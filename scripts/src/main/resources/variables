@@ -1,0 +1,19 @@
+#********************************************************************************
+# These environment variables may be customized by the user.
+# To do so, create a file with the name variables-customized.bat
+# and perform your changes there so they do not get lost if you update. 
+# Whenever variables-customized.bat is present it will override the property values defined here.
+#********************************************************************************
+
+export MAIN_BRANCH=main
+
+export SCRIPTS_PATH=scripts
+export CONF_PATH=conf
+export WORKSPACES_PATH=workspaces
+export SETTINGS_REL_PATH=development/settings
+export ECLIPSE_TEMPLATES_REL_PATH=eclipse/workspace
+export SOFTWARE_PATH=$OASP_PROJECT_HOME/software
+
+export M2_REPO=$OASP_PROJECT_HOME/$CONF_PATH/.m2/repository
+
+export ECLIPSE_VMARGS="-Xms128M -Xmx768M -XX:MaxPermSize=256M"

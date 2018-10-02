@@ -1,0 +1,11 @@
+#!/bin/bash
+cd `dirname $0`
+cd workspaces
+
+for file in *
+do
+  if [ -d "$file" ]
+  then
+    ../create-or-update-workspace "$file"
+  fi
+done

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<project name="devon-ide" default="zip" basedir=".">
+  <property name="version" value="3.0.0-SNAPSHOT"/>
+  <target name="clean">
+    <delete>
+      <fileset dir="${basedir}" includes="devon-ide-software-*.zip"/>
+    </delete>
+  </target>
+ 
+  <target name="zip">
+    <delete>
+      <fileset dir="${basedir}" includes="devon-ide-software-${version}*.zip"/>
+    </delete>
+    <zip zipfile="${basedir}/devon-ide-software-${version}.zip">
+      <zipfileset dir="${basedir}">
+        <include name="software/**"/>
+        <include name="workspaces/main/CobiGen_Templates/**"/>
+      </zipfileset>
+    </zip>
+  </target>
+</project>

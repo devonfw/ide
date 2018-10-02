@@ -1,0 +1,74 @@
+##!/bin/bash
+#cd `dirname $0`
+#cd ..
+#echo $PWD
+export OASP_PROJECT_HOME=$PWD
+. $OASP_PROJECT_HOME/variables
+if [ -f $OASP_PROJECT_HOME/variables-customized ]; then
+    . $OASP_PROJECT_HOME/variables-customized
+fi
+export SOFTWARE_PATH=$OASP_PROJECT_HOME/software
+
+if [ -z $WORKSPACE ]; then
+    export WORKSPACE=$MAIN_BRANCH
+fi
+export WORKSPACE_REL_PATH=workspaces/$WORKSPACE
+export WORKSPACE_PATH=$WORKSPACES_PATH/$WORKSPACE
+
+export WORKSPACE_PLUGINS_PATH=$WORKSPACE_PATH/.metadata/.plugins
+export SETTINGS_PATH=$WORKSPACES_PATH/$MAIN_BRANCH/$SETTINGS_REL_PATH
+export ECLIPSE_TEMPLATES_PATH=$SETTINGS_PATH/$ECLIPSE_TEMPLATES_REL_PATH
+
+if [ -f $SETTINGS_PATH/ide-properties ]; then
+    . $SETTINGS_PATH/ide-properties
+fi
+
+export OASP4J_IDE_VERSION=${project.version}
+export IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
+
+###
+# JAVA
+###
+export JAVA_HOME=$SOFTWARE_PATH/java
+# export JAVA_OPTS=-Dhttp.proxyHost=myproxy.com -Dhttp.proxyPort=8080
+
+###
+# MAVEN
+###
+export M2_HOME=$SOFTWARE_PATH/maven
+export M2_CONF=$OASP_PROJECT_HOME/$CONF_PATH/.m2/settings.xml
+export MAVEN_OPTS="-Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
+export MAVEN_HOME=$M2_HOME
+
+###
+# Eclipse
+###
+export ECLIPSE_HOME=$SOFTWARE_PATH/eclipse
+export ECLIPSE=$ECLIPSE_HOME/eclipse
+export ECLIPSE_OPT="-vm $JAVA_HOME/bin/java -showlocation $WORKSPACE -vmargs $ECLIPSE_VMARGS"
+
+###
+# Path
+###
+for i in $SOFTWARE_PATH/*; do
+    if [ -d "$i/bin" ]; then
+        IDE_PATH="$i/bin:$IDE_PATH"
+    else
+        IDE_PATH="$i:$IDE_PATH"
+    fi
+
+    # Load custom configuration of software
+    if [ -e "$i/ide-config" ]; then
+        . "$i/ide-config"
+    fi
+done
+export PATH=$IDE_PATH:$PATH
+
+###
+# NodeJS
+###
+if [ -d "$SOFTWARE_PATH/nodejs" ]; then
+  export PATH=`npm bin -g 2> /dev/null`:$PATH
+fi
+
+echo "IDE environment has been initialized."

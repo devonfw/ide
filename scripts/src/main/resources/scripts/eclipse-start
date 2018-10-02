@@ -1,0 +1,5 @@
+#!/bin/bash
+cd `dirname $0`
+cd ..
+. scripts/environment-project
+$ECLIPSE -clean -data $WORKSPACE_PATH -keyring "~/.eclipse/.keyring" $ECLIPSE_OPT &

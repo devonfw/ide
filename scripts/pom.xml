@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.devonfw.ide.dev</groupId>
+    <artifactId>devon-ide</artifactId>
+    <version>dev-SNAPSHOT</version>
+  </parent>
+  <groupId>com.devonfw.ide</groupId>
+  <artifactId>devon-ide-scripts</artifactId>
+  <packaging>pom</packaging>
+  <version>${devon-ide.version}</version>
+  <name>${project.artifactId}</name>
+  <description>Scripts to setup and update the development environment.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>devon-ide-configurator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <outputDirectory>${project.build.directory}/package</outputDirectory>
+    <resources>
+    <resource>
+      <directory>src/main/resources</directory>
+      <filtering>true</filtering>
+      <excludes>
+        <exclude>**/*.bak</exclude>
+      </excludes>
+    </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <configuration>
+              <nonFilteredFileExtensions>
+                <nonFilteredFileExtension>reg</nonFilteredFileExtension>
+              </nonFilteredFileExtensions>
+              <includeEmptyDirs>true</includeEmptyDirs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>compile</includeScope>
+              <outputDirectory>${project.build.outputDirectory}/scripts</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>create-distribution</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <appendAssemblyId>true</appendAssemblyId>
+              <descriptors>
+                <descriptor>src/main/assembly/windows.xml</descriptor>
+                <descriptor>src/main/assembly/linux.xml</descriptor>
+                <descriptor>src/main/assembly/all.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

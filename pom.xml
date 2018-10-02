@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: pom.xml 6 2013-09-13 10:20:34Z hohwille $ -->
+<project  xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.devonfw.ide.dev</groupId>
+  <artifactId>devon-ide</artifactId>
+  <packaging>pom</packaging>
+  <version>dev-SNAPSHOT</version>
+  <name>${project.artifactId}</name>
+  <description>This project provides automatic setup and update of the local development environment.</description>
+  <url>https://github.com/devonfw/devon-ide/wiki</url>
+  <inceptionYear>2013</inceptionYear>
+
+  <properties>
+    <devon-ide.version>3.0.0-SNAPSHOT</devon-ide.version>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <modules>
+    <module>configurator</module>
+    <module>scripts</module>
+    <module>settings</module>
+    <module>eclipse-m2e</module>
+  </modules>
+
+  <build>  
+    <plugins>
+      <!-- http://mojo.codehaus.org/flatten-maven-plugin/ -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.0.0-beta-3</version>
+        <configuration>
+          <flattenMode>oss</flattenMode>
+          <updatePomFile>true</updatePomFile>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+        	<!-- activate java5+ -->
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+   
+      <!-- advanced manifest with versions -->
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <configuration>
+        <archive>
+        <manifest>
+          <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+          <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+        </manifest>
+        </archive>
+      </configuration>
+      </plugin>
+    </plugins>
+    
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <!-- also generate javadoc JARs -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- also generate source JARs -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Sign artifacts with PGP -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+            	<keyname>joerg.hohwiller@capgemini.com</keyname>
+            </configuration>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  
+  <scm>
+    <url>https://github.com/oasp/oasp4j-ide/tree/master</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>hohwille</id>
+      <name>J&#246;rg Hohwiller</name>
+      <email>hohwille@users.sourceforge.net</email>
+      <organization></organization>
+      <organizationUrl/>
+      <roles>
+        <role>admin</role>
+        <role>designer</role>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+    <developer>
+      <id>trippl</id>
+      <name>Thomas Rippl</name>
+      <email></email>
+      <organization></organization>
+      <organizationUrl/>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+  </developers>
+  
+  <licenses>
+    <license>
+      <name>Apache Software Licenese</name>
+      <url>http://oasp.github.io/terms-of-use.html</url>
+      <distribution>repo</distribution>
+      <comments/>
+    </license>
+  </licenses>
+  
+</project>

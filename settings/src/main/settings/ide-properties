@@ -1,0 +1,1 @@
+export REPLACEMENT_PATTERNS_PATH=$SETTINGS_PATH/eclipse/workspace/replacement-patterns.properties
