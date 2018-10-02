@@ -1,4 +1,4 @@
-= oasp4j-ide
+= devon-ide
 
-Tool to automate setup and update of development environment (for Java projects).
-See our https://github.com/oasp/oasp4j-ide/wiki[wiki] for further details.
+Tool to automate setup and update of development environment.
+See our https://github.com/devonfw/devon-ide/wiki[wiki] for further details.
