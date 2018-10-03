@@ -9,7 +9,7 @@
   <fileSets>
     <fileSet>
       <directory>src/main/settings</directory>
-      <outputDirectory>/settings</outputDirectory>
+      <outputDirectory>./settings</outputDirectory>
       <useDefaultExcludes>false</useDefaultExcludes>
     </fileSet>
   </fileSets>
