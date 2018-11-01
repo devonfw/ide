@@ -37,7 +37,7 @@ export JAVA_HOME=$SOFTWARE_PATH/java
 ###
 export M2_HOME=$SOFTWARE_PATH/maven
 export M2_CONF=$OASP_PROJECT_HOME/$CONF_PATH/.m2/settings.xml
-export MAVEN_OPTS="-Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
+export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
 export MAVEN_HOME=$M2_HOME
 
 ###

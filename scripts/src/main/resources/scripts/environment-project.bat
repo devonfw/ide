@@ -32,7 +32,7 @@ rem Maven
 set M2_HOME=%SOFTWARE_PATH%\maven
 set M2_CONF=%CD%\%CONF_PATH%\.m2\settings.xml
 
-set MAVEN_OPTS=-Xmx512m -Duser.home=%CD%\%CONF_PATH%
+set MAVEN_OPTS=%MAVEN_OPTS% -Xmx512m -Duser.home=%CD%\%CONF_PATH%
 set MAVEN_HOME=%M2_HOME%
 
 rem ********************************************************************************
