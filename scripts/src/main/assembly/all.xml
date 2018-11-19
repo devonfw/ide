@@ -9,7 +9,7 @@
   <fileSets>
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>./</outputDirectory>
       <excludes>
         <exclude>**/*.txt</exclude>
         <exclude>**/*.jar</exclude>
@@ -18,7 +18,7 @@
     </fileSet>
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>./</outputDirectory>
       <includes>
         <include>**/*.txt</include>
         <include>**/*.jar</include>
