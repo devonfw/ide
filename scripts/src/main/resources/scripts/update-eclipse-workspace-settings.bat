@@ -8,11 +8,11 @@ rem ****************************************************************************
 rem argument1 = workspace name (defaults to %MAIN_BRANCH%)
 if "%1" == "" (
 	set WORKSPACE=%MAIN_BRANCH%
-	set MODE=-i
+	set MODE=-c
 	goto :saveChanges
 )
 if "%1" == "--new" (
-	set MODE=-x
+	set MODE=-cn
 	if "%2" == "" (
 		set WORKSPACE=%MAIN_BRANCH%
 	) else (
@@ -26,9 +26,16 @@ if "%1" == "--new" (
 :saveChanges
 call scripts\environment-project.bat
 
+if not exist %WORKSPACE_PLUGINS_PATH% (
+	echo Could not find workspace %WORKSPACE%
+	echo Update aborted
+	goto :end
+)
+
 rem ********************************************************************************
-set ECLIPSE_TEMPLATES_PATH=%SETTINGS_PATH%\eclipse\workspace
-java -jar %SCRIPTS_PATH%\%ECLIPSE_CONFIGURATOR% -t "%ECLIPSE_TEMPLATES_PATH%" -w "%WORKSPACE_PATH%" -v "%REPLACEMENT_PATTERNS_PATH%" %MODE%
+rem In order to run this jar requires the following environment variables:
+rem WORKSPACE_PLUGINS_PATH, ECLIPSE_TEMPLATES_PATH and REPLACEMENT_PATTERNS_PATH
+java -jar %SCRIPTS_PATH%\%ECLIPSE_CONFIGURATOR% %MODE%
 
 :end
 popd

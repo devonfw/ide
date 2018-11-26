@@ -14,7 +14,7 @@ pushd %~dp0
 
 rem ********************************************************************************
 rem if SOFTWARE_PATH does not exist, do nothing
-if not exist "%SOFTWARE_PATH%" (
+if not exist %SOFTWARE_PATH% (
 	echo Could not find folder "%SOFTWARE_PATH%"
 	echo If you want to change its name see the variables.bat
 	echo Execution aborted
@@ -32,7 +32,7 @@ if not exist %WORKSPACES_PATH% (
 
 rem ********************************************************************************
 rem if the current workspace does not exist, do nothing
-if not exist "%WORKSPACE_PATH%" (
+if not exist %WORKSPACE_PATH% (
 	echo Could not find workspace %WORKSPACE_PATH%
 	echo Execution aborted
 	goto :end
@@ -53,6 +53,13 @@ if not exist conf\.m2 mkdir conf\.m2
 if not exist conf\.m2\settings.xml (
  	copy %SETTINGS_PATH%\maven\settings.xml conf\.m2\settings.xml >nul
 	echo Copied %SETTINGS_PATH%\maven\settings.xml to conf\.m2\settings.xml
+)
+
+rem ********************************************************************************
+rem copy version for ide folder if not exist
+if not exist conf\.m2\settings.json (
+ 	copy %SETTINGS_PATH%\version\settings.json conf\settings.json >nul
+	echo Copied %SETTINGS_PATH%\version\settings.json to conf\settings.json
 )
 
 rem ********************************************************************************
@@ -80,17 +87,16 @@ if "%UPDATE_SUBVERSION_SERVERS%"=="true" (
 
 rem ********************************************************************************
 rem ECLIPSE_TEMPLATES_PATH is required in order for the eclipse configurator to work
-set ECLIPSE_TEMPLATES_PATH=%SETTINGS_PATH%\eclipse\workspace
-if not exist "%ECLIPSE_TEMPLATES_PATH%" (
-	echo Could not find workspace at %ECLIPSE_TEMPLATES_PATH%
+if not exist %ECLIPSE_TEMPLATES_PATH% (
+	echo Could not find workspace %ECLIPSE_TEMPLATES_PATH%
 	echo Execution aborted
 	goto :end
 )
 
 rem ********************************************************************************
 rem REPLACEMENT_PATTERNS_PATH is required in order for the eclipse configurator to work
-if not exist "%REPLACEMENT_PATTERNS_PATH%" (
-	echo Could not find variables at %REPLACEMENT_PATTERNS_PATH%
+if not exist %REPLACEMENT_PATTERNS_PATH% (
+	echo Could not find workspace %REPLACEMENT_PATTERNS_PATH%
 	echo Execution aborted
 	goto :end
 )
@@ -99,11 +105,9 @@ rem ****************************************************************************
 rem copys/merges the *.prefs form %SETTINGS_PATH%\eclipse\workspace\...
 rem to specified Eclipse workspace
 rem ********************************************************************************
-java -jar %SCRIPTS_PATH%\%IDE_CONFIGURATOR% -t "%ECLIPSE_TEMPLATES_PATH%" -w "%WORKSPACE_PATH%" -v "%REPLACEMENT_PATTERNS_PATH%" -u
-if %ERRORLEVEL% NEQ 0 (
-  echo "Configurator has failed! Please check the logs."
-  exit /B -1
-)
+rem In order to run this jar requires the following environment variables:
+rem WORKSPACE_PLUGINS_PATH, ECLIPSE_TEMPLATES_PATH and REPLACEMENT_PATTERNS_PATH
+java -jar %SCRIPTS_PATH%\%ECLIPSE_CONFIGURATOR% -u
 
 echo Eclipse preferences for workspace: "%WORKSPACE%" have been created/updated
 

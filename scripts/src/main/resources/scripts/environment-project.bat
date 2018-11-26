@@ -9,17 +9,22 @@ if "%WORKSPACE%" == "" (
   set WORKSPACE=%MAIN_BRANCH%
 )
 
-if "%SETTINGS_PATH%" == "" (
-  set SETTINGS_PATH=%WORKSPACES_PATH%\%MAIN_BRANCH%\%SETTINGS_REL_PATH%
+if "%WORKSPACE_VS%" == "" (
+  set WORKSPACE_VS=%WORKSPACESVS_PATH%
 )
+
+set WORKSPACE_PLUGINS_PATH=%WORKSPACES_PATH%\%WORKSPACE%\.metadata\.plugins
+set SETTINGS_PATH=%WORKSPACES_PATH%\%MAIN_BRANCH%\%SETTINGS_REL_PATH%
+set ECLIPSE_TEMPLATES_PATH=%SETTINGS_PATH%\%ECLIPSE_TEMPLATES_REL_PATH%
+rem absolute workspace path
 set WORKSPACE_PATH=%CD%\%WORKSPACES_PATH%\%WORKSPACE%
 
 if exist "%SETTINGS_PATH%\ide-properties.bat" (
   call "%SETTINGS_PATH%\ide-properties.bat"
 )
 
-set OASP4J_IDE_VERSION=${project.version}
-set IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
+set OASP4J_IDE_VERSION=1.4.0-SNAPSHOT
+set ECLIPSE_CONFIGURATOR=oasp4j-ide-eclipse-configurator-1.4.0-SNAPSHOT.jar
 
 rem ********************************************************************************
 rem Java
@@ -32,13 +37,19 @@ rem Maven
 set M2_HOME=%SOFTWARE_PATH%\maven
 set M2_CONF=%CD%\%CONF_PATH%\.m2\settings.xml
 
-set MAVEN_OPTS=%MAVEN_OPTS% -Xmx512m -Duser.home=%CD%\%CONF_PATH%
+set MAVEN_OPTS=-Xmx512m -Duser.home=%CD%\%CONF_PATH%
 set MAVEN_HOME=%M2_HOME%
+
+rem ********************************************************************************
+rem VSCODE
+set VS_CODE=%SOFTWARE_PATH%\vscode\bin
+set VS_CODE_HOME=%SOFTWARE_PATH%\vscode
+
 
 rem ********************************************************************************
 rem Eclipse
 set ECLIPSE_HOME=%SOFTWARE_PATH%\eclipse
-set ECLIPSE_OPT=-vm "%JAVA_HOME%\bin\javaw" -showlocation %WORKSPACE% -vmargs %ECLIPSE_VMARGS%
+set ECLIPSE_OPT=-vm %JAVA_HOME%\bin\javaw -showlocation %WORKSPACE% -vmargs %ECLIPSE_VMARGS%
 
 rem ********************************************************************************
 rem Path

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ ! -d vscode-$WORKSPACE_VS ]; then
+echo $WORKSPACE_VS 
+export $WORKSPACE_VS
+#!/bin/bash
+cat > vscode-$WORKSPACE_VS.sh <<EOF
+#!/bin/bash
+#cd `dirname $0`
+cd software/vscode
+
+./code ../../$WORKSPACES_VS/$WORKSPACE_VS
+EOF
+
+fi
+chmod +x vscode-$WORKSPACE_VS.sh 
+
+

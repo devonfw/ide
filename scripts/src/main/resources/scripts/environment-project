@@ -12,6 +12,10 @@ export SOFTWARE_PATH=$OASP_PROJECT_HOME/software
 if [ -z $WORKSPACE ]; then
     export WORKSPACE=$MAIN_BRANCH
 fi
+
+if [ -z $WORKSPACE_VS ]; then
+    export WORKSPACE_VS=$WORKSPACESVS_PATH
+fi
 export WORKSPACE_REL_PATH=workspaces/$WORKSPACE
 export WORKSPACE_PATH=$WORKSPACES_PATH/$WORKSPACE
 
@@ -23,8 +27,10 @@ if [ -f $SETTINGS_PATH/ide-properties ]; then
     . $SETTINGS_PATH/ide-properties
 fi
 
-export OASP4J_IDE_VERSION=${project.version}
-export IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
+#export OASP4J_IDE_VERSION=${project.version}
+#export ECLIPSE_CONFIGURATOR=oasp4j-ide-eclipse-configurator-${eclipse-configurator.version}.jar
+export OASP4J_IDE_VERSION=1.4.0-SNAPSHOT
+export ECLIPSE_CONFIGURATOR=oasp4j-ide-eclipse-configurator-1.4.0-SNAPSHOT.jar
 
 ###
 # JAVA
@@ -37,9 +43,16 @@ export JAVA_HOME=$SOFTWARE_PATH/java
 ###
 export M2_HOME=$SOFTWARE_PATH/maven
 export M2_CONF=$OASP_PROJECT_HOME/$CONF_PATH/.m2/settings.xml
-export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
+export MAVEN_OPTS="-Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
 export MAVEN_HOME=$M2_HOME
 
+
+
+###
+# VSCODE
+###
+export VS_CODE=$SOFTWARE_PATH/vscode/bin
+export VS_CODE_HOME=$SOFTWARE_PATH/vscode
 ###
 # Eclipse
 ###
@@ -63,6 +76,9 @@ for i in $SOFTWARE_PATH/*; do
     fi
 done
 export PATH=$IDE_PATH:$PATH
+export PATH=$SOFTWARE_PATH/sonarqube/bin:$PATH
+export PATH=$SOFTWARE_PATH/sonarqube/sonar-scanner-2.8/bin:$PATH
+echo $PATH
 
 ###
 # NodeJS
@@ -70,5 +86,9 @@ export PATH=$IDE_PATH:$PATH
 if [ -d "$SOFTWARE_PATH/nodejs" ]; then
   export PATH=`npm bin -g 2> /dev/null`:$PATH
 fi
+
+### Alias for Devcon
+alias devcon='. devcon.sh'
+alias devon='. devon.sh'
 
 echo "IDE environment has been initialized."
