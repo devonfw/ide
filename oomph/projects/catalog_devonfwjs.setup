@@ -179,7 +179,7 @@
           label="Install Webclipse Suite? "/>
     </setupTask>
   </setupTask>
-  <project href="http://devonfw.github.io/devonfw-angular2-kickstarter/oomph/projects/DevonfwAngular2Kickstarter.setup#/"/>
-  <project href="http://devonfw.github.io/devon4Sencha/oomph/projects/Devon4Sencha.setup#/"/>
+  <!--<project href="http://devonfw.github.io/devonfw-angular2-kickstarter/oomph/projects/DevonfwAngular2Kickstarter.setup#/"/>
+  <project href="http://devonfw.github.io/devon4Sencha/oomph/projects/Devon4Sencha.setup#/"/>-->
   <description>provides JS projects from the devonfw project</description>
 </setup:ProjectCatalog>
