@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:ProjectCatalog
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    name="devonfw"
+    label="devonfw">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="siteURI">
+      <value>https://devonfw.github.io/</value>
+    </detail>
+    <detail
+        key="imageURI">
+      <value>https://raw.githubusercontent.com/devonfw/devonfw.github.io/master/assets/images/devonfw.png</value>
+    </detail>
+  </annotation>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      id="cmp.workspaces.dev"
+      name="Workspace Ini">
+    <setupTask
+        xsi:type="setup:WorkspaceTask"
+        excludedTriggers="STARTUP MANUAL"
+        location="${workspace.location.bootstrap}">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:WorkspaceTask"
+        excludedTriggers="BOOTSTRAP"
+        location="${osgi.instance.area|trimTrailingSlashes}"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="STARTUP MANUAL"
+        type="FOLDER"
+        name="workspace.location"
+        value="${workspace.location.bootstrap}"
+        storageURI="scope://Workspace"
+        label=""/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="BOOTSTRAP"
+        type="FOLDER"
+        name="workspace.location"
+        value="${osgi.instance.area|trimTrailingSlashes|file}"
+        storageURI="scope://Workspace"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="workspace.location.bootstrap"
+        value="${workspaces.location/}${workspace.location.install}"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="STARTUP MANUAL"
+        name="workspace.location.install"
+        defaultValue="main"
+        storageURI="scope://Installation"
+        label="Workspace for Project Checkout"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:ResourceCreationTask"
+      content="MAX_RECENT_WORKSPACES=5&#xD;&#xA;RECENT_WORKSPACES=${workspace.location|property}&#xD;&#xA;RECENT_WORKSPACES_PROTOCOL=3&#xD;&#xA;SHOW_WORKSPACE_SELECTION_DIALOG=true&#xD;&#xA;eclipse.preferences.version=1"
+      targetURL="configuration:/.settings/org.eclipse.ui.ide.prefs">
+    <description>${workspace.location}</description>
+  </setupTask>
+  <project href="http://devonfw.github.io/devcon/oomph/projects/Devcon.setup#/"/>
+  <project href="http://devonfw.github.io/devon-ide/oomph/projects/DevonIde.setup#/"/>
+  <project href="http://devonfw.github.io/devon/oomph/projects/Devon.setup#/"/>
+  <project href="http://devonfw.github.io/devonfw-locale/oomph/projects/DevonfwLocale.setup#/"/>
+  <project href="http://devonfw.github.io/module-owasp-appsensor/oomph/projects/ModuleOwaspAppsensor.setup#/"/>
+  <project href="http://devonfw.github.io/module-ruleengine/oomph/projects/ModuleRuleengine.setup#/"/>
+  <project href="http://devonfw.github.io/tools-cobigen/oomph/projects/CobiGen.setup#/"/>
+  <project href="http://devonfw.github.io/tools-cobigen/oomph/projects/CobiGenOomph.setup#/"/>
+  <project href="http://devonfw.github.io/training-devon-server/oomph/projects/TrainingDevonServer.setup#/"/>
+  <project href="user:/MyProjects.setup?name='user.project',label='&lt;User>',description='A container project for local user projects that are virtual members of the My Projects project catalog'#/"/>
+  <description>provides projects from the devonfw project</description>
+</setup:ProjectCatalog>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:ProductCatalog
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
+    name="devonfw"
+    label="devonfw">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="siteURI">
+      <value>https://devonfw.github.io/</value>
+    </detail>
+    <detail
+        key="imageURI">
+      <value>https://raw.githubusercontent.com/devonfw/devonfw.github.io/master/assets/images/devonfw.png</value>
+    </detail>
+  </annotation>
+  <setupTask
+      xsi:type="setup:InstallationTask"
+      id="installation"/>
+  <setupTask
+      xsi:type="setup.p2:P2Task"
+      label="Oomph Tasks"
+      licenseConfirmationDisabled="true">
+    <requirement
+        name="org.eclipse.oomph.p2.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.core.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.git.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.jdt.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.maven.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.targlets.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.setup.workingsets.feature.group"/>
+    <requirement
+        name="org.eclipse.oomph.targlets.feature.group"/>
+    <repository
+        url="${oomph.update.url}"/>
+  </setupTask>
+  <product href="http://devonfw.github.io/devon-ide/oomph/products/DevonIde.setup#/"/>
+  <product href="http://devonfw.github.io/tools-cobigen/oomph/products/CobiGenDevelopmentIDE.setup#/"/>
+  <product href="http://devonfw.github.io/tools-cobigen/oomph/products/CobiGenDevelopmentResearchIDE.setup#/"/>
+  <description>This product catalog provides IDEs from the devonfw project</description>
+</setup:ProductCatalog>

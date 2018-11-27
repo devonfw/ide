@@ -1,0 +1,10 @@
+= Change log for devon-ide oomph setup
+
+== Versions
+
+.Eclipse features
+[frame="topbot", options="header"]
+|=====
+|Feature|2.1.1 Version|Included Version|Reason
+|`edu.umd.cs.findbugs.plugin.eclipse.feature.group`|3.0.2.x|3.0.1.x|3.0.2.x not available via official update sites
+|=====

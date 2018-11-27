@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:ProjectCatalog
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:projects="http://www.eclipse.org/oomph/setup/projects/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://de-mucevolve02/oomph/tasks/models/Git.ecore http://www.eclipse.org/oomph/setup/projects/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Projects.ecore"
+    name="devonfwjs"
+    label="devonfw JS">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="siteURI">
+      <value>https://devonfw.github.io/</value>
+    </detail>
+    <detail
+        key="imageURI">
+      <value>https://raw.githubusercontent.com/devonfw/devonfw.github.io/master/assets/images/devonfw.png</value>
+    </detail>
+  </annotation>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      name="Global Variables">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="eclipse.target.platform"
+        defaultValue="None"
+        storageURI="scope://Workspace"
+        label="Target Platform">
+      <annotation
+          source="http://www.eclipse.org/oomph/setup/GlobalVariable"/>
+      <choice
+          value="Oxygen"
+          label="Eclipse Oxygen - 4.7"/>
+      <choice
+          value="Neon"
+          label="Eclipse Neon - 4.6"/>
+      <choice
+          value="Mars"
+          label="Eclipse Mars - 4.5"/>
+      <choice
+          value="None"
+          label="None"/>
+      <description>Choose the compatibility level of the target platform</description>
+    </setupTask>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      id="cmp.workspaces.dev"
+      name="Workspace Ini">
+    <setupTask
+        xsi:type="setup:WorkspaceTask"
+        excludedTriggers="STARTUP MANUAL"
+        location="${workspace.location.bootstrap}">
+      <description></description>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:WorkspaceTask"
+        excludedTriggers="BOOTSTRAP"
+        location="${osgi.instance.area|trimTrailingSlashes}"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="STARTUP MANUAL"
+        type="FOLDER"
+        name="workspace.location"
+        value="${workspace.location.bootstrap}"
+        storageURI="scope://Workspace"
+        label=""/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="BOOTSTRAP"
+        type="FOLDER"
+        name="workspace.location"
+        value="${osgi.instance.area|trimTrailingSlashes|file}"
+        storageURI="scope://Workspace"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="workspace.location.bootstrap"
+        value="${workspaces.location/}${workspace.location.install}"/>
+    <setupTask
+        xsi:type="setup:VariableTask"
+        excludedTriggers="STARTUP MANUAL"
+        name="workspace.location.install"
+        defaultValue="main"
+        storageURI="scope://Installation"
+        label="Workspace for Project Checkout"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup:ResourceCreationTask"
+      content="MAX_RECENT_WORKSPACES=5&#xD;&#xA;RECENT_WORKSPACES=${workspace.location|property}&#xD;&#xA;RECENT_WORKSPACES_PROTOCOL=3&#xD;&#xA;SHOW_WORKSPACE_SELECTION_DIALOG=true&#xD;&#xA;eclipse.preferences.version=1"
+      targetURL="configuration:/.settings/org.eclipse.ui.ide.prefs"/>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      type="BOOLEAN"
+      name="fast.setup"
+      value="true"
+      defaultValue="true"
+      storageURI="scope://Installation"/>
+  <setupTask
+      xsi:type="setup:CompoundTask"
+      filter="(fast.setup=true)"
+      name="Fast Setup">
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Git">
+      <setupTask
+          xsi:type="git:GitCloneTask"
+          id="git.clone.project"
+          location="${workspace.location/${scope.project.label}}"
+          remoteURI="${github.remote.uri}"
+          pushURI="${github.remote.uri}">
+        <description>Clones the repository from Github</description>
+      </setupTask>
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="github.remote.uri"
+          storageURI="scope://Workspace"
+          label="${scope.project.label} remote uri">
+        <choice
+            value="https://github.com/${github.user.name}/${github.project.name}.git"
+            label="HTTPS"/>
+        <choice
+            value="ssh://git@github/${github.user.name}/${github.project.name}.git"
+            label="SSH"/>
+      </setupTask>
+      <setupTask
+          xsi:type="setup:VariableTask"
+          name="github.user.name"
+          defaultValue="devonfw"
+          storageURI="scope://Workspace"
+          label="${scope.project.label} fork"/>
+      <setupTask
+          xsi:type="setup:VariableTask"
+          id="github.project.name"
+          name="github.project.name"
+          storageURI="scope://Workspace"
+          label="Github Project"/>
+    </setupTask>
+    <setupTask
+        xsi:type="setup:CompoundTask"
+        name="Webclipse">
+      <setupTask
+          xsi:type="setup.p2:P2Task"
+          filter="(webclipse.p2=true)"
+          label="Webclipse Suite">
+        <requirement
+            name="com.genuitec.eclipse.webclipse.suite.feature.group"/>
+        <repository
+            url="https://www.genuitec.com/updates/webclipse/ci/"/>
+      </setupTask>
+      <setupTask
+          xsi:type="setup:CompoundTask"
+          predecessor="git.clone.project"
+          filter="(webclipse.p2=true)"
+          name="Project Import">
+        <setupTask
+            xsi:type="setup:ResourceCreationTask"
+            id="resource.creation.project"
+            excludedTriggers="BOOTSTRAP"
+            content="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;projectDescription>&#xA;&#x9;&lt;name>${scope.project.label}&lt;/name>&#xA;&#x9;&lt;comment>&lt;/comment>&#xA;&#x9;&lt;natures>&#xA;&#x9;&#x9;&lt;nature>org.eclipse.wst.common.project.facet.core.nature&lt;/nature>&#xA;&#x9;&lt;/natures>&#xA;&lt;/projectDescription>"
+            targetURL="${git.clone.project.location/.project|uri}"
+            encoding="UTF-8"/>
+        <setupTask
+            xsi:type="projects:ProjectsImportTask"
+            predecessor="resource.creation.project">
+          <sourceLocator
+              rootFolder="${git.clone.project.location}"
+              locateNestedProjects="true"/>
+        </setupTask>
+      </setupTask>
+      <setupTask
+          xsi:type="setup:VariableTask"
+          type="BOOLEAN"
+          name="webclipse.p2"
+          storageURI="scope://Installation"
+          label="Install Webclipse Suite? "/>
+    </setupTask>
+  </setupTask>
+  <project href="http://devonfw.github.io/devonfw-angular2-kickstarter/oomph/projects/DevonfwAngular2Kickstarter.setup#/"/>
+  <project href="http://devonfw.github.io/devon4Sencha/oomph/projects/Devon4Sencha.setup#/"/>
+  <description>provides JS projects from the devonfw project</description>
+</setup:ProjectCatalog>
