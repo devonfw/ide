@@ -1032,21 +1032,6 @@
     </rule>
     <rule>
       <repositoryKey>checkstyle</repositoryKey>
-      <key>com.puppycrawl.tools.checkstyle.checks.whitespace.SeparatorWrapCheck</key>
-      <priority>MINOR</priority>
-      <parameters>
-        <parameter>
-          <key>tokens</key>
-          <value>DOT,COMMA</value>
-        </parameter>
-        <parameter>
-          <key>option</key>
-          <value>eol</value>
-        </parameter>
-      </parameters>
-    </rule>
-    <rule>
-      <repositoryKey>checkstyle</repositoryKey>
       <key>com.puppycrawl.tools.checkstyle.checks.whitespace.SingleSpaceSeparatorCheck</key>
       <priority>MAJOR</priority>
       <parameters>
@@ -1109,85 +1094,169 @@
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureComponentLayerCheck</key>
+      <key>Devon4j:C1</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerBatchDataaccessCheck</key>
+      <key>Devon4j:C2</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerClientDataaccessCheck</key>
+      <key>Devon4j:C3</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerDataaccessLogicCheck</key>
+      <key>Devon4j:C4</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerDataaccessServiceCheck</key>
+      <key>Devon4j:C5</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerLogicServiceCheck</key>
+      <key>Devon4j:C6</key>
+      <priority>MINOR</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:C7</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerServiceBatchCheck</key>
+      <key>Devon4j:L1</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L10</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L11</key>
+      <priority>MAJOR</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L12</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L2</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L3</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L4</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L5</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L6</key>
+      <priority>MAJOR</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L7</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:L8</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerServiceClientCheck</key>
+      <key>Devon4j:L9</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:P1</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:S1</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:S2</key>
+      <priority>MAJOR</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:S3</key>
+      <priority>MAJOR</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:S4</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureLayerServiceDataaccessCheck</key>
-      <priority>CRITICAL</priority>
+      <key>Devon4j:S5</key>
+      <priority>BLOCKER</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitecturePackageCheck</key>
-      <priority>CRITICAL</priority>
+      <key>Devon4j:S6</key>
+      <priority>MAJOR</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureScopeApiBaseCheck</key>
-      <priority>CRITICAL</priority>
+      <key>Devon4j:S7</key>
+      <priority>MAJOR</priority>
       <parameters/>
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureScopeApiImplCheck</key>
-      <priority>CRITICAL</priority>
-      <parameters/>
-    </rule>
-    <rule>
-      <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureScopeBaseBaseCheck</key>
-      <priority>CRITICAL</priority>
-      <parameters/>
-    </rule>
-    <rule>
-      <repositoryKey>devon-java</repositoryKey>
-      <key>DevonArchitectureScopeBaseImplCheck</key>
+      <key>Devon4j:S8</key>
       <priority>CRITICAL</priority>
       <parameters/>
     </rule>
@@ -9765,17 +9834,6 @@
       <key>SwitchLastCaseIsDefaultCheck</key>
       <priority>CRITICAL</priority>
       <parameters/>
-    </rule>
-    <rule>
-      <repositoryKey>squid</repositoryKey>
-      <key>TrailingCommentCheck</key>
-      <priority>MINOR</priority>
-      <parameters>
-        <parameter>
-          <key>legalTrailingCommentPattern</key>
-          <value>^\s*+[^\s]++$</value>
-        </parameter>
-      </parameters>
     </rule>
     <rule>
       <repositoryKey>squid</repositoryKey>
