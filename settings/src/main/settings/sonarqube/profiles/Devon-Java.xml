@@ -1136,6 +1136,36 @@
     </rule>
     <rule>
       <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:E1</key>
+      <priority>CRITICAL</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:E2</key>
+      <priority>BLOCKER</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:E3</key>
+      <priority>CRITICAL</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:E4</key>
+      <priority>CRITICAL</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
+      <key>Devon4j:E5</key>
+      <priority>CRITICAL</priority>
+      <parameters/>
+    </rule>
+    <rule>
+      <repositoryKey>devon-java</repositoryKey>
       <key>Devon4j:L1</key>
       <priority>BLOCKER</priority>
       <parameters/>
