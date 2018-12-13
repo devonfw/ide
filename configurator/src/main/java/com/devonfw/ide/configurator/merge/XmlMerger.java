@@ -34,6 +34,7 @@ public class XmlMerger extends FileTypeMerger {
   static {
     try {
       DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+      documentBuilderFactory.setNamespaceAware(true);
       DOCUMENT_BUILDER = documentBuilderFactory.newDocumentBuilder();
       TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     } catch (Exception e) {
@@ -103,16 +104,14 @@ public class XmlMerger extends FileTypeMerger {
     for (int i = 0; i < length; i++) {
       Attr sourceAttribute = (Attr) sourceAttributes.item(i);
       String namespaceURI = sourceAttribute.getNamespaceURI();
-      String localName = sourceAttribute.getLocalName();
-      Attr targetAttribute = targetElement.getAttributeNodeNS(namespaceURI, localName);
+      // String localName = sourceAttribute.getLocalName();
+      String name = sourceAttribute.getName();
+      Attr targetAttribute = targetElement.getAttributeNodeNS(namespaceURI, name);
       if (targetAttribute == null) {
         if (add) {
-          String qualifiedName = localName;
-          String prefix = sourceAttribute.getPrefix();
-          if (prefix != null) {
-            qualifiedName = prefix + ":" + qualifiedName;
-          }
-          targetElement.setAttributeNS(namespaceURI, qualifiedName, sourceAttribute.getValue());
+          // ridiculous but JDK does not provide namespace support by default...
+          targetElement.setAttributeNS(namespaceURI, name, sourceAttribute.getValue());
+          // targetElement.setAttribute(name, sourceAttribute.getValue());
         }
       } else if (override) {
         targetAttribute.setValue(sourceAttribute.getValue());
