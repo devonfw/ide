@@ -2,6 +2,7 @@ package com.devonfw.ide.configurator.merge;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import com.devonfw.ide.configurator.resolve.VariableResolver;
 
@@ -33,7 +34,7 @@ public class FallbackMerger extends FileTypeMerger {
 
     ensureParentDirecotryExists(targetFile);
     try {
-      Files.copy(sourceFile.toPath(), targetFile.toPath());
+      Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
     } catch (Exception e) {
       throw new IllegalStateException("Failed to copy file " + sourceFile + " to " + targetFile, e);
     }
