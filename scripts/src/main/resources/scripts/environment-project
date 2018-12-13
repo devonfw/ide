@@ -1,9 +1,8 @@
-export OASP_PROJECT_HOME=$PWD
-. $OASP_PROJECT_HOME/variables
-if [ -f $OASP_PROJECT_HOME/variables-customized ]; then
-    . $OASP_PROJECT_HOME/variables-customized
+. $PWD/variables
+if [ -f $PWD/variables-customized ]; then
+    . $PWD/variables-customized
 fi
-export SOFTWARE_PATH=$OASP_PROJECT_HOME/software
+export SOFTWARE_PATH=$PWD/software
 
 if [ -z $WORKSPACE ]; then
     export WORKSPACE=$MAIN_BRANCH
@@ -31,8 +30,8 @@ export JAVA_HOME=$SOFTWARE_PATH/java
 # MAVEN
 ###
 export M2_HOME=$SOFTWARE_PATH/maven
-export M2_CONF=$OASP_PROJECT_HOME/$CONF_PATH/.m2/settings.xml
-export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$OASP_PROJECT_HOME/$CONF_PATH"
+export M2_CONF=$PWD/$CONF_PATH/.m2/settings.xml
+export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$PWD/$CONF_PATH"
 export MAVEN_HOME=$M2_HOME
 
 ###
