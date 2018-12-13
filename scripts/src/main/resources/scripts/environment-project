@@ -1,11 +1,11 @@
 . $PWD/variables
-if [ -f $PWD/variables-customized ]; then
-    . $PWD/variables-customized
+if [ -f "$PWD/variables-customized" ]; then
+  . "$PWD/variables-customized"
 fi
 export SOFTWARE_PATH=$PWD/software
 
-if [ -z $WORKSPACE ]; then
-    export WORKSPACE=$MAIN_BRANCH
+if [ -z "$WORKSPACE" ]; then
+  export WORKSPACE=$MAIN_BRANCH
 fi
 export WORKSPACE_PATH=$PWD/$WORKSPACES_PATH/$WORKSPACE
 
@@ -13,11 +13,10 @@ export WORKSPACE_PLUGINS_PATH=$WORKSPACE_PATH/.metadata/.plugins
 export SETTINGS_PATH=$WORKSPACES_PATH/$MAIN_BRANCH/$SETTINGS_REL_PATH
 export ECLIPSE_TEMPLATES_PATH=$SETTINGS_PATH/$ECLIPSE_TEMPLATES_REL_PATH
 
-if [ -f $SETTINGS_PATH/ide-properties ]; then
-    . $SETTINGS_PATH/ide-properties
+if [ -f "$SETTINGS_PATH/ide-properties" ]; then
+  . "$SETTINGS_PATH/ide-properties"
 fi
 
-export OASP4J_IDE_VERSION=${project.version}
 export IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
 
 ###
