@@ -1,7 +1,3 @@
-##!/bin/bash
-#cd `dirname $0`
-#cd ..
-#echo $PWD
 export OASP_PROJECT_HOME=$PWD
 . $OASP_PROJECT_HOME/variables
 if [ -f $OASP_PROJECT_HOME/variables-customized ]; then
@@ -12,8 +8,7 @@ export SOFTWARE_PATH=$OASP_PROJECT_HOME/software
 if [ -z $WORKSPACE ]; then
     export WORKSPACE=$MAIN_BRANCH
 fi
-export WORKSPACE_REL_PATH=workspaces/$WORKSPACE
-export WORKSPACE_PATH=$WORKSPACES_PATH/$WORKSPACE
+export WORKSPACE_PATH=$PWD/$WORKSPACES_PATH/$WORKSPACE
 
 export WORKSPACE_PLUGINS_PATH=$WORKSPACE_PATH/.metadata/.plugins
 export SETTINGS_PATH=$WORKSPACES_PATH/$MAIN_BRANCH/$SETTINGS_REL_PATH
