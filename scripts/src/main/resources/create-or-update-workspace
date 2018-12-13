@@ -51,15 +51,13 @@ if [ ! -d $ECLIPSE_TEMPLATES_PATH ]; then
     echo "Execution aborted"
     exit 1
 fi
-if [ ! -e $ECLIPSE_REPLACEMENT_PATTERNS_PATH ]; then
-    echo "Could not find file $ECLIPSE_REPLACEMENT_PATTERNS_PATH"
+if [ ! -e $REPLACEMENT_PATTERNS_PATH ]; then
+    echo "Could not find file $REPLACEMENT_PATTERNS_PATH"
     echo "Execution aborted"
     exit 1
 fi
 
 # copys/merges the *.prefs form $SETTINGS_PATH/eclipse/workspace/... to specified Eclipse workspace
-REPLACEMENT_PATTERNS_PATH=$ECLIPSE_REPLACEMENT_PATTERNS_PATH
-
 java -jar $SCRIPTS_PATH/$IDE_CONFIGURATOR -t "$ECLIPSE_TEMPLATES_PATH" -w "$WORKSPACE_PATH" -v "$REPLACEMENT_PATTERNS_PATH" -u
 echo "Eclipse preferences for workspace $WORKSPACE have been created/updated"
 
