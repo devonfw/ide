@@ -1,8 +1,8 @@
 #********************************************************************************
 # These environment variables may be customized by the user.
-# To do so, create a file with the name variables-customized.bat
+# To do so, create a file with the name variables-customized
 # and perform your changes there so they do not get lost if you update. 
-# Whenever variables-customized.bat is present it will override the property values defined here.
+# Whenever variables-customized is present it will override the property values defined here.
 #********************************************************************************
 
 export MAIN_BRANCH=main
