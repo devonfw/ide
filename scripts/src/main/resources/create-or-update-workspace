@@ -41,7 +41,7 @@ fi
 # TODO: Port subversion config
 
 
-ECLIPSE_TEMPLATES_PATH=$SETTINGS_PATH\eclipse\workspace
+ECLIPSE_TEMPLATES_PATH=$SETTINGS_PATH/eclipse/workspace
 if [ ! -d "$ECLIPSE_TEMPLATES_PATH" ]; then
     echo "Could not find folder '$ECLIPSE_TEMPLATES_PATH' (from variable ECLIPSE_TEMPLATES_PATH)"
     echo "Execution aborted"
