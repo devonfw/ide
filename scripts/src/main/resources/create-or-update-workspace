@@ -8,6 +8,7 @@ if [ -n "$1" ]; then
 fi
 
 . scripts/environment-project
+CONF_PATH=$PWD/conf
 
 if [ ! -d "$SOFTWARE_PATH" ]; then
     echo "Could not find folder '$SOFTWARE_PATH' (from variable SOFTWARE_PATH)"
@@ -48,9 +49,8 @@ if [ ! -d "$ECLIPSE_TEMPLATES_PATH" ]; then
     exit 1
 fi
 if [ ! -e "$REPLACEMENT_PATTERNS_PATH" ]; then
-    echo "Could not find file '$REPLACEMENT_PATTERNS_PATH' (from variable REPLACEMENT_PATTERNS_PATH)"
-    echo "Execution aborted"
-    exit 1
+    echo "WARNING: Could not find file '$REPLACEMENT_PATTERNS_PATH' (from variable REPLACEMENT_PATTERNS_PATH)"
+    echo "Please check your ide-properties from $SETTINGS_PATH"
 fi
 
 # copys/merges the *.prefs form $SETTINGS_PATH/eclipse/workspace/... to specified Eclipse workspace
