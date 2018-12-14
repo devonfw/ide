@@ -10,6 +10,9 @@
     <fileSet>
       <directory>${project.build.outputDirectory}</directory>
       <outputDirectory>./</outputDirectory>
+      <excludes>
+        <exclude>system/Finder/**</exclude>
+      </excludes>	  
       <includes>
         <include>**/*.reg</include>
         <include>**/*.bat</include>
