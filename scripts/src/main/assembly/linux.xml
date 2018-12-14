@@ -23,9 +23,10 @@
       <directory>${project.build.outputDirectory}</directory>
       <outputDirectory>./</outputDirectory>
       <excludes>
-        <exclude>system/**</exclude>
+        <exclude>system/IDEenv/**</exclude>
       </excludes>
       <includes>
+		<include>system/Finder/**</include>
         <include>**/*.txt</include>
         <include>**/*.jar</include>
       </includes>
