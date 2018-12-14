@@ -29,7 +29,7 @@ export JAVA_HOME=$SOFTWARE_PATH/java
 # MAVEN
 ###
 export M2_HOME=$SOFTWARE_PATH/maven
-export M2_CONF=$PWD/$CONF_PATH/.m2/settings.xml
+export M2_CONF=$PWD/conf/.m2/settings.xml
 export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$PWD/$CONF_PATH"
 export MAVEN_HOME=$M2_HOME
 
