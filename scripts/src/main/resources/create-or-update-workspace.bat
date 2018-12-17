@@ -56,6 +56,13 @@ if not exist conf\.m2\settings.xml (
 )
 
 rem ********************************************************************************
+rem copy version for ide folder if not exist
+if not exist conf\.m2\settings.json (
+ 	copy %SETTINGS_PATH%\version\settings.json conf\settings.json >nul
+	echo Copied %SETTINGS_PATH%\version\settings.json to conf\settings.json
+)
+
+rem ********************************************************************************
 rem copy subversion config and server to the users subversion folder, overwrite if exist.
 rem only if UPDATE_SUBVERSION_CONFIG or UPDATE_SUBVERSION_SERVERS is set "true"
 

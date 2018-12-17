@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+cd `dirname $0`
+
+if [ -n $1 ]; then
+    WORKSPACE_VS=$1
+fi
+
+echo $WORKSPACE_VS
+. scripts/environment-project
+. scripts/create-vscode-startup
+
+
+echo Finished creating/updating workspace: "$WORKSPACE_VS"
+
+
+

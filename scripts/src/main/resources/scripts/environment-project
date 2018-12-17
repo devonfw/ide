@@ -7,6 +7,9 @@ export SOFTWARE_PATH=$PWD/software
 if [ -z "$WORKSPACE" ]; then
   export WORKSPACE=$MAIN_BRANCH
 fi
+if [ -z "$WORKSPACE_VS" ]; then
+    export WORKSPACE_VS=$WORKSPACESVS_PATH
+fi
 export WORKSPACE_PATH=$PWD/$WORKSPACES_PATH/$WORKSPACE
 
 export WORKSPACE_PLUGINS_PATH=$WORKSPACE_PATH/.metadata/.plugins
@@ -33,6 +36,11 @@ export M2_CONF=$PWD/conf/.m2/settings.xml
 export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$PWD/conf"
 export MAVEN_HOME=$M2_HOME
 
+###
+# VSCODE
+###
+export VS_CODE=$SOFTWARE_PATH/vscode/bin
+export VS_CODE_HOME=$SOFTWARE_PATH/vscode
 ###
 # Eclipse
 ###
@@ -63,5 +71,9 @@ export PATH=$IDE_PATH:$PATH
 if [ -d "$SOFTWARE_PATH/nodejs" ]; then
   export PATH=`npm bin -g 2> /dev/null`:$PATH
 fi
+
+### Alias for Devcon
+alias devcon='. devcon.sh'
+alias devon='. devon.sh'
 
 echo "IDE environment has been initialized."

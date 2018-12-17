@@ -9,6 +9,7 @@ export MAIN_BRANCH=main
 
 export SCRIPTS_PATH=scripts
 export WORKSPACES_PATH=workspaces
+export WORKSPACES_VS=workspaces_vs
 export SETTINGS_REL_PATH=development/settings
 
 #export M2_REPO=~/.m2/repository

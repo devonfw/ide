@@ -37,6 +37,8 @@ fi
 if [ ! -e "$CONF_PATH/.m2/settings.xml" ]; then
     cp "$SETTINGS_PATH/maven/settings.xml" "$CONF_PATH/.m2/settings.xml"
     echo "Copied $SETTINGS_PATH/maven/settings.xml to $CONF_PATH/.m2/settings.xml"
+    cp "$SETTINGS_PATH/version/settings.json" "$CONF_PATH/settings.json"
+    echo "Copied $SETTINGS_PATH/version/settings.json to $CONF_PATH/settings.json"
 fi
 
 # TODO: Port subversion config

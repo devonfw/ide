@@ -9,9 +9,16 @@ if "%WORKSPACE%" == "" (
   set WORKSPACE=%MAIN_BRANCH%
 )
 
+if "%WORKSPACE_VS%" == "" (
+  set WORKSPACE_VS=%WORKSPACESVS_PATH%
+)
+
 if "%SETTINGS_PATH%" == "" (
   set SETTINGS_PATH=%WORKSPACES_PATH%\%MAIN_BRANCH%\%SETTINGS_REL_PATH%
 )
+set WORKSPACE_PLUGINS_PATH=%WORKSPACES_PATH%\%WORKSPACE%\.metadata\.plugins
+set ECLIPSE_TEMPLATES_PATH=%SETTINGS_PATH%\%ECLIPSE_TEMPLATES_REL_PATH%
+rem absolute workspace path
 set WORKSPACE_PATH=%CD%\%WORKSPACES_PATH%\%WORKSPACE%
 
 if exist "%SETTINGS_PATH%\ide-properties.bat" (
@@ -34,6 +41,12 @@ set M2_CONF=%CD%\%CONF_PATH%\.m2\settings.xml
 
 set MAVEN_OPTS=%MAVEN_OPTS% -Xmx512m -Duser.home=%CD%\%CONF_PATH%
 set MAVEN_HOME=%M2_HOME%
+
+rem ********************************************************************************
+rem VSCODE
+set VS_CODE=%SOFTWARE_PATH%\vscode\bin
+set VS_CODE_HOME=%SOFTWARE_PATH%\vscode
+
 
 rem ********************************************************************************
 rem Eclipse

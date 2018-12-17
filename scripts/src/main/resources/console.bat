@@ -7,4 +7,4 @@ call scripts\environment-project.bat
 
 popd
 
-cmd
+%DVCMDER_INSTALL_DIR% /START %CD%
