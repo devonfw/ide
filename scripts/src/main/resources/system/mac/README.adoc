@@ -1,0 +1,28 @@
+= MacOS Integration
+
+This folder contains configurations to integrate `devon-ide` into MacOS.
+
+== Finder
+
+If you want to open a terminal from a folder in `Finder` and automatically get your environment set properly for `devon-ide` you will find the perfect solution here.
+
+image:Finder-Integration.png["Devon-ide integration in MacOS Finder",link=Finder-Integration.png]
+
+So after installing (see below) the integration(s) provided here, you can easily open a terminal ready for your `devon-ide`:
+
+* right click (`[control]` + click) on file or folder in `Finder`
+* Expand the `Quick-Actions` sub-menu
+* Click on the desired action (e.g. `Open Devon-Terminal here`)
+* Verify that you environment is properly initialized by invoking:
++
+```
+mvn -v
+```
+
+=== Terminal
+
+If you want the integration for the `Terminal` app on MacOS simply go to the `terminal` subfolder and double click on the contained `workflow` file.
+
+=== iTerm2
+
+If you prefer `iTerm2` (can be installed from `App Store`) simply go to the `iterm` subfolder and double click on the contained `workflow` file.

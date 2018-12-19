@@ -1,3 +1,22 @@
+= Windows Integration
+
+This folder contains configurations to integrate `devon-ide` into MacOS.
+
+== IDEenv.bat
+Please copy `IDEenv.bat` from `cmd` sub-folder into a central folder that is on your Windows path (`%PATH%`):
+
+* Create a `scripts` folder (e.g. `C:\Users\«MyLogin»\scripts` or `C:\Program Files\scripts`)
+* Ensure that this `scripts` directory is added to your system path:
+** Got to `Computer > Properties > Advanced system settings > Environment Variables`
+** In the upper group (`User variables for ...`) select the variable `PATH`
+** Click on `Edit`
+** To the end of the `Variable value` append a semicolon (`;`) followed by the absolute path of the `scripts` directory (e.g. append `;C:\Users\«MyLogin»\scripts`)
+** Confirm with `OK` (3 times)
+
+== CMD
+
+
+
 Summary:
 This is a central solution for the OASP4J IDE that should be "installed" only once on a windows system.
 It allows to automatically set the environment variables properly no matter where you are in your directory.

@@ -1,0 +1,26 @@
+# Source this script from a linux shell to setup the environment variables for the corresponding project.
+if ! [  -f ~/IDEenv ]
+then
+  cp "${BASH_SOURCE:-$0}" ~/IDEenv
+fi
+if ! [ -f ~/.profile ]
+then
+  touch ~/.profile
+fi
+if ! grep -q ". ~/IDEenv" ~/.profile
+then
+  echo "" >> ~/.profile
+  echo ". ~/IDEenv" >> ~/.profile
+fi
+DIR=$PWD
+while [ "$DIR" != "/" ]
+do
+  if [ -f "$DIR/scripts/environment-project" ]; then
+    CWD=$PWD
+    cd "$DIR"
+    . scripts/environment-project
+    cd $CWD
+    break
+  fi
+  DIR=`dirname "$DIR"`
+done

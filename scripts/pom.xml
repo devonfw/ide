@@ -89,6 +89,7 @@
               <descriptors>
                 <descriptor>src/main/assembly/windows.xml</descriptor>
                 <descriptor>src/main/assembly/linux.xml</descriptor>
+                <descriptor>src/main/assembly/mac.xml</descriptor>
                 <descriptor>src/main/assembly/all.xml</descriptor>
               </descriptors>
             </configuration>
@@ -97,5 +98,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>
