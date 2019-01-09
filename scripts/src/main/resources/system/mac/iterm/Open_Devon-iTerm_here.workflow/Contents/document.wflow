@@ -231,7 +231,21 @@ done</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	if (count of input) is not 2 then		display dialog item 1 of input &amp; "is not an Devon-IDE directory" &amp; (count of input)	else		tell application "iTerm" to do script "cd " &amp; item 1 of input &amp; " &amp;&amp; " &amp; "source " &amp; item 2 of input &amp; "/env.sh"		activate application "iTerm"	end ifend run</string>
+					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input  tell application "iTerm"
+    if (count of windows) is 0 then
+      create window with default profile
+    else
+      tell first window
+        create tab with default profile
+      end tell
+    end if
+    set mytab to current session of first window
+    tell mytab to write text "cd " &amp; item 1 of input
+    if (count of input) is 2 then
+      tell mytab to write text "source " &amp; item 2 of input &amp; "/env.sh"
+    end if
+  end tell
+end run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -295,7 +309,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>DD790147-E98F-42D0-AC30-3414F71304FA</key>
+		<key>8957855B-CD33-448F-9DD8-F2A5B0BC3DCD</key>
 		<dict>
 			<key>from</key>
 			<string>DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF - DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF</string>
