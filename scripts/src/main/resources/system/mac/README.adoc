@@ -1,3 +1,6 @@
+:toc: macro
+toc::[]
+
 = MacOS Integration
 
 This folder contains configurations to integrate `devon-ide` into MacOS.
