@@ -29,3 +29,7 @@ If you want the integration for the `Terminal` app on MacOS simply go to the `te
 === iTerm2
 
 If you prefer `iTerm2` (can be installed from `App Store`) simply go to the `iterm` subfolder and double click on the contained `workflow` file.
+
+== Keyboard
+
+Keyboard support is not an integration but however, some users coming from other platforms may struggle with the way MacOS deals with (external) keyboards. As an IDE is all about speed of development you need support for common shortcuts, etc. To make you fully productive without learning and getting used to new keyboard shortcuts you will find support in link:keyboard/Readme.adoc[].
