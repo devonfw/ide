@@ -6,7 +6,7 @@ pushd %CD%
 if not exist scripts\environment-project.bat (
 	rem search for "scripts/environment-project.bat"
 	if "%CD%"=="%CD:~0,3%" (
-		REM echo Directory is not in a OASP4J IDE
+		REM echo Directory is not in a devon-ide
 		goto :end
 	)
 	cd..
