@@ -11,9 +11,11 @@
       <directory>${project.build.outputDirectory}</directory>
       <outputDirectory>./</outputDirectory>
       <excludes>
-        <exclude>system/Finder/**</exclude>
+        <exclude>system/linux/**</exclude>
+        <exclude>system/mac/**</exclude>
       </excludes>	  
       <includes>
+        <include>**/system/IDEenv</include>
         <include>**/*.reg</include>
         <include>**/*.bat</include>
         <include>**/*.txt</include>
