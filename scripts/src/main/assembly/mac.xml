@@ -23,7 +23,8 @@
       <directory>${project.build.outputDirectory}</directory>
       <outputDirectory>./</outputDirectory>
       <excludes>
-        <exclude>system/**</exclude>
+        <exclude>system/windows/**</exclude>
+        <exclude>system/linux/**</exclude>
       </excludes>
       <includes>
         <include>system/mac/**</include>

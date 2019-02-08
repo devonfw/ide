@@ -1,6 +1,8 @@
 {
 "\UF729" = "moveToBeginningOfLine:"; /* Home */
 "\UF72B" = "moveToEndOfLine:"; /* End */
+"$\UF729" = "moveToBeginningOfLineAndModifySelection:"; /* Shift + Home */
+"$\UF72B" = "moveToEndOfLineAndModifySelection:"; /* Shift + End */
 "@\UF729" = "moveToBeginningOfDocument:"; /* Cmd + Home */
 "@\UF72B" = "moveToEndOfDocument:"; /* Cmd + End */
 "@$\UF729" = "moveToBeginningOfDocumentAndModifySelection:"; /* Shift + Cmd + Home */

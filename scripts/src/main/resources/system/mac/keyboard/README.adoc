@@ -12,6 +12,8 @@ They are provided as so called `bundle` (white lego brick icon). Like a MacOS ap
 
 To install keyboard layouts simply copy the `bundle` to `/Library/Keyboard Layouts`. To actually use them go to `System Preferences` and select `Keyboard`. Then select the tab `Input Sources`. With the `+` button you can add a keyboard layout for your daily usage with your mac. 
 image:keyboard-layouts.png["Keyboard Preferences / Input Sources",link=keyboard-layouts.png]
+
+
 When you have multiple mappings in place, on the top menu bar you will find a little icon next to the current time that allows you to switch between the keyboard layouts, what is very handy when you switch from your native MacBook keyboard to an external USB keyboard or vice versa.
 Even for a pure MacOS geek this can be helpful in case a friend coming from Windows/Linux is supposed to type something on the Mac in a pair-programming session.
 
@@ -26,8 +28,9 @@ If you are used to windows or linux and get easily confused by the apple keyboar
 Open `System Preferences` and select `Keyboard`. Then in the first tab you click on the button `Modifier Keys...`. For every keyboard you can customize the behaviour of your modifier keys and therefore switch `Control` and `Option` as illustrated in the screenshot:
 image:keyboard-modifier-keys.png["Keyboard Preferences / Modifier Keys",link=keyboard-modifier-keys.png]
 
-Further programmers now also should disable that `Control` + `Space` is opening `Spotlight Search`.
-image:keyboard-shortcuts.png["Keyboard Preferences / Shortcuts",link=keyboard-shortcuts.png] as otherwise they can not redined this combination in other apps like common IDEs.
+Programmers now should also disable that `Control` + `Space` is opening `Spotlight Search` as otherwise this shortcut can not be redifined in other apps like common IDEs.
+
+image:keyboard-shortcuts.png["Keyboard Preferences / Shortcuts",link=keyboard-shortcuts.png]
 
 == KeyBindings
 
