@@ -28,7 +28,7 @@ call scripts\environment-project.bat
 
 rem ********************************************************************************
 set ECLIPSE_TEMPLATES_PATH=%SETTINGS_PATH%\eclipse\workspace
-java -jar %SCRIPTS_PATH%\%ECLIPSE_CONFIGURATOR% -t "%ECLIPSE_TEMPLATES_PATH%" -w "%WORKSPACE_PATH%" -v "%REPLACEMENT_PATTERNS_PATH%" %MODE%
+java -jar %SCRIPTS_PATH%\%IDE_CONFIGURATOR% -t "%ECLIPSE_TEMPLATES_PATH%" -w "%WORKSPACE_PATH%" -v "%REPLACEMENT_PATTERNS_PATH%" %MODE%
 
 :end
 popd

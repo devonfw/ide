@@ -15,7 +15,7 @@ fi
 
 . scripts/environment-project
    
-java -jar $SCRIPTS_PATH/$ECLIPSE_CONFIGURATOR -t "$SETTINGS_PATH\eclipse\workspace" -w "$WORKSPACE_PATH" -v "$REPLACEMENT_PATTERNS_PATH" $MODE
+java -jar $SCRIPTS_PATH/$IDE_CONFIGURATOR -t "$SETTINGS_PATH\eclipse\workspace" -w "$WORKSPACE_PATH" -v "$REPLACEMENT_PATTERNS_PATH" $MODE
 
 
 
