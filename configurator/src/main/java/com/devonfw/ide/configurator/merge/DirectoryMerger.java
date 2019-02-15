@@ -78,10 +78,13 @@ public class DirectoryMerger implements FileMerger {
     int lastDot = filename.lastIndexOf('.');
     if (lastDot > 0) {
       String extension = filename.substring(lastDot);
+      Log.LOGGER.finest("Extension is " + extension);
       FileTypeMerger merger = this.extension2mergerMap.get(extension);
       if (merger != null) {
         return merger;
       }
+    } else {
+      Log.LOGGER.finest("No extension for " + file);
     }
     return this.fallbackMerger;
   }
@@ -94,12 +97,18 @@ public class DirectoryMerger implements FileMerger {
         Log.LOGGER.warning("Workspace is missing directory: " + workspaceFile);
         return;
       }
+      Log.LOGGER.fine("Traversing directory " + updateFile);
       for (File child : updateFile.listFiles()) {
-        inverseMerge(workspaceFile, resolver, addNewProperties, new File(updateFile, child.getName()));
+        inverseMerge(new File(workspaceFile, child.getName()), resolver, addNewProperties,
+            new File(updateFile, child.getName()));
       }
     } else if (workspaceFile.exists()) {
+      Log.LOGGER.fine("Start merging of changes from workspace back to file " + updateFile);
       FileTypeMerger merger = getMerger(workspaceFile);
+      Log.LOGGER.finest("Using merger " + merger.getClass().getSimpleName());
       merger.inverseMerge(workspaceFile, resolver, addNewProperties, updateFile);
+    } else {
+      Log.LOGGER.warning("No such file or directory: " + updateFile);
     }
   }
 

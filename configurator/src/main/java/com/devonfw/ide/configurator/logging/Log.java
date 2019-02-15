@@ -1,9 +1,13 @@
 package com.devonfw.ide.configurator.logging;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import com.devonfw.ide.configurator.Configurator;
 
@@ -21,11 +25,19 @@ public class Log {
   static {
     try {
       FileHandler logFileHandler = new FileHandler("Configurator.log");
-      logFileHandler.setLevel(Level.ALL);
-      logFileHandler.setFormatter(new SimpleFormatter());
+      logFileHandler.setLevel(Level.FINEST);
+      LogFormatter formatter = new LogFormatter();
+      logFileHandler.setFormatter(formatter);
       LOGGER.addHandler(logFileHandler);
+      LOGGER.setLevel(Level.FINEST);
+      Logger globalLogger = Logger.getLogger("");
+      globalLogger.setLevel(Level.FINEST);
+      for (Handler handler : globalLogger.getHandlers()) {
+        handler.setFormatter(formatter);
+      }
     } catch (Exception e) {
       System.err.println("Could not open log file");
+      e.printStackTrace();
     }
   }
 
@@ -47,4 +59,14 @@ public class Log {
     Log.LOGGER.severe(message);
   }
 
+  public static class LogFormatter extends Formatter {
+
+    @Override
+    public String format(LogRecord record) {
+
+      return String.format("%1$s [%2$-7s] %3$s\n",
+          new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date(record.getMillis())),
+          record.getLevel().getName(), formatMessage(record));
+    }
+  }
 }

@@ -1,9 +1,15 @@
 package com.devonfw.ide.configurator.resolve;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.devonfw.ide.configurator.logging.Log;
 
 /**
  * Implementation of {@link VariableResolver}.
@@ -18,7 +24,9 @@ public class VariableResolverImpl implements VariableResolver {
 
   private static final String VARIABLE_SUFFIX = "}";
 
-  private Properties variables;
+  private final Properties variables;
+
+  private Properties altVariables;
 
   /**
    * The constructor.
@@ -28,6 +36,44 @@ public class VariableResolverImpl implements VariableResolver {
   public VariableResolverImpl(Properties variables) {
 
     this.variables = variables;
+  }
+
+  /**
+   * @param path a (potential) {@link Path}
+   * @return the given path without trailing slash.
+   */
+  public static String normalizePath(String path) {
+
+    if (path.endsWith("/") || path.endsWith("\\")) {
+      return path.substring(0, path.length() - 1);
+    }
+    return path;
+  }
+
+  private Properties getAltVariables() {
+
+    if (this.altVariables == null) {
+      this.altVariables = new Properties();
+      for (Object keyObject : this.variables.keySet()) {
+        String key = keyObject.toString();
+        String value = this.variables.getProperty(key);
+        Path path = Paths.get(value);
+        Log.LOGGER.fine("Checking if variable points to symlink: " + path);
+        if (Files.isSymbolicLink(path)) {
+          try {
+            Path resolved = Files.readSymbolicLink(path);
+            String altValue = normalizePath(resolved.toString());
+            Log.LOGGER.fine("Symlink resolved to: " + altValue);
+            if (!altValue.equals(value)) {
+              this.altVariables.put(key, altValue);
+            }
+          } catch (IOException e) {
+            Log.LOGGER.finest(e.getMessage());
+          }
+        }
+      }
+    }
+    return this.altVariables;
   }
 
   @Override
@@ -72,8 +118,15 @@ public class VariableResolverImpl implements VariableResolver {
 
     String result = text;
     for (Map.Entry<Object, Object> entry : this.variables.entrySet()) {
-      result = result.replace(entry.getValue().toString(),
-          VARIABLE_PREFIX + entry.getKey().toString() + VARIABLE_SUFFIX);
+      result =
+          result.replace(entry.getValue().toString(), VARIABLE_PREFIX + entry.getKey().toString() + VARIABLE_SUFFIX);
+    }
+    for (Map.Entry<Object, Object> entry : getAltVariables().entrySet()) {
+      result =
+          result.replace(entry.getValue().toString(), VARIABLE_PREFIX + entry.getKey().toString() + VARIABLE_SUFFIX);
+    }
+    if (!result.equals(text)) {
+      Log.LOGGER.fine("Inverse resolved '" + text + "' to '" + result + "'.");
     }
     return result;
   }

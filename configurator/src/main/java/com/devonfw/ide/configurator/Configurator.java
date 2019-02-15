@@ -100,8 +100,36 @@ public class Configurator {
   private VariableResolver createResolver(File variablesFile) {
 
     Properties variables = PropertiesMerger.loadIfExists(variablesFile);
-    variables.put(CLIENT_ENV_HOME_VARIABLE, CURRENT_WORKING_DIRECTORY);
+    putVariable(variables, CLIENT_ENV_HOME_VARIABLE, CURRENT_WORKING_DIRECTORY);
+    putSystemProperty(variables, "java.home");
+    putEnvironmentVariable(variables, "JAVA_HOME");
+    putEnvironmentVariable(variables, "ECLIPSE_HOME");
+    putEnvironmentVariable(variables, "SETTINGS_PATH");
     return new VariableResolverImpl(variables);
+  }
+
+  private static void putSystemProperty(Properties properties, String key) {
+
+    putVariable(properties, key, System.getProperty(key));
+  }
+
+  private static void putEnvironmentVariable(Properties properties, String key) {
+
+    putVariable(properties, key, System.getenv(key));
+  }
+
+  private static void putVariable(Properties properties, String key, String value) {
+
+    if ((value != null) && !value.isEmpty()) {
+      if (value.startsWith("file:")) {
+        value = value.substring(5);
+      }
+      value = VariableResolverImpl.normalizePath(value);
+      properties.put(key, value);
+      Log.LOGGER.fine("Variable '" + key + "' = " + value);
+    } else {
+      Log.LOGGER.info("Variable '" + key + "' is undefined");
+    }
   }
 
   /**
@@ -150,10 +178,13 @@ public class Configurator {
       this.updateFolder = new File(templatesFolder, FOLDER_UPDATE);
 
       if (OPTION_UPDATE.equals(command)) {
+        Log.LOGGER.info("Starting setup/update of workspace...");
         createOrUpdateWorkspace();
       } else if (OPTION_INVERSE.equals(command)) {
+        Log.LOGGER.info("Merging changes of workspace back to settings ...");
         saveChangesInWorkspace(false);
       } else if (OPTION_EXTEND.equals(command)) {
+        Log.LOGGER.info("Merging changes of workspace back to settings (adding new properties)...");
         saveChangesInWorkspace(true);
       } else {
         throw new IllegalStateException(command);
@@ -193,11 +224,14 @@ public class Configurator {
   private static void usage() {
 
     Log.info("USAGE: [-v <variables-file>] -w <workspace-folder> -t <templates-folder> -u|-i");
-    Log.info("  -v <variables-file>:   specifies the properties file to use for replacements of variables in templates.");
+    Log.info(
+        "  -v <variables-file>:   specifies the properties file to use for replacements of variables in templates.");
     Log.info("  -w <workspace-folder>: specifies the folder containing the workspace to manage.");
-    Log.info("  -t <templates-folder>: specifies the folder containing the templates to setup and update the workspace.");
+    Log.info(
+        "  -t <templates-folder>: specifies the folder containing the templates to setup and update the workspace.");
     Log.info("  -u:                    operation to create or update the workspace.");
-    Log.info("  -i:                    operation to do the inverse logic and map back the workspace changes into the update templates.");
+    Log.info(
+        "  -i:                    operation to do the inverse logic and map back the workspace changes into the update templates.");
   }
 
   private static void fail(String message) {
