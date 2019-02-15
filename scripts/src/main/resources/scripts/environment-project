@@ -1,67 +1,70 @@
-. $PWD/variables
-if [ -f "$PWD/variables-customized" ]; then
-  . "$PWD/variables-customized"
-fi
-export SOFTWARE_PATH=$PWD/software
-
-if [ -z "$WORKSPACE" ]; then
-  export WORKSPACE=$MAIN_BRANCH
-fi
-export WORKSPACE_PATH=$PWD/$WORKSPACES_PATH/$WORKSPACE
-
-export WORKSPACE_PLUGINS_PATH=$WORKSPACE_PATH/.metadata/.plugins
-export SETTINGS_PATH=$WORKSPACES_PATH/$MAIN_BRANCH/$SETTINGS_REL_PATH
-export ECLIPSE_TEMPLATES_PATH=$SETTINGS_PATH/$ECLIPSE_TEMPLATES_REL_PATH
-
-if [ -f "$SETTINGS_PATH/ide-properties" ]; then
-  . "$SETTINGS_PATH/ide-properties"
+if [ -n "${SOFTWARE_PATH}" ]
+then
+  # "remove" previous IDE from $PATH
+  export PATH=`echo $PATH | sed "s~${SOFTWARE_PATH}[^:]*::*~~g"`
 fi
 
-export IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
+# load and setup configuration
+source "${PWD}/scripts/variables"
+if [ -f "${PWD}/conf/variables" ]
+then
+  source "${PWD}/conf/variables"
+fi
+if [ -f "${SETTINGS_PATH}/ide-properties" ]
+then
+  source "${SETTINGS_PATH}/ide-properties"
+fi
+if [ -z "${WORKSPACE}" ]
+then
+  export WORKSPACE=main
+fi
+export DEVON_IDE_HOME=${PWD}
+export WORKSPACE_PATH=${PWD}/workspaces/${WORKSPACE}
+export SOFTWARE_PATH=${PWD}/software
+export IDE_CONFIGURATOR=devon-ide-configurator-${devon_ide_version}.jar
 
-###
-# JAVA
-###
-export JAVA_HOME=$SOFTWARE_PATH/java
-# export JAVA_OPTS=-Dhttp.proxyHost=myproxy.com -Dhttp.proxyPort=8080
+# copy defaults
+if [ ! -e "$PWD/conf/variables" ]
+then
+  cp "${SETTINGS_PATH}/devon/variables" "${PWD}/conf/"
+fi
+if [ ! -e "$PWD/conf/variables-customized" ]
+then
+  cp "${SETTINGS_PATH}/devon/variables-customized" "${PWD}/conf/"
+fi
 
-###
-# MAVEN
-###
-export M2_HOME=$SOFTWARE_PATH/maven
-export M2_CONF=$PWD/conf/.m2/settings.xml
-export MAVEN_OPTS="$MAVEN_OPTS -Xmx512m -Duser.home=$PWD/conf"
-export MAVEN_HOME=$M2_HOME
-
-###
-# Eclipse
-###
-export ECLIPSE_HOME=$SOFTWARE_PATH/eclipse
-export ECLIPSE=$ECLIPSE_HOME/eclipse
-export ECLIPSE_OPT="-vm $JAVA_HOME/bin/java -showlocation $WORKSPACE -vmargs $ECLIPSE_VMARGS"
-
-###
-# Path
-###
-for i in $SOFTWARE_PATH/*; do
-    if [ -d "$i/bin" ]; then
-        IDE_PATH="$i/bin:$IDE_PATH"
-    else
-        IDE_PATH="$i:$IDE_PATH"
-    fi
-
-    # Load custom configuration of software
-    if [ -e "$i/ide-config" ]; then
-        . "$i/ide-config"
-    fi
+# Setup path
+for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
+do
+  if [ -d "${SOFTWARE_FOLDER}/bin" ]
+  then
+    PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
+  else
+    PATH="${SOFTWARE_FOLDER}:${PATH}"
+  fi
+  # Load custom configuration of software
+  if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
+  then
+    source "${SOFTWARE_FOLDER}/ide-config"
+  fi
 done
-export PATH=$IDE_PATH:$PATH
 
-###
-# NodeJS
-###
-if [ -d "$SOFTWARE_PATH/nodejs" ]; then
-  export PATH=`npm bin -g 2> /dev/null`:$PATH
+# Modularization: run all linux/mac/bsd scripts from scripts/init/
+# To customize devon-ide you may add your own scripts in this folder
+for SCRIPT in ${PWD}/scripts/init/*
+do
+  if [ "${SCRIPT##*.}" != "bat" ]
+  then
+    source ${SCRIPT}
+  fi
+done
+
+# load user settings late so variables like M2_REPO can be overriden
+if [ -f "${PWD}/conf/variables-customized" ]
+then
+  source "${PWD}/conf/variables-customized"
 fi
+
+export PATH
 
 echo "IDE environment has been initialized."

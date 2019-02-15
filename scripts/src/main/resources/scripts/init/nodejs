@@ -1,0 +1,8 @@
+if [ -d "${SOFTWARE_PATH}/nodejs" ]
+then
+  export PATH=${PATH}:`npm bin -g 2> /dev/null`
+  if ! which ng &> /dev/null
+  then
+    npm install -g @angular/cli@latest --unsafe
+  fi
+fi

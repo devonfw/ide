@@ -12,7 +12,7 @@
   <inceptionYear>2013</inceptionYear>
 
   <properties>
-    <devon-ide.version>3.0.0-SNAPSHOT</devon-ide.version>
+    <devon_ide_version>3.0.0-SNAPSHOT</devon_ide_version>
   </properties>
   
   <dependencies>

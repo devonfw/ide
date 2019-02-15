@@ -1,0 +1,5 @@
+# JAVA
+if [ -d "${SOFTWARE_PATH}/java" ]
+then
+  export JAVA_HOME=${SOFTWARE_PATH}/java
+fi

@@ -1,0 +1,101 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+if [ "${1}" = "-h" ]
+then
+  echo "Launch Eclipse IDE and/or manage Eclipse workspace."
+  echo
+  echo "Arguments:"
+  echo " run | start        launch Eclipse IDE (default if no argument is given)"
+  echo " ws-up[date]        update eclipse workspace"
+  echo " ws-re[verse]       reverse merge changes from workspace into settings"
+  echo " ws-reverse-all     reverse merge adding all new properties"
+  echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
+  exit
+fi
+RUN=
+while [ -n "${1}" ]
+do
+  RUN=
+  if [ "${1}" = "run" ] || [ "${1}" = "start" ]
+  then
+    RUN=true
+  else
+    if [ "${RUN}" != "true" ]
+    then
+      RUN=false
+    fi
+    
+    if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+    then
+      CONFIGURATOR_MODE="-u"
+      CONFIGURATOR_ACTION="updated"
+    elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+    then
+      CONFIGURATOR_MODE="-i"
+      CONFIGURATOR_ACTION="merged back to settings"
+    elif [ "${1}" = "ws-reverse-all" ]
+    then
+      CONFIGURATOR_MODE="-x"
+      CONFIGURATOR_ACTION="merged back to settings (including new properties)"
+    elif [ "${1}" = "create-script" ]
+    then
+      CREATE_SCRIPT=true
+    else
+      echo "Undefined argument: ${1}"
+      exit -1
+    fi
+  fi
+  shift
+done
+
+if [ ! -d "${WORKSPACE_PATH}" ]; then
+    echo "Could not find folder '${WORKSPACE_PATH}' (from variable WORKSPACE_PATH)"
+    echo "Execution aborted"
+    exit 1
+fi
+ECLIPSE_TEMPLATES_PATH=${SETTINGS_PATH}/eclipse/workspace
+if [ ! -d "${ECLIPSE_TEMPLATES_PATH}" ]
+then
+    echo "Could not find folder '${ECLIPSE_TEMPLATES_PATH}' (from variable ECLIPSE_TEMPLATES_PATH)"
+    echo "Execution aborted"
+    exit 1
+fi
+REPLACEMENT_PATTERNS_PATH=${ECLIPSE_TEMPLATES_PATH}/replacement-patterns.properties
+if [ ! -e "${REPLACEMENT_PATTERNS_PATH}" ]
+then
+  touch "${REPLACEMENT_PATTERNS_PATH}"
+fi
+
+if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
+then
+  if [ "${CONFIGURATOR_MODE}" = "-i" ] || [ "${CONFIGURATOR_MODE}" = "-x" ]
+  then
+    echo "ERROR: Workspace ${WORKSPACE} is not initialized."
+    echo "Reverse merge is not possible."
+    exit -1
+  fi
+  CONFIGURATOR_MODE="-u"
+  CONFIGURATOR_ACTION="created"
+fi 
+
+if [ -n "${CONFIGURATOR_MODE}" ]
+then
+  java -jar ${DEVON_IDE_HOME}/scripts/${IDE_CONFIGURATOR} -t "${ECLIPSE_TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
+  echo "Eclipse preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
+fi
+
+if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "eclipse-$WORKSPACE" ]
+then
+ echo "#!/bin/bash" > eclipse-$WORKSPACE
+ echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
+ echo "export WORKSPACE=${WORKSPACE}" >> eclipse-$WORKSPACE
+ echo "scripts/eclipse-start" >> eclipse-$WORKSPACE
+ chmod a+x eclipse-$WORKSPACE
+fi
+
+if [ "${RUN}" != "false" ]
+then
+  echo "launching Eclipse..."
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
+fi

@@ -11,7 +11,7 @@
   <groupId>com.devonfw.ide</groupId>
   <artifactId>devon-ide-configurator</artifactId>
   <packaging>jar</packaging>
-  <version>${devon-ide.version}</version>
+  <version>${devon_ide_version}</version>
   <name>${project.artifactId}</name>
   <description>Code for configurator the creates or updates configuration of IDEs (Eclipse, etc.).</description>
 
