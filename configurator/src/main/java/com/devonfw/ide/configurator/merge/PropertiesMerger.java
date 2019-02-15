@@ -33,6 +33,7 @@ public class PropertiesMerger extends FileTypeMerger {
     boolean updateFileExists = updateFile.exists();
     if (workspaceFile.exists()) {
       if (!updateFileExists) {
+        Log.LOGGER.finer("Nothing to do as update file does not exist: " + updateFile);
         return; // nothing to do ...
       }
       load(properties, workspaceFile);
@@ -44,6 +45,7 @@ public class PropertiesMerger extends FileTypeMerger {
     }
     resolve(properties, resolver);
     save(properties, workspaceFile);
+    Log.LOGGER.finer("Saved merged properties to: " + workspaceFile);
   }
 
   public static Properties load(File file) {
@@ -58,12 +60,15 @@ public class PropertiesMerger extends FileTypeMerger {
     Properties properties = new Properties();
     if ((file != null) && file.exists()) {
       load(properties, file);
+    } else {
+      Log.LOGGER.finest("Properties file does not exist: " + file);
     }
     return properties;
   }
 
   public static void load(Properties properties, File file) {
 
+    Log.LOGGER.finest("Loading properties file " + file);
     try (InputStream in = new FileInputStream(file); Reader reader = new InputStreamReader(in, ENCODING)) {
       properties.load(reader);
     } catch (IOException e) {
@@ -82,6 +87,7 @@ public class PropertiesMerger extends FileTypeMerger {
 
   public static void save(Properties properties, File file) {
 
+    Log.LOGGER.finest("Saving properties file " + file);
     ensureParentDirecotryExists(file);
     try (OutputStream out = new FileOutputStream(file); Writer writer = new OutputStreamWriter(out, ENCODING)) {
       properties.store(writer, null);
@@ -93,13 +99,18 @@ public class PropertiesMerger extends FileTypeMerger {
   @Override
   public void inverseMerge(File workspaceFile, VariableResolver resolver, boolean addNewProperties, File updateFile) {
 
-    if (!workspaceFile.exists() || !updateFile.exists()) {
+    if (!workspaceFile.exists()) {
+      Log.LOGGER.finest("Workspace file does not exist: " + workspaceFile.getAbsolutePath());
+      return;
+    }
+    if (!updateFile.exists()) {
+      Log.LOGGER.finest("Update file does not exist: " + updateFile.getAbsolutePath());
       return;
     }
     Properties updateProperties = load(updateFile);
     Properties workspaceProperties = load(workspaceFile);
-    SortedProperties updatedPropeties = new SortedProperties();
-    updatedPropeties.putAll(updatedPropeties);
+    SortedProperties mergedProperties = new SortedProperties();
+    mergedProperties.putAll(updateProperties);
     boolean updated = false;
     for (Object key : workspaceProperties.keySet()) {
       Object workspaceValue = workspaceProperties.get(key);
@@ -111,14 +122,16 @@ public class PropertiesMerger extends FileTypeMerger {
         }
         if (!workspaceValue.equals(updateValueResolved)) {
           String workspaceValueInverseResolved = resolver.inverseResolve(workspaceValue.toString());
-          updatedPropeties.put(key, workspaceValueInverseResolved);
+          mergedProperties.put(key, workspaceValueInverseResolved);
           updated = true;
         }
       }
     }
     if (updated) {
-      save(updatedPropeties, updateFile);
-      Log.LOGGER.info("Saved changes in " + workspaceFile.getName() + " to: " + updateFile.getAbsolutePath());
+      save(mergedProperties, updateFile);
+      Log.LOGGER.info("Saved changes in " + workspaceFile.getName() + " to " + updateFile.getAbsolutePath());
+    } else {
+      Log.LOGGER.finest("No changes for " + updateFile.getAbsolutePath());
     }
   }
 
