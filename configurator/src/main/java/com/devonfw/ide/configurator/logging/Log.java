@@ -1,5 +1,6 @@
 package com.devonfw.ide.configurator.logging;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;
@@ -20,11 +21,25 @@ import com.devonfw.ide.configurator.Configurator;
 public class Log {
 
   /** Logger instance. */
-  public static final Logger LOGGER = Logger.getLogger(Configurator.class.getName());
+  private static final Logger LOGGER = Logger.getLogger(Configurator.class.getName());
 
-  static {
+  /**
+   * @param filename the base filename of the logger.
+   */
+  public static void init(String filename) {
+
     try {
-      FileHandler logFileHandler = new FileHandler("Configurator.log");
+      String logFolderName = "log";
+      if (!new File("scripts").exists()) {
+        logFolderName = "target";
+      }
+      File logFolder = new File(logFolderName);
+      File logFile = new File(logFolder, filename + ".log");
+      if (logFile.exists()) {
+        logFile.delete();
+      }
+      logFolder.mkdirs();
+      FileHandler logFileHandler = new FileHandler(logFile.getPath());
       logFileHandler.setLevel(Level.FINEST);
       LogFormatter formatter = new LogFormatter();
       logFileHandler.setFormatter(formatter);
@@ -41,24 +56,62 @@ public class Log {
     }
   }
 
+  /**
+   * @param message the trace message to log.
+   */
+  public static void trace(String message) {
+
+    Log.LOGGER.finest(message);
+  }
+
+  /**
+   * @param message the debug message to log.
+   */
+  public static void debug(String message) {
+
+    Log.LOGGER.fine(message);
+  }
+
+  /**
+   * @param message the info message to log.
+   */
   public static void info(String message) {
 
     System.out.println(message);
     Log.LOGGER.info(message);
   }
 
+  /**
+   * @param message the warning message to log.
+   */
   public static void warn(String message) {
 
     System.err.println(message);
     Log.LOGGER.warning(message);
   }
 
+  /**
+   * @param message the error message to log.
+   */
   public static void err(String message) {
 
     System.err.println(message);
     Log.LOGGER.severe(message);
   }
 
+  /**
+   * @param message the error message to log.
+   * @param e the {@link Throwable} to log.
+   */
+  public static void err(String message, Throwable e) {
+
+    System.err.println(message);
+    Log.LOGGER.log(Level.SEVERE, message, e);
+  }
+
+  /**
+   * Custom log {@link Formatter} to overrule ugly JUL defaults.
+   */
   public static class LogFormatter extends Formatter {
 
     @Override

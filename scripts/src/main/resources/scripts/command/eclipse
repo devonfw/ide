@@ -9,7 +9,7 @@ then
   echo " run | start        launch Eclipse IDE (default if no argument is given)"
   echo " ws-up[date]        update eclipse workspace"
   echo " ws-re[verse]       reverse merge changes from workspace into settings"
-  echo " ws-reverse-all     reverse merge adding all new properties"
+  echo " ws-reverse-add     reverse merge adding new properties"
   echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
   exit
 fi
@@ -34,7 +34,7 @@ do
     then
       CONFIGURATOR_MODE="-i"
       CONFIGURATOR_ACTION="merged back to settings"
-    elif [ "${1}" = "ws-reverse-all" ]
+    elif [ "${1}" = "ws-reverse-add" ]
     then
       CONFIGURATOR_MODE="-x"
       CONFIGURATOR_ACTION="merged back to settings (including new properties)"

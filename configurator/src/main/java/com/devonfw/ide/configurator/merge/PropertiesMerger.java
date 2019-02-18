@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,8 +25,6 @@ import com.devonfw.ide.configurator.resolve.VariableResolver;
  */
 public class PropertiesMerger extends FileTypeMerger {
 
-  private static final String ENCODING = "UTF-8";
-
   @Override
   public void merge(File setupFile, File updateFile, VariableResolver resolver, File workspaceFile) {
 
@@ -33,7 +32,7 @@ public class PropertiesMerger extends FileTypeMerger {
     boolean updateFileExists = updateFile.exists();
     if (workspaceFile.exists()) {
       if (!updateFileExists) {
-        Log.LOGGER.finer("Nothing to do as update file does not exist: " + updateFile);
+        Log.trace("Nothing to do as update file does not exist: " + updateFile);
         return; // nothing to do ...
       }
       load(properties, workspaceFile);
@@ -45,7 +44,7 @@ public class PropertiesMerger extends FileTypeMerger {
     }
     resolve(properties, resolver);
     save(properties, workspaceFile);
-    Log.LOGGER.finer("Saved merged properties to: " + workspaceFile);
+    Log.trace("Saved merged properties to: " + workspaceFile);
   }
 
   public static Properties load(File file) {
@@ -58,18 +57,21 @@ public class PropertiesMerger extends FileTypeMerger {
   public static Properties loadIfExists(File file) {
 
     Properties properties = new Properties();
-    if ((file != null) && file.exists()) {
-      load(properties, file);
-    } else {
-      Log.LOGGER.finest("Properties file does not exist: " + file);
+    if (file != null) {
+      if (file.exists()) {
+        load(properties, file);
+      } else {
+        Log.trace("Properties file does not exist: " + file);
+      }
     }
     return properties;
   }
 
   public static void load(Properties properties, File file) {
 
-    Log.LOGGER.finest("Loading properties file " + file);
-    try (InputStream in = new FileInputStream(file); Reader reader = new InputStreamReader(in, ENCODING)) {
+    Log.trace("Loading properties file " + file);
+    try (InputStream in = new FileInputStream(file);
+        Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
       properties.load(reader);
     } catch (IOException e) {
       throw new IllegalStateException("Could not load properties from file: " + file, e);
@@ -87,9 +89,10 @@ public class PropertiesMerger extends FileTypeMerger {
 
   public static void save(Properties properties, File file) {
 
-    Log.LOGGER.finest("Saving properties file " + file);
+    Log.trace("Saving properties file " + file);
     ensureParentDirecotryExists(file);
-    try (OutputStream out = new FileOutputStream(file); Writer writer = new OutputStreamWriter(out, ENCODING)) {
+    try (OutputStream out = new FileOutputStream(file);
+        Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
       properties.store(writer, null);
     } catch (IOException e) {
       throw new IllegalStateException("Could not write properties to file: " + file, e);
@@ -100,11 +103,11 @@ public class PropertiesMerger extends FileTypeMerger {
   public void inverseMerge(File workspaceFile, VariableResolver resolver, boolean addNewProperties, File updateFile) {
 
     if (!workspaceFile.exists()) {
-      Log.LOGGER.finest("Workspace file does not exist: " + workspaceFile.getAbsolutePath());
+      Log.trace("Workspace file does not exist: " + workspaceFile.getAbsolutePath());
       return;
     }
     if (!updateFile.exists()) {
-      Log.LOGGER.finest("Update file does not exist: " + updateFile.getAbsolutePath());
+      Log.trace("Update file does not exist: " + updateFile.getAbsolutePath());
       return;
     }
     Properties updateProperties = load(updateFile);
@@ -129,9 +132,9 @@ public class PropertiesMerger extends FileTypeMerger {
     }
     if (updated) {
       save(mergedProperties, updateFile);
-      Log.LOGGER.info("Saved changes in " + workspaceFile.getName() + " to " + updateFile.getAbsolutePath());
+      Log.debug("Saved changes from " + workspaceFile.getName() + " to " + updateFile.getAbsolutePath());
     } else {
-      Log.LOGGER.finest("No changes for " + updateFile.getAbsolutePath());
+      Log.trace("No changes for " + updateFile.getAbsolutePath());
     }
   }
 

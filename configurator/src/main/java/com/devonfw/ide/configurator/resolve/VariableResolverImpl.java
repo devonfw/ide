@@ -58,17 +58,17 @@ public class VariableResolverImpl implements VariableResolver {
         String key = keyObject.toString();
         String value = this.variables.getProperty(key);
         Path path = Paths.get(value);
-        Log.LOGGER.fine("Checking if variable points to symlink: " + path);
+        Log.trace("Checking if variable points to symlink: " + path);
         if (Files.isSymbolicLink(path)) {
           try {
             Path resolved = Files.readSymbolicLink(path);
             String altValue = normalizePath(resolved.toString());
-            Log.LOGGER.fine("Symlink resolved to: " + altValue);
+            Log.debug("Symlink resolved to: " + altValue);
             if (!altValue.equals(value)) {
               this.altVariables.put(key, altValue);
             }
           } catch (IOException e) {
-            Log.LOGGER.finest(e.getMessage());
+            Log.debug("Ignoring error for resolving symlink: " + e.getMessage());
           }
         }
       }
@@ -126,7 +126,7 @@ public class VariableResolverImpl implements VariableResolver {
           result.replace(entry.getValue().toString(), VARIABLE_PREFIX + entry.getKey().toString() + VARIABLE_SUFFIX);
     }
     if (!result.equals(text)) {
-      Log.LOGGER.fine("Inverse resolved '" + text + "' to '" + result + "'.");
+      Log.trace("Inverse resolved '" + text + "' to '" + result + "'.");
     }
     return result;
   }
