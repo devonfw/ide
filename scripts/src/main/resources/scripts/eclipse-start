@@ -1,4 +1,0 @@
-#!/bin/bash
-cd `dirname $0`
-cd ..
-${ECLIPSE_HOME}/eclipse -clean -data ${WORKSPACE_PATH} -keyring "~/.eclipse/.keyring" ${ECLIPSE_OPT} &

@@ -89,8 +89,8 @@ if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "eclipse-$WORKSPACE" ]
 then
  echo "#!/bin/bash" > eclipse-$WORKSPACE
  echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
- echo "export WORKSPACE=${WORKSPACE}" >> eclipse-$WORKSPACE
- echo "scripts/eclipse-start" >> eclipse-$WORKSPACE
+ echo "cd workspaces/${WORKSPACE}" >> eclipse-$WORKSPACE
+ echo "source ~/bin/devon eclipse" >> eclipse-$WORKSPACE
  chmod a+x eclipse-$WORKSPACE
 fi
 

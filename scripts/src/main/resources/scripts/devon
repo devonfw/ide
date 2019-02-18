@@ -41,6 +41,7 @@ do
     cd "${L_DIR}"
     source scripts/environment-project
     L_RESTDIR=${L_BASEDIR:${#L_DIR}}
+    WORKSPACE=main
     if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]
     then
       L_RESTDIR=${L_RESTDIR:12}
@@ -54,10 +55,11 @@ do
           then
             source "${L_WKS}/variables"
           fi
-          export WORKSPACE=${L_RESTDIR}
+          WORKSPACE=${L_RESTDIR}
         fi
       fi
     fi
+    export WORKSPACE
     cd ${L_PWD}
     break
   fi

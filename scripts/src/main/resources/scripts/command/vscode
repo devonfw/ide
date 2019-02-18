@@ -89,8 +89,8 @@ if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "vscode-$WORKSPACE" ]
 then
  echo "#!/bin/bash" > vscode-$WORKSPACE
  echo "cd \`dirname \${0}\`" >> vscode-$WORKSPACE
- echo "export WORKSPACE=${WORKSPACE}" >> vscode-$WORKSPACE
- echo "scripts/devon vscode" >> vscode-$WORKSPACE
+ echo "cd workspaces/${WORKSPACE}" >> vscode-$WORKSPACE
+ echo "source ~/bin/devon vscode" >> vscode-$WORKSPACE
  chmod a+x vscode-$WORKSPACE
 fi
 
