@@ -1,41 +1,5 @@
 # Source this script from a linux shell to setup the environment variables for the corresponding project.
 
-if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
-then
-  echo "usage: devon [command [args]]"
-  echo "setup devonfw IDE environment and optionally lauch commands."
-  echo 
-  if [ -z "${2}" ]
-  then
-    echo "Commands:"
-    echo " help"
-    for COMMAND in ${DEVON_IDE_HOME}/scripts/command/*
-    do
-      if [ "${COMMAND##*.}" != "bat" ]
-      then
-        echo " `basename ${COMMAND}`"
-      fi
-    done
-    echo
-    echo "For further details use:"
-    echo "devon help <command>"
-  elif [ "${2}" = "help" ]
-  then
-    echo "devon help <command>"
-    echo "Print help for <command>"
-  else
-    COMMAND=${DEVON_IDE_HOME}/scripts/command/${2}
-    if [ -f "${COMMAND}" ]
-    then
-      "${COMMAND}" -h
-    else
-      echo "Unknown command: ${2}"
-      return -1
-    fi
-  fi
-  return
-fi
-
 # Auto-install oursevles...
 if ! [  -f ~/bin/devon ]
 then
@@ -113,7 +77,41 @@ do
 done
 
 # proceed with CLI
-if [ -n "${1}" ]
+if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
+then
+  echo "usage: devon [command [args]]"
+  echo "setup devonfw IDE environment and optionally lauch commands."
+  echo 
+  if [ -z "${2}" ]
+  then
+    echo "Commands:"
+    echo " help"
+    for COMMAND in ${DEVON_IDE_HOME}/scripts/command/*
+    do
+      if [ "${COMMAND##*.}" != "bat" ]
+      then
+        echo " `basename ${COMMAND}`"
+      fi
+    done
+    echo
+    echo "For further details use:"
+    echo "devon help <command>"
+  elif [ "${2}" = "help" ]
+  then
+    echo "devon help <command>"
+    echo "Print help for <command>"
+  else
+    COMMAND=${DEVON_IDE_HOME}/scripts/command/${2}
+    if [ -f "${COMMAND}" ]
+    then
+      "${COMMAND}" -h
+    else
+      echo "Unknown command: ${2}"
+      return -1
+    fi
+  fi
+  return
+elif [ -n "${1}" ]
 then
   COMMAND=${DEVON_IDE_HOME}/scripts/command/${1}
   if [ -f "${COMMAND}" ]

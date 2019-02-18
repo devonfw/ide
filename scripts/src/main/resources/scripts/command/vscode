@@ -3,14 +3,14 @@ cd `dirname $0`
 cd ../..
 if [ "${1}" = "-h" ]
 then
-  echo "Launch Eclipse IDE and/or manage Eclipse workspace."
+  echo "Launch Visual Studio Code and/or manage VSCode workspace."
   echo
   echo "Arguments:"
-  echo " run | start        launch Eclipse IDE (default if no argument is given)"
-  echo " ws-up[date]        update eclipse workspace"
+  echo " run | start        launch VSCode IDE (default if no argument is given)"
+  echo " ws-up[date]        update VSCode workspace"
   echo " ws-re[verse]       reverse merge changes from workspace into settings"
   echo " ws-reverse-all     reverse merge adding all new properties"
-  echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
+  echo " create-script      create vscode-${WORKSPACE} script if not already exists"
   exit
 fi
 RUN=
@@ -54,20 +54,20 @@ if [ ! -d "${WORKSPACE_PATH}" ]; then
     echo "Execution aborted"
     exit 1
 fi
-ECLIPSE_TEMPLATES_PATH=${SETTINGS_PATH}/eclipse/workspace
-if [ ! -d "${ECLIPSE_TEMPLATES_PATH}" ]
+TEMPLATES_PATH=${SETTINGS_PATH}/vscode/workspace
+if [ ! -d "${TEMPLATES_PATH}" ]
 then
-    echo "Could not find folder '${ECLIPSE_TEMPLATES_PATH}' (from variable ECLIPSE_TEMPLATES_PATH)"
+    echo "Could not find folder '${TEMPLATES_PATH}' (from variable TEMPLATES_PATH)"
     echo "Execution aborted"
     exit 1
 fi
-REPLACEMENT_PATTERNS_PATH=${ECLIPSE_TEMPLATES_PATH}/replacement-patterns.properties
+REPLACEMENT_PATTERNS_PATH=${TEMPLATES_PATH}/replacement-patterns.properties
 if [ ! -e "${REPLACEMENT_PATTERNS_PATH}" ]
 then
   touch "${REPLACEMENT_PATTERNS_PATH}"
 fi
 
-if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
+if [ ! -d "${WORKSPACE_PATH}/.vscode" ]
 then
   if [ "${CONFIGURATOR_MODE}" = "-i" ] || [ "${CONFIGURATOR_MODE}" = "-x" ]
   then
@@ -81,30 +81,21 @@ fi
 
 if [ -n "${CONFIGURATOR_MODE}" ]
 then
-  java -jar ${DEVON_IDE_HOME}/scripts/${IDE_CONFIGURATOR} -t "${ECLIPSE_TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
-  echo "Eclipse preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
+  java -jar ${DEVON_IDE_HOME}/scripts/${IDE_CONFIGURATOR} -t "${TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
+  echo "VSCode preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
 fi
 
-if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "eclipse-$WORKSPACE" ]
+if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "vscode-$WORKSPACE" ]
 then
- echo "#!/bin/bash" > eclipse-$WORKSPACE
- echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
- echo "export WORKSPACE=${WORKSPACE}" >> eclipse-$WORKSPACE
- echo "scripts/eclipse-start" >> eclipse-$WORKSPACE
- chmod a+x eclipse-$WORKSPACE
+ echo "#!/bin/bash" > vscode-$WORKSPACE
+ echo "cd \`dirname \${0}\`" >> vscode-$WORKSPACE
+ echo "export WORKSPACE=${WORKSPACE}" >> vscode-$WORKSPACE
+ echo "scripts/devon vscode" >> vscode-$WORKSPACE
+ chmod a+x vscode-$WORKSPACE
 fi
 
 if [ "${RUN}" != "false" ]
 then
-  if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
-  then
-    echo "Eclipse workspace ${WORKSPACE} is locked."
-    echo "It seems as if Eclipse is already running for this workspace."
-    echo "Otherwise consider deleting this file:"
-    echo "${WORKSPACE_PATH}/.metadata/.lock"
-    exit -1
-  else
-    echo "launching Eclipse..."
-    eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
-  fi
+  echo "launching VSCode..."
+  code "${WORKSPACE_PATH}"
 fi
