@@ -4,11 +4,11 @@
   
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.devonfw.ide.dev</groupId>
+    <groupId>com.devonfw.tools.ide.dev</groupId>
     <artifactId>devon-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
-  <groupId>com.devonfw.ide</groupId>
+  <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devon-ide-settings</artifactId>
   <packaging>pom</packaging>
   <version>${devon_ide_version}</version>

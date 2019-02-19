@@ -31,16 +31,14 @@ then
 fi
 
 # initialize environment...
-L_DIR=${PWD}
-L_BASEDIR=${L_DIR}
+L_PWD=${PWD}
+L_BASEDIR=${PWD}
 while true
 do
-  if [ -f "${L_DIR}/scripts/environment-project" ]
+  if [ -f "${PWD}/scripts/environment-project" ]
   then
-    L_PWD=${PWD}
-    cd "${L_DIR}"
     source scripts/environment-project
-    L_RESTDIR=${L_BASEDIR:${#L_DIR}}
+    L_RESTDIR=${L_BASEDIR:${#PWD}}
     WORKSPACE=main
     if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]
     then
@@ -48,7 +46,7 @@ do
       L_RESTDIR=${L_RESTDIR/\/*/}
       if [ -n "${L_RESTDIR}" ]
       then
-        L_WKS=${L_DIR}/workspaces/${L_RESTDIR}
+        L_WKS=${PWD}/workspaces/${L_RESTDIR}
         if [ -d "${L_WKS}" ]
         then
           if [ -f "${L_WKS}/variables" ]
@@ -64,16 +62,17 @@ do
     break
   fi
   L_LINKDIR=`readlink ${L_DIR}`
-  if [ ${?} = 0 ]
+  if [ "${?}" = 0 ]
   then
-    L_DIR=${L_LINKDIR}
-    L_BASEDIR=${L_DIR}
+    cd ${L_LINKDIR}
+    L_BASEDIR=${PWD}
   else
-    L_DIR=`dirname "${L_DIR}"`
+    cd ..
   fi
-  if [ "${L_DIR}" = "/" ]
+  if [ "${PWD}" = "/" ]
   then
     echo "You are not inside a devon IDE installation: $PWD"
+    cd "${L_PWD}"
     break
   fi
 done
