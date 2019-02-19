@@ -1,7 +1,7 @@
 #!/bin/bash
 cd `dirname $0`
 cd ../..
-if [ "${1}" = "-h" ]
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Launch Visual Studio Code and/or manage VSCode workspace."
   echo
@@ -85,13 +85,14 @@ then
   echo "VSCode preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
 fi
 
-if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "vscode-$WORKSPACE" ]
+if [ "${CREATE_SCRIPT}" = "true" ]
 then
  echo "#!/bin/bash" > vscode-$WORKSPACE
  echo "cd \`dirname \${0}\`" >> vscode-$WORKSPACE
  echo "cd workspaces/${WORKSPACE}" >> vscode-$WORKSPACE
- echo "source ~/bin/devon vscode" >> vscode-$WORKSPACE
+ echo "source ${DEVON_IDE_HOME}/scripts/devon vscode" >> eclipse-$WORKSPACE
  chmod a+x vscode-$WORKSPACE
+ echo "Created script vscode-$WORKSPACE"
 fi
 
 if [ "${RUN}" != "false" ]

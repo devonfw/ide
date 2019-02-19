@@ -1,7 +1,7 @@
 #!/bin/bash
 cd `dirname $0`
 cd ../..
-if [ "${1}" = "-h" ]
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Launch Eclipse IDE and/or manage Eclipse workspace."
   echo
@@ -54,14 +54,18 @@ if [ ! -d "${WORKSPACE_PATH}" ]; then
     echo "Execution aborted"
     exit 1
 fi
+
 ECLIPSE_TEMPLATES_PATH=${SETTINGS_PATH}/eclipse/workspace
+
 if [ ! -d "${ECLIPSE_TEMPLATES_PATH}" ]
 then
     echo "Could not find folder '${ECLIPSE_TEMPLATES_PATH}' (from variable ECLIPSE_TEMPLATES_PATH)"
     echo "Execution aborted"
     exit 1
 fi
+
 REPLACEMENT_PATTERNS_PATH=${ECLIPSE_TEMPLATES_PATH}/replacement-patterns.properties
+
 if [ ! -e "${REPLACEMENT_PATTERNS_PATH}" ]
 then
   touch "${REPLACEMENT_PATTERNS_PATH}"
@@ -79,22 +83,7 @@ then
   CONFIGURATOR_ACTION="created"
 fi 
 
-if [ -n "${CONFIGURATOR_MODE}" ]
-then
-  java -jar ${DEVON_IDE_HOME}/scripts/${IDE_CONFIGURATOR} -t "${ECLIPSE_TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
-  echo "Eclipse preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
-fi
-
-if [ "${CREATE_SCRIPT}" = "true" ] && [ ! -e "eclipse-$WORKSPACE" ]
-then
- echo "#!/bin/bash" > eclipse-$WORKSPACE
- echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
- echo "cd workspaces/${WORKSPACE}" >> eclipse-$WORKSPACE
- echo "source ~/bin/devon eclipse" >> eclipse-$WORKSPACE
- chmod a+x eclipse-$WORKSPACE
-fi
-
-if [ "${RUN}" != "false" ]
+if [ "${RUN}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
 then
   if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
   then
@@ -103,8 +92,27 @@ then
     echo "Otherwise consider deleting this file:"
     echo "${WORKSPACE_PATH}/.metadata/.lock"
     exit -1
-  else
-    echo "launching Eclipse..."
-    eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
   fi
+fi
+
+if [ -n "${CONFIGURATOR_MODE}" ]
+then
+  java -jar ${DEVON_IDE_HOME}/scripts/${IDE_CONFIGURATOR} -t "${ECLIPSE_TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
+  echo "Eclipse preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
+fi
+
+if [ "${CREATE_SCRIPT}" = "true" ]
+then
+ echo "#!/bin/bash" > eclipse-$WORKSPACE
+ echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
+ echo "cd workspaces/${WORKSPACE}" >> eclipse-$WORKSPACE
+ echo "source ${DEVON_IDE_HOME}/scripts/devon eclipse" >> eclipse-$WORKSPACE
+ chmod a+x eclipse-$WORKSPACE
+ echo "Created script eclipse-$WORKSPACE"
+fi
+
+if [ "${RUN}" != "false" ]
+then
+  echo "launching Eclipse..."
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
 fi
