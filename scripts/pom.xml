@@ -26,13 +26,13 @@
   <build>
     <outputDirectory>${project.build.directory}/package</outputDirectory>
     <resources>
-    <resource>
-      <directory>src/main/resources</directory>
-      <filtering>true</filtering>
-      <excludes>
-        <exclude>**/*.bak</exclude>
-      </excludes>
-    </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.bak</exclude>
+        </excludes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -72,6 +72,18 @@
               <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>compile</includeScope>
+              <classifier>sources</classifier>
+              <outputDirectory>${project.build.outputDirectory}/scripts/licenses/sourcecode</outputDirectory>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -79,6 +91,9 @@
         <artifactId>license-maven-plugin</artifactId>
         <configuration>
           <licensesOutputDirectory>${project.build.outputDirectory}/scripts/licenses</licensesOutputDirectory>
+          <outputDirectory>${project.build.outputDirectory}/scripts/licenses</outputDirectory>
+          <acceptPomPackaging>true</acceptPomPackaging>
+          <includedScopes>compile,runtime</includedScopes>
         </configuration>
         <executions>
           <execution>
@@ -89,10 +104,10 @@
             </goals>
           </execution>
           <execution>
-            <id>third-party-report</id>
+            <id>add-third-party</id>
             <phase>package</phase>
             <goals>
-              <goal>third-party-report</goal>
+              <goal>add-third-party</goal>
             </goals>
           </execution>
         </executions>

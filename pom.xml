@@ -227,7 +227,7 @@
   
   <licenses>
     <license>
-      <name>Apache Software Licenese</name>
+      <name>Apache Software License, Version 2.0</name>
       <url>https://raw.githubusercontent.com/devonfw/devon-ide/master/LICENSE</url>
       <distribution>repo</distribution>
       <comments/>
