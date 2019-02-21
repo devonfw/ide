@@ -66,11 +66,34 @@
             </goals>
             <configuration>
               <includeScope>compile</includeScope>
-              <outputDirectory>${project.build.outputDirectory}/scripts</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/scripts/lib</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licensesOutputDirectory>${project.build.outputDirectory}/scripts/licenses</licensesOutputDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>download-licenses</id>
+            <phase>package</phase>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>third-party-report</id>
+            <phase>package</phase>
+            <goals>
+              <goal>third-party-report</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

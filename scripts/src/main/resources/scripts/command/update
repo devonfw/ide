@@ -140,7 +140,7 @@ else
   tar xvfz ${DEVON_SCRIPTS_PATH} -C updates/latest/
   result=${?}
 fi
-if [ "${?}" != 0 ] || [ ! -d "updates/latest/scripts" ]
+if [ "${?}" != 0 ] || [ ! -d "updates/latest/scripts" ] || [ ! -d "updates/latest/system" ]
 then
   echo "Failed to extract ${DEVON_SCRIPTS_FILENAME}"
   echo "Please check potential errors and retry."
@@ -152,4 +152,6 @@ DEVON_SCRIPTS_BAK=updates/backups/`date +"%m-%d-%y_%H-%M-%S"`
 mkdir -p ${DEVON_SCRIPTS_BAK}
 mv scripts ${DEVON_SCRIPTS_BAK}
 mv updates/latest/scripts .
+mv system ${DEVON_SCRIPTS_BAK}
+mv system/latest/scripts .
 echo "Sucessfully updated your devon-ide scripts to version ${DEVON_SCRIPTS_LATEST_VERSION}"

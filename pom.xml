@@ -119,6 +119,11 @@
           <artifactId>maven-shade-plugin</artifactId>
           <version>3.2.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.17</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -223,7 +228,7 @@
   <licenses>
     <license>
       <name>Apache Software Licenese</name>
-      <url>http://oasp.github.io/terms-of-use.html</url>
+      <url>https://raw.githubusercontent.com/devonfw/devon-ide/master/LICENSE</url>
       <distribution>repo</distribution>
       <comments/>
     </license>
