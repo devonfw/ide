@@ -1,14 +1,19 @@
+#!/bin/bash
+# Script to setup devon-ide environment. Will actually be sourced,
+# hash bang only for filetype detection and editor syntax support
+
 if [ -n "${SOFTWARE_PATH}" ]
 then
   # "remove" previous IDE from $PATH
   export PATH=`echo $PATH | sed "s~${SOFTWARE_PATH}[^:]*::*~~g"`
 fi
+export DEVON_IDE_HOME=${PWD}
 
 # load and setup configuration
-source "${PWD}/scripts/variables"
-if [ -f "${PWD}/conf/variables" ]
+source "${DEVON_IDE_HOME}/scripts/variables"
+if [ -f "${DEVON_IDE_HOME}/conf/variables" ]
 then
-  source "${PWD}/conf/variables"
+  source "${DEVON_IDE_HOME}/conf/variables"
 fi
 if [ -f "${SETTINGS_PATH}/ide-properties" ]
 then
@@ -18,22 +23,50 @@ if [ -z "${WORKSPACE}" ]
 then
   export WORKSPACE=main
 fi
-export DEVON_IDE_HOME=${PWD}
-export WORKSPACE_PATH=${PWD}/workspaces/${WORKSPACE}
-export SOFTWARE_PATH=${PWD}/software
-export IDE_CONFIGURATOR=devon-ide-configurator-${devon_ide_version}.jar
+export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
+SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 
-# copy defaults
-if [ ! -e "$PWD/conf/variables" ]
+if [ ! -d "${SETTINGS_PATH}" ]
 then
-  cp "${SETTINGS_PATH}/devon/variables" "${PWD}/conf/"
+  ${DEVON_IDE_HOME}/scripts/command/update settings
+  result=${?}
+  if [ ${result} != 0 ]
+  then
+    echo "Failed to install settings with exit code ${result}"
+    echo "Please try to manually setup your settings."
+  fi
 fi
-if [ ! -e "$PWD/conf/variables-customized" ]
+# copy defaults
+if [ ! -d "${DEVON_IDE_HOME}/conf" ]
 then
-  cp "${SETTINGS_PATH}/devon/variables-customized" "${PWD}/conf/"
+  mkdir "${DEVON_IDE_HOME}/conf"
+fi
+if [ -d "${SETTINGS_PATH}" ]
+then
+  if [ ! -e "${DEVON_IDE_HOME}/conf/variables" ]
+  then
+    cp "${SETTINGS_PATH}/devon/variables" "${DEVON_IDE_HOME}/conf/"
+  fi
+  if [ ! -e "${DEVON_IDE_HOME}/conf/variables-customized" ]
+  then
+    cp "${SETTINGS_PATH}/devon/variables-customized" "${DEVON_IDE_HOME}/conf/"
+  fi
 fi
 
 # Setup path
+if [ ! -d "${SOFTWARE_PATH}" ]
+then
+  echo "*** ATTENTION ***"
+  echo "Your devon-ide is missing the software at ${SOFTWARE_PATH}"
+  ${DEVON_IDE_HOME}/scripts/command/install
+  result=${?}
+  if [ ${result} != 0 ]
+  then
+    echo "Failed to install software with exit code ${result}"
+    echo "Please try to manually setup your software."
+    return -1
+  fi
+fi
 for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
 do
   if [ -d "${SOFTWARE_FOLDER}/bin" ]
@@ -51,7 +84,7 @@ done
 
 # Modularization: run all linux/mac/bsd scripts from scripts/init/
 # To customize devon-ide you may add your own scripts in this folder
-for SCRIPT in ${PWD}/scripts/init/*
+for SCRIPT in ${DEVON_IDE_HOME}/scripts/init/*
 do
   if [ "${SCRIPT##*.}" != "bat" ]
   then
@@ -60,9 +93,9 @@ do
 done
 
 # load user settings late so variables like M2_REPO can be overriden
-if [ -f "${PWD}/conf/variables-customized" ]
+if [ -f "${DEVON_IDE_HOME}/conf/variables-customized" ]
 then
-  source "${PWD}/conf/variables-customized"
+  source "${DEVON_IDE_HOME}/conf/variables-customized"
 fi
 
 export PATH

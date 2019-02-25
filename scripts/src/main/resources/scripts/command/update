@@ -1,157 +1,72 @@
 #!/bin/bash
 cd `dirname $0`
 cd ../..
+source scripts/functions
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Update devon-ide scripts."
   echo
   echo "Arguments:"
-  echo "                    by default update to the latest version"
-  echo " to «version»       update (or downgrade) to the specified version"
+  echo "                          by default update scripts package to the latest version"
+  echo "«package»                 update specified package to latest version"
+  echo "«package» to «version»    update (or downgrade) specified package to specified version"
   exit
 fi
 
-function version_compare() {
-  if [ "${1}" = "${2}" ]
+target="${DEVON_IDE_HOME}"
+url="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/"
+package="devon-ide-scripts"
+target_version="LATEST"
+current_version=
+if [ -n "${1}" ]
+then
+  package="devon-ide-${1}"
+  if [ "${2}" = "to" ]
   then
-    return 0
-  fi
-  v1="${1}."
-  v2="${2}."
-  while [ -n "${v1}" ]
-  do
-    s1=${v1/[.]*/}
-    s2=${v2/[.]*/}
-    if [ "${s1}" != "${s2}" ]
+    if [ -z "${3}" ]
     then
-      n1=${v1/[^0-9]*/}
-      n2=${v2/[^0-9]*/}
-      if [ -z "${n1}" ]
-      then
-        n1=0
-      fi
-      if [ -z "${n2}" ]
-      then
-        n2=0
-      fi
-      if [ ${n1} -gt ${n2} ]
-      then
-        echo '>'
-        return 1
-      elif [ ${n1} -lt ${n2} ]
-      then
-        return 2
-      else
-        if [ "${s1}" = "${s2/-SNAPSHOT/}" ]
-        then
-          return 1
-        elif [ "${s1}" \> "${s2}" ]
-        then
-          return 1
-        else
-          return 2
-        fi
-      fi
+      echo "Missing version argument!"
+      echo "devon update to «version»"
+      exit -1
     fi
-    v1=${v1#*.}
-    v2=${v2#*.}
-  done
-  return 0
-}
-
-DEVON_SCRIPTS_ARTIFACT_ID=devon-ide-scripts
-DEVON_IDE_URL=https://repo.maven.apache.org/maven2/com/devonfw/tools/ide
-if [ "${OSTYPE:0:6}" = "darwin" ]
-then
-  DEVON_SCRIPTS_SUFFIX=mac.tar.gz
-elif [ "${OSTYPE}" = "cygwin" ]
-then
-  DEVON_SCRIPTS_SUFFIX=windows.zip
-else
-  DEVON_SCRIPTS_SUFFIX=linux.tar.gz  
+    version="${3}"
+  elif [ -n "${2}" ]
+  then
+    doFail "Undefined argument ${2}!"
+  fi
 fi
-
-DEVON_SCRIPTS_URL=${DEVON_IDE_URL}/${DEVON_SCRIPTS_ARTIFACT_ID}
-DEVON_SCRIPTS_CURRENT_VERSION=${devon_ide_version}
-if [ "${1}" = "to" ]
+if [ "${package}" = "devon-ide-scripts" ]
 then
-  if [ -z "${2}" ]
+  current_version="${devon_ide_version}"
+  if [ "${OSTYPE:0:6}" = "darwin" ]
   then
-    echo "Missing version argument!"
-    echo "devon update to «version»"
-    exit -1
-  fi
-  DEVON_SCRIPTS_LATEST_VERSION="${2}"
-else
-  echo "Trying to determine the latest available version from ${DEVON_SCRIPTS_URL}/maven-metadata.xml"
-  DEVON_SCRIPTS_LATEST_VERSION=`curl -s ${DEVON_SCRIPTS_URL}/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/"`
-  if [ "${?}" != 0 ]
-  then
-    echo "Download failed. Check that 'curl' is installed (curl -v) and you have internet connection available."
-    exit -1
-  fi
-  version_compare "${DEVON_SCRIPTS_LATEST_VERSION}" "${DEVON_SCRIPTS_CURRENT_VERSION}"
-  result=${?}
-  if [ "${result}" = 0 ]
-  then
-    echo "Your devon-ide scripts are already at the latest version: ${DEVON_SCRIPTS_CURRENT_VERSION}"
-    exit
+    suffix="mac.tar.gz"
   else
-    echo "You are using version ${DEVON_SCRIPTS_CURRENT_VERSION}"
-    echo "The latest version is ${DEVON_SCRIPTS_LATEST_VERSION}"
-    if [ "${result}" = 1 ]
+    suffix="linux.tar.gz"
+  fi
+else
+  if [ "${package}" = "devon-ide-settings" ]
+  then
+    if [ -d "${SETTINGS_PATH}/.git" ]
     then
-      echo "As the latest version is newer an update will be performed"
-      echo "Downloading the latest version to ${DEVON_SCRIPTS_PATH}"
-    else
-      echo "You are using a newer version than the latest release version."
-      echo "Hence there is nothing to update."
-      echo "Seems as you are a devon-ide developer. Thanks for contributing!"
+      cd ${SETTINGS_PATH}
+      git pull
+      result=${?}
+      if [ "${result}" = 0 ]
+      then
+        echo "Updated your settings successfully via git pull."
+        exit
+      else
+        doFail "Failed to update your settings via git pull." ${result}
+      fi
+    elif [ -n "${SETTINGS_URL}" ]
+    then
+      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
       exit
     fi
+    target="${SETTINGS_PATH}"
   fi
+  suffix=".zip"
 fi
 
-DEVON_SCRIPTS_FILENAME=${DEVON_SCRIPTS_ARTIFACT_ID}-${DEVON_SCRIPTS_LATEST_VERSION}-${DEVON_SCRIPTS_SUFFIX}
-DEVON_SCRIPTS_PATH=updates/releases/${DEVON_SCRIPTS_FILENAME}
-if [ -e "${DEVON_SCRIPTS_PATH}" ]
-then
-  echo "Release already available at ${DEVON_SCRIPTS_PATH}"
-  echo "To force an update you may want to delete the file and update again"
-else
-  mkdir -p updates/releases
-  curl -fL ${DEVON_SCRIPTS_URL}/${DEVON_SCRIPTS_LATEST_VERSION}/${DEVON_SCRIPTS_FILENAME} -o ${DEVON_SCRIPTS_PATH}
-  result=${?}
-  if [ "${result}" != 0 ]
-  then
-    echo "Failed to download ${DEVON_SCRIPTS_URL}/${DEVON_SCRIPTS_LATEST_VERSION}/${DEVON_SCRIPTS_FILENAME}"
-    echo "Please check potential errors and retry."
-    exit -1
-  fi
-fi
-
-rm -rf updates/latest
-mkdir -p updates/latest
-if [ "${DEVON_SCRIPTS_SUFFIX}" = "windows.zip" ]
-then
-  unzip ${DEVON_SCRIPTS_PATH} -d updates/latest/
-  result=${?}
-else
-  tar xvfz ${DEVON_SCRIPTS_PATH} -C updates/latest/
-  result=${?}
-fi
-if [ "${?}" != 0 ] || [ ! -d "updates/latest/scripts" ] || [ ! -d "updates/latest/system" ]
-then
-  echo "Failed to extract ${DEVON_SCRIPTS_FILENAME}"
-  echo "Please check potential errors and retry."
-  exit -1
-fi
-echo "Sucessfully extracted scripts package to updates/latest/"
-
-DEVON_SCRIPTS_BAK=updates/backups/`date +"%m-%d-%y_%H-%M-%S"`
-mkdir -p ${DEVON_SCRIPTS_BAK}
-mv scripts ${DEVON_SCRIPTS_BAK}
-mv updates/latest/scripts .
-mv system ${DEVON_SCRIPTS_BAK}
-mv system/latest/scripts .
-echo "Sucessfully updated your devon-ide scripts to version ${DEVON_SCRIPTS_LATEST_VERSION}"
+doUpgradeMavenArtifact "${target}" "https://github.com/devonfw/devon-ide/wiki/devon-ide-scripts" "${package}" "${target_version}" "${suffix}" "${current_version}"

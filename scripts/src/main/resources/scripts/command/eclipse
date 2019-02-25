@@ -1,6 +1,7 @@
 #!/bin/bash
 cd `dirname $0`
 cd ../..
+source scripts/functions
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Launch Eclipse IDE and/or manage Eclipse workspace."

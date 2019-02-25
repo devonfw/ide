@@ -1,0 +1,21 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+source scripts/functions
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Install software tool."
+  echo
+  echo "Arguments:"
+  echo "           by default install standard tools"
+  echo "«tool»     install the specified tool"
+  exit
+fi
+
+if [ -z "${1}" ]
+then
+  doRequestSoftware "java"
+  doRequestSoftware "maven"
+else
+  doRequestSoftware "${1}"
+fi

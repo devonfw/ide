@@ -1,4 +1,12 @@
+#!/bin/bash
 # Source this script from a linux shell to setup the environment variables for the corresponding project.
+# hash bang only for filetype detection and editor syntax support
+
+if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
+then
+  echo "${devon_ide_version}"
+  return
+fi
 
 # Auto-install oursevles...
 if ! [  -f ~/bin/devon ]
@@ -81,7 +89,8 @@ done
 if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
 then
   echo "usage: devon [command [args]]"
-  echo "setup devonfw IDE environment and optionally lauch commands."
+  echo "Setup devonfw IDE environment and optionally lauch commands."
+  echo "Current version of devon-scripts is ${devon_ide_version}"
   echo 
   if [ -z "${2}" ]
   then
