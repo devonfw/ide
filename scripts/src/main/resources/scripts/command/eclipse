@@ -98,8 +98,7 @@ fi
 
 if [ -n "${CONFIGURATOR_MODE}" ]
 then
-  java -jar ${DEVON_IDE_HOME}/scripts/lib/${IDE_CONFIGURATOR} -cp ${DEVON_IDE_HOME}/scripts/lib/*.jar -t "${ECLIPSE_TEMPLATES_PATH}" -w "${WORKSPACE_PATH}" -v "${REPLACEMENT_PATTERNS_PATH}" ${CONFIGURATOR_MODE}
-  echo "Eclipse preferences for workspace ${WORKSPACE} have been ${CONFIGURATOR_ACTION}"
+  doConfigureWorkspace "${ECLIPSE_TEMPLATES_PATH}" "${WORKSPACE_PATH}" ${CONFIGURATOR_MODE}
 fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]

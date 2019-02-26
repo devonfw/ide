@@ -111,7 +111,7 @@ function doExtract() {
   fi
   if [ "${ext}" = ".zip" ]
   then
-    doRunCommand "unzip '${1}' -q -d '${target_dir}'"
+    doRunCommand "unzip -q '${1}' -d '${target_dir}'"
   elif [ "${ext}" = ".tar" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
@@ -344,8 +344,20 @@ function doRequestSoftware() {
   elif [ "${software}" = "gradle" ]
   then
     software_version=`doGetVariable GRADLE_VERSION 5.2.1`
-    download_url=https://services.gradle.org/distributions/gradle-${software_version}-bin.zip
-    doFail "Not implemented ${software}"
+    download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
+    test_cmd="gradle -v"
+  elif [ "${software}" = "vscode" ]
+  then
+    download_url="https://az764295.vo.msecnd.net/stable/1b8e8302e405050205e69b59abb3559592bb9e60"
+    if [ "${OSTYPE:0:6}" = "darwin" ]
+    then
+      download_url="${download_url}/VSCode-darwin-stable.zip"
+    elif [ "${OSTYPE}" = "cygwin" ]
+    then
+      download_url="${download_url}/VSCode-win32-x64-1.31.1.zip"
+    else
+      download_url="${download_url}/code-stable-1549938209.tar.gz"
+    fi
   else
     doFail "The software ${software} is requested but not available.\nPlease ensure you have it installed and available on your PATH variable.\nSimply download and extract it to ${DEVON_IDE_HOME}/software/${1}."
   fi
@@ -459,7 +471,7 @@ function doConfigureWorkspace() {
   then
     touch "${replacement_patterns_path}"
   fi
-  doRunCommand "java -jar ${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-${devon_ide_version}.jar -cp ${DEVON_IDE_HOME}/scripts/lib/*.jar -t '${1}' -w '${2}' -v '${replacement_patterns_path}' ${3}"
+  doRunCommand "java -jar '${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-${devon_ide_version}.jar' -cp '${DEVON_IDE_HOME}/scripts/lib/*.jar' -t '${1}' -w '${2}' -v '${replacement_patterns_path}' ${3}"
   local result=${?}
   local action="changed"
   if [ "${3}" = "-u" ]
