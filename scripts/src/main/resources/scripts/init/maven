@@ -1,5 +1,9 @@
+#!/bin/bash
+# init logic that will actually be sourced,
+# hash bang only for filetype detection and editor syntax support
+
 # Maven
-if [ -d "${SOFTWARE_PATH}/maven" ]
+if [ -d "${SOFTWARE_PATH}/maven" ] && [ -d "${SETTINGS_PATH}" ]
 then
   export MAVEN_HOME=${SOFTWARE_PATH}/maven
   export M2_HOME=${MAVEN_HOME}

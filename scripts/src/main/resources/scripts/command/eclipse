@@ -51,9 +51,9 @@ do
 done
 
 if [ ! -d "${WORKSPACE_PATH}" ]; then
-    echo "Could not find folder '${WORKSPACE_PATH}' (from variable WORKSPACE_PATH)"
-    echo "Execution aborted"
-    exit 1
+  echo "Could not find folder '${WORKSPACE_PATH}' (from variable WORKSPACE_PATH)"
+  echo "Execution aborted"
+  exit 1
 fi
 
 ECLIPSE_TEMPLATES_PATH=${SETTINGS_PATH}/eclipse/workspace

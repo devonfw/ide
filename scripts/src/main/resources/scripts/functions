@@ -56,9 +56,9 @@ function doRunCommand() {
   local message
   if [ -z "${2}" ]
   then
-    message="run ${1}"
+    message="run command ${1/ */}"
   else
-    message="${2} (${1})"
+    message="${2} (${1/ */})"
   fi
   doResult "${message}" ${result}
 }
@@ -85,6 +85,7 @@ function doDownload() {
 }
 
 # $1: the file to extract
+# $2: optional volume name
 function doExtract() {
   local target_dir=${DEVON_IDE_HOME}/updates/extracted
   local filename=${1/*\//}
@@ -101,28 +102,32 @@ function doExtract() {
     fi
   elif [ "${ext}" = ".bz2" ]
   then
-    ext=${${filename/\.bz2/}/*\./.}
-    if [ "${ext}" == ".tar" ]
+    local pre_ext=${filename/\.gz/}
+    pre_ext=${pre_ext/*\./.}
+    if [ "${pre_ext}" == ".tar" ]
     then
       ext=".tbz2"
     fi    
   fi
   if [ "${ext}" = ".zip" ]
   then
-    unzip "${1}" -q -d "${target_dir}"
-    result=${?}
+    doRunCommand "unzip '${1}' -q -d '${target_dir}'"
   elif [ "${ext}" = ".tar" ]
   then
-    tar xf "${1}" -C "${target_dir}"
-    result=${?}
+    doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".tgz" ]
   then
-    tar xfz "${1}" -C "${target_dir}"
-    result=${?}
+    doRunCommand "tar xfz '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".tbz2" ]
   then
-    tar xfj "${1}" -C "${target_dir}"
-    result=${?}
+    doRunCommand "tar xfj '${1}' -C '${target_dir}'"
+  elif [ "${ext}" = ".dmg" ]
+  then
+    local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+    mkdir -p "${mount_dir}"
+    doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${1}'"
+    doRunCommand "cp -a '${mount_dir}' '${target_dir}'"
+    doRunCommand "hdiutil detach '${mount_dir}'"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}" ${result}
   fi
@@ -261,6 +266,26 @@ function doRequestCommand() {
   fi
 }
 
+# $1: repository URL(s)
+# $2: installation group id
+function doInstallEclipsePlugin() {
+  local eclipse_home=${DEVON_IDE_HOME}/software/eclipse
+  local eclipse="${eclipse_home}/eclipse"
+  if [ -x "${eclipse_home}/Eclipse.app/Contents/MacOS/eclipse" ]
+  then
+    eclipse="${eclipse_home}/Eclipse.app/Contents/MacOS/eclipse"
+  fi
+  local plugin=${2/.feature.group/}
+  echo
+  echo "Installing eclipse Plugin ${plugin}"
+  ${eclipse} -nosplash -application org.eclipse.equinox.p2.director -repository ${1} -installIU ${2}
+  result=${?}
+  if [ "${result}" != 0 ]
+  then
+    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
+  fi
+}
+
 # $1: tool (e.g. mvn for maven)
 function doRequestSoftware() {
   local software="${1}"
@@ -270,40 +295,56 @@ function doRequestSoftware() {
   fi
   echo
   echo "*** Software '${software}' is Requested ***"
-  local software_version url archive_folder test_cmd
+  local software_version download_url archive_folder test_cmd
   local software_dir="${DEVON_IDE_HOME}/software/${software}"
   if [ "${software}" = "maven" ]
   then
     software_version=`doGetVariable MAVEN_VERSION 3.6.0`
     archive_folder='apache-maven-*'
-    url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
-    test_cmd='mvn -v'
+    download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
+    test_cmd="${software_dir}/bin/mvn -v"
   elif [ "${software}" = "java" ]
   then
     software_version=`doGetVariable JAVA_VERSION 11.0.2`
     archive_folder='jdk-*'
-    url=https://download.java.net/java/GA/jdk${software_version/\.*//}/9/GPL/openjdk-${software_version}
+    download_url=https://download.java.net/java/GA/jdk${software_version/\.*//}/9/GPL/openjdk-${software_version}
+    test_cmd="${software_dir}/bin/java -version"
     if [ "${OSTYPE:0:6}" = "darwin" ]
     then
       software_dir="${DEVON_IDE_HOME}/software/jdk"
-      url="${url}_osx-x64_bin.tar.gz"
+      download_url="${download_url}_osx-x64_bin.tar.gz"
     elif [ "${OSTYPE}" = "cygwin" ]
     then
-      url="${url}_windows-x64_bin.zip"
+      download_url="${download_url}_windows-x64_bin.zip"
     else
-      url="${url}_linux-x64_bin.tar.gz"
+      download_url="${download_url}_linux-x64_bin.tar.gz"
     fi
-    test_cmd='java -version'
   elif [ "${software}" = "ant" ]
   then
     doFail "Not implemented ${1}"
   elif [ "${software}" = "eclipse" ]
   then
-    doFail "Not implemented ${software}"
+    #mirror="https://mirror.math.princeton.edu"
+    mirror="https://ftp.osuosl.org"
+    software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
+    eclipse_edition=java
+    #eclipse_edition=jee
+    download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
+    if [ "${OSTYPE:0:6}" = "darwin" ]
+    then
+      download_url="${download_url}-macosx-cocoa-x86_64.dmg"
+      archive_folder='volume'
+    elif [ "${OSTYPE}" = "cygwin" ]
+    then
+      download_url="${download_url}-win32-x86_64.zip"
+    else
+      download_url="${download_url}-linux-gtk-x86_64.tar.gz"
+    fi
+    test_cmd="which eclipse"
   elif [ "${software}" = "gradle" ]
   then
     software_version=`doGetVariable GRADLE_VERSION 5.2.1`
-    url=https://services.gradle.org/distributions/gradle-${software_version}-bin.zip
+    download_url=https://services.gradle.org/distributions/gradle-${software_version}-bin.zip
     doFail "Not implemented ${software}"
   else
     doFail "The software ${software} is requested but not available.\nPlease ensure you have it installed and available on your PATH variable.\nSimply download and extract it to ${DEVON_IDE_HOME}/software/${1}."
@@ -317,26 +358,46 @@ function doRequestSoftware() {
       software_dir="${DEVON_IDE_HOME}/software/${software}"
     fi
   else
-    echo "Trying to install ${software} from ${url}"
-    doInstall "${software_dir}" "${url}" "${archive_folder}"
+    echo "Trying to install ${software} from ${download_url}"
+    doInstall "${software_dir}" "${download_url}" "${archive_folder}"
     if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
       echo "Creating symlink as workaround for Java on MacOS"
       doRunCommand "ln -s 'jdk/Contents/Home' '${DEVON_IDE_HOME}/software/java'"
       software_dir="${DEVON_IDE_HOME}/software/${software}"
+    elif [ "${software}" = "eclipse" ]
+    then
+      echo "Completing Eclipse installation..."
+      if [ "${OSTYPE:0:6}" = "darwin" ]
+      then
+        echo "Doing workarounds for MacOS quirks..."
+        if [ -e "${software_dir}/Applications" ]
+        then
+          rm "${software_dir}/Applications"
+        fi
+        echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$\@" > "${software_dir}/eclipse"
+        chmod a+x "${software_dir}/eclipse"
+      fi
+      doInstallEclipsePlugin "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
+      doInstallEclipsePlugin "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
+      doInstallEclipsePlugin "http://findbugs.cs.umd.edu/eclipse/" "edu.umd.cs.findbugs.plugin.eclipse.feature.group"
+      doInstallEclipsePlugin "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
+      doInstallEclipsePlugin "http://www.objectaid.com/update/current" "com.objectaid.uml.cls.feature.group,com.objectaid.uml.addon.feature.group,com.objectaid.uml.seq.feature.group"
+      doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
+      doInstallEclipsePlugin "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
+      doInstallEclipsePlugin "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
+      doInstallEclipsePlugin "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
+      doInstallEclipsePlugin "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
+      #doInstallEclipsePlugin "https://TODO/cobigen/update/site" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      #doInstallEclipsePlugin "https://marketplace.eclipse.org/content/tm-terminal" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
+      
     fi
     if [ -d "${software_dir}/bin" ]
     then
       export PATH="${software_dir}/bin:${PATH}"
     else
       export PATH="${software_dir}:${PATH}"
-    fi
-  fi
-  if [ -d "${software_dir}/bin" ]
-  then
-    test_cmd="${software_dir}/bin/${test_cmd}"
-  else
-    test_cmd="${software_dir}/${test_cmd}"
+    fi    
   fi
   echo "Verifying software installtion using command: ${test_cmd}"
   ${test_cmd}
@@ -354,15 +415,15 @@ function doRequestSoftware() {
 # $4: suffix (e.g. '-sources.jar')
 # $5: currentVersion
 function doUpgradeMavenArtifact() {
-  local url="${2}"
+  local download_url="${2}"
   local artifact_id="${3}"
-  url="${url}/${artifact_id}"
+  download_url="${download_url}/${artifact_id}"
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
   if [ "${target_version}" = "LATEST" ]
   then
-    doMavenGetLatestVersion ${url}
+    doMavenGetLatestVersion ${download_url}
     target_version="${LATEST_VERSION}"
   fi
   if [ -n "${current_version}" ]
@@ -385,8 +446,8 @@ function doUpgradeMavenArtifact() {
       fi
     fi
   fi
-  url="${url}/${target_version}/${artifact_id}-${target_version}-${suffix}"
-  doInstall "${1}" "${url}"
+  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}-${suffix}"
+  doInstall "${1}" "${download_url}"
 }
 
 # $1: templates path
@@ -398,7 +459,7 @@ function doConfigureWorkspace() {
   then
     touch "${replacement_patterns_path}"
   fi
-  java -jar ${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-${devon_ide_version}.jar -cp ${DEVON_IDE_HOME}/scripts/lib/*.jar -t "${1}" -w "${2}" -v "${replacement_patterns_path}" ${3}
+  doRunCommand "java -jar ${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-${devon_ide_version}.jar -cp ${DEVON_IDE_HOME}/scripts/lib/*.jar -t '${1}' -w '${2}' -v '${replacement_patterns_path}' ${3}"
   local result=${?}
   local action="changed"
   if [ "${3}" = "-u" ]

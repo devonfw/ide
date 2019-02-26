@@ -16,6 +16,7 @@ if [ -z "${1}" ]
 then
   doRequestSoftware "java"
   doRequestSoftware "maven"
+  doRequestSoftware "eclipse"
 else
   doRequestSoftware "${1}"
 fi

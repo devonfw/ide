@@ -24,18 +24,19 @@ then
   export WORKSPACE=main
 fi
 export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
-SOFTWARE_PATH=${DEVON_IDE_HOME}/software
-
-if [ ! -d "${SETTINGS_PATH}" ]
+if [ ! -d "${WORKSPACE_PATH}" ]
 then
-  ${DEVON_IDE_HOME}/scripts/command/update settings
-  result=${?}
-  if [ ${result} != 0 ]
+  if [ "${WORKSPACE}" = "main" ]
   then
-    echo "Failed to install settings with exit code ${result}"
-    echo "Please try to manually setup your settings."
+    echo "Creating main workspace directory"
+    mkdir -p "${WORKSPACE_PATH}"
+  else
+    echo "WARNING: Worksapce ${WORKSPACE} does not exist"
   fi
 fi
+
+SOFTWARE_PATH=${DEVON_IDE_HOME}/software
+
 # copy defaults
 if [ ! -d "${DEVON_IDE_HOME}/conf" ]
 then
@@ -51,36 +52,39 @@ then
   then
     cp "${SETTINGS_PATH}/devon/variables-customized" "${DEVON_IDE_HOME}/conf/"
   fi
+else
+  #${DEVON_IDE_HOME}/scripts/command/update settings
+  echo
+  echo "*** ATTENTION ***"
+  echo "Your devon-ide is missing the settings at ${SETTINGS_PATH}"
+  echo "Please run the following command to complete your IDE setup:"
+  echo "devon setup"
 fi
 
 # Setup path
-if [ ! -d "${SOFTWARE_PATH}" ]
+if [ -d "${SOFTWARE_PATH}" ]
 then
+  for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
+  do
+    if [ -d "${SOFTWARE_FOLDER}/bin" ]
+    then
+      PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
+    else
+      PATH="${SOFTWARE_FOLDER}:${PATH}"
+    fi
+    # Load custom configuration of software
+    if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
+    then
+      source "${SOFTWARE_FOLDER}/ide-config"
+    fi
+  done
+else
+  echo
   echo "*** ATTENTION ***"
   echo "Your devon-ide is missing the software at ${SOFTWARE_PATH}"
-  ${DEVON_IDE_HOME}/scripts/command/install
-  result=${?}
-  if [ ${result} != 0 ]
-  then
-    echo "Failed to install software with exit code ${result}"
-    echo "Please try to manually setup your software."
-    return -1
-  fi
+  echo "Please run the following command to complete your IDE setup:"
+  echo "devon setup"
 fi
-for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
-do
-  if [ -d "${SOFTWARE_FOLDER}/bin" ]
-  then
-    PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
-  else
-    PATH="${SOFTWARE_FOLDER}:${PATH}"
-  fi
-  # Load custom configuration of software
-  if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
-  then
-    source "${SOFTWARE_FOLDER}/ide-config"
-  fi
-done
 
 # Modularization: run all linux/mac/bsd scripts from scripts/init/
 # To customize devon-ide you may add your own scripts in this folder
