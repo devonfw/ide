@@ -46,6 +46,10 @@ do
   if [ -f "${PWD}/scripts/environment-project" ]
   then
     source scripts/environment-project
+    if [ -z "${1}" ]
+    then
+      echo "devon-ide has environment variables have been set."
+    fi
     L_RESTDIR=${L_BASEDIR:${#PWD}}
     WORKSPACE=main
     if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]

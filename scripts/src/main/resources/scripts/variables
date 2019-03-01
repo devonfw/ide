@@ -8,11 +8,15 @@
 #    conf/variables-customized
 #********************************************************************************
 
-export SETTINGS_PATH=${PWD}/settings
+DEVON_IDE_TOOLS=(java mvn eclipse vscode)
+# Java
+export JAVA_HOME=${PWD}/software/java
 
+# Maven
 #export M2_REPO=~/.m2/repository
-export M2_REPO=$PWD/conf/.m2/repository
+export MAVEN_HOME=${PWD}/software/maven
+export M2_REPO=${PWD}/conf/.m2/repository
 export MAVEN_OPTS="-Xmx512m -Duser.home=${PWD}/conf"
 
+# Eclipse
 ECLIPSE_VMARGS="-Xms128M -Xmx768M -XX:MaxPermSize=256M"
-

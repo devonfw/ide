@@ -1,0 +1,119 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+source scripts/functions
+DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
+
+function doUpdateScripts() {
+  if [ "${OSTYPE:0:6}" = "darwin" ]
+  then
+    local suffix="mac.tar.gz"
+  else
+    local suffix="linux.tar.gz"
+  fi
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" "${suffix}" "${devon_ide_version}"
+}
+
+function doUpdateSettings() {
+  return # TODO temporary hack until release available in maven central
+  if [ ! -d "${SETTINGS_PATH}" ]
+  then
+    if [ -n "${SETTINGS_URL}" ]
+    then
+      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
+      return
+    else
+      echo "*** ATTENTION ***"
+      echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined"
+      echo "As a fallback the default settings are installed"
+      echo "Please consult your project technical lead to fix this properly"
+    fi
+  fi
+  doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+}
+
+function doSetup() {
+  doUpdateSettings
+  if [ -z "${DEVON_IDE_TOOLS}" ]
+  then
+    doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (e.g. variables or variables-customized)."
+  fi
+  for tool in "${DEVON_IDE_TOOLS[@]}"
+  do
+    command=${DEVON_IDE_HOME}/scripts/command/${tool}
+    if [ ! -e "${command}" ]
+    then
+      echo
+      echo "*** WARNING ***"
+      echo "Undefined tool: ${tool}"
+      echo "Not found at ${command}"
+      echo "Please check your DEVON_IDE_TOOLS variable:"
+      echo "${DEVON_IDE_TOOLS}"
+    else
+      if [ ! -x "${command}" ]
+      then
+        echo "Command was not executable. Trying to repair"
+        doRunCommand "chmod a+x ${command}"
+      fi
+      ${command} setup
+      result=${?}
+      if [ ${result} != 0 ]
+      then
+        exit ${result}
+      fi
+    fi
+  done
+}
+
+target_version="LATEST"
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup and update devon-ide."
+  echo
+  echo "Arguments:"
+  echo "setup                            setup devon-ide"
+  echo "update                           check for updates and install if newer version is available"
+  echo "update «package» [to «version»]  update (or downgrade) specified package (to specified version)"
+  echo "                                 packages are e.g. 'scripts' or 'settings'"
+  exit
+elif [ "${1}" = "setup" ]
+then
+  doSetup
+elif [ "${1}" = "update" ]
+then
+  if [ -z "${2}" ]
+  then
+    doUpdateScripts
+    doUpdateSettings
+  else
+    if [ "${3}" = "to" ]
+    then
+      if [ -z "${4}" ]
+      then
+        doFail "Missing version argument!\ndevon ide update to «version»"
+      fi
+      target_version="${4}"
+    elif [ -n "${3}" ]
+    then
+      doFail "Undefined update argument ${3}!"
+    fi
+    if [ "${2}" = "scripts" ]
+    then
+      doUpdateScripts
+    elif [ "${2}" = "settings" ]
+    then
+      doUpdateSettings
+    else
+      doFail "Undefined package ${2}"
+    fi
+  fi
+  exit
+elif [ -z "${1}" ]
+then
+  doFail "Unknown argument: ${1}"
+else
+  doFail "Missing arguments. Call 'devon help ide' to get help."
+fi
+echo "Completed."

@@ -1,0 +1,38 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+source scripts/functions
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run gradle build tool."
+  echo
+  echo "Arguments:"
+  echo "setup      setup gradle (install, verify, configure)"
+  echo "«args»     call gradle with the specified arguments"
+  exit
+elif [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  setup=true
+fi
+
+GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
+if [ -d "${GRADLE_HOME}" ]
+then
+  if [ "${setup}" = "true" ]
+  then
+    echo "Gradle is already installed at ${GRADLE_HOME}"
+  fi
+else
+  software_version=`doGetVariable GRADLE_VERSION 5.2.1`
+  download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
+  doInstall "${software_dir}" "${download_url}" 'apache-maven-*'
+fi
+
+if [ "${setup}" = "true" ]
+then
+  doRunCommand "gradle -v" "verify installation of gradle"
+else
+  gradle ${@}
+fi

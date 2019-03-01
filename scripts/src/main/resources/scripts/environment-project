@@ -2,10 +2,10 @@
 # Script to setup devon-ide environment. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
-if [ -n "${SOFTWARE_PATH}" ]
+if [ -n "${DEVON_IDE_HOME}" ]
 then
   # "remove" previous IDE from $PATH
-  export PATH=`echo $PATH | sed "s~${SOFTWARE_PATH}[^:]*::*~~g"`
+  export PATH=`echo $PATH | sed "s~${DEVON_IDE_HOME}/software[^:]*::*~~g"`
 fi
 export DEVON_IDE_HOME=${PWD}
 
@@ -58,7 +58,7 @@ else
   echo "*** ATTENTION ***"
   echo "Your devon-ide is missing the settings at ${SETTINGS_PATH}"
   echo "Please run the following command to complete your IDE setup:"
-  echo "devon setup"
+  echo "devon ide setup"
 fi
 
 # Setup path
@@ -79,11 +79,14 @@ then
     fi
   done
 else
-  echo
-  echo "*** ATTENTION ***"
-  echo "Your devon-ide is missing the software at ${SOFTWARE_PATH}"
-  echo "Please run the following command to complete your IDE setup:"
-  echo "devon setup"
+  if [ "${1}" != "setup" ]
+  then
+    echo
+    echo "*** ATTENTION ***"
+    echo "Your devon-ide is missing the software at ${SOFTWARE_PATH}"
+    echo "Please run the following command to complete your IDE setup:"
+    echo "devon setup"
+  fi
 fi
 
 # Modularization: run all linux/mac/bsd scripts from scripts/init/
@@ -103,5 +106,3 @@ then
 fi
 
 export PATH
-
-echo "IDE environment has been initialized."

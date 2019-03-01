@@ -238,6 +238,8 @@ function doInstall() {
     doGitPullOrClone "${1}" "${2}"
     return
   fi
+  echo
+  echo "*** Starting installation from ${2} to ${1} ***"
   doDownload "${2}"
   doExtract ${DEVON_IDE_HOME}/updates/releases/${2/*\//}
   if [ -n "${3}" ]
@@ -246,193 +248,44 @@ function doInstall() {
   fi
   doReplaceExtracted "${dir}" "${1}"
   echo "Successfully installed ${1}"
-}
-
-# $1: tool (e.g. mvn for maven)
-function doRequestCommand() {
-  if [ -z "${1}" ]
+  if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
-    doFail "Required command is empty (internal error)"
-  fi
-  if ! which "${1}" > /dev/null
-  then
-    echo "The command ${1} is not available"
-    local software="${1}"
-    if [ "${1}" = "mvn" ]
-    then
-      software="maven"
-    fi
-    doRequestSoftware "${software}"
+    doExtendPath "${1}"
+    echo "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
 }
 
-# $1: repository URL(s)
-# $2: installation group id
-function doInstallEclipsePlugin() {
-  local eclipse_home=${DEVON_IDE_HOME}/software/eclipse
-  local eclipse="${eclipse_home}/eclipse"
-  if [ -x "${eclipse_home}/Eclipse.app/Contents/MacOS/eclipse" ]
+# $1: software folder to add to path
+function doExtendPath() {
+  if [ -d "${1}/bin" ]
   then
-    eclipse="${eclipse_home}/Eclipse.app/Contents/MacOS/eclipse"
-  fi
-  local plugin=${2/.feature.group/}
-  echo
-  echo "Installing eclipse Plugin ${plugin}"
-  ${eclipse} -nosplash -application org.eclipse.equinox.p2.director -repository ${1} -installIU ${2}
-  result=${?}
-  if [ "${result}" != 0 ]
-  then
-    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
-  fi
-}
-
-# $1: tool (e.g. mvn for maven)
-function doRequestSoftware() {
-  local software="${1}"
-  if [ -z "${software}" ]
-  then
-    doFail "Requested software is empty (internal error)"
-  fi
-  echo
-  echo "*** Software '${software}' is Requested ***"
-  local software_version download_url archive_folder test_cmd
-  local software_dir="${DEVON_IDE_HOME}/software/${software}"
-  if [ "${software}" = "maven" ]
-  then
-    software_version=`doGetVariable MAVEN_VERSION 3.6.0`
-    archive_folder='apache-maven-*'
-    download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
-    test_cmd="${software_dir}/bin/mvn -v"
-  elif [ "${software}" = "java" ]
-  then
-    software_version=`doGetVariable JAVA_VERSION 11.0.2`
-    archive_folder='jdk-*'
-    download_url=https://download.java.net/java/GA/jdk${software_version/\.*//}/9/GPL/openjdk-${software_version}
-    test_cmd="${software_dir}/bin/java -version"
-    if [ "${OSTYPE:0:6}" = "darwin" ]
-    then
-      software_dir="${DEVON_IDE_HOME}/software/jdk"
-      download_url="${download_url}_osx-x64_bin.tar.gz"
-    elif [ "${OSTYPE}" = "cygwin" ]
-    then
-      download_url="${download_url}_windows-x64_bin.zip"
-    else
-      download_url="${download_url}_linux-x64_bin.tar.gz"
-    fi
-  elif [ "${software}" = "ant" ]
-  then
-    doFail "Not implemented ${1}"
-  elif [ "${software}" = "eclipse" ]
-  then
-    #mirror="https://mirror.math.princeton.edu"
-    mirror="https://ftp.osuosl.org"
-    software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
-    eclipse_edition=java
-    #eclipse_edition=jee
-    download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
-    if [ "${OSTYPE:0:6}" = "darwin" ]
-    then
-      download_url="${download_url}-macosx-cocoa-x86_64.dmg"
-      archive_folder='volume'
-    elif [ "${OSTYPE}" = "cygwin" ]
-    then
-      download_url="${download_url}-win32-x86_64.zip"
-    else
-      download_url="${download_url}-linux-gtk-x86_64.tar.gz"
-    fi
-    test_cmd="which eclipse"
-  elif [ "${software}" = "gradle" ]
-  then
-    software_version=`doGetVariable GRADLE_VERSION 5.2.1`
-    download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-    test_cmd="gradle -v"
-  elif [ "${software}" = "vscode" ]
-  then
-    download_url="https://az764295.vo.msecnd.net/stable/1b8e8302e405050205e69b59abb3559592bb9e60"
-    if [ "${OSTYPE:0:6}" = "darwin" ]
-    then
-      download_url="${download_url}/VSCode-darwin-stable.zip"
-    elif [ "${OSTYPE}" = "cygwin" ]
-    then
-      download_url="${download_url}/VSCode-win32-x64-1.31.1.zip"
-    else
-      download_url="${download_url}/code-stable-1549938209.tar.gz"
-    fi
+    export PATH="${1}/bin:${PATH}"
   else
-    doFail "The software ${software} is requested but not available.\nPlease ensure you have it installed and available on your PATH variable.\nSimply download and extract it to ${DEVON_IDE_HOME}/software/${1}."
-  fi
-  if [ -d "${software_dir}" ]
-  then
-    echo "The software '${software}' is already installed in your devon-ide."
-    echo "You can find it at ${software_dir}"
-    if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-    then
-      software_dir="${DEVON_IDE_HOME}/software/${software}"
-    fi
-  else
-    echo "Trying to install ${software} from ${download_url}"
-    doInstall "${software_dir}" "${download_url}" "${archive_folder}"
-    if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-    then
-      echo "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "ln -s 'jdk/Contents/Home' '${DEVON_IDE_HOME}/software/java'"
-      software_dir="${DEVON_IDE_HOME}/software/${software}"
-    elif [ "${software}" = "eclipse" ]
-    then
-      echo "Completing Eclipse installation..."
-      if [ "${OSTYPE:0:6}" = "darwin" ]
-      then
-        echo "Doing workarounds for MacOS quirks..."
-        if [ -e "${software_dir}/Applications" ]
-        then
-          rm "${software_dir}/Applications"
-        fi
-        echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$\@" > "${software_dir}/eclipse"
-        chmod a+x "${software_dir}/eclipse"
-      fi
-      doInstallEclipsePlugin "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
-      doInstallEclipsePlugin "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
-      doInstallEclipsePlugin "http://findbugs.cs.umd.edu/eclipse/" "edu.umd.cs.findbugs.plugin.eclipse.feature.group"
-      doInstallEclipsePlugin "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
-      doInstallEclipsePlugin "http://www.objectaid.com/update/current" "com.objectaid.uml.cls.feature.group,com.objectaid.uml.addon.feature.group,com.objectaid.uml.seq.feature.group"
-      doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
-      doInstallEclipsePlugin "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
-      doInstallEclipsePlugin "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
-      doInstallEclipsePlugin "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
-      doInstallEclipsePlugin "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
-      #doInstallEclipsePlugin "https://TODO/cobigen/update/site" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
-      #doInstallEclipsePlugin "https://marketplace.eclipse.org/content/tm-terminal" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
-      
-    fi
-    if [ -d "${software_dir}/bin" ]
-    then
-      export PATH="${software_dir}/bin:${PATH}"
-    else
-      export PATH="${software_dir}:${PATH}"
-    fi    
-  fi
-  echo "Verifying software installtion using command: ${test_cmd}"
-  ${test_cmd}
-  result=${?}
-  if [ ${result} != 0 ]
-  then
-    doFail "Failed to verify installation of software '${software}'."
-  fi
+    export PATH="${1}:${PATH}"
+  fi    
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
 # $2: URL (to groupId)
-# $2: artifactId
-# $3: version ('LATEST' for the most recent version)
-# $4: suffix (e.g. '-sources.jar')
-# $5: currentVersion
+# $3: artifactId
+# $4: version ('LATEST' for the most recent version)
+# $5: suffix (e.g. '-sources.jar')
+# $6: currentVersion
 function doUpgradeMavenArtifact() {
+  if [ -d "${1}/.git" ]
+  then
+    echo "Found git repository ${1} - updating via git"
+    doRunCommand "git pull" "" "${1}"
+    return
+  fi
   local download_url="${2}"
   local artifact_id="${3}"
   download_url="${download_url}/${artifact_id}"
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
+  echo "*** Software Update of ${artifact_id} ***"
+  echo "Updating ${1} from ${download_url}"
   if [ "${target_version}" = "LATEST" ]
   then
     doMavenGetLatestVersion ${download_url}
@@ -466,6 +319,14 @@ function doUpgradeMavenArtifact() {
 # $2: workspace path
 # $3: configurator mode (-u / -r / -x)
 function doConfigureWorkspace() {
+  if [ ! -d "${1}" ]
+  then
+    doFail "Could not find templates path at ${1}"
+  fi
+  if [ ! -d "${2}" ]
+  then
+    doFail "Could not find workspace at ${2}"
+  fi
   local replacement_patterns_path=${1}/replacement-patterns.properties
   if [ ! -e "${replacement_patterns_path}" ]
   then
@@ -549,3 +410,13 @@ then
   DEVON_IDE_HOME="${path}"
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
+source "${DEVON_IDE_HOME}/scripts/variables"
+if [ -f "${DEVON_IDE_HOME}/conf/variables" ]
+then
+  source "${DEVON_IDE_HOME}/conf/variables"
+fi
+if [ -f "${DEVON_IDE_HOME}/conf/variables-customized" ]
+then
+  source "${DEVON_IDE_HOME}/conf/variables-customized"
+fi
+

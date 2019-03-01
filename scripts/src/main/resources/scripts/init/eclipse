@@ -1,6 +1,0 @@
-# Eclipse
-if [ -d "${SOFTWARE_PATH}/eclipse" ]
-then
-   export ECLIPSE_HOME=${SOFTWARE_PATH}/eclipse
-  ECLIPSE_OPT="-vm ${JAVA_HOME}/bin/java -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS}"
-fi

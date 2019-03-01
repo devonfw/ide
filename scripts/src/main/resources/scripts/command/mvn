@@ -1,0 +1,63 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+source scripts/functions
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run maven build tool."
+  echo
+  echo "Arguments:"
+  echo "setup      setup maven (install, verify, configure)"
+  echo "«args»     call maven with the specified arguments"
+  exit
+fi
+
+if [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  setup=true
+fi
+
+MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
+if [ -d "${MAVEN_HOME}" ]
+then
+  if [ "${setup}" = "true" ]
+  then
+    echo "Maven is already installed at ${MAVEN_HOME}"
+  fi
+else
+  software_version=`doGetVariable MAVEN_VERSION 3.6.0`
+  download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
+  doInstall "${MAVEN_HOME}" "${download_url}" 'apache-maven-*'
+fi
+
+if [ "${setup}" = "true" ]
+then
+  if [ -d "${SETTINGS_PATH}" ]
+  then
+    M2_DIR="${DEVON_IDE_HOME}/conf/.m2"
+    if [ ! -e "${M2_DIR}" ]
+    then
+      mkdir -p "${M2_DIR}"
+    fi
+    M2_CONF=${M2_DIR}/settings.xml
+    if [ ! -e "${M2_CONF}" ]
+    then
+      cp "${SETTINGS_PATH}/maven/settings.xml" "${M2_CONF}"
+      echo "Copied ${SETTINGS_PATH}/maven/settings.xml to ${M2_CONF}"
+    fi
+    if [ ! -e "${M2_DIR}/settings-security.xml" ]
+    then
+      MASTER_PASSWORD=`head -c 20 /dev/random | base64`
+      MASTER_PASSWORD=`mvn --encrypt-master-password ${MASTER_PASSWORD}`
+      echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
+      echo "Successfully created ${M2_DIR}/settings-security.xml"
+    fi
+  else
+    echo "WARNING: Settings are missing at ${SETTINGS_PATH}"
+    echo "Please run the following command to fix:"
+    echo "devon setup"
+  fi
+  doRunCommand "mvn -v" "verify installation of maven"
+else
+  mvn ${@}
+fi
