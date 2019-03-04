@@ -73,7 +73,7 @@ else
   else
     download_url="${download_url}/code-stable-1549938209.tar.gz"
   fi
-  doInstall "${VSCODE_HOME}" "${download_url}"
+  doInstall "${VSCODE_HOME}" "${download_url}" "" "vscode"
 fi
 
 if [ ! -d "${WORKSPACE_PATH}/.vscode" ]
@@ -88,7 +88,7 @@ fi
 
 if [ -n "${configurator_mode}" ]
 then
-  doConfigureWorkspace "${ECLIPSE_TEMPLATES_PATH}" "${WORKSPACE_PATH}" ${configurator_mode}
+  doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" ${configurator_mode}
 fi
 
 if [ "${create_script}" = "true" ]

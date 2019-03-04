@@ -110,7 +110,7 @@ else
       "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
     )
   fi
-  for ((i=0; i<=${#ECLIPSE_PLUGINS[*]}; i=i+2))
+  for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
   do
     plugin_url="${ECLIPSE_PLUGINS[${i}]}"
     plugin_feature="${ECLIPSE_PLUGINS[((${i}+1))]}"
@@ -120,7 +120,10 @@ else
     result=${?}
     if [ "${result}" != 0 ]
     then
+      echo
+      echo "******** ATTENTION ********"
       echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
+      echo
     fi
   done
 fi
@@ -139,7 +142,7 @@ if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
 then
   if [ "${CONFIGURATOR_MODE}" = "-i" ] || [ "${CONFIGURATOR_MODE}" = "-x" ]
   then
-    doFail "ERROR: Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+    doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
   fi
   CONFIGURATOR_MODE="-u"
   CONFIGURATOR_ACTION="created"

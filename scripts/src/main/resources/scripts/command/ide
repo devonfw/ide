@@ -40,6 +40,8 @@ function doSetup() {
   fi
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
+    echo
+    echo "*** Setting up ${tool} ***"
     command=${DEVON_IDE_HOME}/scripts/command/${tool}
     if [ ! -e "${command}" ]
     then
@@ -52,7 +54,7 @@ function doSetup() {
     else
       if [ ! -x "${command}" ]
       then
-        echo "Command was not executable. Trying to repair"
+        echo "Command is not executable. Trying to repair"
         doRunCommand "chmod a+x ${command}"
       fi
       ${command} setup
@@ -116,4 +118,5 @@ then
 else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
-echo "Completed."
+echo
+echo "Completed $@"

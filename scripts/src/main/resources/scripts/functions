@@ -5,6 +5,8 @@
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
 function doFail() {
+  echo
+  echo "******** ATTENTION ********"
   echo -e "ERROR: ${1}"
   echo "We are sorry for the inconvenience. Please check the above errors, resolve them and try again."
   if [ -n "${2}" ]
@@ -85,11 +87,15 @@ function doDownload() {
 }
 
 # $1: the file to extract
-# $2: optional volume name
+# $2: optional folder to extract to
 function doExtract() {
   local target_dir=${DEVON_IDE_HOME}/updates/extracted
   local filename=${1/*\//}
   rm -rf "${target_dir}"
+  if [ -n "${2}" ]
+  then
+    target_dir="${target_dir}/${2}"
+  fi
   mkdir -p "${target_dir}"
   local ext=${filename/*\./.}
   if [ "${ext}" = ".gz" ]
@@ -231,6 +237,7 @@ function doGitPullOrClone() {
 # $1: absolute target path
 # $2: URL
 # $3: optional archive folder to rename
+# $4: optional sub-folder to extract to
 function doInstall() {
   local dir=${1/*\//}
   if [ "${2/*\.//.}" = ".git" ]
@@ -238,10 +245,9 @@ function doInstall() {
     doGitPullOrClone "${1}" "${2}"
     return
   fi
-  echo
-  echo "*** Starting installation from ${2} to ${1} ***"
+  echo "Starting installation from ${2} to ${1}"
   doDownload "${2}"
-  doExtract ${DEVON_IDE_HOME}/updates/releases/${2/*\//}
+  doExtract "${DEVON_IDE_HOME}/updates/releases/${2/*\//}" "${4}"
   if [ -n "${3}" ]
   then
     doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
