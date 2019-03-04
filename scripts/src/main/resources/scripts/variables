@@ -9,13 +9,15 @@
 #********************************************************************************
 
 DEVON_IDE_TOOLS=(java mvn eclipse vscode)
+SETTINGS_PATH=${PWD}/settings
+
 # Java
 export JAVA_HOME=${PWD}/software/java
 
 # Maven
 #export M2_REPO=~/.m2/repository
-export MAVEN_HOME=${PWD}/software/maven
 export M2_REPO=${PWD}/conf/.m2/repository
+export MAVEN_HOME=${PWD}/software/maven
 export MAVEN_OPTS="-Xmx512m -Duser.home=${PWD}/conf"
 
 # Eclipse

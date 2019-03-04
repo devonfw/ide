@@ -1,37 +1,24 @@
 @echo off
 rem *******************************************************************************
-rem These environment variables may be customized by the user.
-rem To do so, create a file with the name variables-customized.bat
-rem and perform your changes there so they do not get lost if you update. 
-rem Whenever variables-customized.bat is present it will override the property values defined here.
+rem These environment variables are part of devon-ide
+rem Modifications will be overwritten on updates
+rem To customize variables there are the following options:
+rem 1. Project specific settings can be configured in 
+rem    conf/variables.bat
+rem 2. User specific settings can be configured in
+rem    conf/variables-customized
 rem *******************************************************************************
 
-rem *******************************************************************************
-rem internal generator paths
-rem set MAIN_BRANCH=trunk
-set MAIN_BRANCH=main
-set SCRIPTS_PATH=scripts
-set CONF_PATH=conf
-set WORKSPACES_PATH=workspaces
-rem set SETTINGS_REL_PATH=settings
-set SETTINGS_REL_PATH=development\settings
-rem absolute software path
-if "%CD:~-1%" == "/" (
-  set SOFTWARE_PATH=%CD%software
-) else (
-  if "%CD:~-1%" == "\" (
-    set SOFTWARE_PATH=%CD%software
-  ) else (
-    set SOFTWARE_PATH=%CD%/software
-  )
-)
-rem *******************************************************************************
-rem by default the OASP4J IDE configures its own repository per instance.
-set M2_REPO=%CD%\%CONF_PATH%\.m2\repository
-REM set M2_REPO=%USERPROFILE%/.m2/repository
+set SETTINGS_PATH=%CD%\settings
+
+# Java
+set JAVA_HOME=%CD%/software/java
+
+rem Maven
+rem set M2_REPO=%USERPROFILE%/.m2/repository
+set M2_REPO=%CD%\conf\.m2\repository
+set MAVEN_HOME=%CD%/software/maven
+
+rem Eclipse
 set ECLIPSE_VMARGS=-Xms128M -Xmx768M -XX:MaxPermSize=256M
 
-rem subversion
-set UPDATE_SUBVERSION_CONFIG=false
-set UPDATE_SUBVERSION_SERVERS=false
-rem *******************************************************************************

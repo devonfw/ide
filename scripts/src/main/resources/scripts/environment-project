@@ -35,8 +35,6 @@ then
   fi
 fi
 
-SOFTWARE_PATH=${DEVON_IDE_HOME}/software
-
 # copy defaults
 if [ ! -d "${DEVON_IDE_HOME}/conf" ]
 then
@@ -53,7 +51,6 @@ then
     cp "${SETTINGS_PATH}/devon/variables-customized" "${DEVON_IDE_HOME}/conf/"
   fi
 else
-  #${DEVON_IDE_HOME}/scripts/command/update settings
   echo
   echo "*** ATTENTION ***"
   echo "Your devon-ide is missing the settings at ${SETTINGS_PATH}"
@@ -62,6 +59,7 @@ else
 fi
 
 # Setup path
+SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 if [ -d "${SOFTWARE_PATH}" ]
 then
   for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
@@ -89,15 +87,11 @@ else
   fi
 fi
 
-# Modularization: run all linux/mac/bsd scripts from scripts/init/
-# To customize devon-ide you may add your own scripts in this folder
-for SCRIPT in ${DEVON_IDE_HOME}/scripts/init/*
-do
-  if [ "${SCRIPT##*.}" != "bat" ]
-  then
-    source ${SCRIPT}
-  fi
-done
+# node.js support
+if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
+then
+  PATH=${PATH}:`npm bin -g 2> /dev/null`
+fi
 
 # load user settings late so variables like M2_REPO can be overriden
 if [ -f "${DEVON_IDE_HOME}/conf/variables-customized" ]

@@ -1,4 +1,0 @@
-if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
-then
-  export PATH=${PATH}:`npm bin -g 2> /dev/null`
-fi

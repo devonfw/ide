@@ -9,30 +9,32 @@ then
 fi
 
 # Auto-install oursevles...
-if ! [  -f ~/bin/devon ]
+if ! [  -f ~/.devon/devon ]
 then
   echo "Copying devon CLI script to your home directory..."
-  mkdir -p ~/bin
-  cp "${BASH_SOURCE:-$0}" ~/bin/devon
-  if [ -e ~/.bashrc ]
+  mkdir -p ~/.devon
+  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  if [ ! -e ~/.bashrc ]
   then
-    if ! grep -q "~/bin/devon" ~/.bashrc
-    then
-      echo "Installing devon alias to your .bashrc"
-      echo "" >> ~/.bashrc
-      echo 'alias devon="source ~/bin/devon"' >> ~/.bashrc
-    fi
+    touch ~/.bashrc
   fi
-  if [ -e ~/.zshrc ]
+  if ! grep -q "~/.devon/devon" ~/.bashrc
   then
-    if ! grep -q "~/bin/devon" ~/.zshrc
-    then
-      echo "Installing devon alias to your .zshrc"
-      echo "" >> ~/.zshrc
-      echo 'alias devon="source ~/bin/devon"' >> ~/.zshrc
-    fi
+    echo "Installing devon alias to your .bashrc"
+    echo "" >> ~/.bashrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.bashrc
   fi
-  alias devon="source ~/bin/devon"
+  if [ ! -e ~/.zshrc ]
+  then
+    touch ~/.zshrc
+  fi
+  if ! grep -q "~/.devon/devon" ~/.zshrc
+  then
+    echo "Installing devon alias to your .zshrc"
+    echo "" >> ~/.zshrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.zshrc
+  fi
+  alias devon="source ~/.devon/devon"
   echo "The devon CLI script has been installed to your system."
   echo "Now in any new shell, you can call devon to setup your IDE enviromennt variables."
   echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
@@ -48,7 +50,7 @@ do
     source scripts/environment-project
     if [ -z "${1}" ]
     then
-      echo "devon-ide has environment variables have been set."
+      echo "devon-ide has environment variables have been set for ${PWD}"
     fi
     L_RESTDIR=${L_BASEDIR:${#PWD}}
     WORKSPACE=main
@@ -73,7 +75,7 @@ do
     cd ${L_PWD}
     break
   fi
-  L_LINKDIR=`readlink ${L_DIR}`
+  L_LINKDIR=`readlink ${PWD}`
   if [ "${?}" = 0 ]
   then
     cd ${L_LINKDIR}
@@ -127,11 +129,16 @@ then
   return
 elif [ -n "${1}" ]
 then
-  COMMAND=${DEVON_IDE_HOME}/scripts/command/${1}
-  if [ -f "${COMMAND}" ]
+  command=${DEVON_IDE_HOME}/scripts/command/${1}
+  if [ -f "${command}" ]
   then
     shift
-    "${COMMAND}" ${@}
+    if [ ! -x "${command}" ]
+    then
+      echo "Command is not executable. Trying to repair"
+      chmod a+x "${command}"
+    fi
+    "${command}" ${@}
   else
     devcon ${@}
   fi

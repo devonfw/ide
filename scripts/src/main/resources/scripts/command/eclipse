@@ -70,18 +70,18 @@ else
   #eclipse_edition=jee
   download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
   archive_folder=
-  if [ "${OSTYPE:0:6}" = "darwin" ]
+  if doIsMacOs
   then
     download_url="${download_url}-macosx-cocoa-x86_64.dmg"
     archive_folder='volume'
-  elif [ "${OSTYPE}" = "cygwin" ]
+  elif doIsWindows
   then
     download_url="${download_url}-win32-x86_64.zip"
   else
     download_url="${download_url}-linux-gtk-x86_64.tar.gz"
   fi
   doInstall "${ECLIPSE_HOME}" "${download_url}" "${archive_folder}"
-  if [ "${OSTYPE:0:6}" = "darwin" ]
+  if doIsMacOs
   then
     echo "Doing workarounds for MacOS quirks..."
     if [ -e "${ECLIPSE_HOME}/Applications" ]

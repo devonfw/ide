@@ -67,7 +67,7 @@ function doRunCommand() {
 
 # $1: the URL to download
 function doDownload() {
-  local target_dir="${DEVON_IDE_HOME}/updates/releases"
+  local target_dir="~/Downloads"
   local filename="${1/*\//}"
   local target="${target_dir}/${filename}"
   if [ -f "${target}" ]
@@ -202,13 +202,13 @@ function doMavenGetLatestVersion() {
 # $1: variable name
 # $2: default
 function doGetVariable() {
-  local name=`echo ${1} | tr a-z A-Z`
-  local value=`eval echo '$'${name}`
-  if [ -z "${value}" ]
+  local variable_name=`echo ${1} | tr a-z A-Z`
+  local variable_value=`eval echo '$'${variable_name}`
+  if [ -z "${variable_value}" ]
   then
     echo ${2}
   else
-    echo ${value}
+    echo ${variable_value}
   fi
 }
 
@@ -247,7 +247,7 @@ function doInstall() {
   fi
   echo "Starting installation from ${2} to ${1}"
   doDownload "${2}"
-  doExtract "${DEVON_IDE_HOME}/updates/releases/${2/*\//}" "${4}"
+  doExtract "~/Downloads/${2/*\//}" "${4}"
   if [ -n "${3}" ]
   then
     doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
@@ -407,6 +407,22 @@ function doVersionCompare() {
     v2=${v2#*.}
   done
   return 0
+}
+
+function doIsMacOs() {
+  if [ "${OSTYPE:0:6}" = "darwin" ]
+  then
+    return 0
+  fi
+  return -1
+}
+
+function doIsWindows() {
+  if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
+  then
+    return 0
+  fi
+  return -1
 }
 
 if [ -z "${DEVON_IDE_HOME}" ]
