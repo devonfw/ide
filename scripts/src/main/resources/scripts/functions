@@ -176,11 +176,11 @@ function doReplaceExtracted() {
   local backup_dir="updates/backups/`date +"%m-%d-%y/%H-%M-%S"`"
   if [ -z "${1}" ] || [ "${1}" = '*' ]
   then
-    for file in ${DEVON_IDE_HOME}/updates/extracted/*
+    for extracted_file in ${DEVON_IDE_HOME}/updates/extracted/*
     do
-      if [ -e "${file}" ]
+      if [ -e "${extracted_file}" ]
       then
-        doReplaceExtractedFile "${file}" "${2}" "${backup_dir}"
+        doReplaceExtractedFile "${extracted_file}" "${2}" "${backup_dir}"
       fi
     done
   else
