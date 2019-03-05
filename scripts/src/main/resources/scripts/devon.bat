@@ -13,7 +13,7 @@ if not exist "%USERPROFILE%/scripts" (
 )
 if not exist "%USERPROFILE%\scripts\devon.bat" (
   echo Copying devon CLI script to your home directory...
-  copy "%~dp0\%0" "%USERPROFILE%\scripts\devon.bat"
+  copy "%~f0" "%USERPROFILE%\scripts\devon.bat"
   echo Adding %USERPROFILE%\scripts to your users system PATH
   for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
   if "%USER_PATH:~-1,1%" == ";" (
