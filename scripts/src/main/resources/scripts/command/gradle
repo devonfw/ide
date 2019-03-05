@@ -27,7 +27,7 @@ then
 else
   software_version=`doGetVariable GRADLE_VERSION 5.2.1`
   download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-  doInstall "${software_dir}" "${download_url}" 'apache-maven-*'
+  doInstall "${software_dir}" "${download_url}" 'gradle-*'
 fi
 
 if [ "${setup}" = "true" ]
