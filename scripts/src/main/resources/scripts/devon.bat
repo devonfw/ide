@@ -14,16 +14,19 @@ if not exist "%USERPROFILE%/scripts" (
 if not exist "%USERPROFILE%\scripts\devon.bat" (
   echo Copying devon CLI script to your home directory...
   copy "%~f0" "%USERPROFILE%\scripts\devon.bat"
-  echo Adding %USERPROFILE%\scripts to your users system PATH
-  for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
-  if "%USER_PATH:~-1,1%" == ";" (
-    set "USER_PATH=%USER_PATH:~0,-1%"
-  )
-  setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
-  if "%PATH:~-1,1%" == ";" (
-    set "PATH=%PATH%%USERPROFILE%\scripts"
-  ) else (
-    set "PATH=%PATH%;%USERPROFILE%\scripts"
+  for %%f in (devon.bat) do set "path=%%~$PATH:f"
+  if not defined path (
+    echo Adding %USERPROFILE%\scripts to your users system PATH
+    for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
+    if "%USER_PATH:~-1,1%" == ";" (
+      set "USER_PATH=%USER_PATH:~0,-1%"
+    )
+    setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+    if "%PATH:~-1,1%" == ";" (
+      set "PATH=%PATH%%USERPROFILE%\scripts"
+    ) else (
+      set "PATH=%PATH%;%USERPROFILE%\scripts"
+    )
   )
   echo The devon CLI script has been installed to your system.
   echo Now in any new command shell, you can call devon to setup your IDE enviromennt variables.
