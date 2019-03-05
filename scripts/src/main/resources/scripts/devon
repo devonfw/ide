@@ -67,19 +67,19 @@ do
           then
             source "${L_WKS}/variables"
           fi
-          WORKSPACE=${L_RESTDIR}
+          WORKSPACE="${L_RESTDIR}"
         fi
       fi
     fi
     export WORKSPACE
-    cd ${L_PWD}
+    cd "${L_PWD}"
     break
   fi
   L_LINKDIR=`readlink ${PWD}`
   if [ "${?}" = 0 ]
   then
-    cd ${L_LINKDIR}
-    L_BASEDIR=${PWD}
+    cd "${L_LINKDIR}"
+    L_BASEDIR="${PWD}"
   else
     cd ..
   fi
@@ -90,6 +90,9 @@ do
     break
   fi
 done
+L_PWD=
+L_BASEDIR=
+L_RESTDIR=
 
 # proceed with CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
@@ -102,12 +105,9 @@ then
   then
     echo "Commands:"
     echo " help"
-    for COMMAND in ${DEVON_IDE_HOME}/scripts/command/*
+    for command in "${DEVON_IDE_HOME}/scripts/command/"*
     do
-      if [ "${COMMAND##*.}" != "bat" ]
-      then
-        echo " `basename ${COMMAND}`"
-      fi
+      echo " `basename \"${command}\"`"
     done
     echo
     echo "For further details use:"
@@ -117,10 +117,10 @@ then
     echo "devon help <command>"
     echo "Print help for <command>"
   else
-    COMMAND=${DEVON_IDE_HOME}/scripts/command/${2}
-    if [ -f "${COMMAND}" ]
+    command="${DEVON_IDE_HOME}/scripts/command/${2}"
+    if [ -f "${command}" ]
     then
-      "${COMMAND}" -h
+      "${command}" -h
     else
       echo "Unknown command: ${2}"
       return -1
@@ -129,7 +129,7 @@ then
   return
 elif [ -n "${1}" ]
 then
-  command=${DEVON_IDE_HOME}/scripts/command/${1}
+  command="${DEVON_IDE_HOME}/scripts/command/${1}"
   if [ -f "${command}" ]
   then
     shift

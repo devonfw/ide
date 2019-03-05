@@ -36,7 +36,7 @@ function doSetup() {
   do
     echo
     echo "*** Setting up ${tool} ***"
-    command=${DEVON_IDE_HOME}/scripts/command/${tool}
+    command="${DEVON_IDE_HOME}/scripts/command/${tool}"
     if [ ! -e "${command}" ]
     then
       echo
@@ -49,9 +49,9 @@ function doSetup() {
       if [ ! -x "${command}" ]
       then
         echo "Command is not executable. Trying to repair"
-        doRunCommand "chmod a+x ${command}"
+        chmod a+x "${command}"
       fi
-      ${command} setup
+      "${command}" setup
       result=${?}
       if [ ${result} != 0 ]
       then
