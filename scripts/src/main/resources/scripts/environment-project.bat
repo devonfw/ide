@@ -1,7 +1,7 @@
 rem This batch is not supposed to be called manually
 @echo off
 
-rem TODO remove old IDE entries from PATH 
+set DEVON_IDE_HOME=%CD%
 call "scripts\variables.bat"
 if exist "conf\variables.bat" (
   call "conf\variables.bat"
@@ -46,6 +46,9 @@ if exist "%SETTINGS_PATH%" (
 )
 
 rem setup path
+if not defined DEVON_OLD_PATH (
+  set "DEVON_OLD_PATH=%PATH%"
+)
 set SOFTWARE_PATH=%CD%\software
 setlocal EnableDelayedExpansion
 for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
@@ -61,7 +64,7 @@ for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
 )
 (
   endlocal
-  set "PATH=%IDE_PATH%%PATH%"
+  set "PATH=%IDE_PATH%%DEVON_OLD_PATH%"
 )
 
 rem node.js support

@@ -2,11 +2,6 @@
 # Script to setup devon-ide environment. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
-if [ -n "${DEVON_IDE_HOME}" ]
-then
-  # "remove" previous IDE from $PATH
-  export PATH=`echo $PATH | sed "s~${DEVON_IDE_HOME}/software[^:]*::*~~g"`
-fi
 export DEVON_IDE_HOME=${PWD}
 
 # load and setup configuration
@@ -58,6 +53,12 @@ else
   echo "devon ide setup"
 fi
 
+if [ -z "${DEVON_OLD_PATH}" ]
+then
+  export DEVON_OLD_PATH="${PATH}"
+else
+  PATH="${DEVON_OLD_PATH}"
+fi
 # Setup path
 SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 if [ -d "${SOFTWARE_PATH}" ]
