@@ -45,7 +45,7 @@ L_PWD=${PWD}
 L_BASEDIR=${PWD}
 while true
 do
-  if [ -f "${PWD}/scripts/environment-project" ]
+  if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
   then
     source scripts/environment-project
     if [ -z "${1}" ]

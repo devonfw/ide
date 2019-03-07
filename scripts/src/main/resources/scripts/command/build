@@ -18,27 +18,7 @@ BUILD_CMD=
 BUILD_OPTS=
 if [ -f pom.xml ]
 then
-  if [ -x mvnw ]
-  then
-    BUILD_CMD="./mvnw"
-  else
-    BUILD_CMD="mvn"
-    if which mvn > /dev/null
-    then
-      mkdir -p updates/releases
-      mvn_version=3.6.0
-      mvn_file=apache-maven-${mvn_version}-bin.tar.gz
-      curl -fL http://ftp.fau.de/apache/maven/maven-3/${mvn_version}/binaries/${mvn_file} -o updates/releases ${mvn_file}
-      result=${?}
-      if [ "${result}" != 0 ]
-      then
-        echo "Failed to download ${mvn_file}"
-        echo "Please check potential errors and retry."
-        exit -1
-      fi
-      
-    fi
-  fi
+  BUILD_CMD="mvn"
   if [ -n "${BUILD_MVN_OPTS}" ]
   then
     BUILD_OPTS=${BUILD_MVN_OPTS}
@@ -78,4 +58,4 @@ then
   BUILD_OPTS="${@}"
 fi
 echo "${BUILD_CMD} ${BUILD_OPTS}"
-$BUILD_CMD ${BUILD_OPTS}
+doDevonCommand $BUILD_CMD ${BUILD_OPTS}

@@ -1,7 +1,46 @@
 #!/bin/bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+source `dirname $0`/../functions
+
+# $1: optional setup
+function doSetupJava() {
+  if [ -z "${JAVA_HOME}" ]
+  then
+    export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
+    echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
+  fi
+  if [ -d "${JAVA_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      echo "Java is already installed at ${JAVA_HOME}"
+    fi
+  else
+    local software_version=`doGetVariable JAVA_VERSION 11.0.2`
+    local download_url="https://download.java.net/java/GA/jdk${software_version/\.*/}/9/GPL/openjdk-${software_version}"
+    local software_dir="${JAVA_HOME}"
+    if doIsMacOs
+    then
+      software_dir="${DEVON_IDE_HOME}/software/jdk"
+      download_url="${download_url}_osx-x64_bin.tar.gz"
+    elif doIsWindows
+    then
+      download_url="${download_url}_windows-x64_bin.zip"
+    else
+      download_url="${download_url}_linux-x64_bin.tar.gz"
+    fi
+    doInstall "${software_dir}" "${download_url}" 'jdk-*'
+    if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
+    then
+      echo "Creating symlink as workaround for Java on MacOS"
+      doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
+      doExtendPath "${JAVA_HOME}"
+    fi
+  fi
+  if [ -n "${1}" ]
+  then
+    doRunCommand "${JAVA_HOME}/bin/java -version" "verify installation of Java"
+  fi
+}
 
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -9,44 +48,17 @@ then
   echo "Install and manage Java."
   echo
   echo "Arguments:"
-  echo "setup    setup Java (install and verify)"
+  echo "setup          setup Java (install and verify)"
+  echo "create «args»  create new Java project based on devon4j template, by "
   exit
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  setup=true
+  doSetupJava setup
+elif [ "${1}" = "create" ]
+then
+  doSetupJava
+  shift
+  doMavenArchetype ${@}
 else
   doFail "Unknown argument ${1}"
 fi
-
-if [ -z "${JAVA_HOME}" ]
-then
-  JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-  echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
-fi
-if [ -d "${JAVA_HOME}" ]
-then
-  echo "Java is already installed at ${JAVA_HOME}"
-else
-  software_version=`doGetVariable JAVA_VERSION 11.0.2`
-  download_url="https://download.java.net/java/GA/jdk${software_version/\.*/}/9/GPL/openjdk-${software_version}"
-  software_dir="${JAVA_HOME}"
-  if doIsMacOs
-  then
-    software_dir="${DEVON_IDE_HOME}/software/jdk"
-    download_url="${download_url}_osx-x64_bin.tar.gz"
-  elif doIsWindows
-  then
-    download_url="${download_url}_windows-x64_bin.zip"
-  else
-    download_url="${download_url}_linux-x64_bin.tar.gz"
-  fi
-  doInstall "${software_dir}" "${download_url}" 'jdk-*'
-  if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-  then
-    echo "Creating symlink as workaround for Java on MacOS"
-    doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
-    doExtendPath "${JAVA_HOME}"
-  fi
-fi
-
-doRunCommand "${JAVA_HOME}/bin/java -version" "verify installation of Java"

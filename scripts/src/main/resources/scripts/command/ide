@@ -36,28 +36,7 @@ function doSetup() {
   do
     echo
     echo "*** Setting up ${tool} ***"
-    command="${DEVON_IDE_HOME}/scripts/command/${tool}"
-    if [ ! -e "${command}" ]
-    then
-      echo
-      echo "*** WARNING ***"
-      echo "Undefined tool: ${tool}"
-      echo "Not found at ${command}"
-      echo "Please check your DEVON_IDE_TOOLS variable:"
-      echo "${DEVON_IDE_TOOLS}"
-    else
-      if [ ! -x "${command}" ]
-      then
-        echo "Command is not executable. Trying to repair"
-        chmod a+x "${command}"
-      fi
-      "${command}" setup
-      result=${?}
-      if [ ${result} != 0 ]
-      then
-        exit ${result}
-      fi
-    fi
+    doMavenCommand ${tool}
   done
 }
 

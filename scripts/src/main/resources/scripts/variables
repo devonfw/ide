@@ -9,16 +9,16 @@
 #********************************************************************************
 
 DEVON_IDE_TOOLS=(java mvn eclipse vscode)
-SETTINGS_PATH=${PWD}/settings
+SETTINGS_PATH=${DEVON_IDE_HOME}/settings
 
 # Java
-export JAVA_HOME=${PWD}/software/java
+export JAVA_HOME=${DEVON_IDE_HOME}/software/java
 
 # Maven
 #export M2_REPO=~/.m2/repository
-export M2_REPO=${PWD}/conf/.m2/repository
-export MAVEN_HOME=${PWD}/software/maven
-export MAVEN_OPTS="-Xmx512m -Duser.home=${PWD}/conf"
+export M2_REPO=${DEVON_IDE_HOME}/conf/.m2/repository
+export MAVEN_HOME=${DEVON_IDE_HOME}/software/maven
+export MAVEN_OPTS="-Xmx512m -Duser.home=${DEVON_IDE_HOME}/conf"
 
 # Eclipse
 ECLIPSE_VMARGS="-Xms128M -Xmx768M -XX:MaxPermSize=256M"

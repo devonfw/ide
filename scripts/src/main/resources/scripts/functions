@@ -65,9 +65,39 @@ function doRunCommand() {
   doResult "${message}" ${result}
 }
 
+# ${1}: devon command name
+# ${n+1}: additional args
+function doDevonCommand() {
+  local command_name="${1}"
+  local command="${DEVON_IDE_HOME}/scripts/command/${1}"
+  if [ ! -e "${command}" ]
+  then
+    echo
+    echo "*** WARNING ***"
+    echo "Undefined devon command: ${1}"
+    echo "Not found at ${command}"
+    echo "Please check your DEVON_IDE_TOOLS variable:"
+    echo "${DEVON_IDE_TOOLS}"
+  else
+    if [ ! -x "${command}" ]
+    then
+      echo "Command ${1} is not executable. Trying to repair..."
+      chmod a+x "${command}"
+    fi
+    shift
+    "${command}" ${@}
+    result=${?}
+    if [ ${result} != 0 ]
+    then
+      echo "ERROR: command '${command_name} ${@}' failed with exit code ${result}"
+      exit ${result}
+    fi
+  fi
+}
+
 # $1: the URL to download
 function doDownload() {
-  local target_dir="~/Downloads"
+  local target_dir=~/Downloads
   local filename="${1/*\//}"
   local target="${target_dir}/${filename}"
   if [ -f "${target}" ]
@@ -188,6 +218,8 @@ function doReplaceExtracted() {
   fi
 }
 
+MAVEN_REPO_URL="https://repo.maven.apache.org/maven2"
+
 # $1: URL (to artifactId)
 function doMavenGetLatestVersion() {
   echo "Trying to determine the latest available version from ${1}/maven-metadata.xml"
@@ -199,76 +231,37 @@ function doMavenGetLatestVersion() {
   fi
 }
 
-# $1: variable name
-# $2: default
-function doGetVariable() {
-  local variable_name=`echo ${1} | tr a-z A-Z`
-  local variable_value=`eval echo '$'${variable_name}`
-  if [ -z "${variable_value}" ]
-  then
-    echo ${2}
-  else
-    echo ${variable_value}
-  fi
-}
+# defaults, may be overridden before calling doMavenArchetype
+ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
+ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
+ARCHETYPE_VERSION="LATEST"
 
-# $1: target
-# $2: source
-function doMoveGlobSafe() {
-  if [ -e "${2}" ]
+# $1: java package
+# $2: optional groupId
+# $3: optional artifactId 
+function doMavenArchetype() {
+  local archetype_version_resolve="${ARCHETYPE_VERSION}"
+  if [ "${archetype_version_resolve}" = "LATEST" ]
   then
-    echo "Moving ${2} to ${1}"
-    mv "${2}" "${1}"
+    doMavenGetLatestVersion ${MAVEN_REPO_URL}/${ARCHETYPE_GROUP_ID//\./\/}/${ARCHETYPE_ARTIFACT_ID}
   fi
-}
-
-# $1: absolute target path
-# $2: URL
-function doGitPullOrClone() {
-  doRequestCommand git
-  if [ -d "${1}/.git" ]
+  local target_db_type="h2" #TODO
+  local target_package="${1}"
+  local target_group_id="${2}"
+  if [ -z "${target_group_id}" ]
   then
-    doRunCommand "git pull" "" "${1}"
-  else
-    doRunCommand "git pull '${2}' '${1}'"
+    target_group_id="${target_package}"
   fi
-}
-
-# $1: absolute target path
-# $2: URL
-# $3: optional archive folder to rename
-# $4: optional sub-folder to extract to
-function doInstall() {
-  local dir=${1/*\//}
-  if [ "${2/*\.//.}" = ".git" ]
+  local target_artifact_id="${3}"
+  if [ -z "${target_artifact_id}" ]
   then
-    doGitPullOrClone "${1}" "${2}"
-    return
+    target_artifact_id="${target_group_id/*\./}"
   fi
-  echo "Starting installation from ${2} to ${1}"
-  doDownload "${2}"
-  doExtract "~/Downloads/${2/*\//}" "${4}"
-  if [ -n "${3}" ]
+  if [ -e "${target_artifact_id}" ]
   then
-    doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
+    doFail "Project ${target_artifact_id} already exsits at ${PWD}"
   fi
-  doReplaceExtracted "${dir}" "${1}"
-  echo "Successfully installed ${1}"
-  if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
-  then
-    doExtendPath "${1}"
-    echo "To be fully functional please rerun 'devon' command to update your PATH properly."
-  fi
-}
-
-# $1: software folder to add to path
-function doExtendPath() {
-  if [ -d "${1}/bin" ]
-  then
-    export PATH="${1}/bin:${PATH}"
-  else
-    export PATH="${1}:${PATH}"
-  fi    
+  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -Dpackage=${target_package} -DgroupId=${target_group_id} -DartifactId=${target_artifact_id} -Dversion=1.0.0-SNAPSHOT-DdbType=${target_db_type} -DinteractiveMode=false
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
@@ -319,6 +312,78 @@ function doUpgradeMavenArtifact() {
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}-${suffix}"
   doInstall "${1}" "${download_url}"
+}
+
+# $1: variable name
+# $2: default
+function doGetVariable() {
+  local variable_name=`echo ${1} | tr a-z A-Z`
+  local variable_value=`eval echo '$'${variable_name}`
+  if [ -z "${variable_value}" ]
+  then
+    echo ${2}
+  else
+    echo ${variable_value}
+  fi
+}
+
+# $1: target
+# $2: source
+function doMoveGlobSafe() {
+  if [ -e "${2}" ]
+  then
+    echo "Moving ${2} to ${1}"
+    mv "${2}" "${1}"
+  fi
+}
+
+# $1: absolute target path
+# $2: URL
+function doGitPullOrClone() {
+  doRequestCommand git
+  if [ -d "${1}/.git" ]
+  then
+    doRunCommand "git pull" "" "${1}"
+  else
+    doRunCommand "git pull '${2}' '${1}'"
+  fi
+}
+
+# $1: absolute target path
+# $2: URL
+# $3: optional archive folder to rename
+# $4: optional sub-folder to extract to
+function doInstall() {
+  local dir=${1/*\//}
+  if [ "${2/*\.//.}" = ".git" ]
+  then
+    doGitPullOrClone "${1}" "${2}"
+    return
+  fi
+  echo "Starting installation from ${2} to ${1}"
+  doDownload "${2}"
+  doExtract ~/Downloads/${2/*\//} "${4}"
+  if [ -n "${3}" ]
+  then
+    doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
+  fi
+  doReplaceExtracted "${dir}" "${1}"
+  echo "Successfully installed ${1}"
+  if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  then
+    doExtendPath "${1}"
+    echo "To be fully functional please rerun 'devon' command to update your PATH properly."
+  fi
+}
+
+# $1: software folder to add to path
+function doExtendPath() {
+  if [ -d "${1}/bin" ]
+  then
+    export PATH="${1}/bin:${PATH}"
+  else
+    export PATH="${1}:${PATH}"
+  fi    
 }
 
 # $1: templates path
