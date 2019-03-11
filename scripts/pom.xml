@@ -4,14 +4,14 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.devonfw.ide.dev</groupId>
+    <groupId>com.devonfw.tools.ide.dev</groupId>
     <artifactId>devon-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
-  <groupId>com.devonfw.ide</groupId>
+  <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devon-ide-scripts</artifactId>
   <packaging>pom</packaging>
-  <version>${devon-ide.version}</version>
+  <version>${devon_ide_version}</version>
   <name>${project.artifactId}</name>
   <description>Scripts to setup and update the development environment.</description>
 
@@ -26,13 +26,13 @@
   <build>
     <outputDirectory>${project.build.directory}/package</outputDirectory>
     <resources>
-    <resource>
-      <directory>src/main/resources</directory>
-      <filtering>true</filtering>
-      <excludes>
-        <exclude>**/*.bak</exclude>
-      </excludes>
-    </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <excludes>
+          <exclude>**/*.bak</exclude>
+        </excludes>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -66,11 +66,49 @@
             </goals>
             <configuration>
               <includeScope>compile</includeScope>
-              <outputDirectory>${project.build.outputDirectory}/scripts</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/scripts/lib</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
+          </execution>
+          <execution>
+            <id>copy-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>compile</includeScope>
+              <classifier>sources</classifier>
+              <outputDirectory>${project.build.outputDirectory}/scripts/licenses/sourcecode</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <configuration>
+          <licensesOutputDirectory>${project.build.outputDirectory}/scripts/licenses</licensesOutputDirectory>
+          <outputDirectory>${project.build.outputDirectory}/scripts/licenses</outputDirectory>
+          <acceptPomPackaging>true</acceptPomPackaging>
+          <includedScopes>compile,runtime</includedScopes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>download-licenses</id>
+            <phase>package</phase>
+            <goals>
+              <goal>download-licenses</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>add-third-party</id>
+            <phase>package</phase>
+            <goals>
+              <goal>add-third-party</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
@@ -85,11 +123,7 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <appendAssemblyId>true</appendAssemblyId>
               <descriptors>
-                <descriptor>src/main/assembly/windows.xml</descriptor>
-                <descriptor>src/main/assembly/linux.xml</descriptor>
-                <descriptor>src/main/assembly/mac.xml</descriptor>
                 <descriptor>src/main/assembly/all.xml</descriptor>
               </descriptors>
             </configuration>

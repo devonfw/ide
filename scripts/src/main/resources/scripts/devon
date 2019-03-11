@@ -1,0 +1,145 @@
+#!/bin/bash
+# Source this script from a linux shell to setup the environment variables for the corresponding project.
+# hash bang only for filetype detection and editor syntax support
+
+if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
+then
+  echo "${devon_ide_version}"
+  return
+fi
+
+# Auto-install oursevles...
+if ! [  -f ~/.devon/devon ]
+then
+  echo "Copying devon CLI script to your home directory..."
+  mkdir -p ~/.devon
+  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  if [ ! -e ~/.bashrc ]
+  then
+    touch ~/.bashrc
+  fi
+  if ! grep -q "~/.devon/devon" ~/.bashrc
+  then
+    echo "Installing devon alias to your .bashrc"
+    echo "" >> ~/.bashrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.bashrc
+  fi
+  if [ ! -e ~/.zshrc ]
+  then
+    touch ~/.zshrc
+  fi
+  if ! grep -q "~/.devon/devon" ~/.zshrc
+  then
+    echo "Installing devon alias to your .zshrc"
+    echo "" >> ~/.zshrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.zshrc
+  fi
+  alias devon="source ~/.devon/devon"
+  echo "The devon CLI script has been installed to your system."
+  echo "Now in any new shell, you can call devon to setup your IDE enviromennt variables."
+  echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
+fi
+
+# initialize environment...
+L_PWD=${PWD}
+L_BASEDIR=${PWD}
+while true
+do
+  if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
+  then
+    source scripts/environment-project
+    if [ -z "${1}" ]
+    then
+      echo "devon-ide has environment variables have been set for ${PWD}"
+    fi
+    L_RESTDIR=${L_BASEDIR:${#PWD}}
+    WORKSPACE=main
+    if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]
+    then
+      L_RESTDIR=${L_RESTDIR:12}
+      L_RESTDIR=${L_RESTDIR/\/*/}
+      if [ -n "${L_RESTDIR}" ]
+      then
+        L_WKS=${PWD}/workspaces/${L_RESTDIR}
+        if [ -d "${L_WKS}" ]
+        then
+          if [ -f "${L_WKS}/variables" ]
+          then
+            source "${L_WKS}/variables"
+          fi
+          WORKSPACE="${L_RESTDIR}"
+        fi
+      fi
+    fi
+    export WORKSPACE
+    cd "${L_PWD}"
+    break
+  fi
+  L_LINKDIR=`readlink ${PWD}`
+  if [ "${?}" = 0 ]
+  then
+    cd "${L_LINKDIR}"
+    L_BASEDIR="${PWD}"
+  else
+    cd ..
+  fi
+  if [ "${PWD}" = "/" ]
+  then
+    echo "You are not inside a devon IDE installation: ${L_PWD}"
+    cd "${L_PWD}"
+    break
+  fi
+done
+L_PWD=
+L_BASEDIR=
+L_RESTDIR=
+
+# proceed with CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
+then
+  echo "usage: devon [command [args]]"
+  echo "Setup devonfw IDE environment and optionally lauch commands."
+  echo "Current version of devon-scripts is ${devon_ide_version}"
+  echo 
+  if [ -z "${2}" ]
+  then
+    echo "Commands:"
+    echo " help"
+    for command in "${DEVON_IDE_HOME}/scripts/command/"*
+    do
+      echo " `basename \"${command}\"`"
+    done
+    echo
+    echo "For further details use:"
+    echo "devon help <command>"
+  elif [ "${2}" = "help" ]
+  then
+    echo "devon help <command>"
+    echo "Print help for <command>"
+  else
+    command="${DEVON_IDE_HOME}/scripts/command/${2}"
+    if [ -f "${command}" ]
+    then
+      "${command}" -h
+    else
+      echo "Unknown command: ${2}"
+      return -1
+    fi
+  fi
+  return
+elif [ -n "${1}" ]
+then
+  command="${DEVON_IDE_HOME}/scripts/command/${1}"
+  if [ -f "${command}" ]
+  then
+    shift
+    if [ ! -x "${command}" ]
+    then
+      echo "Command is not executable. Trying to repair"
+      chmod a+x "${command}"
+    fi
+    "${command}" ${@}
+  else
+    devcon ${@}
+  fi
+fi

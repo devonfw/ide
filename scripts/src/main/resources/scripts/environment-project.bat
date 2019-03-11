@@ -1,65 +1,73 @@
 rem This batch is not supposed to be called manually
 @echo off
 
-call variables.bat
-if exist variables-customized.bat (
-  call variables-customized.bat
+set DEVON_IDE_HOME=%CD%
+call "scripts\variables.bat"
+if exist "conf\variables.bat" (
+  call "conf\variables.bat"
 )
-if "%WORKSPACE%" == "" (
-  set WORKSPACE=%MAIN_BRANCH%
-)
-
-if "%SETTINGS_PATH%" == "" (
-  set SETTINGS_PATH=%WORKSPACES_PATH%\%MAIN_BRANCH%\%SETTINGS_REL_PATH%
-)
-set WORKSPACE_PATH=%CD%\%WORKSPACES_PATH%\%WORKSPACE%
-
 if exist "%SETTINGS_PATH%\ide-properties.bat" (
   call "%SETTINGS_PATH%\ide-properties.bat"
 )
+if "%WORKSPACE%" == "" (
+  set WORKSPACE=main
+)
+set WORKSPACE_PATH=%CD%\workspaces\%WORKSPACE%
+if not exist "%WORKSPACE_PATH%" (
+  if "%WORKSPACE%" == "main" (
+    echo Creating main workspace directory
+    md "%WORKSPACE_PATH%"
+  ) else (
+    echo WARNING: Worksapce %WORKSPACE% does not exist
+  )
+)
 
-set OASP4J_IDE_VERSION=${project.version}
-set IDE_CONFIGURATOR=devon-ide-configurator-${devon-ide.version}.jar
+rem copy defaults
+if not exist "conf" (
+  md "conf"
+)
+if exist "%SETTINGS_PATH%" (
+  if not exist "conf\variables.bat" (
+    if exist "%SETTINGS_PATH%\devon\variables.bat" (
+      copy "%SETTINGS_PATH%\devon\variables.bat" "conf\"
+	)
+  )
+  if not exist "conf\variables-customized.bat" (
+    if exist "%SETTINGS_PATH%\devon\variables-customized.bat" (
+      copy "%SETTINGS_PATH%\devon\variables-customized.bat" "conf\"
+	)
+  )
+) else (
+  echo
+  echo *** ATTENTION ***
+  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
+  echo Please run the following command to complete your IDE setup:
+  echo devon ide setup
+)
 
-rem ********************************************************************************
-rem Java
-set JAVA_HOME=%SOFTWARE_PATH%\java
-rem set JAVA_OPTS=-Dhttp.proxyHost=myproxy.com -Dhttp.proxyPort=8080
-
-rem ********************************************************************************
-rem Maven
-
-set M2_HOME=%SOFTWARE_PATH%\maven
-set M2_CONF=%CD%\%CONF_PATH%\.m2\settings.xml
-
-set MAVEN_OPTS=%MAVEN_OPTS% -Xmx512m -Duser.home=%CD%\%CONF_PATH%
-set MAVEN_HOME=%M2_HOME%
-
-rem ********************************************************************************
-rem Eclipse
-set ECLIPSE_HOME=%SOFTWARE_PATH%\eclipse
-set ECLIPSE_OPT=-vm "%JAVA_HOME%\bin\javaw" -showlocation %WORKSPACE% -vmargs %ECLIPSE_VMARGS%
-
-rem ********************************************************************************
-rem Path
-setlocal ENABLEDELAYEDEXPANSION
+rem setup path
+if not defined DEVON_OLD_PATH (
+  set "DEVON_OLD_PATH=%PATH%"
+)
+set SOFTWARE_PATH=%CD%\software
+setlocal EnableDelayedExpansion
 for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
   if exist "%SOFTWARE_PATH%\%%i\bin" (
     set "IDE_PATH=%SOFTWARE_PATH%\%%i\bin;!IDE_PATH!"
   ) else (
     set "IDE_PATH=%SOFTWARE_PATH%\%%i;!IDE_PATH!"
   )
-
+  rem Load custom configuration of software
   if exist "%SOFTWARE_PATH%\%%i\ide-config.bat" (
     call "%SOFTWARE_PATH%\%%i\ide-config.bat"
   )
 )
 (
   endlocal
-  set "PATH=%IDE_PATH%%PATH%"
+  set "PATH=%IDE_PATH%%DEVON_OLD_PATH%"
 )
-rem ********************************************************************************
-rem Node.JS support
+
+rem node.js support
 if exist "%SOFTWARE_PATH%\nodejs" (
   if not exist "%APPDATA%\npm" (
     md "%APPDATA%\npm";
@@ -67,4 +75,6 @@ if exist "%SOFTWARE_PATH%\nodejs" (
   set "PATH=%PATH%;%APPDATA%\npm"
 )
 
-echo IDE environment has been initialized.
+if exist conf\variables-customized.bat (
+  call conf\variables-customized.bat
+)

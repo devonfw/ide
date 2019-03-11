@@ -21,9 +21,11 @@ import com.devonfw.ide.configurator.merge.PropertiesMerger;
  */
 public class ConfiguratorTest extends Assertions {
 
+  private static final String DEVON_IDE_HOME = new File("").getAbsolutePath();
+
   private static final Prop JAVA_VERSION = new Prop("java.version", "1.11");
 
-  private static final Prop JAVA_HOME = new Prop("java.home", new File("").getAbsolutePath() + "/software/java");
+  private static final Prop JAVA_HOME = new Prop("java.home", DEVON_IDE_HOME + "/software/java");
 
   private static final Prop THEME = new Prop("theme", "dark");
 
@@ -49,7 +51,7 @@ public class ConfiguratorTest extends Assertions {
     String tmp = System.getProperty("java.io.tmpdir");
     File tmpDir = new File(tmp);
     File workspaceDir = createUniqueFolder(tmpDir, ".test.workspace");
-    String clientEnvHome = new File("").getAbsolutePath();
+    String clientEnvHome = DEVON_IDE_HOME;
 
     // when
     int exitCode = configurator.run("-t", "src/test/resources/templates", "-w", workspaceDir.getAbsolutePath(), "-u");
@@ -59,19 +61,35 @@ public class ConfiguratorTest extends Assertions {
     File mainPrefsFile = new File(workspaceDir, "main.prefs");
     Properties mainPrefs = PropertiesMerger.load(mainPrefsFile);
     assertThat(mainPrefs).containsOnly(JAVA_VERSION, JAVA_HOME, THEME, UI);
+    File jsonFolder = new File(workspaceDir, "json");
+    assertThat(jsonFolder).isDirectory();
+    assertThat(new File(jsonFolder, "settings.json")).hasContent("\n" // this newline is rather a bug of JSON-P impl
+        + "{\n" //
+        + "    \"java.home\": \"" + DEVON_IDE_HOME + "/software/java\",\n" //
+        + "    \"object\": {\n" //
+        + "        \"bar\": \"" + DEVON_IDE_HOME + "/bar\",\n" //
+        + "        \"array\": [\n" //
+        + "            \"a\",\n" //
+        + "            \"b\",\n" //
+        + "            \"" + DEVON_IDE_HOME + "\"\n" //
+        + "        ],\n" //
+        + "        \"foo\": \"" + DEVON_IDE_HOME + "/foo\"\n" //
+        + "    }\n" //
+        + "}");
+
     File configFolder = new File(workspaceDir, "config");
     assertThat(configFolder).isDirectory();
     File indentFile = new File(configFolder, "indent.properties");
     Properties indent = PropertiesMerger.load(indentFile);
     assertThat(indent).containsOnly(INDENTATION);
     assertThat(new File(configFolder, "layout.xml")).hasContent("" //
-        + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" //
-        + "<layout>\r\n" //
-        + "  <left>navigator</left>\r\n" //
-        + "  <right>debugger</right>\r\n" //
-        + "  <top>editor</top>\r\n" //
-        + "  <bottom>console</bottom>\r\n" //
-        + "  <test path=\"" + clientEnvHome + "\">" + clientEnvHome + "</test>\r\n" //
+        + "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" // here a newline would be reasonable...
+        + "<layout>\n" //
+        + "  <left>navigator</left>\n" //
+        + "  <right>debugger</right>\n" //
+        + "  <top>editor</top>\n" //
+        + "  <bottom>console</bottom>\n" //
+        + "  <test path=\"" + clientEnvHome + "\">" + clientEnvHome + "</test>\n" //
         + "</layout>");
 
     // and after
@@ -79,6 +97,7 @@ public class ConfiguratorTest extends Assertions {
     JAVA_VERSION_HACKED.apply(mainPrefs);
     UI_HACKED.apply(mainPrefs);
     THEME_HACKED.apply(mainPrefs);
+    INDENTATION_HACKED.apply(mainPrefs);
     PropertiesMerger.save(mainPrefs, mainPrefsFile);
 
     // when
@@ -87,7 +106,7 @@ public class ConfiguratorTest extends Assertions {
 
     // then
     mainPrefs = PropertiesMerger.load(mainPrefsFile);
-    assertThat(mainPrefs).containsOnly(JAVA_VERSION, JAVA_HOME, THEME_HACKED, UI_HACKED, EDITOR);
+    assertThat(mainPrefs).containsOnly(JAVA_VERSION, JAVA_HOME, THEME_HACKED, UI_HACKED, EDITOR, INDENTATION_HACKED);
 
     // finally cleanup
     delete(workspaceDir.toPath());

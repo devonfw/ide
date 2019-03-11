@@ -13,6 +13,8 @@
       <excludes>
         <exclude>**/*.txt</exclude>
         <exclude>**/*.jar</exclude>
+        <exclude>**/*.bat</exclude>
+        <exclude>**/*.reg</exclude>
       </excludes>
       <fileMode>0755</fileMode>
     </fileSet>

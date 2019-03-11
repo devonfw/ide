@@ -2,7 +2,7 @@
 <!-- $Id: pom.xml 6 2013-09-13 10:20:34Z hohwille $ -->
 <project  xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.devonfw.ide.dev</groupId>
+  <groupId>com.devonfw.tools.ide.dev</groupId>
   <artifactId>devon-ide</artifactId>
   <packaging>pom</packaging>
   <version>dev-SNAPSHOT</version>
@@ -12,7 +12,7 @@
   <inceptionYear>2013</inceptionYear>
 
   <properties>
-    <devon-ide.version>3.0.0-SNAPSHOT</devon-ide.version>
+    <devon_ide_version>3.0.0-beta1-SNAPSHOT</devon_ide_version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -113,6 +113,16 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.12.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>license-maven-plugin</artifactId>
+          <version>1.17</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -217,8 +227,8 @@
   
   <licenses>
     <license>
-      <name>Apache Software Licenese</name>
-      <url>http://oasp.github.io/terms-of-use.html</url>
+      <name>Apache Software License, Version 2.0</name>
+      <url>https://raw.githubusercontent.com/devonfw/devon-ide/master/LICENSE</url>
       <distribution>repo</distribution>
       <comments/>
     </license>

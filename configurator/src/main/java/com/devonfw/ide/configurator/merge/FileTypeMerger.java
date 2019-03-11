@@ -1,7 +1,6 @@
 package com.devonfw.ide.configurator.merge;
 
 import java.io.File;
-import java.util.logging.Level;
 
 import com.devonfw.ide.configurator.logging.Log;
 
@@ -21,7 +20,7 @@ public abstract class FileTypeMerger implements FileMerger {
     File parentDir = file.getParentFile();
     if (!parentDir.exists()) {
       if (!parentDir.mkdirs()) {
-        Log.LOGGER.log(Level.ALL, "Could not create required directories for file: " + file.getAbsolutePath());
+        Log.err("Could not create required directories for file: " + file.getAbsolutePath());
         return;
       }
     }

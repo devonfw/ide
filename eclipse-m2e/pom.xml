@@ -4,13 +4,13 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.devonfw.ide.dev</groupId>
+    <groupId>com.devonfw.tools.ide.dev</groupId>
     <artifactId>devon-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
   <artifactId>devon-ide-eclipse-m2e</artifactId>
   <packaging>jar</packaging>
-  <version>${devon-ide.version}</version>
+  <version>${devon_ide_version}</version>
   <name>${project.artifactId}</name>
   <description>Maven example project to trigger/enforce the installation of m2e plugins</description>
 

@@ -130,7 +130,7 @@ public class XmlMerger extends FileTypeMerger {
     merge(workspaceDocument, updateDocument, true, addNewProperties);
     resolve(updateDocument, resolver, true);
     save(updateDocument, updateFile);
-    Log.LOGGER.info("Saved changes in " + workspaceFile.getName() + " to: " + updateFile.getAbsolutePath());
+    Log.debug("Saved changes in " + workspaceFile.getName() + " to: " + updateFile.getAbsolutePath());
   }
 
   public static Document load(File file) {

@@ -4,14 +4,14 @@
   
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.devonfw.ide.dev</groupId>
+    <groupId>com.devonfw.tools.ide.dev</groupId>
     <artifactId>devon-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
-  <groupId>com.devonfw.ide</groupId>
+  <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devon-ide-settings</artifactId>
   <packaging>pom</packaging>
-  <version>${devon-ide.version}</version>
+  <version>${devon_ide_version}</version>
   <name>${project.artifactId}</name>
   <description>Settings with configuration templates for devon-ide. You are supposed to copy and commit them to your version control system.</description>
 

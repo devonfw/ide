@@ -4,18 +4,28 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.devonfw.ide.dev</groupId>
+    <groupId>com.devonfw.tools.ide.dev</groupId>
     <artifactId>devon-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
-  <groupId>com.devonfw.ide</groupId>
+  <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devon-ide-configurator</artifactId>
   <packaging>jar</packaging>
-  <version>${devon-ide.version}</version>
+  <version>${devon_ide_version}</version>
   <name>${project.artifactId}</name>
   <description>Code for configurator the creates or updates configuration of IDEs (Eclipse, etc.).</description>
 
   <dependencies>
+    <dependency>
+      <groupId>javax.json</groupId>
+      <artifactId>javax.json-api</artifactId>
+      <version>1.1.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>1.1.4</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

@@ -2,7 +2,6 @@ package com.devonfw.ide.configurator;
 
 import java.io.File;
 import java.util.Properties;
-import java.util.logging.Level;
 
 import com.devonfw.ide.configurator.logging.Log;
 import com.devonfw.ide.configurator.merge.DirectoryMerger;
@@ -126,9 +125,9 @@ public class Configurator {
       }
       value = VariableResolverImpl.normalizePath(value);
       properties.put(key, value);
-      Log.LOGGER.fine("Variable '" + key + "' = " + value);
+      Log.debug("Variable '" + key + "' = " + value);
     } else {
-      Log.LOGGER.info("Variable '" + key + "' is undefined");
+      Log.info("Variable '" + key + "' is undefined");
     }
   }
 
@@ -177,21 +176,31 @@ public class Configurator {
       this.setupFolder = new File(templatesFolder, FOLDER_SETUP);
       this.updateFolder = new File(templatesFolder, FOLDER_UPDATE);
 
+      File parentFile = templatesFolder.getParentFile();
+      String ide = parentFile.getName();
+      if ("workspace".equals(ide)) {
+        parentFile = parentFile.getParentFile();
+        ide = parentFile.getName();
+      }
+      String prefix = ide + "-";
       if (OPTION_UPDATE.equals(command)) {
-        Log.LOGGER.info("Starting setup/update of workspace...");
+        Log.init(prefix + "update");
+        Log.debug("Starting setup/update of workspace...");
         createOrUpdateWorkspace();
       } else if (OPTION_INVERSE.equals(command)) {
-        Log.LOGGER.info("Merging changes of workspace back to settings ...");
+        Log.init(prefix + "inverse-merge");
+        Log.debug("Merging changes of workspace back to settings ...");
         saveChangesInWorkspace(false);
       } else if (OPTION_EXTEND.equals(command)) {
-        Log.LOGGER.info("Merging changes of workspace back to settings (adding new properties)...");
+        Log.init(prefix + "inverse-merge-add");
+        Log.debug("Merging changes of workspace back to settings (adding new properties)...");
         saveChangesInWorkspace(true);
       } else {
         throw new IllegalStateException(command);
       }
       return 0;
     } catch (Exception e) {
-      Log.LOGGER.log(Level.SEVERE, "Configurator failed: " + e.getMessage(), e);
+      Log.err("Configurator failed: " + e.getMessage(), e);
       e.printStackTrace();
       return -1;
     }
@@ -248,7 +257,7 @@ public class Configurator {
       buffer.append(' ');
       buffer.append(arg);
     }
-    Log.LOGGER.info(buffer.toString());
+    Log.debug(buffer.toString());
   }
 
 }
