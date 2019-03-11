@@ -135,11 +135,11 @@ then
     shift
     if [ ! -x "${command}" ]
     then
-      echo "Command is not executable. Trying to repair"
+      echo "Command ${1} is not executable. Trying to repair"
       chmod a+x "${command}"
     fi
     "${command}" ${@}
   else
-    devcon ${@}
+    echo "Unknown command ${1}"
   fi
 fi

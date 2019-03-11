@@ -17,17 +17,17 @@ then
   echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
   exit
 fi
-RUN=
+run=
 while [ -n "${1}" ]
 do
-  RUN=
+  run=
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    RUN=true
+    run=true
   else
-    if [ "${RUN}" != "true" ]
+    if [ "${run}" != "true" ]
     then
-      RUN=false
+      run=false
     fi
     
     if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
@@ -148,7 +148,7 @@ then
   CONFIGURATOR_ACTION="created"
 fi 
 
-if [ "${RUN}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
+if [ "${run}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
 then
   if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
   then
@@ -171,7 +171,7 @@ then
  echo "Created script eclipse-$WORKSPACE"
 fi
 
-if [ "${RUN}" != "false" ]
+if [ "${run}" != "false" ]
 then
   echo "launching Eclipse..."
   eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
