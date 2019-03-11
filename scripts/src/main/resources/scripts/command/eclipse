@@ -100,7 +100,7 @@ else
     ECLIPSE_PLUGINS=(
       "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
       "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
-      "http://findbugs.cs.umd.edu/eclipse/" "edu.umd.cs.findbugs.plugin.eclipse.feature.group"
+      "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
       "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
       "http://www.objectaid.com/update/current" "com.objectaid.uml.cls.feature.group,com.objectaid.uml.addon.feature.group,com.objectaid.uml.seq.feature.group"
       "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
