@@ -8,8 +8,8 @@ if "%1%" == "--version" (
 pushd %CD%
 
 rem Auto-install oursevles...
-if not exist "%USERPROFILE%/scripts" (
-  md "%USERPROFILE%/scripts"
+if not exist "%USERPROFILE%\scripts" (
+  md "%USERPROFILE%\scripts"
 )
 if not exist "%USERPROFILE%\scripts\devon.bat" (
   echo Copying devon CLI script to your home directory...
@@ -56,13 +56,13 @@ goto :iterate_backwards
 
 :cli
 if not "%1%" == "" (
-  if exist "%ProgramFiles%/Git/bin/bash.exe" (
-    "%ProgramFiles%/Git/bin/bash.exe" -c 'devon %*'
+  if exist "%ProgramFiles%\Git\bin\bash.exe" (
+    "%ProgramFiles%\Git\bin\bash.exe" -c 'devon %*'
   ) else (
     echo
-	echo *** ATTENTION ***
+    echo *** ATTENTION ***
     echo Bash has not been found on your system!
-	echo Please install git for windows on your system.
+    echo Please install git for windows on your system.
   )
 )
 

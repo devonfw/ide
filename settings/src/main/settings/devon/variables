@@ -1,9 +1,10 @@
 #********************************************************************************
 # This file contains project sepcific environment variables
 # For user-specific environment variables please edit
-# conf/variables-customized
+# DEVON_IDE_HOME/conf/variables
+# For details see https://github.com/devonfw/devon-ide/wiki/configuration
 #********************************************************************************
 
 # Uncomment the following line to get the legacy default config back for the settings
-#export SETTINGS_PATH=${PWD}/workspaces/main/development/settings
+#export SETTINGS_PATH=${DEVON_IDE_HOME}/workspaces/main/development/settings
 
