@@ -56,8 +56,12 @@ goto :iterate_backwards
 
 :cli
 if not "%1%" == "" (
-  if exist "%ProgramFiles%\Git\bin\bash.exe" (
-    "%ProgramFiles%\Git\bin\bash.exe" -c 'devon %*'
+  set BASH=%ProgramFiles%\Git\bin\bash.exe
+  if not exist "%BASH%" (
+    set BASH=%ProgramFiles(x86)%\Git\bin\bash.exe
+  )
+  if exist "%BASH%" (
+    "%BASH%" -c 'devon %*'
   ) else (
     echo
     echo *** ATTENTION ***

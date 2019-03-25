@@ -8,38 +8,6 @@ then
   return
 fi
 
-# Auto-install oursevles...
-if ! [  -f ~/.devon/devon ]
-then
-  echo "Copying devon CLI script to your home directory..."
-  mkdir -p ~/.devon
-  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
-  if [ ! -e ~/.bashrc ]
-  then
-    touch ~/.bashrc
-  fi
-  if ! grep -q "~/.devon/devon" ~/.bashrc
-  then
-    echo "Installing devon alias to your .bashrc"
-    echo "" >> ~/.bashrc
-    echo 'alias devon="source ~/.devon/devon"' >> ~/.bashrc
-  fi
-  if [ ! -e ~/.zshrc ]
-  then
-    touch ~/.zshrc
-  fi
-  if ! grep -q "~/.devon/devon" ~/.zshrc
-  then
-    echo "Installing devon alias to your .zshrc"
-    echo "" >> ~/.zshrc
-    echo 'alias devon="source ~/.devon/devon"' >> ~/.zshrc
-  fi
-  alias devon="source ~/.devon/devon"
-  echo "The devon CLI script has been installed to your system."
-  echo "Now in any new shell, you can call devon to setup your IDE enviromennt variables."
-  echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
-fi
-
 # initialize environment...
 L_PWD=${PWD}
 L_BASEDIR=${PWD}
@@ -94,52 +62,86 @@ L_PWD=
 L_BASEDIR=
 L_RESTDIR=
 
+# Auto-install oursevles...
+if ! [  -f ~/.devon/devon ]
+then
+  echo "Copying devon CLI script to your home directory..."
+  mkdir -p ~/.devon  
+  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  if [ ! -e ~/.bashrc ]
+  then
+    touch ~/.bashrc
+  fi
+  if ! grep -q "~/.devon/devon" ~/.bashrc
+  then
+    echo "Installing devon alias to your .bashrc"
+    echo "" >> ~/.bashrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.bashrc
+  fi
+  if [ ! -e ~/.zshrc ]
+  then
+    touch ~/.zshrc
+  fi
+  if ! grep -q "~/.devon/devon" ~/.zshrc
+  then
+    echo "Installing devon alias to your .zshrc"
+    echo "" >> ~/.zshrc
+    echo 'alias devon="source ~/.devon/devon"' >> ~/.zshrc
+  fi
+  alias devon="source ~/.devon/devon"
+  echo "The devon CLI script has been installed to your system."
+  echo "Now in any new shell, you can call devon to setup your IDE enviromennt variables."
+  echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
+fi
+if ! [ -f ~/.devon/home ] && [ -n "${DEVON_IDE_HOME}" ]
+then
+  echo "DEVON_IDE_HOME=${DEVON_IDE_HOME}" > ~/.devon/home
+fi
+
 # proceed with CLI
-if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
+if [ -n "${1}" ]
 then
-  echo "usage: devon [command [args]]"
-  echo "Setup devonfw IDE environment and optionally lauch commands."
-  echo "Current version of devon-scripts is ${devon_ide_version}"
-  echo 
-  if [ -z "${2}" ]
+  command="${1}"
+  if [ "${1}" = "-h" ] || [ "${1}" = "--help" ]
   then
-    echo "Commands:"
-    echo " help"
-    for command in "${DEVON_IDE_HOME}/scripts/command/"*
-    do
-      echo " `basename \"${command}\"`"
-    done
-    echo
-    echo "For further details use:"
-    echo "devon help <command>"
-  elif [ "${2}" = "help" ]
+    command="help"
+  fi
+  shift
+  args=${@}
+  if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
   then
-    echo "devon help <command>"
-    echo "Print help for <command>"
-  else
-    command="${DEVON_IDE_HOME}/scripts/command/${2}"
-    if [ -f "${command}" ]
+    args="${command}"
+    command="help"
+  fi
+  if [ -z "${DEVON_IDE_HOME}" ]
+  then
+    if [ -f ~/.devon/home ]
     then
-      "${command}" -h
-    else
-      echo "Unknown command: ${2}"
-      return -1
+      source ~/.devon/home
     fi
   fi
-  return
-elif [ -n "${1}" ]
-then
-  command="${DEVON_IDE_HOME}/scripts/command/${1}"
-  if [ -f "${command}" ]
+  if ! [ -d "${DEVON_IDE_HOME}" ]
   then
-    shift
-    if [ ! -x "${command}" ]
+    echo "ERROR: DEVON_IDE_HOME does not exist!"
+    if [ -n "${DEVON_IDE_HOME}" ]
     then
-      echo "Command ${1} is not executable. Trying to repair"
-      chmod a+x "${command}"
+      echo "${DEVON_IDE_HOME}"
+      echo "It seems as if you original installation has been moved."
+      if [ -f ~/.devon/home ]
+      then
+        rm ~/.devon/home
+      fi      
     fi
-    "${command}" ${@}
-  else
-    echo "Unknown command ${1}"
   fi
+  if [ -f "${DEVON_IDE_HOME}/scripts/command/${command}" ]
+  then
+    if [ ! -x "${DEVON_IDE_HOME}/scripts/command/${command}" ]
+    then
+      echo "Command ${command} is not executable. Trying to repair"
+      chmod a+x "${DEVON_IDE_HOME}/scripts/command/${command}"
+    fi
+    "${DEVON_IDE_HOME}/scripts/command/${command}" ${args}
+  else
+    echo "Unknown command ${command}"
+  fi  
 fi

@@ -1,0 +1,31 @@
+#!/bin/bash
+source `dirname $0`/../functions
+echo
+doLogo
+echo
+echo "Current version of devon-scripts is ${devon_ide_version}"
+echo
+if [ -z "${1}" ]
+then
+  echo "usage: devon [command [args]]"
+  echo "Setup devonfw IDE environment and optionally lauch commands."
+  echo 
+  echo "Commands:"
+  for command in "${DEVON_IDE_HOME}/scripts/command/"*
+  do
+    echo " `basename \"${command}\"`"
+  done
+  echo
+  echo "For further details use:"
+  echo "devon help <command>"
+else
+  echo "usage: devon ${1} [args]"
+  echo
+  if [ "${1}" = "help" ]
+  then
+    echo "devon help <command>"
+    echo "Print help for <command>"
+  else
+    doDevonCommand "${1}" help
+  fi
+fi

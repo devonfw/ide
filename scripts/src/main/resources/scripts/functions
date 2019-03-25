@@ -65,6 +65,67 @@ function doRunCommand() {
   doResult "${message}" ${result}
 }
 
+function doLogo() {
+  local logo=(
+"     devondevon  dev                                                                                                   "
+"    devondevon  devon                  dd                                                      fffff                   "
+"   devondevon  devondev               ddd                                                     ffffff                   "
+"  devondevon  devondevon              ddd                                                     ff                       "
+" devondevon    devondevon        dddddddd   eeeeeee  vvv         vvv   oooo      nnnnnn     fffffff ww               ww"
+"devondevon      devondevon     dddddddddd  eeeeeeeeee vvv       vvv oooooooooo  nnnnnnnnnn  fffffff  ww      w      ww "
+"devondevon       devondevon   dddd    ddd eeee    eee  vvv     vvv oooo    oooo nnn     nnn   ff      ww    www    ww  "
+"devondevon      devondevon    ddd     ddd eeeeeeeeeee   vvv   vvv  ooo      ooo nnn      nnn  ff       ww  wwwww  ww   "
+" devondevon    devondevon     ddd     ddd eeeeeeeeeee    vvvvvvv   ooo      ooo nnn      nnn  ff        ww wwwww ww    "
+"  devondevon  devondevon       ddd    ddd eeee            vvvvv     ooo    ooo  nnn      nnn  ff         wwww wwww     "
+"   devondev  devondevon         dddddddd   eeeeeeeeee      vvv       oooooooo   nnn      nnn  ff          ww   ww      "
+"     devon  devondevon            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
+"      dev  devondevon                                                                                                  "
+  )
+  local len=`tput cols`;
+  if [ "$?" != 0 ]
+  then
+    len=80
+  fi
+  if [ "${len}" -gt 120 ]
+  then
+    len=120
+  fi
+  for ((i=0; i<${#logo[*]}; i=i+1))
+  do
+    echo "${logo[${i}]:0:$len}"
+  done
+}
+
+function doLicenseAgreement() {
+  if ! [ -f ~/.devon/.license.agreement ]
+  then
+    echo
+    doLogo
+    echo
+    echo "Welcome to devon-ide!"
+    echo "This product and its 3rd party components is open-source software."
+    echo "However, before using it you need to read and accept the license agreement and terms of use."
+    echo "You will be able to find it in one of the following locations:"
+    echo "${DEVON_IDE_HOME}/TERMS_OF_USE.adoc"
+    echo "https://github.com/devonfw/devon-ide/wiki/license"
+    echo
+    while true
+    do
+      read -p "Do you accept this terms of use and all license agreements? (yes/no) " answer
+      case "${answer}" in
+        yes)
+          echo -e "On `date +"%Y-%m-%d"` at `date +"%H:%M:%S"` you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
+          break;;
+        no)
+          exit -1;;
+        *)
+          echo "Please answer yes or no.";;
+      esac
+    done
+    echo
+  fi
+}
+
 # ${1}: devon command name
 # ${n+1}: additional args
 function doDevonCommand() {
@@ -97,6 +158,7 @@ function doDevonCommand() {
 
 # $1: the URL to download
 function doDownload() {
+  doLicenseAgreement
   local target_dir=~/Downloads
   local filename="${1/*\//}"
   local target="${target_dir}/${filename}"
@@ -203,7 +265,7 @@ function doReplaceExtractedFile() {
 # $1: name of file or folder to move from the extracted archive
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
-  local backup_dir="updates/backups/`date +"%m-%d-%y/%H-%M-%S"`"
+  local backup_dir="updates/backups/`date +"%y-%m-%d/%H-%M-%S"`"
   if [ -z "${1}" ] || [ "${1}" = '*' ]
   then
     for extracted_file in ${DEVON_IDE_HOME}/updates/extracted/*
@@ -271,6 +333,7 @@ function doMavenArchetype() {
 # $5: suffix (e.g. '-sources.jar')
 # $6: currentVersion
 function doUpgradeMavenArtifact() {
+  doLicenseAgreement
   if [ -d "${1}/.git" ]
   then
     echo "Found git repository ${1} - updating via git"
@@ -492,9 +555,7 @@ function doIsWindows() {
 
 if [ -z "${DEVON_IDE_HOME}" ]
 then
-  local path=`dirname ${BASH_SOURCE:-$0}`
-  path=`dirname ${path}`
-  DEVON_IDE_HOME="${path}"
+  DEVON_IDE_HOME="`dirname ${BASH_SOURCE:-$0}`/.."
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 source "${DEVON_IDE_HOME}/scripts/variables"
