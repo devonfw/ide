@@ -35,7 +35,7 @@ public class SortedProperties extends Properties {
   @Override
   public Set<Object> keySet() {
 
-    SortedSet<Object> set = new TreeSet<Object>(super.keySet());
+    SortedSet<Object> set = new TreeSet<>(super.keySet());
     return set;
   }
 

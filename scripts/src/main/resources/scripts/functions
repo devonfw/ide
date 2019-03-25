@@ -226,6 +226,10 @@ function doExtract() {
     doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${1}'"
     doRunCommand "cp -a '${mount_dir}' '${target_dir}'"
     doRunCommand "hdiutil detach '${mount_dir}'"
+    if [ -e "${target_dir}/Applications" ]
+    then
+      rm "${target_dir}/Applications"
+    fi
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}" ${result}
   fi

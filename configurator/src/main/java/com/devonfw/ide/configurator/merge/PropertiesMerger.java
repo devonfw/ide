@@ -47,6 +47,10 @@ public class PropertiesMerger extends FileTypeMerger {
     Log.trace("Saved merged properties to: " + workspaceFile);
   }
 
+  /**
+   * @param file the {@link File} to load.
+   * @return the loaded {@link Properties}.
+   */
   public static Properties load(File file) {
 
     Properties properties = new Properties();
@@ -54,6 +58,10 @@ public class PropertiesMerger extends FileTypeMerger {
     return properties;
   }
 
+  /**
+   * @param file the {@link File} to load.
+   * @return the loaded {@link Properties}.
+   */
   public static Properties loadIfExists(File file) {
 
     Properties properties = new Properties();
@@ -67,6 +75,10 @@ public class PropertiesMerger extends FileTypeMerger {
     return properties;
   }
 
+  /**
+   * @param properties the existing {@link Properties} instance.
+   * @param file the properties {@link File} to load.
+   */
   public static void load(Properties properties, File file) {
 
     Log.trace("Loading properties file " + file);
@@ -87,6 +99,10 @@ public class PropertiesMerger extends FileTypeMerger {
     }
   }
 
+  /**
+   * @param properties the {@link Properties} to save.
+   * @param file the {@link File} to save to.
+   */
   public static void save(Properties properties, File file) {
 
     Log.trace("Saving properties file " + file);

@@ -93,10 +93,7 @@ fi
 
 if [ "${create_script}" = "true" ]
 then
- echo "#!/bin/bash" > vscode-$WORKSPACE
- echo "cd \`dirname \${0}\`" >> vscode-$WORKSPACE
- echo "cd workspaces/${WORKSPACE}" >> vscode-$WORKSPACE
- echo "source ${DEVON_IDE_HOME}/scripts/devon vscode" >> eclipse-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon vscode" > vscode-$WORKSPACE
  chmod a+x vscode-$WORKSPACE
  echo "Created script vscode-$WORKSPACE"
 fi

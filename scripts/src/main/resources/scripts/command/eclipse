@@ -84,10 +84,6 @@ else
   if doIsMacOs
   then
     echo "Doing workarounds for MacOS quirks..."
-    if [ -e "${ECLIPSE_HOME}/Applications" ]
-    then
-      rm "${ECLIPSE_HOME}/Applications"
-    fi
     echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
     chmod a+x "${ECLIPSE_HOME}/eclipse"
   fi
@@ -162,10 +158,7 @@ fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]
 then
- echo "#!/bin/bash" > eclipse-$WORKSPACE
- echo "cd \`dirname \${0}\`" >> eclipse-$WORKSPACE
- echo "cd workspaces/${WORKSPACE}" >> eclipse-$WORKSPACE
- echo "source ${DEVON_IDE_HOME}/scripts/devon eclipse" >> eclipse-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-$WORKSPACE
  chmod a+x eclipse-$WORKSPACE
  echo "Created script eclipse-$WORKSPACE"
 fi

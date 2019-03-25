@@ -36,11 +36,6 @@ public class Configurator {
   /** The directory where java was executed from. */
   public static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
 
-  /**
-   * Variable to be replaced with CLIENT_ENV_HOME.
-   */
-  public static final String CLIENT_ENV_HOME_VARIABLE = "client.env.home";
-
   private static final String OPTION_VARIABLES = "-v";
 
   private static final String OPTION_WORKSPACE = "-w";
@@ -99,7 +94,8 @@ public class Configurator {
   private VariableResolver createResolver(File variablesFile) {
 
     Properties variables = PropertiesMerger.loadIfExists(variablesFile);
-    putVariable(variables, CLIENT_ENV_HOME_VARIABLE, CURRENT_WORKING_DIRECTORY);
+    putVariable(variables, VariableResolver.VARIABLE_DEVON_IDE_HOME, CURRENT_WORKING_DIRECTORY);
+    putVariable(variables, VariableResolver.VARIABLE_WORKSPACE_PATH, this.workspaceFolder.getPath());
     putSystemProperty(variables, "java.home");
     putEnvironmentVariable(variables, "JAVA_HOME");
     putEnvironmentVariable(variables, "ECLIPSE_HOME");
@@ -165,7 +161,7 @@ public class Configurator {
     }
     if (!verifyFolder(this.workspaceFolder, "workspace")) {
       return -1;
-    } else if (!verifyFolder(templatesFolder, "templates")) {
+    } else if (!verifyFolder(templatesFolder, "templates") || (templatesFolder == null)) {
       return -1;
     } else if (command == null) {
       command = OPTION_UPDATE;

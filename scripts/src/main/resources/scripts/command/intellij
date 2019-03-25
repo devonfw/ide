@@ -1,0 +1,131 @@
+#!/bin/bash
+cd `dirname $0`
+cd ../..
+source scripts/functions
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Manage IntelliJ IDE and workspace."
+  echo
+  echo "Arguments:"
+  echo " setup              setup IntelliJ (install and verify)"
+  echo " run | start        launch IntelliJ IDE (default if no argument is given)"
+  echo " ws-up[date]        update IntelliJ workspace"
+  echo " ws-re[verse]       reverse merge changes from workspace into settings"
+  echo " ws-reverse-add     reverse merge adding new properties"
+  echo " create-script      create intellij-${WORKSPACE} script if not already exists"
+  exit
+fi
+run=
+while [ -n "${1}" ]
+do
+  run=
+  if [ "${1}" = "run" ] || [ "${1}" = "start" ]
+  then
+    run=true
+  else
+    if [ "${run}" != "true" ]
+    then
+      run=false
+    fi
+    
+    if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+    then
+      CONFIGURATOR_MODE="-u"
+      CONFIGURATOR_ACTION="updated"
+    elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+    then
+      CONFIGURATOR_MODE="-i"
+      CONFIGURATOR_ACTION="merged back to settings"
+    elif [ "${1}" = "ws-reverse-add" ]
+    then
+      CONFIGURATOR_MODE="-x"
+      CONFIGURATOR_ACTION="merged back to settings (including new properties)"
+    elif [ "${1}" = "setup" ]
+    then
+      setup=true
+    elif [ "${1}" = "create-script" ]
+    then
+      CREATE_SCRIPT=true
+    else
+      doFail "Unknown argument: ${1}"
+    fi
+  fi
+  shift
+done
+
+IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
+if [ -d "${IDEA_HOME}" ]
+then
+  if [ "${setup}" = "true" ]
+  then
+    echo "IntelliJ is already installed at ${IDEA_HOME}"
+  fi
+else
+  #mirror="https://mirror.math.princeton.edu"
+  mirror="https://ftp.osuosl.org"
+  software_version=`doGetVariable INTELLIJ_VERSION 2018.3.5`
+  eclipse_edition=java
+  #eclipse_edition=jee
+  archive_folder=
+  if doIsMacOs
+  then
+    software_type="dmg"
+    archive_folder='volume'
+  elif doIsWindows
+  then
+    software_type="win.zip"
+  else
+    software_type="tar.gz"
+  fi
+  download_url="https://download-cf.jetbrains.com/idea/ideaIC-${software_version}.${software_type}"
+  doInstall "${IDEA_HOME}" "${download_url}" "${archive_folder}"
+  if doIsMacOs
+  then
+    echo "Doing workarounds for MacOS quirks..."
+    echo -e "#!/bin/bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA CE.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/idea"
+    chmod a+x "${IDEA_HOME}/intellij"
+  fi
+fi
+if [ "${setup}" = "true" ]
+then
+  doRunCommand "which intellij" "verify installation of IntelliJ"
+  if [ -e "${IDEA_HOME}/product-info.json" ]
+  then
+    doRunCommand "cat '${IDEA_HOME}/product-info.json'"
+  else
+    doRunCommand "cat '${IDEA_HOME}/IntelliJ\ IDEA\ CE.app/Contents/Resources/product-info.json'"
+  fi
+fi
+
+IDEA_CONF="${WORKSPACE_PATH}/.idea"
+IDEA_PROPERTIES="${IDEA_CONF}/idea.properties"
+if [ ! -d "${WORKSPACE_PATH}/.idea" ]
+then
+  mkdir -p "${DEVON_IDE_HOME}/conf/.idea/plugins"
+  if [ "${CONFIGURATOR_MODE}" = "-i" ] || [ "${CONFIGURATOR_MODE}" = "-x" ]
+  then
+    doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+  fi
+  CONFIGURATOR_MODE="-u"
+  CONFIGURATOR_ACTION="created"
+fi
+
+if [ -n "${CONFIGURATOR_MODE}" ]
+then
+  doConfigureWorkspace "${SETTINGS_PATH}/intellij/workspace" "${WORKSPACE_PATH}" ${CONFIGURATOR_MODE}
+fi
+
+if [ "${CREATE_SCRIPT}" = "true" ]
+then
+ echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon intellij" > intellij-$WORKSPACE
+ chmod a+x intellij-$WORKSPACE
+ echo "Created script intellij-$WORKSPACE"
+fi
+
+if [ "${run}" != "false" ]
+then
+  echo "launching IntelliJ..."
+  "${IDEA_HOME}/idea" &
+fi

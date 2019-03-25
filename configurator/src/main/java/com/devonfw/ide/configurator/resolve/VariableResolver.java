@@ -11,6 +11,18 @@ package com.devonfw.ide.configurator.resolve;
 public interface VariableResolver {
 
   /**
+   * @deprecated Legacy that is only supported for compatibility. Please use {@link #VARIABLE_DEVON_IDE_HOME} instead.
+   */
+  @Deprecated
+  String VARIABLE_CLIENT_ENV_HOME = "client.env.home";
+
+  /** Variable for top-level directory of 'devon-ide' installation (DEVON_IDE_HOME). */
+  String VARIABLE_DEVON_IDE_HOME = "DEVON_IDE_HOME";
+
+  /** Variable for directory of the current workspace (WORKSPACE_PATH). */
+  String VARIABLE_WORKSPACE_PATH = "WORKSPACE_PATH";
+
+  /**
    * @param text the {@link String} to resolve (e.g. value of {@link java.util.Properties#get(Object) property} or from
    *        XML attribute or element).
    * @return the resolved {@link String}. If the given {@link String} contained variables (e.g. "${«variable.name»}"),
