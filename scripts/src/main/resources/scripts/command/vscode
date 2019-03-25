@@ -28,7 +28,7 @@ do
     then
       run=false
     fi
-    
+
     if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
     then
       configurator_mode="-u"

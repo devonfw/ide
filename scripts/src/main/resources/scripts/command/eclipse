@@ -17,17 +17,17 @@ then
   echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
   exit
 fi
-RUN=
+run=
 while [ -n "${1}" ]
 do
-  RUN=
+  run=
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    RUN=true
+    run=true
   else
-    if [ "${RUN}" != "true" ]
+    if [ "${run}" != "true" ]
     then
-      RUN=false
+      run=false
     fi
     
     if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
@@ -100,9 +100,8 @@ else
     ECLIPSE_PLUGINS=(
       "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
       "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
-      "http://findbugs.cs.umd.edu/eclipse/" "edu.umd.cs.findbugs.plugin.eclipse.feature.group"
+      "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
       "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
-      "http://www.objectaid.com/update/current" "com.objectaid.uml.cls.feature.group,com.objectaid.uml.addon.feature.group,com.objectaid.uml.seq.feature.group"
       "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
       "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
       "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
@@ -148,7 +147,7 @@ then
   CONFIGURATOR_ACTION="created"
 fi 
 
-if [ "${RUN}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
+if [ "${run}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
 then
   if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
   then
@@ -171,7 +170,7 @@ then
  echo "Created script eclipse-$WORKSPACE"
 fi
 
-if [ "${RUN}" != "false" ]
+if [ "${run}" != "false" ]
 then
   echo "launching Eclipse..."
   eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &

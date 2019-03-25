@@ -2,12 +2,43 @@ rem This batch is not supposed to be called manually
 @echo off
 
 set DEVON_IDE_HOME=%CD%
-call "scripts\variables.bat"
-if exist "conf\variables.bat" (
-  call "conf\variables.bat"
+call "%DEVON_IDE_HOME%\scripts\variables.bat"
+if exist "%DEVON_IDE_HOME%\variables.bat" (
+  call "%DEVON_IDE_HOME%\variables.bat"
 )
-if exist "%SETTINGS_PATH%\ide-properties.bat" (
-  call "%SETTINGS_PATH%\ide-properties.bat"
+rem copy defaults
+if not exist "%DEVON_IDE_HOME%\conf" (
+  md "%DEVON_IDE_HOME%\conf"
+)
+if exist "%SETTINGS_PATH%" (
+  if exist "%SETTINGS_PATH%\variables.bat" (
+    call "%SETTINGS_PATH%\variables.bat"
+  ) else (
+    echo
+    echo *** ATTENTION ***
+    echo Your devon-ide settings at %SETTINGS_PATH% are missing project-specific variables.
+    echo Please create this file at %SETTINGS_PATH%/devon/variables.bat
+    echo You can get a template from here:
+    echo https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/variables.bat
+  )
+  if not exist "%DEVON_IDE_HOME%/conf/variables.bat" (
+    if exist "%SETTINGS_PATH%/devon/conf/variables.bat" (
+      copy "%SETTINGS_PATH%/devon/conf/variables.bat" "%DEVON_IDE_HOME%/conf/"
+    ) else (
+      echo
+      echo *** ATTENTION ***
+      echo Your devon-ide settings at %SETTINGS_PATH% are missing a variables template.
+      echo Please create this file at %SETTINGS_PATH%/devon/conf/variables.bat
+      echo You can get a template from here:
+      echo https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/variables.bat
+    )
+  )
+) else (
+  echo
+  echo *** ATTENTION ***
+  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
+  echo Please run the following command to complete your IDE setup:
+  echo devon ide setup [«settings-url»]
 )
 if "%WORKSPACE%" == "" (
   set WORKSPACE=main
@@ -20,29 +51,6 @@ if not exist "%WORKSPACE_PATH%" (
   ) else (
     echo WARNING: Worksapce %WORKSPACE% does not exist
   )
-)
-
-rem copy defaults
-if not exist "conf" (
-  md "conf"
-)
-if exist "%SETTINGS_PATH%" (
-  if not exist "conf\variables.bat" (
-    if exist "%SETTINGS_PATH%\devon\variables.bat" (
-      copy "%SETTINGS_PATH%\devon\variables.bat" "conf\"
-	)
-  )
-  if not exist "conf\variables-customized.bat" (
-    if exist "%SETTINGS_PATH%\devon\variables-customized.bat" (
-      copy "%SETTINGS_PATH%\devon\variables-customized.bat" "conf\"
-	)
-  )
-) else (
-  echo
-  echo *** ATTENTION ***
-  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
-  echo Please run the following command to complete your IDE setup:
-  echo devon ide setup
 )
 
 rem setup path
@@ -75,6 +83,7 @@ if exist "%SOFTWARE_PATH%\nodejs" (
   set "PATH=%PATH%;%APPDATA%\npm"
 )
 
-if exist conf\variables-customized.bat (
-  call conf\variables-customized.bat
+rem load user settings late so variables like M2_REPO can be overriden
+if exist "%DEVON_IDE_HOME%\conf\variables.bat" (
+  call "%DEVON_IDE_HOME%\conf\variables.bat"
 )

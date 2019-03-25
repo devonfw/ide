@@ -3,6 +3,7 @@
 # You may reconfigure some variables to tweak devon-ide to your personal needs
 # However, you do so at your own risk!!!
 # Only change variables if you know exactly what you are doing!!!
+# For details see https://github.com/devonfw/devon-ide/wiki/configuration
 #********************************************************************************
 
 # Uncomment the following line to use your shared maven repository

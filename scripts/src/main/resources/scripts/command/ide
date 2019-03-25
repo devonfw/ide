@@ -36,7 +36,7 @@ function doSetup() {
   do
     echo
     echo "*** Setting up ${tool} ***"
-    doDevonCommand ${tool}
+    doDevonCommand ${tool} setup
   done
 }
 
