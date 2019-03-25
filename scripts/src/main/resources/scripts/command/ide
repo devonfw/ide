@@ -23,7 +23,7 @@ function doUpdateSettings() {
       echo "Please consult your project technical lead to fix this properly"
     fi
   fi
-  doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+  doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".tar.gz"
 }
 
 function doSetup() {
