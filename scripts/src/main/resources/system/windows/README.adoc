@@ -2,17 +2,6 @@
 
 This folder contains configurations to integrate `devon-ide` into MacOS.
 
-== IDEenv.bat
-Please copy `IDEenv.bat` from `cmd` sub-folder into a central folder that is on your Windows path (`%PATH%`):
-
-* Create a `scripts` folder (e.g. `C:\Users\«MyLogin»\scripts` or `C:\Program Files\scripts`)
-* Ensure that this `scripts` directory is added to your system path:
-** Got to `Computer > Properties > Advanced system settings > Environment Variables`
-** In the upper group (`User variables for ...`) select the variable `PATH`
-** Click on `Edit`
-** To the end of the `Variable value` append a semicolon (`;`) followed by the absolute path of the `scripts` directory (e.g. append `;C:\Users\«MyLogin»\scripts`)
-** Confirm with `OK` (3 times)
-
 == CMD
 If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devon-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell. Therefore you once have to follow these steps:
 
@@ -21,7 +10,7 @@ If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for 
 * Confrim the dialog `Registry Editor` with `Yes`.
 * Click `OK`.
 
-Now you have the option `Open CMD here` if you right click on a folder in `Windows Explorer` that will open `CMD` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
+Now you have the option `Open Devon CMD here` if you right click on a folder in `Windows Explorer` that will open `CMD` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
 
 === ConEMU
 https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells. If you like it, you will also want to have it integrated with `devon-ide`. All you need to do is follow these simple steps:
