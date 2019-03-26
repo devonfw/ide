@@ -98,9 +98,13 @@ public class VariableResolverImpl implements VariableResolver {
    * @param name the name of the variable to resolve.
    * @return the value of the variable with the given {@code name}.
    */
+  @SuppressWarnings("deprecation")
   protected String resolveVariable(String name) {
 
     String result = null;
+    if (VariableResolver.VARIABLE_CLIENT_ENV_HOME.equals(name)) {
+      name = VariableResolver.VARIABLE_DEVON_IDE_HOME;
+    }
     Object value = this.variables.get(name);
     if (value != null) {
       result = value.toString();

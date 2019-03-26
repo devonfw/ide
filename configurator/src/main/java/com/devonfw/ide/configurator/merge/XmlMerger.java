@@ -133,6 +133,10 @@ public class XmlMerger extends FileTypeMerger {
     Log.debug("Saved changes in " + workspaceFile.getName() + " to: " + updateFile.getAbsolutePath());
   }
 
+  /**
+   * @param file the {@link File} to load.
+   * @return the loaded XML {@link Document}.
+   */
   public static Document load(File file) {
 
     try {
@@ -142,6 +146,10 @@ public class XmlMerger extends FileTypeMerger {
     }
   }
 
+  /**
+   * @param document the XML {@link Document} to save.
+   * @param file the {@link File} to save to.
+   */
   public static void save(Document document, File file) {
 
     ensureParentDirecotryExists(file);

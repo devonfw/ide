@@ -42,7 +42,8 @@ then
       echo "https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/variables"
     fi
   fi
-else if [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
+elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
+then
   echo
   echo "*** ATTENTION ***"
   echo "Your devon-ide is missing the settings at ${SETTINGS_PATH}"

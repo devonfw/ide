@@ -5,7 +5,7 @@ import java.io.File;
 import com.devonfw.ide.configurator.logging.Log;
 
 /**
- * TODO hohwille This type ...
+ * Simple container for the commandline arguments.
  *
  * @since 3.0.0
  */
@@ -17,6 +17,8 @@ public class Args {
 
   /**
    * The constructor.
+   *
+   * @param args the arguments.
    */
   public Args(String... args) {
 
@@ -24,11 +26,17 @@ public class Args {
     this.i = 0;
   }
 
+  /**
+   * @return {@code true} if {@link #next() next argument} is available, {@code false} otherwise.
+   */
   public boolean hasNext() {
 
     return (this.i < this.args.length);
   }
 
+  /**
+   * @return the current argument.
+   */
   public String current() {
 
     if (this.i < this.args.length) {
@@ -37,6 +45,10 @@ public class Args {
     return null;
   }
 
+  /**
+   * @return the next argument.
+   * @see #hasNext()
+   */
   public String next() {
 
     if (this.i < this.args.length) {
@@ -45,6 +57,11 @@ public class Args {
     return null;
   }
 
+  /**
+   * @param file the current {@link File} variable to check if the parameter was already applied. Initially
+   *        {@code null}.
+   * @return the {@link #next() next argument} as {@link File}.
+   */
   public File nextFile(File file) {
 
     String arg = current();
