@@ -55,20 +55,11 @@
 				<key>ActionBundlePath</key>
 				<string>/System/Library/Automator/Run Shell Script.action</string>
 				<key>ActionName</key>
-				<string>Shell-Skript ausführen</string>
+				<string>Run Shell Script</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>echo "$1"
-DIR=$1
-while [ "$DIR" != "/" ]
-do
-  if [ -f "$DIR/scripts/environment-project" ]; then
-  	echo "$DIR"
-	exit 0
-   fi
-   DIR=$(dirname "$DIR")
-done</string>
+					<string>echo "$1"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -97,9 +88,9 @@ done</string>
 				<key>Keywords</key>
 				<array>
 					<string>Shell</string>
-					<string>Skript</string>
-					<string>Befehl</string>
-					<string>Ausführen</string>
+					<string>Script</string>
+					<string>Command</string>
+					<string>Run</string>
 					<string>Unix</string>
 				</array>
 				<key>OutputUUID</key>
@@ -180,12 +171,10 @@ done</string>
 						<string>4</string>
 					</dict>
 				</dict>
-				<key>conversionLabel</key>
-				<integer>0</integer>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>386.000000:411.000000</string>
+				<string>309.000000:305.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run Shell Script.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -229,11 +218,11 @@ done</string>
 				<key>ActionBundlePath</key>
 				<string>/System/Library/Automator/Run AppleScript.action</string>
 				<key>ActionName</key>
-				<string>AppleScript ausführen</string>
+				<string>Run AppleScript</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	if (count of input) is not 2 then		display dialog item 1 of input &amp; "is not an Devon-IDE directory" &amp; (count of input)	else		tell application "Terminal" to do script "cd " &amp; item 1 of input &amp; " &amp;&amp; " &amp; "source " &amp; item 2 of input &amp; "/env.sh"		activate application "Terminal"	end ifend run</string>
+					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	if (count of input) is not 2 then		display dialog item 1 of input &amp; "is not an Devon-IDE directory" &amp; (count of input)	else		tell application "Terminal" to do script "cd " &amp; item 1 of input &amp; " &amp;&amp; " &amp; "devon"		activate application "Terminal"	end ifend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -253,7 +242,7 @@ done</string>
 				<string>0B6928B7-43BF-4B65-AFE1-C31F9E4CE717</string>
 				<key>Keywords</key>
 				<array>
-					<string>Ausführen</string>
+					<string>Run</string>
 				</array>
 				<key>OutputUUID</key>
 				<string>A3557367-EDB2-4D75-8A6E-738B2BF08BFF</string>
@@ -287,7 +276,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<true/>
 				<key>location</key>
-				<string>386.000000:656.000000</string>
+				<string>309.000000:550.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
@@ -297,7 +286,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>F65615AE-DB2A-4451-B835-80631E6C4807</key>
+		<key>20D8C238-EC82-4219-80CA-309F513A8810</key>
 		<dict>
 			<key>from</key>
 			<string>DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF - DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF</string>
