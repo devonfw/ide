@@ -33,7 +33,7 @@ if not exist "%USERPROFILE%\scripts\devon.bat" (
   echo You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'
 )
 
-set WORKSPACE=""
+set "WORKSPACE=main"
 :iterate_backwards
 if exist scripts\environment-project.bat (
   call scripts\environment-project.bat
@@ -49,7 +49,9 @@ if "%CD%" == "%CD:~0,3%" (
 set last_folder=%folder%
 for %%a in (.) do set folder=%%~na
 if "%folder%" == "workspaces" (
-  set WORKSPACE=%last_folder%
+  if not "%last_folder%" == "workspaces" (
+    set WORKSPACE=%last_folder%
+  )
 )
 cd..  
 goto :iterate_backwards
@@ -58,18 +60,32 @@ goto :iterate_backwards
 if "%1%" == "" (
   goto :end
 )
-set "BASH=%ProgramFiles%\Git\bin\bash.exe"
+set "BASH=%ProgramFiles(x86)%\Git\bin\bash.exe"
+set "HOME=%USERPROFILE%"
 if not exist "%BASH%" (
-  set "BASH=%ProgramFiles(x86)%\Git\bin\bash.exe"
+  set "BASH=%ProgramFiles%\Git\bin\bash.exe"
 )
-if exist "%BASH%" (
-  "%BASH%" -c 'devon %*'
-) else (
+if not exist "%BASH%" (
   echo:
   echo *** ATTENTION ***
   echo Bash has not been found on your system!
   echo Please install git for windows on your system.
+  goto :end
 )
+set "DEVON_PATH=%PATH%"
+set "PATH=%DEVON_OLD_PATH%"
+set "DEVON_OLD_PATH="
+if not exist "%HOME%\.devon\devon" (
+  pushd
+  cd "%DEVON_IDE_HOME%
+  "%BASH%" -c 'source scripts/devon'
+  popd
+)
+"%BASH%" -c 'source ~/.devon/devon %*'
+set "DEVON_OLD_PATH=%PATH%"
+set "PATH=%DEVON_PATH%"
+set "DEVON_PATH="
+
 goto :end
 
 :printVersion
