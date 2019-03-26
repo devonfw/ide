@@ -59,16 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>echo "$1"
-DIR=$1
-while [ "$DIR" != "/" ]
-do
-  if [ -f "$DIR/scripts/environment-project" ]; then
-  	echo "$DIR"
-	exit 0
-   fi
-   DIR=$(dirname "$DIR")
-done</string>
+					<string>echo "$1"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>
@@ -231,21 +222,7 @@ done</string>
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input  tell application "iTerm"
-    if (count of windows) is 0 then
-      create window with default profile
-    else
-      tell first window
-        create tab with default profile
-      end tell
-    end if
-    set mytab to current session of first window
-    tell mytab to write text "cd " &amp; item 1 of input
-    if (count of input) is 2 then
-      tell mytab to write text "source " &amp; item 2 of input &amp; "/env.sh"
-    end if
-  end tell
-end run</string>
+					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	tell application "iTerm"		if (count of windows) is 0 then			create window with default profile		else			tell first window				create tab with default profile			end tell		end if		set mytab to current session of first window		tell mytab to write text "cd " &amp; item 1 of input		tell mytab to write text "devon"	end tellend run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -309,7 +286,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>8957855B-CD33-448F-9DD8-F2A5B0BC3DCD</key>
+		<key>BE822428-288A-41D1-8AFB-7F2A62F4407E</key>
 		<dict>
 			<key>from</key>
 			<string>DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF - DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF</string>
