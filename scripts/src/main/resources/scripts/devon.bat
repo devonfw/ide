@@ -37,7 +37,7 @@ set WORKSPACE=""
 :iterate_backwards
 if exist scripts\environment-project.bat (
   call scripts\environment-project.bat
-  echo devon-ide has environment variables have been set for %CD%
+  echo devon-ide environment variables have been set for %CD%
   popd
   goto :cli
 )
@@ -55,21 +55,21 @@ cd..
 goto :iterate_backwards
 
 :cli
-if not "%1%" == "" (
-  set BASH=%ProgramFiles%\Git\bin\bash.exe
-  if not exist "%BASH%" (
-    set BASH=%ProgramFiles(x86)%\Git\bin\bash.exe
-  )
-  if exist "%BASH%" (
-    "%BASH%" -c 'devon %*'
-  ) else (
-    echo
-    echo *** ATTENTION ***
-    echo Bash has not been found on your system!
-    echo Please install git for windows on your system.
-  )
+if "%1%" == "" (
+  goto :end
 )
-
+set "BASH=%ProgramFiles%\Git\bin\bash.exe"
+if not exist "%BASH%" (
+  set "BASH=%ProgramFiles(x86)%\Git\bin\bash.exe"
+)
+if exist "%BASH%" (
+  "%BASH%" -c 'devon %*'
+) else (
+  echo:
+  echo *** ATTENTION ***
+  echo Bash has not been found on your system!
+  echo Please install git for windows on your system.
+)
 goto :end
 
 :printVersion
