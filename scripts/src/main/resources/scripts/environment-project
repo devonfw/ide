@@ -70,6 +70,28 @@ if [ -z "${DEVON_OLD_PATH}" ]
 then
   export DEVON_OLD_PATH="${PATH}"
 else
+  if [[ "${DEVON_OLD_PATH}" == *"C:\\WINDOWS"* ]]
+  then
+    # https://github.com/devonfw/devon-ide/issues/49
+    DEVON_OLD_PATH=
+    IFS=':'
+    set -f
+    for dir in ${PATH}
+    do
+      if [ "${dir}" != "${DEVON_IDE_HOME}"* ]
+      then
+        if [ -z "${DEVON_OLD_PATH}" ]
+        then
+          DEVON_OLD_PATH="${dir}"
+        else
+          DEVON_OLD_PATH="${DEVON_OLD_PATH}:${dir}"
+        fi
+      fi
+    done
+    set +f
+    unset IFS
+    export DEVON_OLD_PATH
+  fi
   PATH="${DEVON_OLD_PATH}"
 fi
 # Setup path
