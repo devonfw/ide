@@ -73,42 +73,27 @@
             </configuration>
           </execution>
           <execution>
-            <id>copy-sources</id>
+            <id>copy-doc</id>
             <phase>package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>copy</goal>
             </goals>
             <configuration>
-              <includeScope>compile</includeScope>
-              <classifier>sources</classifier>
-              <outputDirectory>${project.build.outputDirectory}/scripts/licenses/sourcecode</outputDirectory>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>devon-ide-doc</artifactId>
+                  <version>${project.version}</version>
+                  <type>pdf</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                  <destFileName>devon-ide-doc.pdf</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <configuration>
-          <licensesOutputDirectory>${project.build.outputDirectory}/scripts/licenses</licensesOutputDirectory>
-          <outputDirectory>${project.build.outputDirectory}/scripts/licenses</outputDirectory>
-          <acceptPomPackaging>true</acceptPomPackaging>
-          <includedScopes>compile,runtime</includedScopes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>download-licenses</id>
-            <phase>package</phase>
-            <goals>
-              <goal>download-licenses</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>add-third-party</id>
-            <phase>package</phase>
-            <goals>
-              <goal>add-third-party</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
