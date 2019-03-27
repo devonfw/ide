@@ -1,0 +1,4 @@
+[submodule "doc"]
+	path = doc
+	url = https://github.com/devonfw/devon-ide.wiki.git
+	branch = master

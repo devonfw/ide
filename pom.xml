@@ -12,7 +12,8 @@
   <inceptionYear>2013</inceptionYear>
 
   <properties>
-    <devon_ide_version>3.0.0-beta3-SNAPSHOT</devon_ide_version>
+    <revision>dev</revision>
+    <changelist>-SNAPSHOT</changelist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -27,6 +28,7 @@
   </dependencies>
 
   <modules>
+    <module>doc</module>
     <module>configurator</module>
     <module>scripts</module>
     <module>settings</module>
