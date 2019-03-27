@@ -267,7 +267,7 @@ function doReplaceExtractedFile() {
 }
 
 # $1: name of file or folder to move from the extracted archive
-# $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
+# $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
   local backup_dir="updates/backups/`date +"%y-%m-%d/%H-%M-%S"`"
   if [ -z "${1}" ] || [ "${1}" = '*' ]
@@ -300,17 +300,11 @@ function doMavenGetLatestVersion() {
 # defaults, may be overridden before calling doMavenArchetype
 ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
 ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
-ARCHETYPE_VERSION="LATEST"
 
 # $1: java package
 # $2: optional groupId
 # $3: optional artifactId 
 function doMavenArchetype() {
-  local archetype_version_resolve="${ARCHETYPE_VERSION}"
-  if [ "${archetype_version_resolve}" = "LATEST" ]
-  then
-    doMavenGetLatestVersion ${MAVEN_REPO_URL}/${ARCHETYPE_GROUP_ID//\./\/}/${ARCHETYPE_ARTIFACT_ID}
-  fi
   local target_db_type="h2" #TODO
   local target_package="${1}"
   local target_group_id="${2}"
@@ -327,7 +321,7 @@ function doMavenArchetype() {
   then
     doFail "Project ${target_artifact_id} already exsits at ${PWD}"
   fi
-  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -Dpackage=${target_package} -DgroupId=${target_group_id} -DartifactId=${target_artifact_id} -Dversion=1.0.0-SNAPSHOT-DdbType=${target_db_type} -DinteractiveMode=false
+  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -Dpackage=${target_package} -DgroupId=${target_group_id} -DartifactId=${target_artifact_id} -Dversion=1.0.0-SNAPSHOT -DdbType=${target_db_type} -DinteractiveMode=false
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
