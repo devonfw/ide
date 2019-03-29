@@ -1,9 +1,9 @@
 @echo off
 if "%1%" == "-v" (
-  goto :printVersion
+  goto :print_version
 )
 if "%1%" == "--version" (
-  goto :printVersion
+  goto :print_version
 )
 
 rem Auto-install oursevles...
@@ -105,9 +105,8 @@ if "%folder%" == "workspaces" (
 cd..  
 goto :iterate_backwards
 
-goto :end
+goto :eof
 
-:printVersion
+rem subroutine to print version
+:print_version
 echo ${devon_ide_version}
-
-:end
