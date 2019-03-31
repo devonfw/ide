@@ -1,5 +1,5 @@
 #!/bin/bash
-cd `dirname $0`
+cd $(dirname $0)
 cd ../..
 source scripts/functions
 
@@ -65,7 +65,7 @@ then
 else
   #mirror="https://mirror.math.princeton.edu"
   mirror="https://ftp.osuosl.org"
-  software_version=`doGetVariable INTELLIJ_VERSION 2018.3.5`
+  software_version=$(doGetVariable INTELLIJ_VERSION 2018.3.5)
   eclipse_edition=java
   #eclipse_edition=jee
   archive_folder=
@@ -119,7 +119,7 @@ fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]
 then
- echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon intellij" > intellij-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon intellij" > intellij-$WORKSPACE
  chmod a+x intellij-$WORKSPACE
  echo "Created script intellij-$WORKSPACE"
 fi

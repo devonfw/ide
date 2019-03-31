@@ -1,5 +1,5 @@
 #!/bin/bash
-cd `dirname $0`
+cd $(dirname $0)
 cd ../..
 source scripts/functions
 
@@ -25,7 +25,7 @@ then
     echo "Gradle is already installed at ${GRADLE_HOME}"
   fi
 else
-  software_version=`doGetVariable GRADLE_VERSION 5.2.1`
+  software_version=$(doGetVariable GRADLE_VERSION 5.2.1)
   download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
   doInstall "${software_dir}" "${download_url}" 'gradle-*'
 fi

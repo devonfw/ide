@@ -1,5 +1,5 @@
 #!/bin/bash
-cd `dirname $0`
+cd $(dirname $0)
 cd ../..
 source scripts/functions
 
@@ -23,7 +23,7 @@ if which ng &> /dev/null
 then
   if [ "${setup}" = "true" ]
   then
-    echo "angluar-cli (ng) is already installed at `which ng`"
+    echo "angluar-cli (ng) is already installed at $(which ng)"
   fi
 else
   doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"

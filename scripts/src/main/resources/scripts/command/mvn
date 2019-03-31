@@ -1,5 +1,5 @@
 #!/bin/bash
-source `dirname $0`/../functions
+source $(dirname $0)/../functions
 
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -25,7 +25,7 @@ then
     echo "Maven is already installed at ${MAVEN_HOME}"
   fi
 else
-  software_version=`doGetVariable MAVEN_VERSION 3.6.0`
+  software_version=$(doGetVariable MAVEN_VERSION 3.6.0)
   download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
   doInstall "${MAVEN_HOME}" "${download_url}" 'apache-maven-*'
 fi
@@ -47,8 +47,8 @@ then
     fi
     if [ ! -e "${M2_DIR}/settings-security.xml" ]
     then
-      MASTER_PASSWORD=`head -c 20 /dev/random | base64`
-      MASTER_PASSWORD=`mvn --encrypt-master-password ${MASTER_PASSWORD}`
+      MASTER_PASSWORD=$(head -c 20 /dev/random | base64)
+      MASTER_PASSWORD=$(mvn --encrypt-master-password ${MASTER_PASSWORD})
       echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
       echo "Successfully created ${M2_DIR}/settings-security.xml"
     fi

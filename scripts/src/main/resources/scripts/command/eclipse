@@ -1,5 +1,5 @@
 #!/bin/bash
-cd `dirname $0`
+cd $(dirname $0)
 cd ../..
 source scripts/functions
 
@@ -65,7 +65,7 @@ then
 else
   #mirror="https://mirror.math.princeton.edu"
   mirror="https://ftp.osuosl.org"
-  software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
+  software_version=$(doGetVariable ECLIPSE_VERSION 2018-12)
   eclipse_edition=java
   #eclipse_edition=jee
   download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
@@ -158,7 +158,7 @@ fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]
 then
- echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-$WORKSPACE
  chmod a+x eclipse-$WORKSPACE
  echo "Created script eclipse-$WORKSPACE"
 fi

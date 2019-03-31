@@ -1,5 +1,5 @@
 #!/bin/bash
-source `dirname $0`/../functions
+source $(dirname $0)/../functions
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Run build job."
