@@ -166,7 +166,7 @@ function doDownload() {
   then
     echo "Artifact already exists at ${target}"
     echo "To force update please delete the file and run again."
-    return -1
+    return 255
   fi
   mkdir -p "${target_dir}"
   echo "Downloading ${filename} from ${1}"
@@ -540,7 +540,7 @@ function doIsMacOs() {
   then
     return 0
   fi
-  return -1
+  return 255
 }
 
 function doIsWindows() {
@@ -548,7 +548,7 @@ function doIsWindows() {
   then
     return 0
   fi
-  return -1
+  return 255
 }
 
 if [ -z "${DEVON_IDE_HOME}" ]
