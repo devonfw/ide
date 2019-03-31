@@ -84,7 +84,7 @@ else
   if doIsMacOs
   then
     echo "Doing workarounds for MacOS quirks..."
-    echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
+    echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse "'"$@"' > "${ECLIPSE_HOME}/eclipse"
     chmod a+x "${ECLIPSE_HOME}/eclipse"
   fi
   if [ -z "${ECLIPSE_PLUGINS}" ]
