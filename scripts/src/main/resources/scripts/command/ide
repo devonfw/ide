@@ -92,4 +92,4 @@ else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
 echo
-echo "Completed $@"
+echo "Completed $*"

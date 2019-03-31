@@ -150,7 +150,7 @@ function doDevonCommand() {
     result=${?}
     if [ ${result} != 0 ]
     then
-      echo "ERROR: command '${command_name} ${@}' failed with exit code ${result}"
+      echo "ERROR: command '${command_name} ${*}' failed with exit code ${result}"
       exit ${result}
     fi
   fi
