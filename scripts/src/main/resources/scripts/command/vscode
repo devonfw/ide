@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $(dirname $0)
+cd "$(dirname "$0")"
 cd ../..
 source scripts/functions
 
@@ -93,8 +93,8 @@ fi
 
 if [ "${create_script}" = "true" ]
 then
- echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon vscode" > vscode-$WORKSPACE
- chmod a+x vscode-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon vscode" > vscode-"$WORKSPACE"
+ chmod a+x vscode-"$WORKSPACE"
  echo "Created script vscode-$WORKSPACE"
 fi
 

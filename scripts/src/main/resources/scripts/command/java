@@ -1,5 +1,5 @@
 #!/bin/bash
-source $(dirname $0)/../functions
+source "$(dirname "$0")"/../functions
 
 # $1: optional setup
 function doSetupJava() {

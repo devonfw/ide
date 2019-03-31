@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $(dirname $0)
+cd "$(dirname "$0")"
 cd ../..
 source scripts/functions
 
@@ -111,7 +111,7 @@ else
     plugin_feature="${ECLIPSE_PLUGINS[((${i}+1))]}"
     plugin="${plugin_feature/\.feature\.group*/}"
     echo "Installing eclipse plugin ${plugin} from ${plugin_url}"
-    ${ECLIPSE_HOME}/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_feature}"
+    "${ECLIPSE_HOME}"/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_feature}"
     result=${?}
     if [ "${result}" != 0 ]
     then
@@ -158,13 +158,13 @@ fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]
 then
- echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-$WORKSPACE
- chmod a+x eclipse-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-"$WORKSPACE"
+ chmod a+x eclipse-"$WORKSPACE"
  echo "Created script eclipse-$WORKSPACE"
 fi
 
 if [ "${run}" != "false" ]
 then
   echo "launching Eclipse..."
-  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs "${ECLIPSE_VMARGS}" &
 fi

@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $(dirname $0)
+cd "$(dirname "$0")"
 cd ../..
 source scripts/functions
 
@@ -119,8 +119,8 @@ fi
 
 if [ "${CREATE_SCRIPT}" = "true" ]
 then
- echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon intellij" > intellij-$WORKSPACE
- chmod a+x intellij-$WORKSPACE
+ echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon intellij" > intellij-"$WORKSPACE"
+ chmod a+x intellij-"$WORKSPACE"
  echo "Created script intellij-$WORKSPACE"
 fi
 

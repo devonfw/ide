@@ -49,7 +49,7 @@ function doRunCommand() {
     fi
   fi
   echo "Running command: ${1}"
-  eval ${1}
+  eval "${1}"
   result=${?}
   if [ -n "${3}" ]
   then
@@ -272,7 +272,7 @@ function doReplaceExtracted() {
   local backup_dir="updates/backups/$(date +"%y-%m-%d/%H-%M-%S")"
   if [ -z "${1}" ] || [ "${1}" = '*' ]
   then
-    for extracted_file in ${DEVON_IDE_HOME}/updates/extracted/*
+    for extracted_file in "${DEVON_IDE_HOME}"/updates/extracted/*
     do
       if [ -e "${extracted_file}" ]
       then
@@ -289,7 +289,7 @@ MAVEN_REPO_URL="https://repo.maven.apache.org/maven2"
 # $1: URL (to artifactId)
 function doMavenGetLatestVersion() {
   echo "Trying to determine the latest available version from ${1}/maven-metadata.xml"
-  LATEST_VERSION=$(curl -fs ${1}/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/")
+  LATEST_VERSION=$(curl -fs "${1}"/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/")
   result=${?}
   if [ "${result}" != 0 ] || [ -z "${LATEST_VERSION}" ]
   then
@@ -321,7 +321,7 @@ function doMavenArchetype() {
   then
     doFail "Project ${target_artifact_id} already exsits at ${PWD}"
   fi
-  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -Dpackage=${target_package} -DgroupId=${target_group_id} -DartifactId=${target_artifact_id} -Dversion=1.0.0-SNAPSHOT -DdbType=${target_db_type} -DinteractiveMode=false
+  doDevonCommand mvn archetype:generate -DarchetypeGroupId="${ARCHETYPE_GROUP_ID}" -DarchetypeArtifactId="${ARCHETYPE_ARTIFACT_ID}" -Dpackage="${target_package}" -DgroupId="${target_group_id}" -DartifactId="${target_artifact_id}" -Dversion=1.0.0-SNAPSHOT -DdbType="${target_db_type}" -DinteractiveMode=false
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
@@ -348,7 +348,7 @@ function doUpgradeMavenArtifact() {
   echo "Updating ${1} from ${download_url}"
   if [ "${target_version}" = "LATEST" ]
   then
-    doMavenGetLatestVersion ${download_url}
+    doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
   fi
   if [ -n "${current_version}" ]
@@ -378,13 +378,13 @@ function doUpgradeMavenArtifact() {
 # $1: variable name
 # $2: default
 function doGetVariable() {
-  local variable_name=$(echo ${1} | tr a-z A-Z)
-  local variable_value=$(eval echo '$'${variable_name})
+  local variable_name=$(echo "${1}" | tr a-z A-Z)
+  local variable_value=$(eval echo '$'"${variable_name}")
   if [ -z "${variable_value}" ]
   then
-    echo ${2}
+    echo "${2}"
   else
-    echo ${variable_value}
+    echo "${variable_value}"
   fi
 }
 
@@ -423,10 +423,10 @@ function doInstall() {
   fi
   echo "Starting installation from ${2} to ${1}"
   doDownload "${2}"
-  doExtract ~/Downloads/${2/*\//} "${4}"
+  doExtract ~/Downloads/"${2/*\//}" "${4}"
   if [ -n "${3}" ]
   then
-    doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
+    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/${3}"
   fi
   doReplaceExtracted "${dir}" "${1}"
   echo "Successfully installed ${1}"
@@ -553,7 +553,7 @@ function doIsWindows() {
 
 if [ -z "${DEVON_IDE_HOME}" ]
 then
-  DEVON_IDE_HOME="$(dirname ${BASH_SOURCE:-$0})/.."
+  DEVON_IDE_HOME="$(dirname "${BASH_SOURCE:-$0}")/.."
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 source "${DEVON_IDE_HOME}/scripts/variables"

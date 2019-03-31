@@ -1,5 +1,5 @@
 #!/bin/bash
-cd $(dirname $0)
+cd "$(dirname "$0")"
 cd ../..
 source scripts/functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
@@ -36,7 +36,7 @@ function doSetup() {
   do
     echo
     echo "*** Setting up ${tool} ***"
-    doDevonCommand ${tool} setup
+    doDevonCommand "${tool}" setup
   done
 }
 
