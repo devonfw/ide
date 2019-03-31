@@ -8,6 +8,6 @@ then
 elif [ -n "${1}" ]
 then
   doFail "Undefined option ${1}"
-  exit -1
+  exit 255
 fi
 ${DEVON_IDE_HOME}/scripts/command/ide setup

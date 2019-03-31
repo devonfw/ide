@@ -49,7 +49,7 @@ do
       create_script=true
     else
       echo "Undefined argument: ${1}"
-      exit -1
+      exit 255
     fi
   fi
   shift

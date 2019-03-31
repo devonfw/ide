@@ -50,7 +50,7 @@ then
   fi
 else
   echo "Currently not in a buildable project or build system could not be auto-detected"
-  exit -1
+  exit 255
 fi
 
 if [ -n "${1}" ]
