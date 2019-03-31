@@ -34,5 +34,5 @@ if [ "${setup}" = "true" ]
 then
   doRunCommand "gradle -v" "verify installation of gradle"
 else
-  gradle ${@}
+  gradle "${@}"
 fi

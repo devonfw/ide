@@ -31,5 +31,5 @@ fi
 
 if [ "${setup}" != "true" ]
 then
-  ng ${@}
+  ng "${@}"
 fi

@@ -58,7 +58,7 @@ elif [ "${1}" = "create" ]
 then
   doSetupJava
   shift
-  doMavenArchetype ${@}
+  doMavenArchetype "${@}"
 else
   doFail "Unknown argument ${1}"
 fi
