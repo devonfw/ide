@@ -3,6 +3,116 @@ cd `dirname $0`
 cd ../..
 source scripts/functions
 
+# $1: plugin URL (update site)
+# $2: plugin feature group ID
+function doInstallEclipsePlugin() {
+  local plugin="${2/\.feature\.group*/}"
+  echo "Installing eclipse plugin ${plugin} from ${1}"
+  ${ECLIPSE_HOME}/eclipse -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${1}" -installIU "${2}" -vmargs ${ECLIPSE_VMARGS}
+  result=${?}
+  if [ "${result}" != 0 ]
+  then
+    echo
+    echo "******** ATTENTION ********"
+    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
+    echo
+  fi
+}
+
+function doSetup() {
+  if [ -d "${ECLIPSE_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      echo "Eclipse is already installed at ${ECLIPSE_HOME}"
+    fi
+  else
+    #mirror="https://mirror.math.princeton.edu"
+    local mirror="https://ftp.osuosl.org"
+    local software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
+    local eclipse_edition=java
+    #eclipse_edition=jee
+    local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
+    local archive_folder=
+    if doIsMacOs
+    then
+      download_url="${download_url}-macosx-cocoa-x86_64.dmg"
+      archive_folder='volume'
+    elif doIsWindows
+    then
+      download_url="${download_url}-win32-x86_64.zip"
+    else
+      download_url="${download_url}-linux-gtk-x86_64.tar.gz"
+    fi
+    doInstall "${ECLIPSE_HOME}" "${download_url}" "${archive_folder}"
+    if doIsMacOs
+    then
+      echo "Doing workarounds for MacOS quirks..."
+      echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
+      chmod a+x "${ECLIPSE_HOME}/eclipse"
+    fi
+    if [ -z "${ECLIPSE_PLUGINS}" ]
+    then
+      # TODO CobiGen and TM-Terminal
+      # https://github.com/devonfw/devon-ide/issues/59
+      # "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      # "https://marketplace.eclipse.org/content/tm-terminal" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
+      # "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
+      # "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
+      ECLIPSE_PLUGINS=(
+        "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
+        "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
+        "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
+        "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
+        "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
+        "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
+        "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
+      )
+    fi
+    for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
+    do
+      doInstallEclipsePlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
+    done
+  fi
+  if [ -n "${1}" ]
+  then
+    doRunCommand "which eclipse" "verify installation of Eclipse"
+    if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
+    then
+      doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"
+    else
+      doRunCommand "cat '${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct'"
+    fi
+  fi
+}
+
+function doConfigureEclipse() {
+  local mode="${1}"
+  if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
+  then
+    # TODO 
+    echo doFail "Eclipse workspace ${WORKSPACE} is locked.\nIt seems as if Eclipse is already running for this workspace.\nOtherwise consider deleting this file\n${WORKSPACE_PATH}/.metadata/.lock"
+  fi
+  if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
+  then
+    if [ "${mode}" = "-i" ] || [ "${mode}" = "-x" ]
+    then
+      doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+    fi
+    mode="-u"
+  fi
+  if [ -n "${mode}" ]
+  then
+    doConfigureWorkspace "${SETTINGS_PATH}/eclipse/workspace" "${WORKSPACE_PATH}" ${mode}
+  fi
+}
+
+function doStartEclipse() {
+  doConfigureEclipse
+  echo "launching Eclipse..."
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -17,154 +127,36 @@ then
   echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
   exit
 fi
-run=
+ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
+if [ -z "${1}" ]
+then
+  doSetup
+  doStartEclipse
+fi
 while [ -n "${1}" ]
 do
-  run=
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    run=true
+    doSetup
+    doStartEclipse
+  elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+  then
+    doConfigureEclipse -u
+  elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+  then
+    doConfigureEclipse -i
+  elif [ "${1}" = "ws-reverse-add" ]
+  then
+    doConfigureEclipse -x
+  elif [ "${1}" = "setup" ]
+  then
+    doSetup setup
+    doCreateIdeScript eclipse
+  elif [ "${1}" = "create-script" ]
+  then
+    doCreateIdeScript eclipse
   else
-    if [ "${run}" != "true" ]
-    then
-      run=false
-    fi
-    
-    if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
-    then
-      CONFIGURATOR_MODE="-u"
-      CONFIGURATOR_ACTION="updated"
-    elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
-    then
-      CONFIGURATOR_MODE="-i"
-      CONFIGURATOR_ACTION="merged back to settings"
-    elif [ "${1}" = "ws-reverse-add" ]
-    then
-      CONFIGURATOR_MODE="-x"
-      CONFIGURATOR_ACTION="merged back to settings (including new properties)"
-    elif [ "${1}" = "setup" ]
-    then
-      setup=true
-    elif [ "${1}" = "create-script" ]
-    then
-      CREATE_SCRIPT=true
-    else
-      doFail "Unknown argument: ${1}"
-    fi
+    doFail "Unknown argument: ${1}"
   fi
   shift
 done
-
-ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
-if [ -d "${ECLIPSE_HOME}" ]
-then
-  if [ "${setup}" = "true" ]
-  then
-    echo "Eclipse is already installed at ${ECLIPSE_HOME}"
-  fi
-else
-  #mirror="https://mirror.math.princeton.edu"
-  mirror="https://ftp.osuosl.org"
-  software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
-  eclipse_edition=java
-  #eclipse_edition=jee
-  download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
-  archive_folder=
-  if doIsMacOs
-  then
-    download_url="${download_url}-macosx-cocoa-x86_64.dmg"
-    archive_folder='volume'
-  elif doIsWindows
-  then
-    download_url="${download_url}-win32-x86_64.zip"
-  else
-    download_url="${download_url}-linux-gtk-x86_64.tar.gz"
-  fi
-  doInstall "${ECLIPSE_HOME}" "${download_url}" "${archive_folder}"
-  if doIsMacOs
-  then
-    echo "Doing workarounds for MacOS quirks..."
-    echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
-    chmod a+x "${ECLIPSE_HOME}/eclipse"
-  fi
-  if [ -z "${ECLIPSE_PLUGINS}" ]
-  then
-    # TODO CobiGen and TM-Terminal
-    #"https://TODO/cobigen/update/site" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
-    #"https://marketplace.eclipse.org/content/tm-terminal" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
-  
-    ECLIPSE_PLUGINS=(
-      "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
-      "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
-      "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
-      "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
-      "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
-      "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
-      "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
-      "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
-      "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
-    )
-  fi
-  for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
-  do
-    plugin_url="${ECLIPSE_PLUGINS[${i}]}"
-    plugin_feature="${ECLIPSE_PLUGINS[((${i}+1))]}"
-    plugin="${plugin_feature/\.feature\.group*/}"
-    echo "Installing eclipse plugin ${plugin} from ${plugin_url}"
-    ${ECLIPSE_HOME}/eclipse -nosplash -application org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_feature}"
-    result=${?}
-    if [ "${result}" != 0 ]
-    then
-      echo
-      echo "******** ATTENTION ********"
-      echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
-      echo
-    fi
-  done
-fi
-if [ "${setup}" = "true" ]
-then
-  doRunCommand "which eclipse" "verify installation of Eclipse"
-  if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
-  then
-    doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"
-  else
-    doRunCommand "cat '${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct'"
-  fi
-fi
-
-if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
-then
-  if [ "${CONFIGURATOR_MODE}" = "-i" ] || [ "${CONFIGURATOR_MODE}" = "-x" ]
-  then
-    doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
-  fi
-  CONFIGURATOR_MODE="-u"
-  CONFIGURATOR_ACTION="created"
-fi 
-
-if [ "${run}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
-then
-  if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
-  then
-    echo doFail "Eclipse workspace ${WORKSPACE} is locked.\nIt seems as if Eclipse is already running for this workspace.\nOtherwise consider deleting this file\n${WORKSPACE_PATH}/.metadata/.lock"
-  fi
-fi
-
-if [ -n "${CONFIGURATOR_MODE}" ]
-then
-  doConfigureWorkspace "${SETTINGS_PATH}/eclipse/workspace" "${WORKSPACE_PATH}" ${CONFIGURATOR_MODE}
-fi
-
-if [ "${CREATE_SCRIPT}" = "true" ]
-then
- echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon eclipse" > eclipse-$WORKSPACE
- chmod a+x eclipse-$WORKSPACE
- echo "Created script eclipse-$WORKSPACE"
-fi
-
-if [ "${run}" != "false" ]
-then
-  echo "launching Eclipse..."
-  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
-fi

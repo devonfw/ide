@@ -1,1 +1,1 @@
-regedit.exe /S IDEenv.reg
+regedit.exe /S devon-cmd.reg
