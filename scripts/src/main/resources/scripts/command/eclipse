@@ -166,5 +166,5 @@ fi
 if [ "${run}" != "false" ]
 then
   echo "launching Eclipse..."
-  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs "${ECLIPSE_VMARGS}" &
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs "${ECLIPSE_VMARGS}" &
 fi
