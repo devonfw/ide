@@ -67,19 +67,19 @@ function doRunCommand() {
 
 function doLogo() {
   local logo=(
-"     devondevon  dev                                                                                                   "
-"    devondevon  devon                  dd                                                      fffff                   "
-"   devondevon  devondev               ddd                                                     ffffff                   "
-"  devondevon  devondevon              ddd                                                     ff                       "
-" devondevon    devondevon        dddddddd   eeeeeee  vvv         vvv   oooo      nnnnnn     fffffff ww               ww"
-"devondevon      devondevon     dddddddddd  eeeeeeeeee vvv       vvv oooooooooo  nnnnnnnnnn  fffffff  ww      w      ww "
-"devondevon       devondevon   dddd    ddd eeee    eee  vvv     vvv oooo    oooo nnn     nnn   ff      ww    www    ww  "
-"devondevon      devondevon    ddd     ddd eeeeeeeeeee   vvv   vvv  ooo      ooo nnn      nnn  ff       ww  wwwww  ww   "
-" devondevon    devondevon     ddd     ddd eeeeeeeeeee    vvvvvvv   ooo      ooo nnn      nnn  ff        ww wwwww ww    "
-"  devondevon  devondevon       ddd    ddd eeee            vvvvv     ooo    ooo  nnn      nnn  ff         wwww wwww     "
-"   devondev  devondevon         dddddddd   eeeeeeeeee      vvv       oooooooo   nnn      nnn  ff          ww   ww      "
-"     devon  devondevon            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
-"      dev  devondevon                                                                                                  "
+"     ..........  ///                                                                                                   "
+"    ..........  /////                  dd                                                      fffff                   "
+"   ..........  ////////               ddd                                                     ffffff                   "
+"  ..........  //////////              ddd                                                     ff                       "
+" ..........    //////////        dddddddd   eeeeeee  vvv         vvv   oooo      nnnnnn     fffffff ww               ww"
+"..........      //////////     dddddddddd  eeeeeeeeee vvv       vvv oooooooooo  nnnnnnnnnn  fffffff  ww      w      ww "
+"..........       //////////   dddd    ddd eeee    eee  vvv     vvv oooo    oooo nnn     nnn   ff      ww    www    ww  "
+"..........      //////////    ddd     ddd eeeeeeeeeee   vvv   vvv  ooo      ooo nnn      nnn  ff       ww  wwwww  ww   "
+" ..........    //////////     ddd     ddd eeeeeeeeeee    vvvvvvv   ooo      ooo nnn      nnn  ff        ww wwwww ww    "
+"  ..........  //////////       ddd    ddd eeee            vvvvv     ooo    ooo  nnn      nnn  ff         wwww wwww     "
+"   ........  //////////         dddddddd   eeeeeeeeee      vvv       oooooooo   nnn      nnn  ff          ww   ww      "
+"     .....  //////////            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
+"      ...  //////////                                                                                                  "
   )
   local len=`tput cols`;
   if [ "$?" != 0 ]
@@ -350,6 +350,7 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion ${download_url}
     target_version="${LATEST_VERSION}"
+    echo "LATEST = $target_version"
   fi
   if [ -n "${current_version}" ]
   then
@@ -371,7 +372,7 @@ function doUpgradeMavenArtifact() {
       fi
     fi
   fi
-  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}-${suffix}"
+  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
   doInstall "${1}" "${download_url}"
 }
 
@@ -485,6 +486,19 @@ function doConfigureWorkspace() {
   fi
 }
 
+# $1: name of ide
+function doCreateIdeScript() {
+  if doIsWindows
+  then
+    echo -e "@echo off\r\npushd %%~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
+    echo "Created script ${1}-${WORKSPACE}.bat"
+  else
+    echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
+    chmod a+x ${1}-${WORKSPACE}
+    echo "Created script ${1}-${WORKSPACE}"
+  fi
+}
+
 # $1: version1
 # $2: version2
 function doVersionCompare() {
@@ -558,11 +572,32 @@ function load_properties() {
   fi
   local key
   local value
+  local export
   while IFS='=' read -r key value
   do
-    if [ -n "${value}" ] && [ "${key:0:1}" != "#" ]
+    if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
     then
-      eval ${key}=\${value}
+      export=""
+      if [ "${value:0:1}" = "~" ]
+      then
+        value=${HOME}${value:1}
+      fi
+      if [ "${key:0:7}" = "export " ]
+      then
+        export="true"
+        key="${key:7}"
+      fi
+      if [ -z "${value}" ]
+      then
+        unset ${key}
+      else
+        eval ${key}=${value}
+        #echo "${key}=${!key}"
+        if [ "${export}" = "true" ]
+        then
+          export ${key}
+        fi
+      fi
     fi
   done < "${1}"
 }

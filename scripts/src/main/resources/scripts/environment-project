@@ -11,15 +11,32 @@ function load_properties() {
   fi
   local key
   local value
+  local export
   while IFS='=' read -r key value
   do
-    if [ -n "${value}" ] && [ "${key:0:1}" != "#" ]
+    if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
     then
+      export=""
       if [ "${value:0:1}" = "~" ]
       then
         value=${HOME}${value:1}
       fi
-      eval ${key}=${value}
+      if [ "${key:0:7}" = "export " ]
+      then
+        export="true"
+        key="${key:7}"
+      fi
+      if [ -z "${value}" ]
+      then
+        unset ${key}
+      else
+        eval ${key}=${value}
+        #echo "${key}=${!key}"
+        if [ "${export}" = "true" ]
+        then
+          export ${key}
+        fi
+      fi
     fi
   done < "${1}"
 }
@@ -148,6 +165,6 @@ fi
 # load user settings late so variables like M2_REPO can be overriden
 load_properties "${DEVON_IDE_HOME}/conf/devon.properties"
 
-unfunction load_properties
+unset -f load_properties
 
 export PATH
