@@ -147,7 +147,7 @@ if [ "${run}" != "false" ] || [ -n "${CONFIGURATOR_MODE}" ]
 then
   if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
   then
-    echo doFail "Eclipse workspace ${WORKSPACE} is locked.\nIt seems as if Eclipse is already running for this workspace.\nOtherwise consider deleting this file\n${WORKSPACE_PATH}/.metadata/.lock"
+    doFail "Eclipse workspace ${WORKSPACE} is locked.\nIt seems as if Eclipse is already running for this workspace.\nOtherwise consider deleting this file\n${WORKSPACE_PATH}/.metadata/.lock"
   fi
 fi
 
