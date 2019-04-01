@@ -551,18 +551,29 @@ function doIsWindows() {
   return -1
 }
 
+function load_properties() {
+  if ! [ -f "${1}" ]
+  then
+    return
+  fi
+  local key
+  local value
+  while IFS='=' read -r key value
+  do
+    if [ -n "${value}" ] && [ "${key:0:1}" != "#" ]
+    then
+      eval ${key}=\${value}
+    fi
+  done < "${1}"
+}
+
 if [ -z "${DEVON_IDE_HOME}" ]
 then
   DEVON_IDE_HOME="`dirname ${BASH_SOURCE:-$0}`/.."
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
-source "${DEVON_IDE_HOME}/scripts/variables"
-if [ -f "${DEVON_IDE_HOME}/conf/variables" ]
-then
-  source "${DEVON_IDE_HOME}/conf/variables"
-fi
-if [ -f "${DEVON_IDE_HOME}/conf/variables-customized" ]
-then
-  source "${DEVON_IDE_HOME}/conf/variables-customized"
-fi
+load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
+load_properties "${DEVON_IDE_HOME}/devon.properties"
+load_properties "${SETTINGS_PATH}/devon/devon.properties"
+load_properties "${DEVON_IDE_HOME}/conf/devon.properties"
 
