@@ -90,7 +90,7 @@ else
 fi
 if [ "${setup}" = "true" ]
 then
-  doRunCommand "which intellij" "verify installation of IntelliJ"
+  doRunCommand "command -v intellij" "verify installation of IntelliJ"
   if [ -e "${IDEA_HOME}/product-info.json" ]
   then
     doRunCommand "cat '${IDEA_HOME}/product-info.json'"

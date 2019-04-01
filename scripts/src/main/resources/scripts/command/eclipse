@@ -124,7 +124,7 @@ else
 fi
 if [ "${setup}" = "true" ]
 then
-  doRunCommand "which eclipse" "verify installation of Eclipse"
+  doRunCommand "command -v eclipse" "verify installation of Eclipse"
   if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
   then
     doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"

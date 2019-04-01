@@ -19,11 +19,11 @@ then
   setup=true
 fi
 
-if which ng &> /dev/null
+if command -v ng &> /dev/null
 then
   if [ "${setup}" = "true" ]
   then
-    echo "angluar-cli (ng) is already installed at $(which ng)"
+    echo "angluar-cli (ng) is already installed at $(command -v ng)"
   fi
 else
   doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"
