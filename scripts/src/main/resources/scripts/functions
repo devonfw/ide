@@ -426,7 +426,7 @@ function doInstall() {
   doExtract ~/Downloads/"${2/*\//}" "${4}"
   if [ -n "${3}" ]
   then
-    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/${3}"
+    doMoveGlobSafe "${DEVON_IDE_HOME}"/updates/extracted/"${dir}" "${DEVON_IDE_HOME}"/updates/extracted/${3}
   fi
   doReplaceExtracted "${dir}" "${1}"
   echo "Successfully installed ${1}"

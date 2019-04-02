@@ -55,7 +55,7 @@ fi
 
 if [ -n "${1}" ]
 then
-  BUILD_OPTS="${*}"
+  BUILD_OPTS="${@}"
 fi
 echo "${BUILD_CMD} ${BUILD_OPTS}"
-doDevonCommand $BUILD_CMD "${BUILD_OPTS}"
+doDevonCommand $BUILD_CMD ${BUILD_OPTS}
