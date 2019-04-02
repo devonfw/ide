@@ -335,7 +335,7 @@ function doUpgradeMavenArtifact() {
   if [ -d "${1}/.git" ]
   then
     echo "Found git repository ${1} - updating via git"
-    doRunCommand "git pull" "" "${1}"
+    doGitPullOrClone "${1}"
     return
   fi
   local download_url="${2}"
@@ -402,12 +402,22 @@ function doMoveGlobSafe() {
 # $1: absolute target path
 # $2: URL
 function doGitPullOrClone() {
-  doRequestCommand git
   if [ -d "${1}/.git" ]
   then
-    doRunCommand "git pull" "" "${1}"
+    local remotes=$(git remote)
+    if [ -n "${remotes}" ]
+    then
+      doRunCommand "git pull" "" "${1}"
+    else
+      echo "Can not update local git repository: ${1}"
+    fi
   else
-    doRunCommand "git pull '${2}' '${1}'"
+    if [ -z "${2}" ]
+    then
+      doFail "Not a git repository: ${1}"
+    else
+      doRunCommand "git clone '${2}' '${1}'"
+    fi
   fi
 }
 
