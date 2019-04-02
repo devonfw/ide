@@ -224,8 +224,8 @@ function doExtract() {
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
     mkdir -p "${mount_dir}"
     doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${1}'"
-    doRunCommand "cp -a '${mount_dir}' '${target_dir}'"
-    doRunCommand "hdiutil detach '${mount_dir}'"
+    doRunCommand "cp -a '${mount_dir}'/*.app '${target_dir}'"
+    doRunCommand "hdiutil detach -force '${mount_dir}'"
     if [ -e "${target_dir}/Applications" ]
     then
       rm "${target_dir}/Applications"
