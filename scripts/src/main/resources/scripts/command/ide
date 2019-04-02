@@ -73,6 +73,15 @@ function doSetup() {
     echo "*** Setting up ${tool} ***"
     doDevonCommand ${tool} setup
   done
+  if doIsWindows
+  then
+    regedit.exe /S "${DEVON_IDE_HOME}/system/windows/cmd/devon-cmd.reg"
+    regedit.exe /S "${DEVON_IDE_HOME}/system/windows/power-shell/devon-power-shell.reg"
+    if [ -e "${DEVON_IDE_HOME}/console.bat" ]
+    then
+      echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
+    fi
+  fi
 }
 
 function doUninstall() {
@@ -89,6 +98,8 @@ function doUninstall() {
   doRunCommand 'rm -rf ~/.devon'
   if doIsWindows
   then
+    regedit.exe /S "${DEVON_IDE_HOME}/system/windows/cmd/devon-cmd-remove.reg"
+    regedit.exe /S "${DEVON_IDE_HOME}/system/windows/power-shell/devon-power-shell-remove.reg"
     if [ -d "${USERPROFILE}/.devon" ]
     then
       doRunCommand 'rm -rf "${USERPROFILE}/.devon"'

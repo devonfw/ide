@@ -1,6 +1,6 @@
 Windows Registry Editor Version 5.00
 
-[HKEY_CLASSES_ROOT\Folder\shell\cmd]
-@="Open Devon CMD here"
-[HKEY_CLASSES_ROOT\Folder\shell\cmd\command]
+[HKEY_CLASSES_ROOT\Folder\shell\devon_cmd]
+@="Open Devon CMD shell here"
+[HKEY_CLASSES_ROOT\Folder\shell\devon_cmd\command]
 @="cmd.exe /s /k pushd \"%V\" & devon"
