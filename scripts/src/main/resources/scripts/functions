@@ -617,7 +617,9 @@ function doLoadProperties() {
 
 if [ -z "${DEVON_IDE_HOME}" ]
 then
-  DEVON_IDE_HOME="`dirname ${BASH_SOURCE:-$0}`/.."
+  cd "$(dirname ${BASH_SOURCE:-$0})/.."
+  DEVON_IDE_HOME="${PWD}"
+  cd - > /dev/null
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
