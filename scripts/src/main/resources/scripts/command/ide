@@ -77,13 +77,14 @@ function doSetup() {
 
 function doUninstall() {
   echo "Uninstalling devon-ide..."
+  mkdir -p "${DEVON_IDE_HOME}/updates"
   if [ -f ~/.bashrc ]
   then
-    cat ~/.bashrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/update/.bashrc" && mv "${DEVON_IDE_HOME}/update/.bashrc" ~/.bashrc
+    cat ~/.bashrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" ~/.bashrc
   fi
   if [ -f ~/.zshrc ]
   then
-    cat ~/.zshrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/update/.zshrc" && mv "${DEVON_IDE_HOME}/update/.zshrc" ~/.zshrc
+    cat ~/.zshrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" ~/.zshrc
   fi
   doRunCommand 'rm -rf ~/.devon'
   if doIsWindows
