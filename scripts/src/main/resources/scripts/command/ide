@@ -67,6 +67,30 @@ function doSetup() {
   done
 }
 
+function doUninstall() {
+  echo "Uninstalling devon-ide..."
+  if [ -f ~/.bashrc ]
+  then
+    cat ~/.bashrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/update/.bashrc" && mv "${DEVON_IDE_HOME}/update/.bashrc" ~/.bashrc
+  fi
+  if [ -f ~/.zshrc ]
+  then
+    cat ~/.zshrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/update/.zshrc" && mv "${DEVON_IDE_HOME}/update/.zshrc" ~/.zshrc
+  fi
+  doRunCommand 'rm -rf ~/.devon'
+  if doIsWindows
+  then
+    if [ -d "${USERPROFILE}/.devon" ]
+    then
+      doRunCommand 'rm -rf "${USERPROFILE}/.devon"'
+    fi
+    if [ -f "${USERPROFILE}/scripts/devon" ]
+    then
+      doRunCommand 'rm "${USERPROFILE}/scripts/devon"''
+    fi
+  fi
+}
+
 target_version="LATEST"
 
 # CLI
@@ -79,11 +103,15 @@ then
   echo "update                           check for updates and install if newer version is available"
   echo "update «package» [to «version»]  update (or downgrade) specified package (to specified version)"
   echo "                                 packages are e.g. 'scripts' or 'settings'"
+  echo "uninstall                        uninstall devon-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
 then
   shift
   doSetup ${@}
+elif [ "${1}" = "uninstall" ]
+then
+  doUninstall
 elif [ "${1}" = "update" ]
 then
   if [ -z "${2}" ]
