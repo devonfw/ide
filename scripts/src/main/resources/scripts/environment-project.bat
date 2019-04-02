@@ -127,7 +127,6 @@ set "var=!var:export =!
 (
   rem endlocal in () block to access local variable and "export" it
   endlocal
-  echo "%var%=%value%"
   rem use call in order to evaluate %var% inside value
   call set "%var%=%value%"
 )
