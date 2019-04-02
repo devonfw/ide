@@ -575,7 +575,7 @@ function doIsWindows() {
   return -1
 }
 
-function load_properties() {
+function doLoadProperties() {
   if ! [ -f "${1}" ]
   then
     return
@@ -617,8 +617,8 @@ then
   DEVON_IDE_HOME="`dirname ${BASH_SOURCE:-$0}`/.."
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
-load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
-load_properties "${DEVON_IDE_HOME}/devon.properties"
-load_properties "${SETTINGS_PATH}/devon/devon.properties"
-load_properties "${DEVON_IDE_HOME}/conf/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
+doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
 
