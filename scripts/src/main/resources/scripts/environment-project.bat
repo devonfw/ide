@@ -2,9 +2,9 @@ rem This batch is not supposed to be called manually
 @echo off
 
 set DEVON_IDE_HOME=%CD%
-call load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
+call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
 if exist "%DEVON_IDE_HOME%\variables.bat" (
-  call load_properties "%DEVON_IDE_HOME%\devon.properties"
+  call :load_properties "%DEVON_IDE_HOME%\devon.properties"
 )
 rem copy defaults
 if not exist "%DEVON_IDE_HOME%\conf" (
@@ -12,7 +12,7 @@ if not exist "%DEVON_IDE_HOME%\conf" (
 )
 if exist "%SETTINGS_PATH%" (
   if exist "%SETTINGS_PATH%\devon\devon.properties" (
-    call load_properties "%SETTINGS_PATH%\devon\devon.properties"
+    call :load_properties "%SETTINGS_PATH%\devon\devon.properties"
   ) else (
     echo:
     echo *** ATTENTION ***
@@ -94,7 +94,7 @@ if exist "%SOFTWARE_PATH%\nodejs" (
 :variables
 rem load user settings late so variables like M2_REPO can be overriden
 if exist "%DEVON_IDE_HOME%\conf\devon.properties" (
-  call load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
+  call :load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
 )
 goto :eof
 
