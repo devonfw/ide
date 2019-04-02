@@ -29,7 +29,7 @@ function doSetup() {
   else
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
-    local software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
+    local software_version="${ECLIPSE_VERSION:-2018-12}"
     local eclipse_edition=java
 	local extract_folder=
     #eclipse_edition=jee
@@ -112,7 +112,7 @@ function doConfigureEclipse() {
 function doStartEclipse() {
   doConfigureEclipse
   echo "launching Eclipse..."
-  eclipse -clean -data "${WORKSPACE_PATH}" -keyring "~/.eclipse/.keyring" -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
+  eclipse -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
 }
 
 # CLI
