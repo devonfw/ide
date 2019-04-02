@@ -86,7 +86,7 @@ function doUninstall() {
     fi
     if [ -f "${USERPROFILE}/scripts/devon" ]
     then
-      doRunCommand 'rm "${USERPROFILE}/scripts/devon"''
+      doRunCommand 'rm "${USERPROFILE}/scripts/devon"'
     fi
   fi
 }
