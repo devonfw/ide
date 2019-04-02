@@ -31,20 +31,20 @@ function doSetup() {
     local mirror="https://ftp.osuosl.org"
     local software_version=`doGetVariable ECLIPSE_VERSION 2018-12`
     local eclipse_edition=java
+	local extract_folder=
     #eclipse_edition=jee
     local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
-    local archive_folder=
     if doIsMacOs
     then
       download_url="${download_url}-macosx-cocoa-x86_64.dmg"
-      archive_folder='volume'
+	  extract_folder="eclipse"
     elif doIsWindows
     then
       download_url="${download_url}-win32-x86_64.zip"
     else
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
-    doInstall "${ECLIPSE_HOME}" "${download_url}" "${archive_folder}"
+    doInstall "${ECLIPSE_HOME}" "${download_url}" "" "${extract_folder}"
     if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
@@ -95,11 +95,13 @@ function doConfigureEclipse() {
   fi
   if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
   then
-    if [ "${mode}" = "-i" ] || [ "${mode}" = "-x" ]
+    if [ -z "${mode}" ]
+    then
+      mode="-u"
+    elif [ "${mode}" != "-u" ]
     then
       doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
     fi
-    mode="-u"
   fi
   if [ -n "${mode}" ]
   then

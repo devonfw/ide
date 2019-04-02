@@ -224,8 +224,8 @@ function doExtract() {
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
     mkdir -p "${mount_dir}"
     doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${1}'"
-    doRunCommand "cp -a '${mount_dir}' '${target_dir}'"
-    doRunCommand "hdiutil detach '${mount_dir}'"
+    doRunCommand "cp -a '${mount_dir}'/*.app '${target_dir}'"
+    doRunCommand "hdiutil detach -force '${mount_dir}'"
     if [ -e "${target_dir}/Applications" ]
     then
       rm "${target_dir}/Applications"
@@ -335,7 +335,7 @@ function doUpgradeMavenArtifact() {
   if [ -d "${1}/.git" ]
   then
     echo "Found git repository ${1} - updating via git"
-    doRunCommand "git pull" "" "${1}"
+    doGitPullOrClone "${1}"
     return
   fi
   local download_url="${2}"
@@ -402,12 +402,22 @@ function doMoveGlobSafe() {
 # $1: absolute target path
 # $2: URL
 function doGitPullOrClone() {
-  doRequestCommand git
   if [ -d "${1}/.git" ]
   then
-    doRunCommand "git pull" "" "${1}"
+    local remotes=$(cd "${1}";git remote)
+    if [ -n "${remotes}" ]
+    then
+      doRunCommand "git pull" "" "${1}"
+    else
+      echo "Can not update local git repository: ${1}"
+    fi
   else
-    doRunCommand "git pull '${2}' '${1}'"
+    if [ -z "${2}" ]
+    then
+      doFail "Not a git repository: ${1}"
+    else
+      doRunCommand "git clone '${2}' '${1}'"
+    fi
   fi
 }
 
@@ -565,7 +575,7 @@ function doIsWindows() {
   return -1
 }
 
-function load_properties() {
+function doLoadProperties() {
   if ! [ -f "${1}" ]
   then
     return
@@ -607,8 +617,8 @@ then
   DEVON_IDE_HOME="`dirname ${BASH_SOURCE:-$0}`/.."
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
-load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
-load_properties "${DEVON_IDE_HOME}/devon.properties"
-load_properties "${SETTINGS_PATH}/devon/devon.properties"
-load_properties "${DEVON_IDE_HOME}/conf/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
+doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
 
