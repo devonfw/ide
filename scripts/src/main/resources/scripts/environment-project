@@ -30,8 +30,12 @@ function load_properties() {
       then
         unset ${key}
       else
+        if [ "${value:0:1}" != "(" ]
+        then
+          value=\"${value}\"
+        fi
+        echo eval "${key}=${value}"
         eval ${key}=${value}
-        #echo "${key}=${!key}"
         if [ "${export}" = "true" ]
         then
           export ${key}
