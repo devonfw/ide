@@ -74,7 +74,7 @@ if not exist "%HOME%\.devon\devon" (
   popd
 )
 if "%1%" == "bash" (
-  "%BASH%" --init-file "~/.devon/devon"
+  "%BASH%"
 ) else (
   "%BASH%" -c 'source ~/.devon/devon %*'
 )
