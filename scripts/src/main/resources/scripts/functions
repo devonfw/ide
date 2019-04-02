@@ -336,7 +336,7 @@ function doUpgradeMavenArtifact() {
   then
     echo "Found git repository ${1} - updating via git"
     doGitPullOrClone "${1}"
-    return
+    return ${?}
   fi
   local download_url="${2}"
   local artifact_id="${3}"
@@ -359,7 +359,7 @@ function doUpgradeMavenArtifact() {
     if [ "${result}" = 0 ]
     then
       echo "The ${artifact_id} package is already at the latest version ${target_version}"
-      return
+      return 1
     else
       echo "You are using version ${current_version} of ${artifact_id} "
       echo "The new version to install is ${target_version}"
@@ -368,7 +368,7 @@ function doUpgradeMavenArtifact() {
         echo "You are using a newer version than the latest release version."
         echo "Hence there is nothing to update."
         echo "Seems as you are an active devonfw developer. Thanks for contributing!"
-        return
+        return 1
       fi
     fi
   fi
@@ -410,6 +410,7 @@ function doGitPullOrClone() {
       doRunCommand "git pull" "" "${1}"
     else
       echo "Can not update local git repository: ${1}"
+      return 1
     fi
   else
     if [ -z "${2}" ]
