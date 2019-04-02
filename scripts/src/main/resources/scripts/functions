@@ -605,7 +605,6 @@ function doLoadProperties() {
         then
           value=\"${value}\"
         fi
-        echo eval "${key}=${value}"
         eval ${key}=${value}
         if [ "${export}" = "true" ]
         then
