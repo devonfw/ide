@@ -404,7 +404,7 @@ function doMoveGlobSafe() {
 function doGitPullOrClone() {
   if [ -d "${1}/.git" ]
   then
-    local remotes=$(git remote)
+    local remotes=$(cd "${1}";git remote)
     if [ -n "${remotes}" ]
     then
       doRunCommand "git pull" "" "${1}"
