@@ -73,7 +73,11 @@ if not exist "%HOME%\.devon\devon" (
   "%BASH%" -c 'source devon'
   popd
 )
-"%BASH%" -c 'source ~/.devon/devon %*'
+if "%1%" == "bash" (
+  "%BASH%" --init-file "~/.devon/devon"
+) else (
+  "%BASH%" -c 'source ~/.devon/devon %*'
+)
 if not "%DEVON_PATH%" == "" (
   set "DEVON_OLD_PATH=%PATH%"
   set "PATH=%DEVON_PATH%"
