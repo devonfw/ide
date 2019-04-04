@@ -29,8 +29,7 @@ do
 done
 if ! git diff-index --quiet HEAD || [ -n "$(git status -s)" ]
 then
-  echo "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
-  echo exit 255
+  doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
 fi
 
 if [ -z "${force}" ] 
@@ -89,6 +88,7 @@ fi
 echo
 echo "Setting version of your project to ${release_version} ..."
 doDevonCommand build set-version "${release_version}" "${current_version}" cleanKeepBackup
+git add -u
 git commit -m "bumped version to ${release_version}"
 git tag -a "release/${release_version}" -m "tagged version ${release_version}"
 echo
@@ -96,6 +96,7 @@ echo "Building and deploying the release..."
 doDevonCommand build release || doFail "Release build failed! You should reset your local commits via 'git reset HEAD^'."
 echo "Setting version of your project to ${next_version} ..."
 doDevonCommand build set-version "${next_version}" "${current_version}" ""
+git add -u
 git commit -m "set next version to ${next_version}"
 if [ -z "${batch}" ]
 then

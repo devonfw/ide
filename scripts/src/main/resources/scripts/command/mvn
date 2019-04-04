@@ -48,7 +48,7 @@ function doSetupMaven() {
 function doGetMavenProjectVersion() {
   local maven_project_version
   local changelist_option=""
-  maven_project_version="$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)"
+  maven_project_version="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
   if [ "${maven_project_version}" = "dev" ] || [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     if [ -e ".mvn/maven.config" ]
@@ -264,7 +264,7 @@ else
     doCheckTopLevelProject ${@}
   elif [ "${1}" = "release" ]
   then
-    mvn clean deploy -Pdeploy,release
+    mvn clean deploy -Dchangelist= -Pdeploy
   else
     mvn ${@}
   fi
