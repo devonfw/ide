@@ -1,64 +1,271 @@
 #!/bin/bash
 source `dirname $0`/../functions
 
+# $1: optional setup
+function doSetupMaven() {
+  if [ -d "${MAVEN_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      echo "Maven is already installed at ${MAVEN_HOME}"
+    fi
+  else
+    local software_version=${MAVEN_VERSION:-3.6.0}
+    local download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
+    doInstall "${MAVEN_HOME}" "${download_url}" 'apache-maven-*'
+  fi
+  if [ -n "${1}" ]
+  then
+    if [ -d "${SETTINGS_PATH}" ]
+    then
+      M2_DIR="${DEVON_IDE_HOME}/conf/.m2"
+      if [ ! -e "${M2_DIR}" ]
+      then
+        mkdir -p "${M2_DIR}"
+      fi
+      M2_CONF=${M2_DIR}/settings.xml
+      if [ ! -e "${M2_CONF}" ]
+      then
+        doRunCommand "cp '${SETTINGS_PATH}/maven/settings.xml' '${M2_CONF}'" "copy maven settings.xml"
+      fi
+      if [ ! -e "${M2_DIR}/settings-security.xml" ]
+      then
+        MASTER_PASSWORD=`head -c 20 /dev/random | base64`
+        MASTER_PASSWORD=`mvn --encrypt-master-password ${MASTER_PASSWORD}`
+        echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
+        echo "Successfully created ${M2_DIR}/settings-security.xml"
+        MASTER_PASSWORD=
+      fi
+    else
+      echo "WARNING: Settings are missing at ${SETTINGS_PATH}"
+      echo "Please run the following command to fix:"
+      echo "devon setup"
+    fi
+    doRunCommand "mvn -v" "verify installation of maven"
+  fi
+}
+
+function doGetMavenProjectVersion() {
+  local maven_project_version
+  local changelist_option=""
+  maven_project_version="$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)"
+  if [ "${maven_project_version}" = "dev" ] || [ "${maven_project_version}" = "dev-SNAPSHOT" ]
+  then
+    if [ -e ".mvn/maven.config" ]
+    then
+      # https://maven.apache.org/maven-ci-friendly.html
+      local maven_project_version="$(cat .mvn/maven.config | sed 's/.*-Drevision=\([^ ]*\).*/\1/')"
+      local maven_changelist=""
+      if [ "${1}" != "release" ]
+      then
+        maven_changelist="$(cat .mvn/maven.config | grep '\-Dchangelist=' | sed 's/.*-Dchangelist=\([^ ]*\).*/\1/')"
+      fi
+      maven_project_version="${maven_project_version}${maven_changelist}"
+    else
+      local module_list="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}')"
+      if [ "${?}" = 0 ]
+      then
+        maven_project_version="$(echo "${module_list}" | grep -v '^dev\(-SNAPSHOT\)*$' | sort -u )"
+        if [ -z "${maven_project_version}" ]
+        then
+          maven_project_version="$(echo "${module_list}" | sort -u )"
+        fi
+        if [[ "${maven_project_version}" == *$'\n'* ]]
+        then
+          doFail "Multiple versions in reactor:\n${maven_project_version}"
+        fi
+      else
+        doFail "${module_list}"
+      fi
+    fi
+  fi
+  echo $maven_project_version
+}
+
+# $1: new version
+# $2: current version
+# $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
+function doSetMavenProjectVersion() {
+  local current_version="${2}"
+  if [ -z "${2}" ]
+  then
+    current_version="$(doGetMavenProjectVersion)"
+  fi
+  if [ "${current_version}" = "${1}" ]
+  then
+    echo "Maven version is already set to ${1}. Nothing to change."
+    return
+  fi
+  if [ -e ".mvn/maven.config" ]
+  then
+    # https://maven.apache.org/maven-ci-friendly.html
+    local maven_config="$(cat .mvn/maven.config)"
+    local updated_config="${maven_config/-Drevision=[^ ]*/-Drevision=${1/-SNAPSHOT/}}"
+    if [ "${updated_config}" != "${maven_config}" ]
+    then
+      echo "${updated_config}" > .mvn/maven.config
+      local new_version="$(doGetMavenProjectVersion)"
+      if [ "${new_version}" != "${2}" ]
+      then
+        if [ "${new_version}-SNAPSHOT" == "${2}" ]
+        then
+          local new_config="${updated_config/-Dchangelist=[^ ]*/-Dchangelist=-SNAPSHOT}"
+          if [ "${new_config}" = "${updated_config}" ]
+          then
+            new_config="${updated_config} -Dchangelist=-SNAPSHOT"
+          fi
+          updated_config="${new_config}"
+          echo "${updated_config}" > .mvn/maven.config
+          new_version="$(doGetMavenProjectVersion)"
+        fi
+      fi
+      if [ "${new_version}" == "${2}" ]
+      then
+        echo "updated .mvn/maven.config"
+        echo "from: ${maven_config}"
+        echo "to: ${updated_config}"
+        return
+      else
+        echo "failed to update version via .mvn/maven.config"
+        echo "${maven_config}" > .mvn/maven.config
+      fi
+    fi
+  fi
+  local module_list="$(mvn -q exec:exec -Dexec.executable=pwd)"
+  if [ "${?}" = 0 ]
+  then
+    local cwd="${PWD}"
+    for folder in ${module_list}
+    do
+      cd "${folder}"
+      doSetMavenPomVersion ${@}
+    done
+    cd "${cwd}"
+  else
+    doFail "${module_list}"
+  fi
+}
+
+# $1: new version
+# $2: current version
+# $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
+function doSetMavenPomVersion() {
+  if [ -f pom.xml.bak ]
+  then
+    if [ "${3}" = "cleanBackup" ] || [ "${3}" = "cleanKeepBackup" ]
+    then
+      rm pom.xml.bak
+    fi
+  fi
+  local maven_project_version="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
+  if [ "${maven_project_version}" = "${1}" ] 
+  then
+    echo "No changes needed for ${PWD}/pom.xml"
+    return
+  fi
+  if [ ! -f pom.xml.bak ]
+  then
+    echo "Creating backup of ${PWD}/pom.xml"
+    cp pom.xml pom.xml.bak
+  fi
+  local pom_elements="$(cat pom.xml.bak | grep ${2})"
+  if [ "${?}" != 0 ]
+  then
+    doFail "Version ${2} not found in POM ${PWD}/pom.xml"
+    exit 255
+  fi
+  if [[ "${pom_elements}" == *$'\n'* ]]
+  then
+    echo "Multiple matches of version in your pom.xml:\n${pom_elements}"
+    if [ -z "${force}" ]
+    then
+      read -p "Are you sure you want to continue? " answer
+      if [ "${answer}" != "yes" ]
+      then
+        exit 255
+      fi
+    fi
+  fi
+  cat pom.xml.bak | sed "s/${2}/${1}/g" > pom.xml
+  if [ "${3}" != "keepBackup" ] && [ "${3}" != "cleanKeepBackup" ]
+  then
+    rm pom.xml.bak
+  fi
+}
+
+# $1: quiet option (-q, --quiet, quiet) or anything else to echo
+function doCheckTopLevelProject() {
+  if [ ! -f pom.xml ]
+  then
+    doEcho "${1}" "Not in a maven project: ${PWD}"
+    exit 255
+  fi
+  local relative_path
+  if grep -q "<parent>" pom.xml
+  then
+    relative_path="$(grep -q "<relativePath" pom.xml)"
+    if [ "${?}" = 0 ]
+    then
+      if [[ "${relative_path}" == *"<relativePath/>"* ]]
+      then
+        relative_path=""
+      else
+        relative_path="$(echo $relativePath | sed 's/.*\<relativePath>\(.*\)\<\/relativePath>/\1/')"
+      fi
+    else
+      relative_path="../pom.xml"
+    fi
+  fi
+  if [ -n "${relative_path}" ]
+  then
+    if [ -f "${relative_path}" ]
+    then
+      doEcho "${1}" "Parent with existing relativePath ${relative_path}"
+      doEcho "${1}" "You are inside a maven module."
+      exit 254
+    else
+      doEcho "${1}" "Parent with non-existing relativePath ${relative_path}"
+    fi
+  fi
+  doEcho "${1}" "You are inside a top-level maven project"
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup or run maven build tool."
   echo
   echo "Arguments:"
-  echo "setup      setup maven (install, verify, configure)"
-  echo "«args»     call maven with the specified arguments"
+  echo "setup                    setup maven (install, verify, configure)"
+  echo "get-version              get the current project version"
+  echo "set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo "check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo "release                  start a clean deploy release build"
+  echo "«args»                   call maven with the specified arguments"
   exit
 fi
 
+MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  setup=true
-fi
-
-MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
-if [ -d "${MAVEN_HOME}" ]
-then
-  if [ "${setup}" = "true" ]
-  then
-    echo "Maven is already installed at ${MAVEN_HOME}"
-  fi
+  doSetupMaven setup
 else
-  software_version=`doGetVariable MAVEN_VERSION 3.6.0`
-  download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
-  doInstall "${MAVEN_HOME}" "${download_url}" 'apache-maven-*'
-fi
-
-if [ "${setup}" = "true" ]
-then
-  if [ -d "${SETTINGS_PATH}" ]
+  doSetupMaven
+  if [ "${1}" = "get-version" ]
   then
-    M2_DIR="${DEVON_IDE_HOME}/conf/.m2"
-    if [ ! -e "${M2_DIR}" ]
-    then
-      mkdir -p "${M2_DIR}"
-    fi
-    M2_CONF=${M2_DIR}/settings.xml
-    if [ ! -e "${M2_CONF}" ]
-    then
-      cp "${SETTINGS_PATH}/maven/settings.xml" "${M2_CONF}"
-      echo "Copied ${SETTINGS_PATH}/maven/settings.xml to ${M2_CONF}"
-    fi
-    if [ ! -e "${M2_DIR}/settings-security.xml" ]
-    then
-      MASTER_PASSWORD=`head -c 20 /dev/random | base64`
-      MASTER_PASSWORD=`mvn --encrypt-master-password ${MASTER_PASSWORD}`
-      echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
-      echo "Successfully created ${M2_DIR}/settings-security.xml"
-      MASTER_PASSWORD=
-    fi
+    doGetMavenProjectVersion
+  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+  then
+    shift
+    doSetMavenProjectVersion ${@}
+  elif [ "${1}" = "check-top-level-project" ]
+  then
+    shift
+    doCheckTopLevelProject ${@}
+  elif [ "${1}" = "release" ]
+  then
+    mvn clean deploy -Pdeploy,release
   else
-    echo "WARNING: Settings are missing at ${SETTINGS_PATH}"
-    echo "Please run the following command to fix:"
-    echo "devon setup"
+    mvn ${@}
   fi
-  doRunCommand "mvn -v" "verify installation of maven"
-else
-  mvn ${@}
 fi

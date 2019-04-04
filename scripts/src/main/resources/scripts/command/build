@@ -27,12 +27,7 @@ then
   fi
 elif [ -f build.gradle ]
 then
-  if [ -x gradlew ]
-  then
-    BUILD_CMD="./gradlew"
-  else
-    BUILD_CMD="gradle"
-  fi
+  BUILD_CMD="gradle"
   if [ -n "${BUILD_GRADLE_OPTS}" ]
   then
     BUILD_OPTS="${BUILD_GRADLE_OPTS}"
@@ -57,5 +52,4 @@ if [ -n "${1}" ]
 then
   BUILD_OPTS="${@}"
 fi
-echo "${BUILD_CMD} ${BUILD_OPTS}"
 doDevonCommand $BUILD_CMD ${BUILD_OPTS}
