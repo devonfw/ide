@@ -65,6 +65,76 @@ function doRunCommand() {
   doResult "${message}" ${result}
 }
 
+# $1: force option
+function doIsForce() {
+  if [ "${1}" = "-f" ] || [ "${1}" = "force" ] || [ "${1}" = "--force" ]
+  then
+    return
+  fi
+  return 255
+}
+
+# $1: optional spaces for indendation
+function doForceHelp() {
+  echo "-f | --force | force ${1}force proceeding even in case of warnings."
+}
+
+# $1: batch option (non interactive mode)
+function doIsBatch() {
+  if [ "${1}" = "-b" ] || [ "${1}" = "batch" ] || [ "${1}" = "--batch" ]
+  then
+    return
+  fi
+  return 255
+}
+
+# $1: optional spaces for indendation
+function doBatchHelp() {
+  echo "-b | --batch | batch ${1}run in non-interactive mode (do not ask any questions)."
+}
+
+# $1: quiet option
+function doIsQuiet() {
+  if [ "${1}" = "-q" ] || [ "${1}" = "quiet" ] || [ "${1}" = "--quiet" ]
+  then
+    return
+  fi
+  return 255
+}
+
+# $1: optional spaces for indendation
+function doQuietHelp() {
+  echo "-q | --quiet | quiet ${1}be quiet and avoid output."
+}
+
+# $1: basename of folder
+function doIsIgnoredFolder() {
+  case "${1}" in
+   target)
+     return;;
+   eclipse-target)
+     return;;
+   node_modules)
+     return;;
+   .git)
+     return;;
+   .svn)
+     return;;
+  esac
+  return 255
+}
+
+# $1: quiet option (-q, --quiet, quiet) or anything else to echo
+# $2+: messages to output
+function doEcho() {
+  if doIsQuiet "${1}"
+  then
+    return
+  fi
+  shift
+  echo -e ${@}
+}
+
 function doLogo() {
   local logo=(
 "     ..........  ///                                                                                                   "
