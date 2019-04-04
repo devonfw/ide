@@ -2,17 +2,17 @@ rem This batch is not supposed to be called manually
 @echo off
 
 set DEVON_IDE_HOME=%CD%
-call "%DEVON_IDE_HOME%\scripts\variables.bat"
+call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
 if exist "%DEVON_IDE_HOME%\variables.bat" (
-  call "%DEVON_IDE_HOME%\variables.bat"
+  call :load_properties "%DEVON_IDE_HOME%\devon.properties"
 )
 rem copy defaults
 if not exist "%DEVON_IDE_HOME%\conf" (
   md "%DEVON_IDE_HOME%\conf"
 )
 if exist "%SETTINGS_PATH%" (
-  if exist "%SETTINGS_PATH%\devon\variables.bat" (
-    call "%SETTINGS_PATH%\devon\variables.bat"
+  if exist "%SETTINGS_PATH%\devon\devon.properties" (
+    call :load_properties "%SETTINGS_PATH%\devon\devon.properties"
   ) else (
     echo:
     echo *** ATTENTION ***
@@ -93,6 +93,41 @@ if exist "%SOFTWARE_PATH%\nodejs" (
 
 :variables
 rem load user settings late so variables like M2_REPO can be overriden
-if exist "%DEVON_IDE_HOME%\conf\variables.bat" (
-  call "%DEVON_IDE_HOME%\conf\variables.bat"
+if exist "%DEVON_IDE_HOME%\conf\devon.properties" (
+  call :load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
 )
+goto :eof
+
+rem subroutine to load properties as environment variables with
+rem %~1: path to properties file
+:load_properties
+for /F "eol=# delims== tokens=1,*" %%a in (%~1) do (
+  if not "%%a" == "" (
+    call :set_variable "%%a" "%%b"
+  )
+)
+goto :eof
+
+rem subroutine to set environment variable with
+rem %~1: variable name
+rem %~2: variable value (may contain ~ or ${var})
+:set_variable
+setlocal EnableDelayedExpansion
+set "value=%~2"
+rem replace ${var} variable syntax with windows %var% syntax
+set "value=!value:${=%%!
+set "value=!value:}=%%!
+rem resolve ~ to user home (USERPROFILE)
+if "!value:~0,1!" == "~" (
+  set "value=%USERPROFILE%!value:~1!"
+)
+set "var=%~1"
+rem remove potential export as this only makes sense on linux/mac
+set "var=!var:export =!
+(
+  rem endlocal in () block to access local variable and "export" it
+  endlocal
+  rem use call in order to evaluate %var% inside value
+  call set "%var%=%value%"
+)
+goto :eof

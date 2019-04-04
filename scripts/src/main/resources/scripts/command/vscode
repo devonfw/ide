@@ -3,6 +3,50 @@ cd "$(dirname "$0")"
 cd ../..
 source scripts/functions
 
+function doSetup() {
+  if [ -d "${VSCODE_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      echo "VSCode is already installed at ${VSCODE_HOME}"
+    fi
+  else
+    local download_url="https://az764295.vo.msecnd.net/stable/1b8e8302e405050205e69b59abb3559592bb9e60"
+    if doIsMacOs
+    then
+      download_url="${download_url}/VSCode-darwin-stable.zip"
+    elif doIsWindows
+    then
+      download_url="${download_url}/VSCode-win32-x64-1.31.1.zip"
+    else
+      download_url="${download_url}/code-stable-1549938209.tar.gz"
+    fi
+    doInstall "${VSCODE_HOME}" "${download_url}" "" "vscode"
+  fi
+}
+
+function doConfigureVsCode() {
+  local mode="${1}"
+  if [ ! -d "${WORKSPACE_PATH}/.vscode" ]
+  then
+    if [ "${mode}" = "-i" ] || [ "${mode}" = "-x" ]
+    then
+      doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+    fi
+    mode="-u"
+  fi
+  if [ -n "${mode}" ]
+  then
+    doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" ${mode}
+  fi
+}
+
+function doStartVsCode() {
+  doConfigureVsCode
+  echo "launching VSCode..."
+  code "${WORKSPACE_PATH}"
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -16,90 +60,37 @@ then
   echo " create-script      create vscode-${WORKSPACE} script if not already exists"
   exit
 fi
-run=
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+if [ -z "${1}" ]
+then
+  doSetup
+  doStartVsCode
+fi
 while [ -n "${1}" ]
 do
-  run=
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    run=true
+    doSetup
+    doStartVsCode
+  elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+  then
+    configurator_mode="-u"
+  elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+  then
+    configurator_mode="-i"
+  elif [ "${1}" = "ws-reverse-add" ]
+  then
+    configurator_mode="-x"
+  elif [ "${1}" = "setup" ]
+  then
+    doSetup setup
+    doCreateIdeScript eclipse
+  elif [ "${1}" = "create-script" ]
+  then
+    doCreateIdeScript eclipse
   else
-    if [ "${run}" != "true" ]
-    then
-      run=false
-    fi
-
-    if [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
-    then
-      configurator_mode="-u"
-      CONFIGURATOR_ACTION="updated"
-    elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
-    then
-      configurator_mode="-i"
-      CONFIGURATOR_ACTION="merged back to settings"
-    elif [ "${1}" = "ws-reverse-add" ]
-    then
-      configurator_mode="-x"
-      CONFIGURATOR_ACTION="merged back to settings (including new properties)"
-    elif [ "${1}" = "setup" ]
-    then
-      setup=true
-    elif [ "${1}" = "create-script" ]
-    then
-      create_script=true
-    else
-      echo "Undefined argument: ${1}"
-      exit 255
-    fi
+    echo "Undefined argument: ${1}"
+    exit -1
   fi
   shift
 done
-
-VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
-if [ -d "${VSCODE_HOME}" ]
-then
-  if [ "${setup}" = "true" ]
-  then
-    echo "VSCode is already installed at ${VSCODE_HOME}"
-  fi
-else
-  download_url="https://az764295.vo.msecnd.net/stable/1b8e8302e405050205e69b59abb3559592bb9e60"
-  if doIsMacOs
-  then
-    download_url="${download_url}/VSCode-darwin-stable.zip"
-  elif doIsWindows
-  then
-    download_url="${download_url}/VSCode-win32-x64-1.31.1.zip"
-  else
-    download_url="${download_url}/code-stable-1549938209.tar.gz"
-  fi
-  doInstall "${VSCODE_HOME}" "${download_url}" "" "vscode"
-fi
-
-if [ ! -d "${WORKSPACE_PATH}/.vscode" ]
-then
-  if [ "${configurator_mode}" = "-i" ] || [ "${configurator_mode}" = "-x" ]
-  then
-    doFail "ERROR: Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
-  fi
-  configurator_mode="-u"
-  CONFIGURATOR_ACTION="created"
-fi 
-
-if [ -n "${configurator_mode}" ]
-then
-  doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" ${configurator_mode}
-fi
-
-if [ "${create_script}" = "true" ]
-then
- echo -e "#!/bin/bash\ncd \$(dirname \${0})\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon vscode" > vscode-"$WORKSPACE"
- chmod a+x vscode-"$WORKSPACE"
- echo "Created script vscode-$WORKSPACE"
-fi
-
-if [ "${run}" != "false" ]
-then
-  echo "launching VSCode..."
-  code "${WORKSPACE_PATH}"
-fi

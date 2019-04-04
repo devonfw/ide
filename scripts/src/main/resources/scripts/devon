@@ -75,8 +75,7 @@ then
   if ! grep -q "~/.devon/devon" ~/.bashrc
   then
     echo "Installing devon alias to your .bashrc"
-    echo "" >> ~/.bashrc
-    echo 'alias devon="source ~/.devon/devon"' >> ~/.bashrc
+    echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.bashrc
   fi
   if [ ! -e ~/.zshrc ]
   then
@@ -85,8 +84,7 @@ then
   if ! grep -q "~/.devon/devon" ~/.zshrc
   then
     echo "Installing devon alias to your .zshrc"
-    echo "" >> ~/.zshrc
-    echo 'alias devon="source ~/.devon/devon"' >> ~/.zshrc
+    echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.zshrc
   fi
   alias devon="source ~/.devon/devon"
   echo "The devon CLI script has been installed to your system."

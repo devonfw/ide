@@ -6,31 +6,66 @@ DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateScripts() {
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".tar.gz" "${devon_ide_version}"
+  if [ "${?}" = 0 ]
+  then
+    cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+    if doIsWindows
+    then
+      cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
+    fi
+  fi
 }
 
 function doUpdateSettings() {
-  return # TODO temporary hack until release available in maven central
   if [ ! -d "${SETTINGS_PATH}" ]
   then
-    if [ -n "${SETTINGS_URL}" ]
+    if [ -n "${1}"]
     then
-      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
-      return
-    else
+      SETTINGS_URL="${1}"
+    fi    
+    if [ -z "${SETTINGS_URL}" ]
+    then
       echo "*** ATTENTION ***"
-      echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined"
-      echo "As a fallback the default settings are installed"
-      echo "Please consult your project technical lead to fix this properly"
+      echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
+      echo "Further details can be found here:"
+      echo "https://github.com/devonfw/devon-ide/wiki/settings"
+      echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
+      echo "In case you just want to test devon-ide you may simply hit return to install default settings."
+      echo
+      read -p "Settings URL: " answer
+      if [ -z "${answer}" ]
+      then
+        SETTINGS_URL="${DEVON_IDE_REPO_URL}/devon-ide-settings"
+        doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+      else
+        SETTINGS_URL="${answer}"
+        doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
+      fi
+    else
+      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
     fi
+    if [ ! -d "${SETTINGS_PATH}" ]
+    then
+      doFail "Installation of settings failed!"
+    fi
+    if [ ! -d "${SETTINGS_PATH}/.git" ]
+    then
+      cd "${SETTINGS_PATH}"
+      git init
+      git add .
+      git commit -m "Initial settings downloaded from ${SETTINGS_URL}"
+      cd -
+    fi
+  else
+    doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
   fi
-  doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".tar.gz"
 }
 
 function doSetup() {
-  doUpdateSettings
+  doUpdateSettings ${@}
   if [ -z "${DEVON_IDE_TOOLS}" ]
   then
-    doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (e.g. variables or variables-customized)."
+    doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (devon.properties)."
   fi
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
@@ -38,6 +73,31 @@ function doSetup() {
     echo "*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
+}
+
+function doUninstall() {
+  echo "Uninstalling devon-ide..."
+  mkdir -p "${DEVON_IDE_HOME}/updates"
+  if [ -f ~/.bashrc ]
+  then
+    cat ~/.bashrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" ~/.bashrc
+  fi
+  if [ -f ~/.zshrc ]
+  then
+    cat ~/.zshrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" ~/.zshrc
+  fi
+  doRunCommand 'rm -rf ~/.devon'
+  if doIsWindows
+  then
+    if [ -d "${USERPROFILE}/.devon" ]
+    then
+      doRunCommand 'rm -rf "${USERPROFILE}/.devon"'
+    fi
+    if [ -f "${USERPROFILE}/scripts/devon" ]
+    then
+      doRunCommand 'rm "${USERPROFILE}/scripts/devon"'
+    fi
+  fi
 }
 
 target_version="LATEST"
@@ -52,10 +112,15 @@ then
   echo "update                           check for updates and install if newer version is available"
   echo "update «package» [to «version»]  update (or downgrade) specified package (to specified version)"
   echo "                                 packages are e.g. 'scripts' or 'settings'"
+  echo "uninstall                        uninstall devon-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
 then
-  doSetup
+  shift
+  doSetup ${@}
+elif [ "${1}" = "uninstall" ]
+then
+  doUninstall
 elif [ "${1}" = "update" ]
 then
   if [ -z "${2}" ]

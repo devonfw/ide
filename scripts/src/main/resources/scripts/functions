@@ -67,19 +67,19 @@ function doRunCommand() {
 
 function doLogo() {
   local logo=(
-"     devondevon  dev                                                                                                   "
-"    devondevon  devon                  dd                                                      fffff                   "
-"   devondevon  devondev               ddd                                                     ffffff                   "
-"  devondevon  devondevon              ddd                                                     ff                       "
-" devondevon    devondevon        dddddddd   eeeeeee  vvv         vvv   oooo      nnnnnn     fffffff ww               ww"
-"devondevon      devondevon     dddddddddd  eeeeeeeeee vvv       vvv oooooooooo  nnnnnnnnnn  fffffff  ww      w      ww "
-"devondevon       devondevon   dddd    ddd eeee    eee  vvv     vvv oooo    oooo nnn     nnn   ff      ww    www    ww  "
-"devondevon      devondevon    ddd     ddd eeeeeeeeeee   vvv   vvv  ooo      ooo nnn      nnn  ff       ww  wwwww  ww   "
-" devondevon    devondevon     ddd     ddd eeeeeeeeeee    vvvvvvv   ooo      ooo nnn      nnn  ff        ww wwwww ww    "
-"  devondevon  devondevon       ddd    ddd eeee            vvvvv     ooo    ooo  nnn      nnn  ff         wwww wwww     "
-"   devondev  devondevon         dddddddd   eeeeeeeeee      vvv       oooooooo   nnn      nnn  ff          ww   ww      "
-"     devon  devondevon            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
-"      dev  devondevon                                                                                                  "
+"     ..........  ///                                                                                                   "
+"    ..........  /////                  dd                                                      fffff                   "
+"   ..........  ////////               ddd                                                     ffffff                   "
+"  ..........  //////////              ddd                                                     ff                       "
+" ..........    //////////        dddddddd   eeeeeee  vvv         vvv   oooo      nnnnnn     fffffff ww               ww"
+"..........      //////////     dddddddddd  eeeeeeeeee vvv       vvv oooooooooo  nnnnnnnnnn  fffffff  ww      w      ww "
+"..........       //////////   dddd    ddd eeee    eee  vvv     vvv oooo    oooo nnn     nnn   ff      ww    www    ww  "
+"..........      //////////    ddd     ddd eeeeeeeeeee   vvv   vvv  ooo      ooo nnn      nnn  ff       ww  wwwww  ww   "
+" ..........    //////////     ddd     ddd eeeeeeeeeee    vvvvvvv   ooo      ooo nnn      nnn  ff        ww wwwww ww    "
+"  ..........  //////////       ddd    ddd eeee            vvvvv     ooo    ooo  nnn      nnn  ff         wwww wwww     "
+"   ........  //////////         dddddddd   eeeeeeeeee      vvv       oooooooo   nnn      nnn  ff          ww   ww      "
+"     .....  //////////            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
+"      ...  //////////                                                                                                  "
   )
   local len=$(tput cols);
   if [ "$?" != 0 ]
@@ -224,8 +224,8 @@ function doExtract() {
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
     mkdir -p "${mount_dir}"
     doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${1}'"
-    doRunCommand "cp -a '${mount_dir}' '${target_dir}'"
-    doRunCommand "hdiutil detach '${mount_dir}'"
+    doRunCommand "cp -a '${mount_dir}'/*.app '${target_dir}'"
+    doRunCommand "hdiutil detach -force '${mount_dir}'"
     if [ -e "${target_dir}/Applications" ]
     then
       rm "${target_dir}/Applications"
@@ -335,8 +335,8 @@ function doUpgradeMavenArtifact() {
   if [ -d "${1}/.git" ]
   then
     echo "Found git repository ${1} - updating via git"
-    doRunCommand "git pull" "" "${1}"
-    return
+    doGitPullOrClone "${1}"
+    return ${?}
   fi
   local download_url="${2}"
   local artifact_id="${3}"
@@ -350,6 +350,7 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
+    echo "LATEST = $target_version"
   fi
   if [ -n "${current_version}" ]
   then
@@ -358,7 +359,7 @@ function doUpgradeMavenArtifact() {
     if [ "${result}" = 0 ]
     then
       echo "The ${artifact_id} package is already at the latest version ${target_version}"
-      return
+      return 1
     else
       echo "You are using version ${current_version} of ${artifact_id} "
       echo "The new version to install is ${target_version}"
@@ -367,11 +368,11 @@ function doUpgradeMavenArtifact() {
         echo "You are using a newer version than the latest release version."
         echo "Hence there is nothing to update."
         echo "Seems as you are an active devonfw developer. Thanks for contributing!"
-        return
+        return 1
       fi
     fi
   fi
-  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}-${suffix}"
+  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
   doInstall "${1}" "${download_url}"
 }
 
@@ -401,12 +402,23 @@ function doMoveGlobSafe() {
 # $1: absolute target path
 # $2: URL
 function doGitPullOrClone() {
-  doRequestCommand git
   if [ -d "${1}/.git" ]
   then
-    doRunCommand "git pull" "" "${1}"
+    local remotes=$(cd "${1}";git remote)
+    if [ -n "${remotes}" ]
+    then
+      doRunCommand "git pull" "" "${1}"
+    else
+      echo "Can not update local git repository: ${1}"
+      return 1
+    fi
   else
-    doRunCommand "git pull '${2}' '${1}'"
+    if [ -z "${2}" ]
+    then
+      doFail "Not a git repository: ${1}"
+    else
+      doRunCommand "git clone '${2}' '${1}'"
+    fi
   fi
 }
 
@@ -485,6 +497,19 @@ function doConfigureWorkspace() {
   fi
 }
 
+# $1: name of ide
+function doCreateIdeScript() {
+  if doIsWindows
+  then
+    echo -e "@echo off\r\npushd %%~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
+    echo "Created script ${1}-${WORKSPACE}.bat"
+  else
+    echo -e "#!/bin/bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
+    chmod a+x ${1}-${WORKSPACE}
+    echo "Created script ${1}-${WORKSPACE}"
+  fi
+}
+
 # $1: version1
 # $2: version2
 function doVersionCompare() {
@@ -551,18 +576,55 @@ function doIsWindows() {
   return 255
 }
 
+function doLoadProperties() {
+  if ! [ -f "${1}" ]
+  then
+    return
+  fi
+  local key
+  local value
+  local export
+  while IFS='=' read -r key value
+  do
+    if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
+    then
+      export=""
+      if [ "${value:0:1}" = "~" ]
+      then
+        value=${HOME}${value:1}
+      fi
+      if [ "${key:0:7}" = "export " ]
+      then
+        export="true"
+        key="${key:7}"
+      fi
+      if [ -z "${value}" ]
+      then
+        unset ${key}
+      else
+        if [ "${value:0:1}" != "(" ]
+        then
+          value=\"${value}\"
+        fi
+        eval ${key}=${value}
+        if [ "${export}" = "true" ]
+        then
+          export ${key}
+        fi
+      fi
+    fi
+  done < "${1}"
+}
+
 if [ -z "${DEVON_IDE_HOME}" ]
 then
-  DEVON_IDE_HOME="$(dirname "${BASH_SOURCE:-$0}")/.."
+  cd "$(dirname "${BASH_SOURCE:-$0}")/.."
+  DEVON_IDE_HOME="${PWD}"
+  cd - > /dev/null
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
-source "${DEVON_IDE_HOME}/scripts/variables"
-if [ -f "${DEVON_IDE_HOME}/conf/variables" ]
-then
-  source "${DEVON_IDE_HOME}/conf/variables"
-fi
-if [ -f "${DEVON_IDE_HOME}/conf/variables-customized" ]
-then
-  source "${DEVON_IDE_HOME}/conf/variables-customized"
-fi
+doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
+doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
 
