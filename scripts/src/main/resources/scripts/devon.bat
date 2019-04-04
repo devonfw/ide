@@ -60,7 +60,7 @@ echo *** ATTENTION ***
 echo Bash has not been found on your system!
 echo Please install git for windows on your system.
 echo https://git-scm.com/download/win
-goto :end
+goto :eof
 
 :bash_detected
 if not "%DEVON_OLD_PATH%" == "" (
@@ -92,7 +92,7 @@ if exist scripts\environment-project.bat (
   call scripts\environment-project.bat
   echo devon-ide environment variables have been set for %CD%
   popd
-  goto :end
+  goto :eof
 )
 if "%CD%" == "%CD:~0,3%" (
   popd

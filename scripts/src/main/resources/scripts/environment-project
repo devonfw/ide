@@ -55,27 +55,13 @@ fi
 if [ -d "${SETTINGS_PATH}" ]
 then
   load_properties "${SETTINGS_PATH}/devon/devon.properties"
-  if ! [ -f "${SETTINGS_PATH}/devon/devon.properties" ]
-  then
-    echo
-    echo "*** ATTENTION ***"
-    echo "Your devon-ide settings at ${SETTINGS_PATH} are missing project-specific devon.properties."
-    echo "Please create this file at ${SETTINGS_PATH}/devon/devon.properties"
-    echo "You can get a template from here:"
-    echo "https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/devon.properties"
-  fi
   if ! [ -f "${DEVON_IDE_HOME}/conf/devon.properties" ]
   then
     if [ -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
     then
       cp "${SETTINGS_PATH}/devon/conf/devon.properties" "${DEVON_IDE_HOME}/conf/"
     else
-      echo
-      echo "*** ATTENTION ***"
-      echo "Your devon-ide settings at ${SETTINGS_PATH} are missing a devon.properties template."
-      echo "Please create this file at ${SETTINGS_PATH}/devon/conf/devon.properties"
-      echo "You can get a template from here:"
-      echo "https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/devon.properties"
+      touch "${DEVON_IDE_HOME}/conf/devon.properties"
     fi
   fi
 elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]

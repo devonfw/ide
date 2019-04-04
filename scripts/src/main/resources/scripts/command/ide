@@ -73,6 +73,13 @@ function doSetup() {
     echo "*** Setting up ${tool} ***"
     doDevonCommand ${tool} setup
   done
+  if doIsWindows
+  then
+    if [ -e "${DEVON_IDE_HOME}/console.bat" ]
+    then
+      echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
+    fi
+  fi
 }
 
 function doUninstall() {
@@ -89,6 +96,10 @@ function doUninstall() {
   doRunCommand 'rm -rf ~/.devon'
   if doIsWindows
   then
+    echo "To uninstall the windows explorer integrations we need to apply changes to the windows registry:"
+    echo "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
+    echo "Simply confirm the popup with Yes or otherwise review and merge the registry file manually."
+    regedit.exe "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
     if [ -d "${USERPROFILE}/.devon" ]
     then
       doRunCommand 'rm -rf "${USERPROFILE}/.devon"'
@@ -98,6 +109,9 @@ function doUninstall() {
       doRunCommand 'rm "${USERPROFILE}/scripts/devon"'
     fi
   fi
+  echo "So sad that you did not like devon-ide. It has been uninstalled from your system."
+  echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
+  echo "Goodbye and have a nice day!"
 }
 
 target_version="LATEST"
