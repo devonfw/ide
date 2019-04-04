@@ -105,10 +105,10 @@ then
     command="help"
   fi
   shift
-  args=${@}
+  args=
   if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
   then
-    args="${command}"
+    args=(${command})
     command="help"
   fi
   if [ -z "${DEVON_IDE_HOME}" ]
@@ -138,7 +138,12 @@ then
       echo "Command ${command} is not executable. Trying to repair"
       chmod a+x "${DEVON_IDE_HOME}/scripts/command/${command}"
     fi
-    "${DEVON_IDE_HOME}/scripts/command/${command}" ${args}
+    if [ -n "${args}" ]
+    then
+      "${DEVON_IDE_HOME}/scripts/command/${command}" ${args}
+    else
+      "${DEVON_IDE_HOME}/scripts/command/${command}" ${@}
+    fi
   else
     echo "Unknown command ${command}"
   fi  
