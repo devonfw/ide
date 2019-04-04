@@ -13,24 +13,12 @@ if not exist "%DEVON_IDE_HOME%\conf" (
 if exist "%SETTINGS_PATH%" (
   if exist "%SETTINGS_PATH%\devon\devon.properties" (
     call :load_properties "%SETTINGS_PATH%\devon\devon.properties"
-  ) else (
-    echo:
-    echo *** ATTENTION ***
-    echo Your devon-ide settings at %SETTINGS_PATH% are missing project-specific variables.
-    echo Please create this file at %SETTINGS_PATH%\devon\variables.bat
-    echo You can get a template from here:
-    echo https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/variables.bat
   )
-  if not exist "%DEVON_IDE_HOME%\conf\variables.bat" (
-    if exist "%SETTINGS_PATH%\devon\conf\variables.bat" (
-      copy "%SETTINGS_PATH%\devon\conf\variables.bat" "%DEVON_IDE_HOME%\conf\"
+  if not exist "%DEVON_IDE_HOME%\conf\devon.properties" (
+    if exist "%SETTINGS_PATH%\devon\conf\devon.properties" (
+      copy "%SETTINGS_PATH%\devon\conf\devon.properties" "%DEVON_IDE_HOME%\conf\"
     ) else (
-      echo:
-      echo *** ATTENTION ***
-      echo Your devon-ide settings at %SETTINGS_PATH% are missing a user-specific variables template.
-      echo Please create this file at %SETTINGS_PATH%\devon\conf\variables.bat
-      echo You can get a template from here:
-      echo https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/variables.bat
+      echo: > "%DEVON_IDE_HOME%\conf\devon.properties"
     )
   )
 ) else (
