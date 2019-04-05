@@ -103,7 +103,6 @@ function doEcho() {
   then
     return
   fi
-  shift
   echo -e ${@}
 }
 
@@ -171,7 +170,7 @@ function doLogo() {
 "     .....  //////////            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
 "      ...  //////////                                                                                                  "
   )
-  local len=`tput cols`;
+  local len="$(tput cols)"
   if [ "$?" != 0 ]
   then
     len=80
@@ -208,7 +207,7 @@ function doLicenseAgreement() {
       read -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
-          echo -e "On `date +"%Y-%m-%d"` at `date +"%H:%M:%S"` you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
+          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
           break;;
         no)
           exit -1;;
@@ -231,13 +230,7 @@ function doDevonCommand() {
   local command="${DEVON_IDE_HOME}/scripts/command/${1}"
   if [ ! -e "${command}" ]
   then
-    echo
-    echo "*** WARNING ***"
-    echo "Undefined devon command: ${1}"
-    echo "Not found at ${command}"
-    echo "Please check your DEVON_IDE_TOOLS variable:"
-    echo "${DEVON_IDE_TOOLS}"
-    return 255
+    doFail "Undefined devon command: ${1}\nNot found at ${command}."
   else
     if [ ! -x "${command}" ]
     then
@@ -245,7 +238,7 @@ function doDevonCommand() {
       chmod a+x "${command}"
     fi
     shift
-    "${command}" ${force} ${quiet} ${batch} -- ${@}
+    "${command}" ${force} ${quiet} ${batch} ${@}
     result=${?}
     if [ ${result} != 0 ]
     then
@@ -354,7 +347,7 @@ function doReplaceExtractedFile() {
   if [ -n "${2}" ]
   then
     target="${2}"
-    target_dir=`dirname "${2}"`
+    target_dir="$(dirname "${2}")"
   fi
   if [ -e "${target}" ]
   then
@@ -373,7 +366,7 @@ function doReplaceExtractedFile() {
 # $1: name of file or folder to move from the extracted archive
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
-  local backup_dir="updates/backups/`date +"%y-%m-%d/%H-%M-%S"`"
+  local backup_dir="updates/backups/$(date +"%y-%m-%d/%H-%M-%S")"
   if [ -z "${1}" ] || [ "${1}" = '*' ]
   then
     for extracted_file in ${DEVON_IDE_HOME}/updates/extracted/*
@@ -393,7 +386,7 @@ MAVEN_REPO_URL="https://repo.maven.apache.org/maven2"
 # $1: URL (to artifactId)
 function doMavenGetLatestVersion() {
   echo "Trying to determine the latest available version from ${1}/maven-metadata.xml"
-  LATEST_VERSION=`curl -fs ${1}/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/"`
+  LATEST_VERSION="$(curl -fs ${1}/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/")"
   result=${?}
   if [ "${result}" != 0 ] || [ -z "${LATEST_VERSION}" ]
   then
@@ -478,19 +471,6 @@ function doUpgradeMavenArtifact() {
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
   doInstall "${1}" "${download_url}"
-}
-
-# $1: variable name
-# $2: default
-function doGetVariable() {
-  local variable_name=`echo ${1} | tr a-z A-Z`
-  local variable_value=`eval echo '$'${variable_name}`
-  if [ -z "${variable_value}" ]
-  then
-    echo ${2}
-  else
-    echo ${variable_value}
-  fi
 }
 
 # $1: target
@@ -612,7 +592,7 @@ function doCreateIdeScript() {
     echo -e "@echo off\r\npushd %%~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
     echo "Created script ${1}-${WORKSPACE}.bat"
   else
-    echo -e "#!/usr/bin/env bash\ncd \`dirname \${0}\`\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
+    echo -e "#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
     chmod a+x ${1}-${WORKSPACE}
     echo "Created script ${1}-${WORKSPACE}"
   fi

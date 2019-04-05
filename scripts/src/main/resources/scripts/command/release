@@ -31,7 +31,7 @@ then
 fi
 
 doEcho "Trying to determine current version of your project..."
-current_version="$(doDevonCommand build get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
+current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
 release_version="${current_version/-SNAPSHOT/}"
 last_segment="${release_version/*./}"
 next_version="${release_version:0:${#release_version}-${#last_segment}}$[last_segment+1]"
@@ -65,7 +65,7 @@ echo
 echo "Setting version of your project to ${release_version} ..."
 doDevonCommand build set-version "${release_version}" "${current_version}" cleanKeepBackup
 git add -u
-git commit -m "bumped version to ${release_version}"
+git commit -m "set release version to ${release_version}"
 git tag -a "release/${release_version}" -m "tagged version ${release_version}"
 echo
 echo "Building and deploying the release..."

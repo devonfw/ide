@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+source "$(dirname "${0}")"/../functions
+cd "${DEVON_IDE_HOME}"
 
 function doSetup() {
   if [ -d "${VSCODE_HOME}" ]

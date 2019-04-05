@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+source "$(dirname "${0}")"/../functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateScripts() {
@@ -122,7 +120,7 @@ then
   echo "Setup and update devon-ide."
   echo
   echo "Arguments:"
-  echo "setup                            setup devon-ide"
+  echo "setup [«SETTINGS_URL»]           setup devon-ide (getting the settings from the given URL)"
   echo "update                           check for updates and install if newer version is available"
   echo "update «package» [to «version»]  update (or downgrade) specified package (to specified version)"
   echo "                                 packages are e.g. 'scripts' or 'settings'"

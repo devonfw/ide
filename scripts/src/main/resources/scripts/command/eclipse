@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+source "$(dirname "${0}")"/../functions
+cd "${DEVON_IDE_HOME}"
 
 # $1: plugin URL (update site)
 # $2: plugin feature group ID

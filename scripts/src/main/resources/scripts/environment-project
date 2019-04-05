@@ -87,6 +87,7 @@ then
     echo "WARNING: Worksapce ${WORKSPACE} does not exist"
   fi
 fi
+load_properties "${WORKSPACE_PATH}/devon.properties"
 
 if [ -z "${DEVON_OLD_PATH}" ]
 then
@@ -120,7 +121,7 @@ fi
 SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 if [ -d "${SOFTWARE_PATH}" ]
 then
-  for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
+  for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
   do
     if [ -d "${SOFTWARE_FOLDER}/bin" ]
     then
@@ -148,7 +149,7 @@ fi
 # node.js support
 if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
 then
-  PATH=${PATH}:`npm bin -g 2> /dev/null`
+  PATH="${PATH}:$(npm bin -g 2> /dev/null)"
 fi
 
 # load user settings late so variables like M2_REPO can be overriden
