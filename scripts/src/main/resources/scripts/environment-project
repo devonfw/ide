@@ -87,6 +87,7 @@ then
     echo "WARNING: Worksapce ${WORKSPACE} does not exist"
   fi
 fi
+load_properties "${WORKSPACE_PATH}/devon.properties"
 
 if [ -z "${DEVON_OLD_PATH}" ]
 then
@@ -120,7 +121,7 @@ fi
 SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 if [ -d "${SOFTWARE_PATH}" ]
 then
-  for SOFTWARE_FOLDER in ${SOFTWARE_PATH}/*
+  for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
   do
     if [ -d "${SOFTWARE_FOLDER}/bin" ]
     then

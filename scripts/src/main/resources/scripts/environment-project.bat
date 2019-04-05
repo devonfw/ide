@@ -40,6 +40,7 @@ if not exist "%WORKSPACE_PATH%" (
     echo WARNING: Worksapce %WORKSPACE% does not exist
   )
 )
+call :load_properties "%WORKSPACE_PATH%\devon.properties"
 
 rem setup path
 if not defined DEVON_OLD_PATH (
@@ -89,6 +90,9 @@ goto :eof
 rem subroutine to load properties as environment variables with
 rem %~1: path to properties file
 :load_properties
+if not exist "%~1" (
+  goto :eof
+)
 for /F "eol=# delims== tokens=1,*" %%a in (%~1) do (
   if not "%%a" == "" (
     call :set_variable "%%a" "%%b"
