@@ -15,7 +15,7 @@ function doSetup() {
       echo "Java is already installed at ${JAVA_HOME}"
     fi
   else
-    local software_version=`doGetVariable JAVA_VERSION 11.0.2`
+    local software_version="${JAVA_VERSION:-11.0.2}"
     local download_url="https://download.java.net/java/GA/jdk${software_version/\.*/}/9/GPL/openjdk-${software_version}"
     local software_dir="${JAVA_HOME}"
     if doIsMacOs

@@ -473,19 +473,6 @@ function doUpgradeMavenArtifact() {
   doInstall "${1}" "${download_url}"
 }
 
-# $1: variable name
-# $2: default
-function doGetVariable() {
-  local variable_name=`echo ${1} | tr a-z A-Z`
-  local variable_value=`eval echo '$'${variable_name}`
-  if [ -z "${variable_value}" ]
-  then
-    echo ${2}
-  else
-    echo ${variable_value}
-  fi
-}
-
 # $1: target
 # $2: source
 function doMoveGlobSafe() {

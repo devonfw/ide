@@ -13,7 +13,7 @@ function doSetup() {
   else
     #mirror="https://mirror.math.princeton.edu"
     mirror="https://ftp.osuosl.org"
-    software_version=`doGetVariable INTELLIJ_VERSION 2018.3.5`
+    software_version="${INTELLIJ_VERSION:-2018.3.5}"
     eclipse_edition=java
     #eclipse_edition=jee
     if doIsMacOs
