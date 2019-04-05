@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if command -v yarn &> /dev/null
+  then
+    if [ -n "${1}" ]
+    then
+      doEcho "yarn is already installed at $(command -v yarn)"
+    fi
+  else
+    if command -v npm &> /dev/null
+    then
+      doRunCommand "npm install -g yarn"
+    else
+      doRunCommand "brew install yarn"
+    fi
+  fi
+}
+
+function doGetProjectVersion() {
+  if [ -f package.json ]
+  then
+    local version_line="$(cat package.json | grep "\"version\"")" || doFail "Could not determine your version! Please check your package.json."
+    echo "${version_line}" | sed "s/.*:[ ]*\"\([^\"]*\)\".*/\1/"
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doSetProjectVersion() {
+  if [ -f package.json ]
+  then
+    cp package.json package.json.bak
+    cat package.json.bak | sed "s/\"version\"\:[ ]*\"[^\"]*\"/\"version\": \"${1}\"/" > package.json
+    rm package.json.bak
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doCheckTopLevelProject() {
+  if [ ! -f package.json ]
+  then
+    doFail "No package.json - not an npm project."
+  fi
+  # IMHO npm/package.json does not support nested projects (modules)
+}
+
+function doRunBuild() {
+  doSetup
+  local extra_arg=""
+  if [ ! -d node_modules ] && [[ "${@}" != *install* ]]
+  then
+    extra_arg="install"
+  fi
+  doEcho "Running: yarn ${extra_arg} ${@}"
+  if doIsQuiet
+  then
+    yarn --silent ${extra_arg} ${@}
+  else
+    yarn ${extra_arg} ${@}
+  fi
+}
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run yarn."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup angular-cli (install and verify)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call maven with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+if [ -z "${1}" ]
+then
+  doRunBuild ${YARN_BUILD_OPTS:-build}
+elif [ "${1}" = "setup" ]
+then
+  doSetup setup
+else
+  if [ "${1}" = "get-version" ]
+  then
+    doGetProjectVersion
+  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+  then
+    shift
+    doSetProjectVersion ${@}
+  elif [ "${1}" = "check-top-level-project" ]
+  then
+    shift
+    doCheckTopLevelProject ${@}
+  elif [ "${1}" = "release" ]
+  then
+    # TODO
+    doRunBuild ${YARN_RELEASE_OPTS:-release}
+  else
+    doRunBuild ${@}
+  fi
+fi
