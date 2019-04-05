@@ -38,6 +38,5 @@ then
   fi
   #BUILD_OPTS="${BUILD_NPM_OPTS:-build}"
 else
-  echo "Currently not in a buildable project or build system could not be auto-detected"
-  exit -1
+  doFail "Currently not in a buildable project or build system could not be auto-detected"
 fi

@@ -90,8 +90,7 @@ do
   then
     doCreateIdeScript eclipse
   else
-    echo "Undefined argument: ${1}"
-    exit -1
+    doFail "Undefined argument: ${1}"
   fi
   shift
 done

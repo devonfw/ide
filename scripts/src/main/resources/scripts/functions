@@ -14,7 +14,7 @@ function doFail() {
     echo "Exit code was ${2}"
     exit ${2}
   else
-    exit -1
+    exit 255
   fi
 }
 
@@ -210,7 +210,7 @@ function doLicenseAgreement() {
           echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
           break;;
         no)
-          exit -1;;
+          exit 255;;
         *)
           echo "Please answer yes or no.";;
       esac
@@ -651,17 +651,17 @@ function doVersionCompare() {
 function doIsMacOs() {
   if [ "${OSTYPE:0:6}" = "darwin" ]
   then
-    return 0
+    return
   fi
-  return -1
+  return 255
 }
 
 function doIsWindows() {
   if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
   then
-    return 0
+    return
   fi
-  return -1
+  return 255
 }
 
 function doLoadProperties() {
