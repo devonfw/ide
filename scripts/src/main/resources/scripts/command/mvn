@@ -1,8 +1,8 @@
-#!/bin/bash
-source `dirname $0`/../functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
-function doSetupMaven() {
+function doSetup() {
   if [ -d "${MAVEN_HOME}" ]
   then
     if [ -n "${1}" ]
@@ -45,39 +45,24 @@ function doSetupMaven() {
   fi
 }
 
-function doGetMavenProjectVersion() {
+# $@: optional maven arguments
+function doGetProjectVersion() {
+  doSetup
   local maven_project_version
-  local changelist_option=""
-  maven_project_version="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
-  if [ "${maven_project_version}" = "dev" ] || [ "${maven_project_version}" = "dev-SNAPSHOT" ]
+  local version_list="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' ${@})"
+  if [ "${?}" = 0 ]
   then
-    if [ -e ".mvn/maven.config" ]
+    maven_project_version="$(echo "${version_list}" | grep -v '^dev\(-SNAPSHOT\)*$' | sort -u )"
+    if [ -z "${maven_project_version}" ]
     then
-      # https://maven.apache.org/maven-ci-friendly.html
-      local maven_project_version="$(cat .mvn/maven.config | sed 's/.*-Drevision=\([^ ]*\).*/\1/')"
-      local maven_changelist=""
-      if [ "${1}" != "release" ]
-      then
-        maven_changelist="$(cat .mvn/maven.config | grep '\-Dchangelist=' | sed 's/.*-Dchangelist=\([^ ]*\).*/\1/')"
-      fi
-      maven_project_version="${maven_project_version}${maven_changelist}"
-    else
-      local module_list="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}')"
-      if [ "${?}" = 0 ]
-      then
-        maven_project_version="$(echo "${module_list}" | grep -v '^dev\(-SNAPSHOT\)*$' | sort -u )"
-        if [ -z "${maven_project_version}" ]
-        then
-          maven_project_version="$(echo "${module_list}" | sort -u )"
-        fi
-        if [[ "${maven_project_version}" == *$'\n'* ]]
-        then
-          doFail "Multiple versions in reactor:\n${maven_project_version}"
-        fi
-      else
-        doFail "${module_list}"
-      fi
+      maven_project_version="$(echo "${version_list}" | sort -u )"
     fi
+    if [[ "${maven_project_version}" == *$'\n'* ]]
+    then
+      doFail "Multiple versions in reactor:\n${maven_project_version}"
+    fi
+  else
+    doFail "${version_list}\nYour maven project has errors. Please run 'mvn install' and retry."
   fi
   echo $maven_project_version
 }
@@ -85,11 +70,11 @@ function doGetMavenProjectVersion() {
 # $1: new version
 # $2: current version
 # $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
-function doSetMavenProjectVersion() {
+function doSetProjectVersion() {
   local current_version="${2}"
   if [ -z "${2}" ]
   then
-    current_version="$(doGetMavenProjectVersion)"
+    current_version="$(doGetProjectVersion)"
   fi
   if [ "${current_version}" = "${1}" ]
   then
@@ -100,26 +85,26 @@ function doSetMavenProjectVersion() {
   then
     # https://maven.apache.org/maven-ci-friendly.html
     local maven_config="$(cat .mvn/maven.config)"
-    local updated_config="${maven_config/-Drevision=[^ ]*/-Drevision=${1/-SNAPSHOT/}}"
+    local current_revision="${2/-SNAPSHOT/}"
+    if [ "${maven_config/${current_revision}/}" = "${maven_config}" ]
+    then
+      doConfirmWarning "Your .mvn/maven.config does not contain the expected revision ${current_revision}:\n${maven_config}"
+    fi
+    local revision="${1/-SNAPSHOT/}"
+    local changelist=""
+    local mvn_version_arg=""
+    if [ "${revision}" != "{1}" ]
+    then
+      changelist="-SNAPSHOT"
+    else
+      mvn_version_arg="-Dchangelist="
+    fi
+    local updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
     if [ "${updated_config}" != "${maven_config}" ]
     then
       echo "${updated_config}" > .mvn/maven.config
-      local new_version="$(doGetMavenProjectVersion)"
-      if [ "${new_version}" != "${2}" ]
-      then
-        if [ "${new_version}-SNAPSHOT" == "${2}" ]
-        then
-          local new_config="${updated_config/-Dchangelist=[^ ]*/-Dchangelist=-SNAPSHOT}"
-          if [ "${new_config}" = "${updated_config}" ]
-          then
-            new_config="${updated_config} -Dchangelist=-SNAPSHOT"
-          fi
-          updated_config="${new_config}"
-          echo "${updated_config}" > .mvn/maven.config
-          new_version="$(doGetMavenProjectVersion)"
-        fi
-      fi
-      if [ "${new_version}" == "${2}" ]
+      local new_version="$(doGetProjectVersion ${mvn_version_arg})"
+      if [ "${new_version}" = "${1}" ]
       then
         echo "updated .mvn/maven.config"
         echo "from: ${maven_config}"
@@ -138,7 +123,7 @@ function doSetMavenProjectVersion() {
     for folder in ${module_list}
     do
       cd "${folder}"
-      doSetMavenPomVersion ${@}
+      doSetPomVersion ${@}
     done
     cd "${cwd}"
   else
@@ -149,14 +134,16 @@ function doSetMavenProjectVersion() {
 # $1: new version
 # $2: current version
 # $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
-function doSetMavenPomVersion() {
+function doSetPomVersion() {
   if [ -f pom.xml.bak ]
   then
     if [ "${3}" = "cleanBackup" ] || [ "${3}" = "cleanKeepBackup" ]
     then
+      echo "Cleaning previous backup ${PWD}/pom.xml.bak"
       rm pom.xml.bak
     fi
   fi
+  doSetup
   local maven_project_version="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
   if [ "${maven_project_version}" = "${1}" ] 
   then
@@ -189,6 +176,7 @@ function doSetMavenPomVersion() {
   cat pom.xml.bak | sed "s/${2}/${1}/g" > pom.xml
   if [ "${3}" != "keepBackup" ] && [ "${3}" != "cleanKeepBackup" ]
   then
+    echo "Cleaning backup ${PWD}/pom.xml.bak"
     rm pom.xml.bak
   fi
 }
@@ -230,42 +218,61 @@ function doCheckTopLevelProject() {
   doEcho "${1}" "You are inside a top-level maven project"
 }
 
+function doRunBuild() {
+  local maven_cmd="mvn"
+  if [ -x mvnw ]
+  then
+    maven_cmd="./mvnw"
+  else
+    doSetup
+  fi
+  doEcho "Running: ${maven_cmd} ${@}"
+  if doIsQuiet
+  then
+    ${maven_cmd} -q ${@}
+  else
+    ${maven_cmd} ${@}
+  fi
+}
+
 # CLI
+MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup or run maven build tool."
   echo
   echo "Arguments:"
-  echo "setup                    setup maven (install, verify, configure)"
-  echo "get-version              get the current project version"
-  echo "set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo "check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
-  echo "release                  start a clean deploy release build"
-  echo "«args»                   call maven with the specified arguments"
-  exit
-fi
-
-MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
-if [ -z "${1}" ] || [ "${1}" = "setup" ]
+  echo "                          run default build"
+  echo " setup                    setup maven (install, verify, configure)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call maven with the specified arguments"
+  echo
+  echo "Options:"
+elif [ -z "${1}" ]
 then
-  doSetupMaven setup
+  doRunBuild ${MVN_BUILD_OPTS:-clean install}
+elif [ "${1}" = "setup" ]
+then
+  doSetup setup
 else
-  doSetupMaven
   if [ "${1}" = "get-version" ]
   then
-    doGetMavenProjectVersion
+    doGetProjectVersion
   elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
   then
     shift
-    doSetMavenProjectVersion ${@}
+    doSetProjectVersion ${@}
   elif [ "${1}" = "check-top-level-project" ]
   then
     shift
     doCheckTopLevelProject ${@}
   elif [ "${1}" = "release" ]
   then
-    mvn clean deploy -Dchangelist= -Pdeploy
+    doRunBuild ${MVN_RELEASE_OPTS:-clean deploy} -Dchangelist= -Pdeploy
   else
-    mvn ${@}
+    doRunBuild ${@}
   fi
 fi
