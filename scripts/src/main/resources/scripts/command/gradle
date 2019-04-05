@@ -1,7 +1,69 @@
-#!/bin/bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if [ -d "${GRADLE_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      doEcho "Gradle is already installed at ${GRADLE_HOME}"
+    fi
+  else
+    software_version="${GRADLE_VERSION:-5.2.1}"
+    download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
+    doInstall "${GRADLE_HOME}" "${download_url}" 'gradle-*'
+  fi
+  if [ -n "${1}" ]
+  then
+    doRunCommand "gradle -v" "verify installation of gradle"
+  fi
+}
+
+function doGetProjectVersion() {
+  gradle properties -q | grep "version:" | sed "s/version:[ ]*//"
+}
+
+# $1: new version
+# $2: current version
+# $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
+function doSetProjectVersion() {
+  local current_version="${2}"
+  if [ -z "${2}" ]
+  then
+    current_version="$(doGetProjectVersion)"
+  fi
+  # TODO
+  if [ -f gradle.properties ]
+  then
+    
+  fi
+}
+
+function doCheckTopLevelProject() {
+  if [ ! -f build.gralde ]
+  then
+    doEcho "Not in a gradle project: ${PWD}"
+    exit 255
+  fi
+}
+
+function doRunBuild() {
+  local gradle_cmd="gradle"
+  if [ -x gradlew ]
+  then
+    gradle_cmd="./gradlew"
+  else
+    doSetup
+  fi
+  doEcho "Running: ${gradle_cmd} ${@}"
+  if doIsQuiet
+  then
+    ${gradle_cmd} -q ${@}
+  else
+    ${gradle_cmd} ${@}
+  fi
+}
 
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -9,30 +71,41 @@ then
   echo "Setup or run gradle build tool."
   echo
   echo "Arguments:"
-  echo "setup      setup gradle (install, verify, configure)"
-  echo "«args»     call gradle with the specified arguments"
+  echo "                          run default build"
+  echo " setup                    setup gradle (install, verify, configure)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call gradle with the specified arguments"
+  echo
+  echo "Options:"
   exit
-elif [ -z "${1}" ] || [ "${1}" = "setup" ]
-then
-  setup=true
 fi
-
 GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
-if [ -d "${GRADLE_HOME}" ]
+if [ -z "${1}" ]
 then
-  if [ "${setup}" = "true" ]
+  doRunBuild ${GRADLE_BUILD_OPTS:-clean dist}
+elif [ "${1}" = "setup" ]
+then
+  doSetup setup
+else
+  if [ "${1}" = "get-version" ]
   then
-    echo "Gradle is already installed at ${GRADLE_HOME}"
+    doGetProjectVersion
+  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+  then
+    shift
+    doSetProjectVersion ${@}
+  elif [ "${1}" = "check-top-level-project" ]
+  then
+    shift
+    doCheckTopLevelProject ${@}
+  elif [ "${1}" = "release" ]
+  then
+    # TODO
+    doRunBuild ${GRADLE_RELEASE_OPTS:-clean release}
+  else
+    doRunBuild ${@}
   fi
-else
-  software_version=`doGetVariable GRADLE_VERSION 5.2.1`
-  download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-  doInstall "${software_dir}" "${download_url}" 'gradle-*'
-fi
-
-if [ "${setup}" = "true" ]
-then
-  doRunCommand "gradle -v" "verify installation of gradle"
-else
-  gradle ${@}
 fi

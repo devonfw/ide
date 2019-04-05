@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Script to setup devon-ide environment. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 

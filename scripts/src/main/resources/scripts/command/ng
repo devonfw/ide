@@ -1,7 +1,5 @@
-#!/bin/bash
-cd `dirname $0`
-cd ../..
-source scripts/functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
 
 #CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -9,8 +7,10 @@ then
   echo "Setup or run angular-cli (ng)."
   echo
   echo "Arguments:"
-  echo "setup      setup angular-cli (install and verify)"
-  echo "«args»     call maven with the specified arguments"
+  echo "setup                 setup angular-cli (install and verify)"
+  echo "«args»                call maven with the specified arguments"
+  echo
+  echo "Options:"
   exit
 fi
 
@@ -19,11 +19,11 @@ then
   setup=true
 fi
 
-if which ng &> /dev/null
+if command -v ng &> /dev/null
 then
   if [ "${setup}" = "true" ]
   then
-    echo "angluar-cli (ng) is already installed at `which ng`"
+    echo "angluar-cli (ng) is already installed at $(command -v ng)"
   fi
 else
   doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"

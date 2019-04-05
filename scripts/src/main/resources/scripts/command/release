@@ -1,5 +1,5 @@
-#!/bin/bash
-source `dirname $0`/../functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
 
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -7,30 +7,19 @@ then
   echo "Build and deploy a release from the current project."
   echo
   echo "Arguments:"
-  doHelpForce
-  doHelpBatch
+  echo "-"
+  echo
+  echo "Options:"
   exit
+elif [ -n "${1}" ]
+then
+  echo "Unknown argument '${1}'"
+  exit 255
 fi
-batch=""
-force=""
-while [ -n "${1}" ]
-do
-  if doIsBatch "${1}"
-  then
-    batch="${1}"
-  elif doIsForce "${1}"
-  then
-    force="${1}"
-  else
-    echo "Unknown argument '${1}'"
-    exit 255
-  fi
-  shift
-done
+
 if ! git diff-index --quiet HEAD || [ -n "$(git status -s)" ]
 then
-  echo "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
-  echo exit 255
+  doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
 fi
 
 if [ -z "${force}" ] 
@@ -41,7 +30,7 @@ then
   fi
 fi
 
-echo "Trying to determine current version of your project..."
+doEcho "Trying to determine current version of your project..."
 current_version="$(doDevonCommand build get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
 release_version="${current_version/-SNAPSHOT/}"
 last_segment="${release_version/*./}"
@@ -50,45 +39,32 @@ if [ "${current_version}" = "${release_version}-SNAPSHOT" ]
 then
   next_version="${next_version}-SNAPSHOT"
 fi
-echo "Current version: ${current_version}"
-echo "Release version: ${release_version}"
-echo "Next version: ${next_version}"
-echo
 if [ "${current_version}" = "${release_version}" ]
 then
-  echo "WARNING: Current version is not a SNAPSHOT version"
-  if [ -z "${force}" ] && [ -n "${batch}" ]
+  doConfirmWarning "Current version is not a SNAPSHOT version!"
+fi
+while true
+do
+  echo "Current version: ${current_version}"
+  echo "Release version: ${release_version}"
+  echo "Next version: ${next_version}"
+  if [ "${next_version/-SNAPSHOT/}" == "${next_version}" ]
   then
-    doFail "You need to start your relase on a SNAPSHOT version otherwise use force in batch mode."
+    doWarning "Next version is not a SNAPSHOT version!"
   fi
-fi
-if [ -z "${batch}" ]
-then
-  while true
-  do
-    read -p "Are the above settings corret? (yes/no/exit) " answer
-    if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
-    then
-      break
-    elif [ "${answer}" = "exit" ]
-    then
-      exit
-    elif [ "${answer}" = "no" ]
-    then
-      read -p "Please enter next version: " next_version
-      echo
-      echo "Current version: ${current_version}"
-      echo "Release version: ${release_version}"
-      echo "Next version: ${next_version}"
-      echo
-    else
-      echo "Please answer yes or no."
-    fi
-  done
-fi
+  echo
+  if doAskToContinue "" "return"
+  then
+    break
+  else
+    read -p "Please enter next version: " next_version
+    echo
+  fi
+done
 echo
 echo "Setting version of your project to ${release_version} ..."
 doDevonCommand build set-version "${release_version}" "${current_version}" cleanKeepBackup
+git add -u
 git commit -m "bumped version to ${release_version}"
 git tag -a "release/${release_version}" -m "tagged version ${release_version}"
 echo
@@ -96,12 +72,8 @@ echo "Building and deploying the release..."
 doDevonCommand build release || doFail "Release build failed! You should reset your local commits via 'git reset HEAD^'."
 echo "Setting version of your project to ${next_version} ..."
 doDevonCommand build set-version "${next_version}" "${current_version}" ""
+git add -u
 git commit -m "set next version to ${next_version}"
-if [ -z "${batch}" ]
-then
-  echo "The release has been completed. The local commits and tag need to be pushed now."
-  echo "You now have the chance to review these changes manually before they are pushed."
-  read -p "Hit enter to push " answer
-fi
+doAskToContinue "Local commits and tag need to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
 git push --tags
 echo "Done."

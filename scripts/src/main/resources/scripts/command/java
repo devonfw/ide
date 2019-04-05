@@ -1,8 +1,8 @@
-#!/bin/bash
-source `dirname $0`/../functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
-function doSetupJava() {
+function doSetup() {
   if [ -z "${JAVA_HOME}" ]
   then
     export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
@@ -48,15 +48,16 @@ then
   echo "Install and manage Java."
   echo
   echo "Arguments:"
-  echo "setup          setup Java (install and verify)"
-  echo "create «args»  create new Java project based on devon4j template, by "
-  exit
+  echo " setup                setup Java (install and verify)"
+  echo " create «args»        create new Java project based on devon4j template, by "
+  echo
+  echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  doSetupJava setup
+  doSetup setup
 elif [ "${1}" = "create" ]
 then
-  doSetupJava
+  doSetup
   shift
   doMavenArchetype ${@}
 else

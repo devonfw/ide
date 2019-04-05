@@ -1,55 +1,44 @@
-#!/bin/bash
-source `dirname $0`/../functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
+
+function doBuild() {
+  doEcho "${@}"
+  doDevonCommand ${@}
+}
+
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Run build job."
   echo "The build tool is auto-detected from according configuration files:"
-  echo "  pom.xml           maven (mvnw if present, mvn otherwise)"
-  echo "  build.gradle      gradle (gradlew if present, otherwise gradle)"
-  echo "  package.json      npm"
+  echo " pom.xml              maven (mvnw if present, mvn otherwise)"
+  echo " build.gradle         gradle (gradlew if present, otherwise gradle)"
+  echo " package.json         npm"
   echo
   echo "Arguments:"
-  echo "                    run the default build if no arguments are given. Needs to succeed for definition-of-done."
-  echo "«args»              run the build with the given arguments."
+  echo "                      run the default build if no arguments are given. Needs to succeed for definition-of-done."
+  echo " «args»               run the build with the given arguments."
+  echo
+  echo "Options:"
   exit
 fi
 
-BUILD_CMD=
-BUILD_OPTS=
 if [ -f pom.xml ]
 then
-  BUILD_CMD="mvn"
-  if [ -n "${BUILD_MVN_OPTS}" ]
-  then
-    BUILD_OPTS=${BUILD_MVN_OPTS}
-  else
-    BUILD_OPTS="clean install"
-  fi
+  doBuild mvn ${@}
 elif [ -f build.gradle ]
 then
-  BUILD_CMD="gradle"
-  if [ -n "${BUILD_GRADLE_OPTS}" ]
-  then
-    BUILD_OPTS="${BUILD_GRADLE_OPTS}"
-  else
-    BUILD_OPTS="clean dist"
-  fi
+  doBuild gradle ${@}
+  #BUILD_OPTS="${BUILD_GRADLE_OPTS:-clean dist}"
 elif [ -f package.json ]
 then
-  BUILD_CMD="npm"
-  if [ -n "${BUILD_NPM_OPTS}" ]
+  if [ -f yarn.lock ]
   then
-    BUILD_OPTS="${BUILD_NPM_OPTS}"
+    doBuild yarn ${@}
   else
-    BUILD_OPTS="build"
+    doBuild npm ${@}
   fi
+  #BUILD_OPTS="${BUILD_NPM_OPTS:-build}"
 else
   echo "Currently not in a buildable project or build system could not be auto-detected"
   exit -1
 fi
-
-if [ -n "${1}" ]
-then
-  BUILD_OPTS="${@}"
-fi
-doDevonCommand $BUILD_CMD ${BUILD_OPTS}

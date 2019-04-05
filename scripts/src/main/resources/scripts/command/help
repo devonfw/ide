@@ -1,5 +1,5 @@
-#!/bin/bash
-source `dirname $0`/../functions
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
 echo
 doLogo
 echo
@@ -19,7 +19,7 @@ then
   echo "For further details use:"
   echo "devon help <command>"
 else
-  echo "usage: devon ${1} [args]"
+  echo "usage: devon ${1} [options] [args]"
   echo
   if [ "${1}" = "help" ]
   then
@@ -27,5 +27,8 @@ else
     echo "Print help for <command>"
   else
     doDevonCommand "${1}" help
+    echo " -b | --batch         run in non-interactive mode (do not ask any questions)."
+    echo " -q | --quiet         be quiet and avoid output."
+    echo " -f | --force         force proceeding even in case of warnings."
   fi
 fi
