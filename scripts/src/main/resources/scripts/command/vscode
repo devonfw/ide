@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd `dirname $0`
 cd ../..
 source scripts/functions
@@ -53,11 +53,13 @@ then
   echo "Launch Visual Studio Code and/or manage VSCode workspace."
   echo
   echo "Arguments:"
-  echo " run | start        launch VSCode IDE (default if no argument is given)"
-  echo " ws-up[date]        update VSCode workspace"
-  echo " ws-re[verse]       reverse merge changes from workspace into settings"
-  echo " ws-reverse-add     reverse merge adding new properties"
-  echo " create-script      create vscode-${WORKSPACE} script if not already exists"
+  echo " run | start          launch VSCode IDE (default if no argument is given)"
+  echo " ws-up[date]          update VSCode workspace"
+  echo " ws-re[verse]         reverse merge changes from workspace into settings"
+  echo " ws-reverse-add       reverse merge adding new properties"
+  echo " create-script        create vscode-${WORKSPACE} script if not already exists"
+  echo
+  echo "Options:"
   exit
 fi
 VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"

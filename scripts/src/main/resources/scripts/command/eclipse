@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 cd `dirname $0`
 cd ../..
 source scripts/functions
@@ -48,7 +48,7 @@ function doSetup() {
     if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
-      echo -e "#!/bin/bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
+      echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
       chmod a+x "${ECLIPSE_HOME}/eclipse"
     fi
     if [ -z "${ECLIPSE_PLUGINS}" ]
@@ -76,7 +76,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "which eclipse" "verify installation of Eclipse"
+    doRunCommand "command -v eclipse" "verify installation of Eclipse"
     if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
     then
       doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"
