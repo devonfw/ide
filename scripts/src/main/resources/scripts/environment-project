@@ -101,7 +101,7 @@ else
     set -f
     for dir in ${PATH}
     do
-      if [ "${dir}" != "${DEVON_IDE_HOME}"* ]
+      if [[ "${dir}" != "${DEVON_IDE_HOME}"* ]]
       then
         if [ -z "${DEVON_OLD_PATH}" ]
         then
