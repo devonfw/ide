@@ -254,7 +254,7 @@ then
 elif [ "${1}" = "release" ]
 then
   export GPG_TTY=$(tty)
-  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy} -Dchangelist= -Pdeploy
+  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}
 else
   doRunBuild ${@}
 fi
