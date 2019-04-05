@@ -13,7 +13,7 @@ then
   echo "Commands:"
   for command in "${DEVON_IDE_HOME}/scripts/command/"*
   do
-    echo " `basename \"${command}\"`"
+    echo " $(basename "${command}")"
   done
   echo
   echo "For further details use:"

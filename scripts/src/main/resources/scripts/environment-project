@@ -149,7 +149,7 @@ fi
 # node.js support
 if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
 then
-  PATH=${PATH}:`npm bin -g 2> /dev/null`
+  PATH="${PATH}:$(npm bin -g 2> /dev/null)"
 fi
 
 # load user settings late so variables like M2_REPO can be overriden
