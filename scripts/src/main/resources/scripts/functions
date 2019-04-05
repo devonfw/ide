@@ -103,7 +103,6 @@ function doEcho() {
   then
     return
   fi
-  shift
   echo -e ${@}
 }
 
@@ -231,13 +230,7 @@ function doDevonCommand() {
   local command="${DEVON_IDE_HOME}/scripts/command/${1}"
   if [ ! -e "${command}" ]
   then
-    echo
-    echo "*** WARNING ***"
-    echo "Undefined devon command: ${1}"
-    echo "Not found at ${command}"
-    echo "Please check your DEVON_IDE_TOOLS variable:"
-    echo "${DEVON_IDE_TOOLS}"
-    return 255
+    doFail "Undefined devon command: ${1}\nNot found at ${command}."
   else
     if [ ! -x "${command}" ]
     then
@@ -245,7 +238,7 @@ function doDevonCommand() {
       chmod a+x "${command}"
     fi
     shift
-    "${command}" ${force} ${quiet} ${batch} -- ${@}
+    "${command}" ${force} ${quiet} ${batch} ${@}
     result=${?}
     if [ ${result} != 0 ]
     then
