@@ -589,7 +589,7 @@ function doConfigureWorkspace() {
 function doCreateIdeScript() {
   if doIsWindows
   then
-    echo -e "@echo off\r\npushd %%~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
+    echo -e "@echo off\r\npushd %~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
     echo "Created script ${1}-${WORKSPACE}.bat"
   else
     echo -e "#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
