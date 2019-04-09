@@ -111,6 +111,7 @@ function doUninstall() {
       then
         doUninstallFromHome "/c/cygwin64/home/${USER}"
       elif [ -d "/c/cygwin" ]
+      then
         doUninstallFromHome "/c/cygwin/home/${USER}"
       fi
     fi
