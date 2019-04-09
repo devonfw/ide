@@ -25,7 +25,7 @@ function doSetup() {
       software_type="tar.gz"
     fi
     download_url="https://download-cf.jetbrains.com/idea/ideaIC-${software_version}.${software_type}"
-    doInstall "${IDEA_HOME}" "${download_url}" "" "intellij"
+    doInstall "${IDEA_HOME}" "${download_url}"
     if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."

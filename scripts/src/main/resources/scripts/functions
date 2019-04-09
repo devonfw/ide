@@ -363,21 +363,21 @@ function doReplaceExtractedFile() {
   doRunCommand "mv '${1}' '${target}'"
 }
 
-# $1: name of file or folder to move from the extracted archive
+# $1: path of the extracted name to install (move to target)
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
   local backup_dir="updates/backups/$(date +"%y-%m-%d/%H-%M-%S")"
-  if [ -z "${1}" ] || [ "${1}" = '*' ]
+  if [ "${2}" = "${DEVON_IDE_HOME}" ]
   then
-    for extracted_file in ${DEVON_IDE_HOME}/updates/extracted/*
+    for extracted_file in "${1}"/*
     do
       if [ -e "${extracted_file}" ]
       then
-        doReplaceExtractedFile "${extracted_file}" "${2}" "${backup_dir}"
+        doReplaceExtractedFile "${extracted_file}" "${2}/${extracted_file/*\//}" "${backup_dir}"
       fi
     done
   else
-    doReplaceExtractedFile "${DEVON_IDE_HOME}/updates/extracted/${1}" "${2}" "${backup_dir}"
+    doReplaceExtractedFile "${1}" "${2}" "${backup_dir}"
   fi
 }
 
@@ -445,7 +445,7 @@ function doUpgradeMavenArtifact() {
   echo "Updating ${1} from ${download_url}"
   if [ "${target_version}" = "LATEST" ]
   then
-    doMavenGetLatestVersion ${download_url}
+    doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
     echo "LATEST = $target_version"
   fi
@@ -508,8 +508,7 @@ function doGitPullOrClone() {
 
 # $1: absolute target path
 # $2: URL
-# $3: optional archive folder to rename
-# $4: optional sub-folder to extract to
+# $3: optional archive folder to rename (may also be a glob pattern like 'apache-maven-*')
 function doInstall() {
   if [ -z "${1}" ]
   then
@@ -523,12 +522,14 @@ function doInstall() {
   fi
   echo "Starting installation from ${2} to ${1}"
   doDownload "${2}"
-  doExtract ~/Downloads/${2/*\//} "${4}"
   if [ -n "${3}" ]
   then
-    doMoveGlobSafe ${DEVON_IDE_HOME}/updates/extracted/${dir} ${DEVON_IDE_HOME}/updates/extracted/${3}
+    doExtract ~/Downloads/${2/*\//}
+    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/"${3}
+  else
+    doExtract ~/Downloads/${2/*\//} "${dir}"
   fi
-  doReplaceExtracted "${dir}" "${1}"
+  doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
   echo "Successfully installed ${1}"
   if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
