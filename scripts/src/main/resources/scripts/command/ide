@@ -88,7 +88,7 @@ function doUninstallFromHome() {
   fi
   if [ -f "${1}/.zshrc" ]
   then
-    cat "${1}~/.zshrc" | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
+    cat "${1}/.zshrc" | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
   fi
   if [ -f "${1}/scripts/devon" ]
   then
