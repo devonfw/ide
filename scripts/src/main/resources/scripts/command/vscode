@@ -20,7 +20,7 @@ function doSetup() {
     else
       download_url="${download_url}/code-stable-1549938209.tar.gz"
     fi
-    doInstall "${VSCODE_HOME}" "${download_url}" "" "vscode"
+    doInstall "${VSCODE_HOME}" "${download_url}"
   fi
 }
 

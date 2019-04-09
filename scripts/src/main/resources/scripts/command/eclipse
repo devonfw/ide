@@ -30,20 +30,19 @@ function doSetup() {
     local mirror="https://ftp.osuosl.org"
     local software_version="${ECLIPSE_VERSION:-2018-12}"
     local eclipse_edition=java
-	local extract_folder=
+    local extract_folder=
     #eclipse_edition=jee
     local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
     if doIsMacOs
     then
       download_url="${download_url}-macosx-cocoa-x86_64.dmg"
-	  extract_folder="eclipse"
     elif doIsWindows
     then
       download_url="${download_url}-win32-x86_64.zip"
     else
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
-    doInstall "${ECLIPSE_HOME}" "${download_url}" "" "${extract_folder}"
+    doInstall "${ECLIPSE_HOME}" "${download_url}"
     if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."

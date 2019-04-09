@@ -5,7 +5,8 @@
 if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
 then
   echo "${devon_ide_version}"
-  return
+  return 0 2>/dev/null
+  exit 0
 fi
 
 # initialize environment...
