@@ -17,7 +17,7 @@ function doUpdateScripts() {
 function doUpdateSettings() {
   if [ ! -d "${SETTINGS_PATH}" ]
   then
-    if [ -n "${1}"]
+    if [ -n "${1}" ]
     then
       SETTINGS_URL="${1}"
     fi    
@@ -55,7 +55,8 @@ function doUpdateSettings() {
       cd -
     fi
   else
-    doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+    #doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+    echo
   fi
 }
 
