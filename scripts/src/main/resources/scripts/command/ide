@@ -17,7 +17,7 @@ function doUpdateScripts() {
 function doUpdateSettings() {
   if [ ! -d "${SETTINGS_PATH}" ]
   then
-    if [ -n "${1}"]
+    if [ -n "${1}" ]
     then
       SETTINGS_URL="${1}"
     fi    
@@ -55,7 +55,8 @@ function doUpdateSettings() {
       cd -
     fi
   else
-    doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+    #doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+    echo
   fi
 }
 
@@ -80,32 +81,45 @@ function doSetup() {
   fi
 }
 
+# $1: home directory
+function doUninstallFromHome() {
+  if [ -f "${1}/.bashrc" ]
+  then
+    cat "${1}/.bashrc" | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" "${1}/.bashrc"
+  fi
+  if [ -f "${1}/.zshrc" ]
+  then
+    cat "${1}/.zshrc" | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
+  fi
+  if [ -f "${1}/scripts/devon" ]
+  then
+    doRunCommand "rm '${1}/scripts/devon'"
+  fi
+  doRunCommand "rm -rf '${1}/.devon'"
+}
+
 function doUninstall() {
   echo "Uninstalling devon-ide..."
   mkdir -p "${DEVON_IDE_HOME}/updates"
-  if [ -f ~/.bashrc ]
-  then
-    cat ~/.bashrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" ~/.bashrc
-  fi
-  if [ -f ~/.zshrc ]
-  then
-    cat ~/.zshrc | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" ~/.zshrc
-  fi
-  doRunCommand 'rm -rf ~/.devon'
+  doUninstallFromHome ~
   if doIsWindows
   then
+    if [ "${OSTYPE}" = "cygwin" ]
+    then
+      doUninstallFromHome "$(cygpath $USERPROFILE)"
+    else
+      if [ -d "/c/cygwin64" ]
+      then
+        doUninstallFromHome "/c/cygwin64/home/${USER}"
+      elif [ -d "/c/cygwin" ]
+      then
+        doUninstallFromHome "/c/cygwin/home/${USER}"
+      fi
+    fi
     echo "To uninstall the windows explorer integrations we need to apply changes to the windows registry:"
     echo "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
     echo "Simply confirm the popup with Yes or otherwise review and merge the registry file manually."
     regedit.exe "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
-    if [ -d "${USERPROFILE}/.devon" ]
-    then
-      doRunCommand 'rm -rf "${USERPROFILE}/.devon"'
-    fi
-    if [ -f "${USERPROFILE}/scripts/devon" ]
-    then
-      doRunCommand 'rm "${USERPROFILE}/scripts/devon"'
-    fi
   fi
   echo "So sad that you did not like devon-ide. It has been uninstalled from your system."
   echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
