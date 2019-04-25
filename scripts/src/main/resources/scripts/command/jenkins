@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if [ -d "${JENKINS_HOME}" ]
+  then
+    if [ -n "${1}" ]
+    then
+      echo "Jenkins is already installed at ${JENKINS_HOME}"
+    fi
+  else
+    local download_url
+    if [ -z "${JENKINS_VERSION}" ]
+    then
+      download_url="http://mirrors.jenkins.io/war-stable/latest/jenkins.war"
+    else
+      download_url="http://ftp-nyc.osuosl.org/pub/jenkins/war-stable/${JENKINS_VERSION}/jenkins.war"
+    fi
+    doDownload "${download_url}"
+    
+    http://localhost:9999/jnlpJars/jenkins-cli.jar
+    mkdir -p "${JENKINS_HOME}"
+    doRunCommand "mv ~/Downloads/jenkins.war '${JENKINS_HOME}/jenkins.war'"
+    local cwd="${PWD}"
+    cd "${JENKINS_HOME}"
+    doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
+    cd "${cwd}"
+  fi
+  if [ -n "${1}" ]
+  then
+    doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verify installation of Jenkins"
+  fi
+}
+
+function doStart() {
+  doSetup
+  doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
+  sleep 15  
+  echo
+  echo "Jenkins is running on http://localhost:${JENKINS_PORT:-9999}"
+}
+
+function doJenkinsCli() {
+  echo java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" ${@}
+  java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" ${@}
+}
+
+function doStop() {
+  doJenkinsCli shutdown
+}
+
+function doAdd() {
+  if [ ! -d .git ]
+  then
+    doFail "Not in a top-level git project!"
+  fi
+  local JENKINSFILE="${1:-Jenkinsfile}"
+  if [ ! -f "${JENKINSFILE}" ]
+  then
+    doFail "Could not find Jenkinsfile (${JENKINSFILE})."
+  fi
+  cat "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@GIT@~file://${PWD}~" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename ${PWD})"
+}
+
+function doRemove() {
+  doJenkinsCli delete-job "$(basename ${PWD})"
+}
+
+# CLI
+JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run Jenkins CI build server on local machnine."
+  echo
+  echo "Arguments:"
+  echo " start                    start local Jenkins server"
+  echo " stop                     stop local Jenkins server"
+  echo " setup                    setup Jenkins (install, verify, configure)"
+  echo " add                      add CI job for current project to Jenkins"
+  echo " remove                   remove CI job for current project from Jenkins"
+  echo
+  echo "Options:"
+elif [ "${1}" = "setup" ]
+then
+  doSetup setup
+elif [ "${1}" = "start" ]
+then
+  doStart
+elif [ "${1}" = "stop" ]
+then
+  doStop
+elif [ "${1}" = "add" ]
+then
+  doAdd
+elif [ "${1}" = "remove" ]
+then
+  doRemove
+else
+  doFail "undefined argument ${@}"
+fi
