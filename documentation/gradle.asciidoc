@@ -1,0 +1,16 @@
+:toc:
+toc::[]
+
+= gradle
+
+The `gradle` commandlet allows to install, configure, and launch https://gradle.org/[gradle]. It is similar to https://docs.gradle.org/5.3.1/userguide/gradle_wrapper.html[gradle-wrapper]. So calling `devon gradle «args»` is more or less the same as calling `gradle «args»` but with the benefit that the version of gradle preferred by your project is used (and will be installed if not yet available).
+
+The arguments (`devon gradle «args»`) are explained by the following table:
+
+.Usage of `devon gradle`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |setup gradle (install and verify), link:configuration[configurable] via `GRADLE_VERSION`
+|`«args»`        |run gradle with the given arguments (`«args»`)
+|=======================

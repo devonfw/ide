@@ -1,0 +1,16 @@
+:toc:
+toc::[]
+
+= java
+
+The `java` commandlet allows to install and setup https://openjdk.java.net/[Java]. Also it supports https://github.com/devonfw/devon4j[devon4j].
+The arguments (`devon java «args»`) are explained by the following table:
+
+.Usage of `devon java`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |setup OpenJDK (install and verify), link:configuration[configurable] via `JAVA_VERSION`
+|`create`        |create a new Java project based on https://github.com/devonfw/devon4j[devon4j].
+|`migrate`       |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version.
+|=======================

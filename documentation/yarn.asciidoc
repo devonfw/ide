@@ -1,0 +1,21 @@
+:toc:
+toc::[]
+
+= yarn
+
+The `yarn` commandlet allows to install, configure, and launch https://www.npmjs.com/[npm]. Calling `devon yarn «args»` is more or less the same as calling `yarn «args»` but with the benefit that the version of npm preferred by your project is used (and will be installed if not yet available).
+
+The arguments (`devon yarn «args»`) are explained by the following table:
+
+.Usage of `devon yarn`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|                          |run default build, link:configuration[configurable] via `YARN_BUILD_OPTS`
+|`setup`                   |setup yarn (install and verify), link:configuration[configurable] via `YARN_VERSION`
+|`get-version`             |Print the version of your current project.
+|`set-version` «nv» [«cv»] |Set the version of your current project to `«nv»` (assuming your current version is `«cv»`).
+|`check-top-level-project` |Check if you are running on a top-level project or fail if in a module or no NPM project at all.
+|release                   |Start a clean deploy release build, link:configuration[configurable] via `YARN_RELEASE_OPTS`
+|`«args»`        |run yarn with the given arguments (`«args»`)
+|=======================

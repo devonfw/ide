@@ -1,0 +1,28 @@
+:toc:
+toc::[]
+
+= Structure
+The directory layout of your `devon-ide` will look like this:
+
+.File structure of your devon-ide
+[subs=+macros]
+----
+/ projects (or C:\Projects, etc.)
+└──/ my-project (link:variables[$DEVON_IDE_HOME])
+    ├──/ link:conf[]
+    ├──/ link:log[]
+    ├──/ link:scripts[]
+    ├──/ link:settings[]
+    ├──/ link:software[]
+    ├──/ link:system[]
+    ├──/ link:updates[]
+    ├──/ link:workspaces[]
+    ├── link:setup[]
+    ├── link:setup[setup.bat]
+    └── link:license[TERMS_OF_USE.adoc]
+----
+
+The elements of the above structure are described in the indivudal sections. As they are hyperlinks you can simply click them to get more details.
+
+== TERMS_OF_USE
+You need to agree with the https://github.com/devonfw/devon-ide/blob/master/TERMS_OF_USE.adoc[TERMS_OF_USE] in order to use `devon-ide`. Everything included out of the box applies to open-source licenses. However, due to the many thrid party components with their licenses and terms we want to make this clear to all our users and be compliant.

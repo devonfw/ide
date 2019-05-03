@@ -1,0 +1,90 @@
+:toc: macro
+toc::[]
+
+= Tools
+
+This page is a general guide and collection to boost your productivity by using proper tools.
+
+== Tabs everywere
+Many people got used to _tabs_ that have been introduced by all major browsers:
+
+.Tabs in Firefox
+image::images/tools-tabs-firefox.png["tabs in firefox"]
+
+This nice feature can be added to many other tools.
+
+=== Tabs for Windows Explorer
+If you want to have tabs for windows explorer simply install http://en.ejie.me/[Clover]
+
+.Tabs in Windows Explorer
+image::images/tools-tabs-explorer.png["tabs in windows explorer"]
+
+=== Tabs for SSH
+If you want to have tabs for your SSH client http://www.putty.org/[Putty] (or even better http://www.9bis.net/kitty/[Kitty] that comes with https://winscp.net/[WinSCP] integration) you simply install https://github.com/jimradford/superputty#superputty-application[SuperPutty]
+
+.Tabs for SSH
+image::images/tools-tabs-ssh.png["tabs for SSH sessions"]
+
+=== Tabs for CMD
+If you want to have tabs for your windows command-line you simply install https://conemu.github.io/[ConEmu]
+
+.Tabs for CMD
+image::images/tools-tabs-cmd.png["tabs for windows shells"]
+
+See link:guide-integration[] for integration of ConEmu with `devon-ide`.
+
+== Browser Plugins
+There are tons of helpful browser plugins out there and it might be a matter of personal taste what you like to have installed. However, as we are heavily using github we want to promote https://github.com/buunguyen/octotree#octotree[octotree].
+
+== Windows Helpers
+
+=== Handle passwords
+For security you want complex passwords that differ for each account? For simplicity you only want to remember a single password? Want to have both? Then you need to install https://keepass.info/[KeePass] right now.
+
+=== Real text editor
+A real developer needs a real text editor and not windows build in `notepad`.
+The most common choice is https://notepad-plus-plus.org/[Notepad++].
+
+=== Real compression tool
+You need to deal with ZIP files, TGZ, dpkg, etc.? Just install http://www.7-zip.org/[7zip] and forget about windows build-in ZIP support (that is buggy with long file paths, etc.).
+
+=== Smarter clipboard
+You want to paste something from the clipboard but meanwhile you had to copy something else? Just one of many things you can easily do with http://ditto-cp.sourceforge.net/[ditto].
+
+=== Sysinternal Tools
+A real developer will quickly notice that windows build in tools to analyze processes, network connections, autostarts, etc. are quite poor. So what you really want is the https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite[Sysinternals-Suite]. Make process-explorer your https://www.ricksdailytips.com/make-process-explorer-default-task-manager/[default task manager] asap. Use autoruns to prevent nasty backround things to be started automatically. Use tcpview to figure out which process is blocking port 8080, etc.
+
+=== Cope with file locks
+Did you ever fail to delete a file or directory that was locked by some process and you did not even know which one it was?
+Then you might love https://www.iobit.com/en/iobit-unlocker.php[IoBit Unlocker].
+See also https://www.howtogeek.com/128680/HOW-TO-DELETE-MOVE-OR-RENAME-LOCKED-FILES-IN-WINDOWS/[this article].
+
+=== Create symbolic links
+You are used to symbolic and hard links in Linux? You have to work with Windows? You would also like to have such links in Windows? Why not? Windows https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/[supports real links] (not these stupid shortcuts).
+If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. Howerver, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
+
+=== Linux
+Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate).
+
+=== X11
+Want to connect via SSH and need to open an X11 app from the server? Want to see the GUI on your windows desktop?
+No problem: Install https://sourceforge.net/projects/vcxsrv/[VcXsrv].
+
+=== Keyboard Freak
+Are you the keyboard shortcut guy? Want to have shortcuts for things like « and » ?
+Then you should try https://www.autohotkey.com/[AutoHotKey].
+For the example (« and ») you can simply use this script to get started:
+```
+^<::Send {U+00AB}
+^+<::Send {U+00BB}
+```
+Now just press `[ctrl][<]` and `[ctrl][>]` (`[ctrl][shift][<]`). Next create shortcuts to launch your IDE, to open your favorite tool, etc.
+
+=== Paint anywhere on your desktop
+Do you collaborate sharing your screen, and want to mark a spot on top of what you see? Use http://epic-pen.com/[Epic Pen] to do just that.
+
+=== analyze graphs
+Need to visualise complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf) an run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
+
+=== up your screen capture game
+Capture any part of your screen with a single click, directly upload to dropbox, or run an svn commit (oops sorry git ;-) ) all in one go with http://getgreenshot.org/[Greenshot].

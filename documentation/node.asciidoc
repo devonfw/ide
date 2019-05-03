@@ -1,0 +1,14 @@
+:toc:
+toc::[]
+
+= node
+
+The `node` commandlet allows to install and setup https://nodejs.org/[node.js].
+The arguments (`devon node «args»`) are explained by the following table:
+
+.Usage of `devon node`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |setup node.js (install and verify), link:configuration[configurable] via `NODE_VERSION`
+|=======================

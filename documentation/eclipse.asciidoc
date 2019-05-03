@@ -1,0 +1,23 @@
+:toc:
+toc::[]
+
+= eclipse
+
+The `eclipse` commandlet allows to install, configure, and launch the https://eclipse.org/[Eclipse IDE].
+To launch Eclipse for your current workspace and devon-ide installation simply run:
+`devon eclipse`
+
+You may also supply additional arguments as `devon eclipse «args»`. These are explained by the following table:
+
+.Usage of `devon eclipse`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |setup Eclipse (install and verify)
+|`run`           |launch Eclipse IDE (default if no argument is given)
+|`start`         |same as `run`
+|`ws-up[date]`   |update eclipse workspace
+|`ws-re[verse]`  |reverse merge changes from workspace into settings
+|`ws-reverse-add`|reverse merge adding new properties
+|`create-script` |create launch script for this IDE, your current workspace and your OS
+|=======================

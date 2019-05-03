@@ -1,0 +1,48 @@
+:toc:
+toc::[]
+
+= Devon CLI
+
+The `devon-ide` is shipped with a central command `devon`. The link:download#setup[setup] will automatically register this command so it is available in any shell on your system. This page describes the Command Line Interface (CLI) of this command.
+
+== Devon
+Without any arguments the `devon` command will determine your `DEVON_IDE_HOME` and setup your link:variables[environment variables] automatically. In case you are not inside of a `devon-ide` folder the command will echo a message and do nothing.
+
+[source,bash]
+--------
+[/]$ devon
+You are not inside a devon IDE installation: /
+[/]$ cd /projects/my-project/workspaces/test/my-git-repo
+[my-git-repo]$ devon
+devon-ide has environment variables have been set for /projects/my-project
+[my-git-repo]$ echo $DEVON_IDE_HOME
+/projects/devon
+[my-git-repo]$ echo $JAVA_HOME
+/projects/my-project/software/java
+--------
+
+== Commandlets
+The `devon` command supports a plugable set of _commandlets_. Such commandlet is provided as first argument to the devon command and my take additional arguments:
+
+`devon «commandlet» [«arg»]*`
+
+Technically a commandlet is a bash script located in `$DEVON_IDE_HOME/scripts/command`. So if you want to integrate another tool with `devon-ide` we are awaiting your pull-request.
+
+The following commandlets are currently available:
+
+* link:build[]
+* link:eclipse[]
+* link:gradle[]
+* link:help[]
+* link:ide[]
+* link:intellij[]
+* link:java[]
+* link:jenkins[]
+* link:mvn[]
+* link:ng[]
+* link:node[]
+* link:npm[]
+* link:release[]
+* link:sonar[]
+* link:vscode[]
+* link:yarn[]

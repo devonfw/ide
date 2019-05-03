@@ -1,0 +1,16 @@
+:toc:
+toc::[]
+
+= ide
+
+The `ide` commandlet manages your `devon-ide`.
+
+== setup
+Run `devon ide setup` to initially setup your `devon-ide`. The `setup` script in the toplevel directory (`$DEVON_IDE_HOME`) is technically just a shortcut to run this command. The setup only needs to be called once after a new `devon-ide` instance has been created. It will do the following things:
+
+* link:setup#install[install] the `devon` command on your system (if not already installed).
+* install all required tools from `DEVON_IDE_TOOLS` link:variables[variable] (if not already installed).
+* configure all these tools
+
+== update
+Run `devon ide update` to update your `devon-ide`. This will check for updates and link:setup#install[install] them automatically.

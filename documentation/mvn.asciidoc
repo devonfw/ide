@@ -1,0 +1,21 @@
+:toc:
+toc::[]
+
+= mvn
+
+The `mvn` commandlet allows to install, configure, and launch https://maven.apache.org/[maven]. It is similar to https://github.com/takari/maven-wrapper[maven-wrapper] and https://github.com/dansomething/mdub[mdub]. So calling `devon mvn «args»` is more or less the same as calling `mvn «args»` but with the benefit that the version of maven preferred by your project is used (and will be installed if not yet available).
+
+The arguments (`devon mvn «args»`) are explained by the following table:
+
+.Usage of `devon mvn`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|                          |run default build, link:configuration[configurable] via `MVN_BUILD_OPTS`
+|`setup`                   |setup Maven (install and verify), link:configuration[configurable] via `MAVEN_VERSION`
+|`get-version`             |Print the version of your current project. Will consolidate the version for multi-module projects ignoring `dev[-SNAPSHOT]` versions and fail on mixed versions.
+|`set-version` «nv» [«cv»] |Set the version of your current project to `«nv»` (assuming your current version is `«cv»`).
+|`check-top-level-project` |Check if you are running on a top-level project or fail if in a module or no maven project at all.
+|release                   |Start a clean deploy release build, link:configuration[configurable] via `MVN_RELEASE_OPTS`
+|`«args»`        |run maven with the given arguments (`«args»`)
+|=======================
