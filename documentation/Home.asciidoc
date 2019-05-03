@@ -9,9 +9,9 @@ The `devon-ide` is a fantastic tool to automatically download, install, setup an
 
 For further details visit the following links:
 
-* link:features[features & motivation]
-* link:setup[download & setup]
-* link:usage[]
+* link:features.asciidoc[features & motivation]
+* link:setup.asciidoc[download & setup]
+* link:usage.asciidoc[usage]
 
 TL;DR?
 

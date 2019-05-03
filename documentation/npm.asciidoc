@@ -11,11 +11,11 @@ The arguments (`devon npm «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|                          |run default build, link:configuration[configurable] via `NPM_BUILD_OPTS`
-|`setup`                   |setup NPM (install and verify), link:configuration[configurable] via `NPM_VERSION`
+|                          |run default build, link:configuration.asciidoc[configurable] via `NPM_BUILD_OPTS`
+|`setup`                   |setup NPM (install and verify), link:configuration.asciidoc[configurable] via `NPM_VERSION`
 |`get-version`             |Print the version of your current project.
 |`set-version` «nv» [«cv»] |Set the version of your current project to `«nv»` (assuming your current version is `«cv»`).
 |`check-top-level-project` |Check if you are running on a top-level project or fail if in a module or no NPM project at all.
-|release                   |Start a clean deploy release build, link:configuration[configurable] via `NPM_RELEASE_OPTS`
+|release                   |Start a clean deploy release build, link:configuration.asciidoc[configurable] via `NPM_RELEASE_OPTS`
 |`«args»`        |run NPM with the given arguments (`«args»`)
 |=======================

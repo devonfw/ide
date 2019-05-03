@@ -23,73 +23,69 @@ This document contains the instructions for the tool `devon-ide` to setup and ma
 
 :leveloffset: 1
 
-include::features[]
+include::features.asciidoc[]
 
 <<<<
 
-include::setup[]
+include::setup.asciidoc[]
 
 <<<<
 
-include::usage[]
+include::usage.asciidoc[]
 
 <<<<
 
-include::configuration[]
+include::configuration.asciidoc[]
 
 <<<<
 
-include::variables[]
+include::variables.asciidoc[]
 
 <<<<
 
-include::cli[]
+include::cli.asciidoc[]
 
 :leveloffset: 2
 
-include::structure[]
+include::build.asciidoc[]
 
-include::build[]
+include::eclipse.asciidoc[]
 
-include::eclipse[]
+include::gradle.asciidoc[]
 
-include::gradle[]
+include::help.asciidoc[]
 
-include::help[]
+include::ide.asciidoc[]
 
-include::ide[]
+include::intellij.asciidoc[]
 
-include::intellij[]
+include::java.asciidoc[]
 
-include::java[]
+include::jenkins.asciidoc[]
 
-include::jenkins[]
+include::mvn.asciidoc[]
 
-include::mvn[]
+include::ng.asciidoc[]
 
-include::ng[]
+include::node.asciidoc[]
 
-include::node[]
+include::npm.asciidoc[]
 
-include::npm[]
+include::release.asciidoc[]
 
-include::release[]
+include::sonar.asciidoc[]
 
-include::sonar[]
+include::vscode.asciidoc[]
 
-include::vscode[]
+include::yarn.asciidoc[]
 
-include::yarn[]
+<<<<
 
 :leveloffset: 1
 
-<<<<
-
 include::structure[]
 
 :leveloffset: 2
-
-include::structure[]
 
 include::conf[]
 
@@ -106,5 +102,9 @@ include::system[]
 include::updates[]
 
 include::workspaces[]
+
+<<<<
+
+:leveloffset: 1
 
 include::license[]

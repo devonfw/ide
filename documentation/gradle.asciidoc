@@ -11,6 +11,6 @@ The arguments (`devon gradle «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`setup`         |setup gradle (install and verify), link:configuration[configurable] via `GRADLE_VERSION`
+|`setup`         |setup gradle (install and verify), link:configuration.asciidoc[configurable] via `GRADLE_VERSION`
 |`«args»`        |run gradle with the given arguments (`«args»`)
 |=======================

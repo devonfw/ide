@@ -10,7 +10,7 @@ The arguments (`devon java «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`setup`         |setup OpenJDK (install and verify), link:configuration[configurable] via `JAVA_VERSION`
+|`setup`         |setup OpenJDK (install and verify), link:configuration.asciidoc[configurable] via `JAVA_VERSION`
 |`create`        |create a new Java project based on https://github.com/devonfw/devon4j[devon4j].
 |`migrate`       |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version.
 |=======================

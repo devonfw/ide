@@ -3,4 +3,4 @@ toc::[]
 
 = software
 
-The `software` folder contains the third party tools for your IDE such as link:mvn[maven], link:npm[], link:java[], etc. With respect to the link:license[licensing terms] you may create a custom archive containing a `devon-ide` together with the required software. However, to be platform indepentent and allow lightweight updates the `devon-ide` is capable to download and link:install[] the software automatically for you.
+The `software` folder contains the third party tools for your IDE such as link:mvn.asciidoc[maven], link:npm.asciidoc[npm], link:java.asciidoc[java], etc. With respect to the link:license.asciidoc[licensing terms] you may create a custom archive containing a `devon-ide` together with the required software. However, to be platform indepentent and allow lightweight updates the `devon-ide` is capable to download and link:install.asciidoc[install] the software automatically for you.

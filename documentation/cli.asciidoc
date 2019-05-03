@@ -3,10 +3,10 @@ toc::[]
 
 = Devon CLI
 
-The `devon-ide` is shipped with a central command `devon`. The link:download#setup[setup] will automatically register this command so it is available in any shell on your system. This page describes the Command Line Interface (CLI) of this command.
+The `devon-ide` is shipped with a central command `devon`. The link:download.asciidoc#setup[setup] will automatically register this command so it is available in any shell on your system. This page describes the Command Line Interface (CLI) of this command.
 
 == Devon
-Without any arguments the `devon` command will determine your `DEVON_IDE_HOME` and setup your link:variables[environment variables] automatically. In case you are not inside of a `devon-ide` folder the command will echo a message and do nothing.
+Without any arguments the `devon` command will determine your `DEVON_IDE_HOME` and setup your link:variables.asciidoc[environment variables] automatically. In case you are not inside of a `devon-ide` folder the command will echo a message and do nothing.
 
 [source,bash]
 --------
@@ -30,19 +30,19 @@ Technically a commandlet is a bash script located in `$DEVON_IDE_HOME/scripts/co
 
 The following commandlets are currently available:
 
-* link:build[]
-* link:eclipse[]
-* link:gradle[]
-* link:help[]
-* link:ide[]
-* link:intellij[]
-* link:java[]
-* link:jenkins[]
-* link:mvn[]
-* link:ng[]
-* link:node[]
-* link:npm[]
-* link:release[]
-* link:sonar[]
-* link:vscode[]
-* link:yarn[]
+* link:build.asciidoc[build]
+* link:eclipse.asciidoc[eclipse]
+* link:gradle.asciidoc[gradle]
+* link:help.asciidoc[help]
+* link:ide.asciidoc[ide]
+* link:intellij.asciidoc[intellij]
+* link:java.asciidoc[java]
+* link:jenkins.asciidoc[jenkins]
+* link:mvn.asciidoc[mvn]
+* link:ng.asciidoc[ng]
+* link:node.asciidoc[node]
+* link:npm.asciidoc[npm]
+* link:release.asciidoc[release]
+* link:sonar.asciidoc[sonar]
+* link:vscode.asciidoc[vscode]
+* link:yarn.asciidoc[yarn]

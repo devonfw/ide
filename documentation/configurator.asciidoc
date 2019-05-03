@@ -13,7 +13,7 @@ If you want to explicitly update your workspace without launching the IDE, you c
 For every tool managed with our configurator we distinguish the following file structures:
 
 1. The actual configuration location of the tool itself. We configure the tool to relocate this to a specific workspace (so by default `workspaces/main/`).
-2. A configuration location with the configuration only used during the link:setup[]: `$SETTINGS_PATH/«tool»/workspace/setup`. Contains settings to setup a link:workspace[]. After that the user remains control over these settings.
+2. A configuration location with the configuration only used during the link:setup.asciidoc[setup]: `$SETTINGS_PATH/«tool»/workspace/setup`. Contains settings to setup a link:workspaces.asciidoc[workspace]. After that the user remains control over these settings.
 3. A configuration location with the configuration used to update and override settings: `$SETTINGS_PATH/«tool»/workspace/update`. Contains settings that are overridden with every update and enforced for every team member.
 
 The configurator will recursively traverse the directory structure of 2. and 3. together. For each located file `«relative-path»/«file»` it will create or update 1. according to the following rules:
@@ -38,7 +38,7 @@ Many fundamental settings for Eclipse can be found in the sub-folder `https://gi
 * do the desired modification of the configuration within the IDE's GUI (e.g. in Eclipse preferences)
 * exit your IDE and wait till it is shutdown
 * run `ws-reverse` command for your IDE (e.g. `devon eclipse ws-reverse`) - ensure you do this in the same workspace (without intermediate `cd` commands).
-* review the changes to your link:settings[] (git diff)
+* review the changes to your link:settings.asciidoc[settings] (git diff)
 * if all looks as expected commit these changes and push them - consider using a feature branch and ask a colleguage to test these changes before you apply this to the main branch.
 * otherwise in case you modified an currently unmanaged setting you can try `ws-reverse-add` instead of `ws-reverse` and check the diff again. Be sure not to add undesired settings that should not be managed.
 * in case your changes are in an entirely new configuration file that is currently not managed (in 3.) you need to figure out this file manually and add it to the according location in 3.

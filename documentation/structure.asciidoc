@@ -8,18 +8,18 @@ The directory layout of your `devon-ide` will look like this:
 [subs=+macros]
 ----
 / projects (or C:\Projects, etc.)
-└──/ my-project (link:variables[$DEVON_IDE_HOME])
-    ├──/ link:conf[]
-    ├──/ link:log[]
-    ├──/ link:scripts[]
-    ├──/ link:settings[]
-    ├──/ link:software[]
-    ├──/ link:system[]
-    ├──/ link:updates[]
-    ├──/ link:workspaces[]
-    ├── link:setup[]
-    ├── link:setup[setup.bat]
-    └── link:license[TERMS_OF_USE.adoc]
+└──/ my-project (link:variables.asciidoc[$DEVON_IDE_HOME])
+    ├──/ link:conf.asciidoc[conf]
+    ├──/ link:log.asciidoc[log]
+    ├──/ link:scripts.asciidoc[scripts]
+    ├──/ link:settings.asciidoc[settings]
+    ├──/ link:software.asciidoc[software]
+    ├──/ link:system.asciidoc[system]
+    ├──/ link:updates.asciidoc[updates]
+    ├──/ link:workspaces.asciidoc[workspaces]
+    ├── link:setup.asciidoc[setup]
+    ├── link:setup.asciidoc[setup.bat]
+    └── link:license.asciidoc[TERMS_OF_USE.adoc]
 ----
 
 The elements of the above structure are described in the indivudal sections. As they are hyperlinks you can simply click them to get more details.

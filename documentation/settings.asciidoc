@@ -11,7 +11,7 @@ To test `devon-ide` or for small projects you can also use these default setting
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
 
 == Structure
-The settings folder (`link:variables[SETTINGS_PATH]`) has to following file structure:
+The settings folder (`link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
 
 .File structure of settings
 [source]
@@ -46,16 +46,16 @@ The settings folder (`link:variables[SETTINGS_PATH]`) has to following file stru
 ----
 
 As you can see the `settings` folder contains sub-folders for tools of the IDE.
-So the `devon` folder contains `variables[.bat]` files for the link:configuration[] of your environment.
-Further, for the IDEs such as link:eclipse[] or link:vscode[] the according folders contain the templates to manage the workspace via our link:configurator[].
+So the `devon` folder contains `variables[.bat]` files for the link:configuration.asciidoc[configuration] of your environment.
+Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode] the according folders contain the templates to manage the workspace via our link:configurator.asciidoc[configurator].
 
 == Configuration Philosophy
 Different tools and configuration files require a different handling:
 
 * Where suitable we directly use these configurations from your `settings` (e.g. for `devon/variables[.bat]`, `eclipse/lifecycle-mapping-metadata.xml`, or `eclipse/project.dictionary`).
-* Some configurations need user-specific customization so the `settings` only contain a template that is copied to the actual configuration file location during link:setup[] (if no such file already exists). This e.g. applies to `maven/settings.xml` (that is copied to `conf/.m2`).
+* Some configurations need user-specific customization so the `settings` only contain a template that is copied to the actual configuration file location during link:setup.asciidoc[setup] (if no such file already exists). This e.g. applies to `maven/settings.xml` (that is copied to `conf/.m2`).
 * Other configurations need to be imported manually. To avoid manual steps and simplify usage we try to automate as much as possible. This currently applies to `sonarqube` profiles but will be automated with https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin] in the future.
-* For tools with complex configuration structures like link:eclipse[], IntelliJ, or link:vscode[] we provide a smart mechanism via our link:configurator[].
+* For tools with complex configuration structures like link:eclipse.asciidoc[eclipse], link:intellij..asciidoc[intellij], or link:vscode.asciidoc[vscode] we provide a smart mechanism via our link:configurator.asciidoc[configurator].
 
 == Customize Settings
 You can easily customize these settings for the requirements of your project. We suggest that one team member is repsonsible to ensure that everything stays consistent and works.

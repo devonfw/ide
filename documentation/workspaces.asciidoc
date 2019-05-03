@@ -12,14 +12,14 @@ Within the workspace folder (e.g. `workspaces/main`) you are again free to creat
 ----
 / workspaces
 ├──/ main
-│  ├──/ link:configurator[.metadata]
+│  ├──/ link:configurator.asciidoc[.metadata]
 │  ├──/ https://github.com/devonfw/tools-cobigen[CobiGen_Templates]
 │  ├──/ https://github.com/devonfw/devon-ide[devon-ide]
 │  ├──/ https://github.com/devonfw/devon4j[devon4j]
 │  ├──/ https://github.com/devonfw/my-thai-star[my-thai-star]
 │  └──/ https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin]
 └──/ stable
-   ├──/ link:configurator[.metadata]
+   ├──/ link:configurator.asciidoc[.metadata]
    ├──/ https://github.com/devonfw/devon-ide[devon-ide]
    ├──/ https://github.com/devonfw/devon4j[devon4j]
    └──/ https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin]
