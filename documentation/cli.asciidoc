@@ -3,7 +3,7 @@ toc::[]
 
 = Devon CLI
 
-The `devon-ide` is shipped with a central command `devon`. The link:download.asciidoc#setup[setup] will automatically register this command so it is available in any shell on your system. This page describes the Command Line Interface (CLI) of this command.
+The `devon-ide` is shipped with a central command `devon`. The link:setup.asciidoc[setup] will automatically register this command so it is available in any shell on your system. This page describes the Command Line Interface (CLI) of this command.
 
 == Devon
 Without any arguments the `devon` command will determine your `DEVON_IDE_HOME` and setup your link:variables.asciidoc[environment variables] automatically. In case you are not inside of a `devon-ide` folder the command will echo a message and do nothing.
