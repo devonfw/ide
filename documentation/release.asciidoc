@@ -1,0 +1,17 @@
+:toc:
+toc::[]
+
+= release
+
+Create a release in a standardized way including the following steps:
+
+* verify the current project (no local changes, etc.)
+* determine `«version»` (if currently `«version»-SNAPSHOT`) and print out release information.
+* ask user for confirmation
+* bump release to `«version»` in build configuration (e.g. `pom.xml` files)
+* commit the change
+* create annotated tag for your release as `release/«version»`
+* invoke deployment on build-system
+* set next version as `(«version»+1)-SNAPSHOT` in build configuration (e.g. `pom.xml` files)
+* commit the change
+* push your changes

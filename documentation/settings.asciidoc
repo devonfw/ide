@@ -1,0 +1,63 @@
+:toc:
+toc::[]
+
+= Settings
+
+The `devon-ide` requires `settings` with configuration templates for the arbitrary tools.
+
+To get an initial set of these settings we provide the https://github.com/devonfw/devon-ide/tree/master/settings/src/main/settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
+
+To test `devon-ide` or for small projects you can also use these default settings.
+However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
+
+== Structure
+The settings folder (`link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
+
+.File structure of settings
+[source]
+----
+/settings
+├──/devon
+|  ├──conf
+|  |  ├──variables
+|  |  └──variables.bat
+|  ├──variables
+|  └──variables.bat
+├──/eclipse
+|  ├──/workspace
+|  |  ├──/setup
+|  |  └──/update
+|  ├──lifecycle-mapping-metadata.xml
+|  ├──replacement-properties.properties
+|  └──project.dictionary
+├──/maven
+|  └──settings.xml
+├──/...
+├──/sonarqube
+|  └──/profiles
+|     ├──Devon-C#.xml
+|     ├──...
+|     └──Devon-XML.xml
+└──/vscode
+   └──/workspace
+      ├──/setup
+      ├──/update
+      └──replacement-properties.properties
+----
+
+As you can see the `settings` folder contains sub-folders for tools of the IDE.
+So the `devon` folder contains `variables[.bat]` files for the link:configuration.asciidoc[configuration] of your environment.
+Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode] the according folders contain the templates to manage the workspace via our link:configurator.asciidoc[configurator].
+
+== Configuration Philosophy
+Different tools and configuration files require a different handling:
+
+* Where suitable we directly use these configurations from your `settings` (e.g. for `devon/variables[.bat]`, `eclipse/lifecycle-mapping-metadata.xml`, or `eclipse/project.dictionary`).
+* Some configurations need user-specific customization so the `settings` only contain a template that is copied to the actual configuration file location during link:setup.asciidoc[setup] (if no such file already exists). This e.g. applies to `maven/settings.xml` (that is copied to `conf/.m2`).
+* Other configurations need to be imported manually. To avoid manual steps and simplify usage we try to automate as much as possible. This currently applies to `sonarqube` profiles but will be automated with https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin] in the future.
+* For tools with complex configuration structures like link:eclipse.asciidoc[eclipse], link:intellij..asciidoc[intellij], or link:vscode.asciidoc[vscode] we provide a smart mechanism via our link:configurator.asciidoc[configurator].
+
+== Customize Settings
+You can easily customize these settings for the requirements of your project. We suggest that one team member is repsonsible to ensure that everything stays consistent and works.
+
+You may also create new sub-folders in `settings` and put individual things according to your needs. E.g. you could add scripts for https://addons.mozilla.org/de/firefox/addon/greasemonkey[greasemonkey] or https://chrome.google.com/webstore/detail/tampermonkey[tampermonkey], as well as scripts for your database or whatever may be useful and worth to share in your team. However, to share and maintain knowledge we recommend to use a wiki.

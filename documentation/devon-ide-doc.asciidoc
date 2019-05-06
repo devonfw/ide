@@ -1,0 +1,110 @@
+= devon-ide ${project.version}
+The devonfw community
+${project.version}, ${buildtime}: Subtitle {doctitle}
+:description: comprehensive documentation of the devon-ide tool to manage your development tools.
+:sectnums:
+:toc:
+:toc-title: Table of Contents
+ifdef::backend-pdf[]
+:title-logo-image: image:./images/devonfw.png[pdfwidth=5in,align=center]
+endif::[]
+:imagesdir: ./
+
+[preface]
+== Introduction
+http://devonfw.com[devonfw] provides a solution 
+to building applications which combine best-in-class frameworks and libraries 
+as well as industry proven practices and code conventions.
+It massively speeds up development, reduces risks and helps you to deliver better results.
+
+This document contains the instructions for the tool `devon-ide` to setup and maintain your development tools including your favorite IDE (integrated development environment).
+
+:toc:
+
+:leveloffset: 1
+
+include::features.asciidoc[]
+
+<<<<
+
+include::setup.asciidoc[]
+
+<<<<
+
+include::usage.asciidoc[]
+
+<<<<
+
+include::configuration.asciidoc[]
+
+<<<<
+
+include::variables.asciidoc[]
+
+<<<<
+
+include::cli.asciidoc[]
+
+:leveloffset: 2
+
+include::build.asciidoc[]
+
+include::eclipse.asciidoc[]
+
+include::gradle.asciidoc[]
+
+include::help.asciidoc[]
+
+include::ide.asciidoc[]
+
+include::intellij.asciidoc[]
+
+include::java.asciidoc[]
+
+include::jenkins.asciidoc[]
+
+include::mvn.asciidoc[]
+
+include::ng.asciidoc[]
+
+include::node.asciidoc[]
+
+include::npm.asciidoc[]
+
+include::release.asciidoc[]
+
+include::sonar.asciidoc[]
+
+include::vscode.asciidoc[]
+
+include::yarn.asciidoc[]
+
+<<<<
+
+:leveloffset: 1
+
+include::structure[]
+
+:leveloffset: 2
+
+include::conf[]
+
+include::log[]
+
+include::scripts[]
+
+include::settings[]
+
+include::software[]
+
+include::system[]
+
+include::updates[]
+
+include::workspaces[]
+
+<<<<
+
+:leveloffset: 1
+
+include::license[]

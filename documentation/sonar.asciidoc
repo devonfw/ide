@@ -1,0 +1,15 @@
+:toc:
+toc::[]
+
+= sonar
+The `sonar` commandlet allows to install, configure, and launch https://www.sonarqube.org[SonarQube].
+
+.Usage of `devon sonar`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |Setup SonarQube (install and verify)
+|`start`         |Start your local SonarQube server
+|`stop`          |Stop your local SonarQube server
+|`add-ci`        |Analyze current project with SonarQube
+|=======================

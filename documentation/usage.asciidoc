@@ -1,0 +1,37 @@
+:toc:
+toc::[]
+
+= Usage
+
+This section explains you how to use the `devon-ide`. We assume you have successfully link:install.asciidoc[installed] it first.
+
+== Developer
+As a developer you are supported to link:setup.asciidoc[setup] your IDE within minutes. You only need the settings URL from your xref:architect[Architect].
+
+=== Update
+To update your IDE (if instructed by your xref:architect[Architect]), all you need to do is run the following command:
+```
+devon ide update
+```
+
+=== Working with multiple workspaces
+If you are working on different branches in parallel you typically want to use multiple workspaces. 
+
+. Go to the link:workspaces.asciidoc[workspaces] folder in your link:variables[${DEVON_IDE_HOME}] and create a new folder with the name of your choice (e.g. `release2.1`).
+. Check out the according projects and branch into that workspace folder.
+. Open a shell in that new workspace folder (`cd` to it) and according to your IDE run e.g. link:eclipse.asciidoc[eclipse], link:vscode.asciidoc[vscode], or link:intellij.asciidoc[intellij] to create your workspace and launch the IDE. You can also add the parameter `create-script` to the IDE link:cli.asciidoc#commandlet[commandlet] in order to create a launch-script for your IDE.
+
+You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
+
+== Architect
+As architect or technical lead of the project you can link:configuration.asciidoc[configure] the `devon-ide` to your needs.
+
+=== Project specific settings
+For your project you should create a git-repository for the link:settings.asciidoc[settings]. You can customize many aspects this way.
+
+=== Distribute
+To redistribute the IDE you can decide to use the official vanilla releases of the `devon-ide` link:scripts.asciidoc[scripts].
+However, you may also add the cloned settings, a custom link:configuration.asciidoc[devon.properties] file, or predefine link:software.asciidoc[software] (be aware of multi-plattform-support).
+
+=== Update
+When you have done changes in a larger project (big team), please first test the changes yourself, then pick a pilot user of the team, and only after that works well for a couple of days inform the entire team to update.
