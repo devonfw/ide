@@ -29,7 +29,7 @@ function doSetup() {
     fi
     echo "*******"
     echo "Installing plugins (extension-pack) into VS code..."
-    doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack"
+    doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
   fi
 }
 
