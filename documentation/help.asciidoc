@@ -1,0 +1,15 @@
+:toc:
+toc::[]
+
+= help
+The `help` commandlet provides help for the link:cli.asciidoc[CLI].
+
+.Usage of `devon help`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|                |Print general help
+|`«command»`     |Print help for the link:cli.asciidoc#commandlets[commandlet] `«command»`.
+|=======================
+
+Please note that `devon help «command»` will do the same as `devon «command» help`.

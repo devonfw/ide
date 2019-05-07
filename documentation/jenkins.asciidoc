@@ -1,0 +1,15 @@
+:toc:
+toc::[]
+
+= jenkins
+The `jenkins` commandlet allows to install, configure, and launch https://jenkins.io/[Jenkins].
+
+.Usage of `devon jenkins`
+[options="header"]
+|=======================
+|*Argument(s)*   |*Meaning*
+|`setup`         |Setup Jenkins (install and verify)
+|`start`         |Start your local Jenkins server
+|`stop`          |Stop your local Jenkins server
+|`add-ci`        |Add current project as CI job to your local Jenkins
+|=======================

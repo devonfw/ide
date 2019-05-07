@@ -29,7 +29,7 @@
   </dependencies>
 
   <modules>
-    <module>doc</module>
+    <module>documentation</module>
     <module>configurator</module>
     <module>scripts</module>
     <module>settings</module>
