@@ -21,6 +21,15 @@ function doSetup() {
       download_url="${download_url}/code-stable-1549938209.tar.gz"
     fi
     doInstall "${VSCODE_HOME}" "${download_url}"
+    if doIsMacOs
+    then
+      mkdir "${VSCODE_HOME}/bin"
+      echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
+      chmod a+x "${VSCODE_HOME}/bin/code"
+    fi
+    echo "*******"
+    echo "Installing plugins (extension-pack) into VS code..."
+    doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack"
   fi
 }
 
@@ -43,7 +52,7 @@ function doConfigureVsCode() {
 function doStartVsCode() {
   doConfigureVsCode
   echo "launching VSCode..."
-  code "${WORKSPACE_PATH}"
+  "${VSCODE_HOME}/bin/code" "${WORKSPACE_PATH}"
 }
 
 # CLI
