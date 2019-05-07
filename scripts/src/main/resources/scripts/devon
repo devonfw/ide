@@ -17,6 +17,10 @@ do
   if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
   then
     source scripts/environment-project
+    if [ -z "${DEVON_IDE_HOME}" ]
+    then
+      export DEVON_IDE_HOME="${PWD}"
+    fi
     if [ -z "${1}" ]
     then
       echo "devon-ide has environment variables have been set for ${PWD}"
@@ -128,7 +132,7 @@ then
       if [ -f ~/.devon/home ]
       then
         rm ~/.devon/home
-      fi      
+      fi
     fi
   fi
   if [ -f "${DEVON_IDE_HOME}/scripts/command/${command}" ]
