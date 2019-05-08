@@ -51,26 +51,19 @@ function doSetup() {
     fi
     if [ -z "${ECLIPSE_PLUGINS}" ]
     then
-      # TODO CobiGen and TM-Terminal
-      # https://github.com/devonfw/devon-ide/issues/59
-      # "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
-      # "https://marketplace.eclipse.org/content/tm-terminal" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
-      # "http://downloads.sonarsource.com/eclipse/eclipse/" "org.sonar.ide.eclipse.feature.feature.group,org.sonar.ide.eclipse.jdt.feature.feature.group"
-      # "http://update.eclemma.org/" "org.eclipse.eclemma.feature.feature.group"
-      ECLIPSE_PLUGINS=(
-        "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
-        "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
-        "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
-        "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
-        "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
-        "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
-        "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
-      )
+      doAddPlugin startexplorer
+      doAddPlugin regexutil
+      doAddPlugin templatevariables
+      doAddPlugin spotbugs
+      doAddPlugin checkstyle
+      doAddPlugin cobigen
+      doAddPlugin terminal
+    else
+      for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
+      do
+        doAddPlugin "${ECLIPSE_PLUGINS[((${i}+1))]}" "${ECLIPSE_PLUGINS[${i}]}"
+      done
     fi
-    for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
-    do
-      doInstallEclipsePlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
-    done
   fi
   if [ -n "${1}" ]
   then
@@ -107,6 +100,60 @@ function doConfigureEclipse() {
   fi
 }
 
+# $1: id
+# $2: optional URL
+function doAddPlugin() {
+  if [ -z "${2}" ]
+  then
+    if [ "${1}" = "startexplorer" ]
+    then
+      doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
+    elif [ "${1}" = "cobigen" ]
+    then
+      echo "***** ERROR *****"
+      echo "CobiGen still has no public update site - see https://github.com/devonfw/devon-ide/issues/84"
+      echo doInstallEclipsePlugin "https://github.com/devonfw/tools-cobigen/releases" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+    elif [ "${1}" = "terminal" ]
+    then
+      echo "***** ERROR *****"
+      echo "TM Terminal does not have an update-site but only a marketplace site."
+      echo "We currently have no clue how to automatically install plugins from marketplace"
+      echo "Until this issue is resolved, you need to manually install TM Terminal from the below marketplace URL:"
+      echo http://marketplace.eclipse.org/content/tm-terminal
+      echo doInstallEclipsePlugin "https://TODO" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
+    elif [ "${1}" = "anyedit" ]
+    then
+      doInstallEclipsePlugin "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
+    elif [ "${1}" = "regexutil" ]
+    then
+      doInstallEclipsePlugin "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
+    elif [ "${1}" = "templatevariables" ]
+    then
+      doInstallEclipsePlugin "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
+    elif [ "${1}" = "spotbugs" ]
+    then
+      doInstallEclipsePlugin "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
+    elif [ "${1}" = "checkstyle" ]
+    then
+      doInstallEclipsePlugin "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
+    elif [ "${1}" = "github" ]
+    then
+      doInstallEclipsePlugin "http://download.eclipse.org/egit/github/updates/" "org.eclipse.mylyn.github.feature.feature.group"
+    elif [ "${1}" = "devstyle" ]
+    then
+      doInstallEclipsePlugin "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
+    elif [ "${1}" = "soapui" ]
+    then
+      doInstallEclipsePlugin "http://www.soapui.org/eclipse/update/site.xml" "com.eviware.soapui.soapui_feature.feature.group"
+    else
+      echo "Undefined plugin ID ${1} - not known or supported."
+      echo "Provide full groupId together with URL of update-site."
+    fi
+  else
+    doInstallEclipsePlugin "${2}" "${1}"
+  fi
+}
+
 function doStartEclipse() {
   doConfigureEclipse
   echo "launching Eclipse..."
@@ -119,12 +166,13 @@ then
   echo "Manage Eclipse IDE and workspace."
   echo
   echo "Arguments:"
-  echo " setup              setup Eclipse (install and verify)"
-  echo " run | start        launch Eclipse IDE (default if no argument is given)"
-  echo " ws-up[date]        update eclipse workspace"
-  echo " ws-re[verse]       reverse merge changes from workspace into settings"
-  echo " ws-reverse-add     reverse merge adding new properties"
-  echo " create-script      create eclipse-${WORKSPACE} script if not already exists"
+  echo " setup                    setup Eclipse (install and verify)"
+  echo " add-plugin «id» [«url»]  install an additional plugin"
+  echo " run | start              launch Eclipse IDE (default if no argument is given)"
+  echo " ws-up[date]              update eclipse workspace"
+  echo " ws-re[verse]             reverse merge changes from workspace into settings"
+  echo " ws-reverse-add           reverse merge adding new properties"
+  echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -155,6 +203,11 @@ do
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript eclipse
+  elif [ "${1}" = "add-plugin" ]
+  then
+    shift
+    doAddPlugin ${@}
+    exit ${?}
   else
     doFail "Unknown argument: ${1}"
   fi

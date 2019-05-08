@@ -22,7 +22,7 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |*`MAVEN_HOME`*|`$DEVON_IDE_HOME/software/maven`|Path to Maven
 |*`MAVEN_OPTS`*|`-Xmx512m -Duser.home=$DEVON_IDE_HOME/conf`|Maven options
 |`ECLIPSE_VMARGS`|`-Xms128M -Xmx768M -XX:MaxPermSize=256M`|JVM options for Eclipse
-|`ECLIPSE_PLUGINS`|`-`|Array with "update site URLs" and "feature groups" to cusomize required link:eclipse.asciidoc#plugins[eclipse plugins].
+|`ECLIPSE_PLUGINS`|`-`|Array with "feature groups" and "update site URLs" to cusomize required link:eclipse.asciidoc#plugins[eclipse plugins].
 |`«TOOL»_VERSION`|`-`|The version of the tool `«TOOL»` to install and use (e.g. `ECLIPSE_VERSION` or `MAVEN_VERSION`).
 |`«TOOL»_BUILD_OPTS`|e.g.`clean install`|The arguments provided to the build-tool `«TOOL»` in order to run a build.
 |`«TOOL»_RELEASE_OPTS`|e.g.`clean deploy -Dchangelist= -Pdeploy`|The arguments provided to the build-tool `«TOOL»` in order to perform a release build.
