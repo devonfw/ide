@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 import java.util.HashMap;
@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.devonfw.ide.configurator.logging.Log;
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Implementation of {@link FileMerger} that does the whole thing:

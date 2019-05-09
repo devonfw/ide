@@ -1,8 +1,8 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 
-import com.devonfw.ide.configurator.logging.Log;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * {@link FileMerger} responsible for a single type of {@link File}.

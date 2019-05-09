@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,8 +26,8 @@ import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 
-import com.devonfw.ide.configurator.logging.Log;
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * TODO hohwille This type ...

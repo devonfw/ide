@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.resolve;
+package com.devonfw.tools.ide.configurator.resolve;
 
 /**
  * Interface for a resolver of variables. It is capable of replacing one or multiple occurrences of variables with their

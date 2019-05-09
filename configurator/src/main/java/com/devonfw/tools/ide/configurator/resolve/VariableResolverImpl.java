@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.resolve;
+package com.devonfw.tools.ide.configurator.resolve;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,7 +9,7 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.devonfw.ide.configurator.logging.Log;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Implementation of {@link VariableResolver}.

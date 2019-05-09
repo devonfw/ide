@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.logging;
+package com.devonfw.tools.ide.logging;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import com.devonfw.ide.configurator.Configurator;
+import com.devonfw.tools.ide.configurator.Configurator;
 
 /**
  * This class provides a {@link Logger} for logging purposes. To minimize dependencies we use the JDK default logger.

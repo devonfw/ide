@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 
@@ -17,8 +17,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import com.devonfw.ide.configurator.logging.Log;
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Implementation of {@link FileTypeMerger} for XML.

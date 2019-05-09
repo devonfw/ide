@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator;
+package com.devonfw.tools.ide.configurator;
 
 import java.util.ArrayList;
 import java.util.Collections;

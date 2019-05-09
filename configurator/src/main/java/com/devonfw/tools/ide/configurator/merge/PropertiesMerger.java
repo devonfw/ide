@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,9 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.Set;
 
-import com.devonfw.ide.configurator.SortedProperties;
-import com.devonfw.ide.configurator.logging.Log;
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.SortedProperties;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Implementation of {@link FileTypeMerger} for {@link Properties} files.

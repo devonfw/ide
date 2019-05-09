@@ -1,8 +1,8 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
 
 /**
  * Interface for a merger responsible for merging files.

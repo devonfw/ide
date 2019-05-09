@@ -1,13 +1,13 @@
-package com.devonfw.ide.configurator;
+package com.devonfw.tools.ide.configurator;
 
 import java.io.File;
 import java.util.Properties;
 
-import com.devonfw.ide.configurator.logging.Log;
-import com.devonfw.ide.configurator.merge.DirectoryMerger;
-import com.devonfw.ide.configurator.merge.PropertiesMerger;
-import com.devonfw.ide.configurator.resolve.VariableResolver;
-import com.devonfw.ide.configurator.resolve.VariableResolverImpl;
+import com.devonfw.tools.ide.configurator.merge.DirectoryMerger;
+import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolverImpl;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Class to create and update workspaces.

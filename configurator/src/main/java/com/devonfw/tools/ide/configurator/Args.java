@@ -1,8 +1,8 @@
-package com.devonfw.ide.configurator;
+package com.devonfw.tools.ide.configurator;
 
 import java.io.File;
 
-import com.devonfw.ide.configurator.logging.Log;
+import com.devonfw.tools.ide.logging.Log;
 
 /**
  * Simple container for the commandline arguments.

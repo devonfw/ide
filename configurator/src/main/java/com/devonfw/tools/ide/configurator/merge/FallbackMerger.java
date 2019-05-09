@@ -1,10 +1,10 @@
-package com.devonfw.ide.configurator.merge;
+package com.devonfw.tools.ide.configurator.merge;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-import com.devonfw.ide.configurator.resolve.VariableResolver;
+import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
 
 /**
  * Implementation of {@link FileTypeMerger} to use as fallback. It can not actually merge but will simply overwrite the
