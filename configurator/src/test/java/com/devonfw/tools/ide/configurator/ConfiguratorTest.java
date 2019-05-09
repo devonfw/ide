@@ -1,4 +1,4 @@
-package com.devonfw.ide.configurator;
+package com.devonfw.tools.ide.configurator;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,8 @@ import java.util.Properties;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import com.devonfw.ide.configurator.merge.PropertiesMerger;
+import com.devonfw.tools.ide.configurator.Configurator;
+import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
 
 /**
  * Test of {@link Configurator}.

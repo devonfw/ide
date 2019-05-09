@@ -28,21 +28,41 @@ public class Log {
    */
   public static void init(String filename) {
 
+    init(filename, false);
+  }
+
+  /**
+   * @param filename the base filename of the logger.
+   * @param disableConsole - {@code true} to disable console logging, {@code false} otherwise.
+   */
+  public static void init(String filename, boolean disableConsole) {
+
     try {
+      String devonIdeHome = System.getenv("DEVON_IDE_HOME");
+      File home = null;
+      if (devonIdeHome != null) {
+        home = new File(devonIdeHome);
+      }
+      if ((home == null) || !home.isDirectory()) {
+        home = new File(".");
+      }
       String logFolderName = "log";
-      if (!new File("scripts").exists()) {
+      if (!new File(home, "scripts").exists()) {
         logFolderName = "target";
       }
-      File logFolder = new File(logFolderName);
+      File logFolder = new File(home, logFolderName);
+      logFolder.mkdirs();
       File logFile = new File(logFolder, filename + ".log");
       if (logFile.exists()) {
         logFile.delete();
       }
-      logFolder.mkdirs();
       FileHandler logFileHandler = new FileHandler(logFile.getPath());
       logFileHandler.setLevel(Level.FINEST);
       LogFormatter formatter = new LogFormatter();
       logFileHandler.setFormatter(formatter);
+      if (disableConsole) {
+        LOGGER.setUseParentHandlers(false);
+      }
       LOGGER.addHandler(logFileHandler);
       LOGGER.setLevel(Level.FINEST);
       Logger globalLogger = Logger.getLogger("");
@@ -77,7 +97,6 @@ public class Log {
    */
   public static void info(String message) {
 
-    System.out.println(message);
     Log.LOGGER.info(message);
   }
 
@@ -86,7 +105,6 @@ public class Log {
    */
   public static void warn(String message) {
 
-    System.err.println(message);
     Log.LOGGER.warning(message);
   }
 
@@ -95,7 +113,6 @@ public class Log {
    */
   public static void err(String message) {
 
-    System.err.println(message);
     Log.LOGGER.severe(message);
   }
 
@@ -105,7 +122,6 @@ public class Log {
    */
   public static void err(String message, Throwable e) {
 
-    System.err.println(message);
     Log.LOGGER.log(Level.SEVERE, message, e);
   }
 
