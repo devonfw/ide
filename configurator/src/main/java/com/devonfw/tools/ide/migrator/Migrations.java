@@ -111,6 +111,12 @@ public class Migrations {
             "implements $1Dao, io.oasp.module.jpa.common.base.LegacyDaoQuerySupport<$1Entity>",
             FileFilterPattern.reject("Application(MasterData)?DaoImpl\\.java")) //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.1.0")) //
+        .pom().replaceProperty("devon4j.version", "3.1.0") //
+        .replaceProperty("spring.boot.version", "2.1.4.RELEASE") //
+        // only for oasp4j legacy project (flyway.version not present in projects created from devon4j)
+        .replaceProperty("flyway.version", "5.2.4") //
+        .and() //
         .next().build();
   }
 
