@@ -35,24 +35,20 @@ if not exist "%USERPROFILE%\scripts\devon.bat" (
 if "%1%" == "" (
   goto :setup_env
 )
-if exist "%ProgramFiles%\Git\bin\bash.exe" (
-  set "BASH=%ProgramFiles%\Git\bin\bash.exe"
+
+for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\GitForWindows" /v "InstallPath" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set GIT_HOME=%%P
+
+if exist "%GIT_HOME%\bin\bash.exe" (
+  set "BASH=%GIT_HOME%\bin\bash.exe"
   set "HOME=%USERPROFILE%"
   goto :bash_detected
 )
-if exist "%ProgramFiles(x86)%\Git\bin\bash.exe" (
-  set "BASH=%ProgramFiles(x86)%\Git\bin\bash.exe"
-  set "HOME=%USERPROFILE%"
-  goto :bash_detected
-)
-if exist "C:\cygwin64\bin\bash.exe" (
-  set "BASH=C:\cygwin64\bin\bash.exe"
-  set "HOME=C:\cygwin64\home\%USERNAME%"
-  goto :bash_detected
-)
-if exist "C:\cygwin\bin\bash.exe" (
-  set "BASH=C:\cygwin\bin\bash.exe"
-  set "HOME=C:\cygwin\home\%USERNAME%"
+
+for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
+
+if exist "%CYGWIN_HOME%\bin\bash.exe" (
+  set "BASH=%CYGWIN_HOME%\bin\bash.exe"
+  set "HOME=%CYGWIN_HOME%\home\%USERNAME%"
   goto :bash_detected
 )
 echo:
