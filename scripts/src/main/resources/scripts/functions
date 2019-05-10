@@ -586,6 +586,20 @@ function doConfigureWorkspace() {
   fi
 }
 
+function doRunConfigurator() {
+  local classpath=""
+  for file in "${DEVON_IDE_HOME}/scripts/lib"/*.jar
+  do
+    if [ -z "${classpath}" ]
+    then
+      classpath="${file}"
+    else
+      classpath="${classpath}:${file}"
+    fi
+  done
+  doRunCommand "java -cp '${classpath}' ${@}"
+}
+
 # $1: name of ide
 function doCreateIdeScript() {
   if doIsWindows
