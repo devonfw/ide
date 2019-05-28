@@ -1,13 +1,11 @@
 package com.devonfw.tools.ide.migrator.xml;
 
-import javax.xml.stream.events.Namespace;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Implementation of {@link AbstractXmlMigration} for a simple {@link Namespace} replacement.
+ * Implementation of {@link AbstractXmlMigration} for a simple "Namespace" replacement.
  */
 public class XmlNamespaceReplacement extends AbstractXmlMigration {
 

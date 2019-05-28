@@ -5,7 +5,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Implementation of {@link AbstractXmlMigration} for a simple {@link comment node} replacement
+ * Implementation of {@link AbstractXmlMigration} for a simple "comment node" replacement
  */
 public class XmlCommentNodeReplacement extends AbstractXmlMigration {
 
