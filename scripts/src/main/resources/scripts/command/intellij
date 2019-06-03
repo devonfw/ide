@@ -3,13 +3,8 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}"
 
 function doSetup() {
-  if [ -d "${IDEA_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "IntelliJ is already installed at ${IDEA_HOME}"
-    fi
-  else
     #mirror="https://mirror.math.princeton.edu"
     mirror="https://ftp.osuosl.org"
     software_version="${INTELLIJ_VERSION:-2018.3.5}"

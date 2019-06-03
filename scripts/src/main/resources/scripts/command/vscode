@@ -3,13 +3,8 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}"
 
 function doSetup() {
-  if [ -d "${VSCODE_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "VSCode is already installed at ${VSCODE_HOME}"
-    fi
-  else
     local software_version="${VSCODE_VERSION:-1.34.0}"
     local download_url="https://update.code.visualstudio.com/${software_version}"
     local software_extension=".zip"

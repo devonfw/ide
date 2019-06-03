@@ -3,13 +3,8 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -d "${MAVEN_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "Maven is already installed at ${MAVEN_HOME}"
-    fi
-  else
     local software_version=${MAVEN_VERSION:-3.6.0}
     local download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
     doInstall "${MAVEN_HOME}" "${download_url}" "apache-maven" "${software_version}" 'apache-maven-*' "" "all"

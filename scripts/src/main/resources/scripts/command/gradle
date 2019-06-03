@@ -3,16 +3,11 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -d "${GRADLE_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      doEcho "Gradle is already installed at ${GRADLE_HOME}"
-    fi
-  else
     software_version="${GRADLE_VERSION:-5.2.1}"
     download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-    doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" 'gradle-*'
+    doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" 'gradle-*' "" "all"
   fi
   if [ -n "${1}" ]
   then

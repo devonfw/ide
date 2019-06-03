@@ -530,6 +530,17 @@ function doInstall() {
     doGitPullOrClone "${1}" "${2}"
     return
   fi
+  if [ -e "${1}/.devon.software.version" ]
+  then
+    local current_version="$(cat "${1}/.devon.software.version")"
+    if [ "${current_version}" == "${4}" ]
+    then
+      doEcho "Version ${4} of ${3} is already installed."
+      return 1
+    else
+      doEcho "Updating ${3} from version ${current_version} to version ${4}..."
+    fi
+  fi
   local dir=${1/*\//}
   local download_url="${2}"
   local filename="${3}-${4}"
