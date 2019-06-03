@@ -252,7 +252,7 @@ function doDevonCommand() {
 # $2: the optional, explicit filename to save to
 function doDownload() {
   doLicenseAgreement
-  local target_dir=~/Downloads
+  local target_dir="${DEVON_DOWNLOAD_DIR}"
   local filename
   if [ -n "${2}" ]
   then
@@ -578,10 +578,10 @@ function doInstall() {
   doDownload "${download_url}" "${filename}"
   if [ -n "${5}" ]
   then
-    doExtract ~/Downloads/${filename}
+    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}"
     doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/"${5}
   else
-    doExtract ~/Downloads/${filename} "${dir}"
+    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
   fi
   doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
   echo "${4}" > "${1}/.devon.software.version"
@@ -785,6 +785,11 @@ doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
 doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
+DEVON_DOWNLOAD_DIR=~/Downloads
+if [ "${OSTYPE}" = "cygwin" ]
+then
+  DEVON_DOWNLOAD_DIR="$(cygpath ${USERPROFILE}\\Downloads)"
+fi
 
 batch=""
 force=""
