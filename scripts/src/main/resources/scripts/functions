@@ -186,7 +186,7 @@ function doLogo() {
 }
 
 function doLicenseAgreement() {
-  if ! [ -f ~/.devon/.license.agreement ]
+  if ! [ -f "${DEVON_HOME_DIR}/.devon/.license.agreement" ]
   then
     echo
     doLogo
@@ -207,7 +207,7 @@ function doLicenseAgreement() {
       read -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
+          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
           break;;
         no)
           exit 255;;
@@ -749,7 +749,7 @@ function doLoadProperties() {
       export=""
       if [ "${value:0:1}" = "~" ]
       then
-        value=${HOME}${value:1}
+        value="${DEVON_HOME_DIR}${value:1}"
       fi
       if [ "${key:0:7}" = "export " ]
       then
@@ -785,11 +785,12 @@ doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
 doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
-DEVON_DOWNLOAD_DIR=~/Downloads
+DEVON_HOME_DIR=~
 if [ "${OSTYPE}" = "cygwin" ]
 then
-  DEVON_DOWNLOAD_DIR="$(cygpath ${USERPROFILE}\\Downloads)"
+  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
 fi
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 
 batch=""
 force=""
