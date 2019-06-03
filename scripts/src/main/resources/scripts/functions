@@ -774,6 +774,12 @@ function doLoadProperties() {
   done < "${1}"
 }
 
+DEVON_HOME_DIR=~
+if [ "${OSTYPE}" = "cygwin" ]
+then
+  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
+fi
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 if [ -z "${DEVON_IDE_HOME}" ]
 then
   cd "$(dirname ${BASH_SOURCE:-$0})/.."
@@ -785,12 +791,6 @@ doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
 doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
-DEVON_HOME_DIR=~
-if [ "${OSTYPE}" = "cygwin" ]
-then
-  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
-fi
-DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 
 batch=""
 force=""
