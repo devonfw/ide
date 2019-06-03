@@ -42,7 +42,7 @@ function doSetup() {
     else
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
-    doInstall "${ECLIPSE_HOME}" "${download_url}"
+    doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
     if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."

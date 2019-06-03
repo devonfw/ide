@@ -19,7 +19,7 @@ function doSetup() {
     fi
     doDownload "${download_url}"
     
-    http://localhost:9999/jnlpJars/jenkins-cli.jar
+    #http://localhost:9999/jnlpJars/jenkins-cli.jar
     mkdir -p "${JENKINS_HOME}"
     doRunCommand "mv ~/Downloads/jenkins.war '${JENKINS_HOME}/jenkins.war'"
     local cwd="${PWD}"
