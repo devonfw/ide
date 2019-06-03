@@ -19,17 +19,20 @@ function doSetup() {
       software_extension=".tgz"
     fi
     doInstall "${VSCODE_HOME}" "${download_url}" "vscode" "${software_version}" "" "${software_extension}"
-    if doIsMacOs
+    if [ "${?}" = 0 ]
     then
-      mkdir "${VSCODE_HOME}/bin"
-      echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
-      chmod a+x "${VSCODE_HOME}/bin/code"
+      if doIsMacOs
+      then
+        mkdir "${VSCODE_HOME}/bin"
+        echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
+        chmod a+x "${VSCODE_HOME}/bin/code"
+      fi
+      echo "******* Notice *******"
+      echo "Installing plugins (extension-pack) into VS code..."
+      echo "Please wait until VSCode has successfully installed all plugins."
+      echo "You may then use or close VSCode as you like."
+      doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
     fi
-    echo "******* Notice *******"
-    echo "Installing plugins (extension-pack) into VS code..."
-    echo "Please wait until VSCode has successfully installed all plugins."
-    echo "You may then use or close VSCode as you like."
-    doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
   fi
 }
 
