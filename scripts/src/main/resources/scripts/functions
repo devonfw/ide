@@ -476,8 +476,13 @@ function doUpgradeMavenArtifact() {
       fi
     fi
   fi
+  local archive_folder=""
+  if [ "${artifact_id}" = "devon-ide-settings" ]
+  then
+    archive_folder="settings"
+  fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}" "${artifact_id}"
+  doInstall "${1}" "${download_url}" "${artifact_id}" "" "${archive_folder}"
 }
 
 # $1: target
@@ -521,7 +526,7 @@ function doGitPullOrClone() {
 # $6: optional file extension (default is taken from download URL)
 # $7: optional OS architecture indicator (e.g. 'all' if architecture independent)
 function doInstall() {
-  if [ -z "${1}" ] || [ -z "${2}" ]
+  if [ -z "${1}" ] || [ -z "${2}" ] || [ -z "${3}" ]
   then
     doFail "missing arguments for doInstall: ${@}"
   fi
