@@ -37,10 +37,10 @@ function doUpdateSettings() {
         doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
       else
         SETTINGS_URL="${answer}"
-        doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
+        doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
       fi
     else
-      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}"
+      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
     fi
     if [ ! -d "${SETTINGS_PATH}" ]
     then
