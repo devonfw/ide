@@ -64,7 +64,7 @@ then
       touch "${DEVON_IDE_HOME}/conf/devon.properties"
     fi
   fi
-elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
+elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
 then
   echo
   echo "*** ATTENTION ***"
