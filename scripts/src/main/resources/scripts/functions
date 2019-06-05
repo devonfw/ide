@@ -477,7 +477,7 @@ function doUpgradeMavenArtifact() {
     fi
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}"
+  doInstall "${1}" "${download_url}" "${artifact_id}"
 }
 
 # $1: target
@@ -521,7 +521,7 @@ function doGitPullOrClone() {
 # $6: optional file extension (default is taken from download URL)
 # $7: optional OS architecture indicator (e.g. 'all' if architecture independent)
 function doInstall() {
-  if [ -z "${1}" ] || [ -z "${2}" ] || [ -z "${3}" ] || [ -z "${4}" ]
+  if [ -z "${1}" ] || [ -z "${2}" ]
   then
     doFail "missing arguments for doInstall: ${@}"
   fi
@@ -543,37 +543,43 @@ function doInstall() {
   fi
   local dir=${1/*\//}
   local download_url="${2}"
-  local filename="${3}-${4}"
-  if [ -n "${7}" ]
+  local filename
+  if [ -z "${4}" ]
   then
-    filename="${filename}-${7}"
+    filename=${download_url/*\//}
   else
-    if doIsMacOs
+    filename="${3}-${4}"
+    if [ -n "${7}" ]
     then
-      filename="${filename}-mac"
-    elif doIsWindows
-    then
-      filename="${filename}-windows"
+      filename="${filename}-${7}"
     else
-      filename="${filename}-linux"
-    fi
-  fi
-  local extension="${6:-.tgz}"
-  if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
-  then
-    download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}"
-  else
-    if [ -z "${6}" ]
-    then
-      local file="${download_url/*\//}"
-      extension=${file/*\.tar\./.tar.}
-      if [ "${extension}" = "${file}" ]
+      if doIsMacOs
       then
-        extension="${file/*\./.}"
+        filename="${filename}-mac"
+      elif doIsWindows
+      then
+        filename="${filename}-windows"
+      else
+        filename="${filename}-linux"
       fi
     fi
+    local extension="${6:-.tgz}"
+    if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
+    then
+      download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}"
+    else
+      if [ -z "${6}" ]
+      then
+        local file="${download_url/*\//}"
+        extension=${file/*\.tar\./.tar.}
+        if [ "${extension}" = "${file}" ]
+        then
+          extension="${file/*\./.}"
+        fi
+      fi
+    fi
+    filename="${filename}${extension}"
   fi
-  filename="${filename}${extension}"
   echo "Starting installation of ${3} to ${1} from ${download_url}"
   doDownload "${download_url}" "${filename}"
   if [ -n "${5}" ]
