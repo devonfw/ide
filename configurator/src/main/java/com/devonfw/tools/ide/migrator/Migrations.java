@@ -124,7 +124,7 @@ public class Migrations {
             "Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles(beanMappings).build();\n return mapper;")//
         .and().xml("dozer-mapping.xml")
         .replaceNamespace("http://dozer.sourceforge.net", "http://dozermapper.github.io/schema/bean-mapping")
-        .replaceNamespace("http://dozer.sourceforge.net           http://dozer.sourceforge.net/schema/beanmapping.xsd",
+        .replaceNamespace("http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd",
             "http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd")
         .replaceCommentNode(
             "<!DOCTYPE mappings PUBLIC \"-//DOZER//DTD MAPPINGS//EN\" \"http://dozer.sourceforge.net/dtd/dozerbeanmapping.dtd\">",
