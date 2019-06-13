@@ -571,7 +571,7 @@ function doInstall() {
     local extension="${6:-.tgz}"
     if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
     then
-      download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}"
+      download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}${extension}"
     else
       if [ -z "${6}" ]
       then
