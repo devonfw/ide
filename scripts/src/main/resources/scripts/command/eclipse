@@ -19,13 +19,8 @@ function doInstallEclipsePlugin() {
 }
 
 function doSetup() {
-  if [ -d "${ECLIPSE_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "Eclipse is already installed at ${ECLIPSE_HOME}"
-    fi
-  else
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
     local software_version="${ECLIPSE_VERSION:-2018-12}"
@@ -42,27 +37,30 @@ function doSetup() {
     else
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
-    doInstall "${ECLIPSE_HOME}" "${download_url}"
-    if doIsMacOs
+    doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
+    if [ "${?}" = 0 ]
     then
-      echo "Doing workarounds for MacOS quirks..."
-      echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
-      chmod a+x "${ECLIPSE_HOME}/eclipse"
-    fi
-    if [ -z "${ECLIPSE_PLUGINS}" ]
-    then
-      doAddPlugin startexplorer
-      doAddPlugin regexutil
-      doAddPlugin templatevariables
-      doAddPlugin spotbugs
-      doAddPlugin checkstyle
-      doAddPlugin cobigen
-      doAddPlugin terminal
-    else
-      for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
-      do
-        doAddPlugin "${ECLIPSE_PLUGINS[((${i}+1))]}" "${ECLIPSE_PLUGINS[${i}]}"
-      done
+      if doIsMacOs
+      then
+        echo "Doing workarounds for MacOS quirks..."
+        echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
+        chmod a+x "${ECLIPSE_HOME}/eclipse"
+      fi
+      if [ -z "${ECLIPSE_PLUGINS}" ]
+      then
+        doAddPlugin startexplorer
+        doAddPlugin regexutil
+        doAddPlugin templatevariables
+        doAddPlugin spotbugs
+        doAddPlugin checkstyle
+        doAddPlugin cobigen
+        doAddPlugin terminal
+      else
+        for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
+        do
+          doAddPlugin "${ECLIPSE_PLUGINS[((${i}+1))]}" "${ECLIPSE_PLUGINS[${i}]}"
+        done
+      fi
     fi
   fi
   if [ -n "${1}" ]

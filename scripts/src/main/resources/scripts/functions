@@ -186,7 +186,7 @@ function doLogo() {
 }
 
 function doLicenseAgreement() {
-  if ! [ -f ~/.devon/.license.agreement ]
+  if ! [ -f "${DEVON_HOME_DIR}/.devon/.license.agreement" ]
   then
     echo
     doLogo
@@ -207,7 +207,7 @@ function doLicenseAgreement() {
       read -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > ~/.devon/.license.agreement
+          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
           break;;
         no)
           exit 255;;
@@ -249,10 +249,17 @@ function doDevonCommand() {
 }
 
 # $1: the URL to download
+# $2: the optional, explicit filename to save to
 function doDownload() {
   doLicenseAgreement
-  local target_dir=~/Downloads
-  local filename="${1/*\//}"
+  local target_dir="${DEVON_DOWNLOAD_DIR}"
+  local filename
+  if [ -n "${2}" ]
+  then
+    filename="${2}"
+  else
+    filename="${1/*\//}"
+  fi
   local target="${target_dir}/${filename}"
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
@@ -469,8 +476,13 @@ function doUpgradeMavenArtifact() {
       fi
     fi
   fi
+  local archive_folder=""
+  if [ "${artifact_id}" = "devon-ide-settings" ]
+  then
+    archive_folder="settings"
+  fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}"
+  doInstall "${1}" "${download_url}" "${artifact_id}" "" "${archive_folder}"
 }
 
 # $1: target
@@ -508,28 +520,82 @@ function doGitPullOrClone() {
 
 # $1: absolute target path
 # $2: URL
-# $3: optional archive folder to rename (may also be a glob pattern like 'apache-maven-*')
+# $3: name of software
+# $4: version of software
+# $5: optional archive folder to rename (may also be a glob pattern like 'apache-maven-*')
+# $6: optional file extension (default is taken from download URL)
+# $7: optional OS architecture indicator (e.g. 'all' if architecture independent)
 function doInstall() {
-  if [ -z "${1}" ]
+  if [ -z "${1}" ] || [ -z "${2}" ] || [ -z "${3}" ]
   then
-    doFail "Missing target path for installation: ${@}"
+    doFail "missing arguments for doInstall: ${@}"
   fi
-  local dir=${1/*\//}
   if [ "${2/*\.//.}" = ".git" ]
   then
     doGitPullOrClone "${1}" "${2}"
     return
   fi
-  echo "Starting installation from ${2} to ${1}"
-  doDownload "${2}"
-  if [ -n "${3}" ]
+  if [ -e "${1}/.devon.software.version" ]
   then
-    doExtract ~/Downloads/${2/*\//}
-    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/"${3}
+    local current_version="$(cat "${1}/.devon.software.version")"
+    if [ "${current_version}" == "${4}" ]
+    then
+      doEcho "Version ${4} of ${3} is already installed."
+      return 1
+    else
+      doEcho "Updating ${3} from version ${current_version} to version ${4}..."
+    fi
+  fi
+  local dir=${1/*\//}
+  local download_url="${2}"
+  local filename
+  if [ -z "${4}" ]
+  then
+    filename=${download_url/*\//}
   else
-    doExtract ~/Downloads/${2/*\//} "${dir}"
+    filename="${3}-${4}"
+    if [ -n "${7}" ]
+    then
+      filename="${filename}-${7}"
+    else
+      if doIsMacOs
+      then
+        filename="${filename}-mac"
+      elif doIsWindows
+      then
+        filename="${filename}-windows"
+      else
+        filename="${filename}-linux"
+      fi
+    fi
+    local extension="${6:-.tgz}"
+    if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
+    then
+      download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}${extension}"
+    else
+      if [ -z "${6}" ]
+      then
+        local file="${download_url/*\//}"
+        extension=${file/*\.tar\./.tar.}
+        if [ "${extension}" = "${file}" ]
+        then
+          extension="${file/*\./.}"
+        fi
+      fi
+    fi
+    filename="${filename}${extension}"
+  fi
+  echo "Starting installation of ${3} to ${1} from ${download_url}"
+  doDownload "${download_url}" "${filename}"
+  if [ -n "${5}" ]
+  then
+    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}"
+    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/"${5}
+  else
+    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
   fi
   doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
+  echo "${4}" > "${1}/.devon.software.version"
   echo "Successfully installed ${1}"
   if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
@@ -694,7 +760,7 @@ function doLoadProperties() {
       export=""
       if [ "${value:0:1}" = "~" ]
       then
-        value=${HOME}${value:1}
+        value="${DEVON_HOME_DIR}${value:1}"
       fi
       if [ "${key:0:7}" = "export " ]
       then
@@ -719,6 +785,12 @@ function doLoadProperties() {
   done < "${1}"
 }
 
+DEVON_HOME_DIR=~
+if [ "${OSTYPE}" = "cygwin" ]
+then
+  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
+fi
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 if [ -z "${DEVON_IDE_HOME}" ]
 then
   cd "$(dirname ${BASH_SOURCE:-$0})/.."

@@ -3,35 +3,36 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}"
 
 function doSetup() {
-  if [ -d "${VSCODE_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "VSCode is already installed at ${VSCODE_HOME}"
-    fi
-  else
-    local download_url="https://az764295.vo.msecnd.net/stable/1b8e8302e405050205e69b59abb3559592bb9e60"
+    local software_version="${VSCODE_VERSION:-1.34.0}"
+    local download_url="https://update.code.visualstudio.com/${software_version}"
+    local software_extension=".zip"
     if doIsMacOs
     then
-      download_url="${download_url}/VSCode-darwin-stable.zip"
+      download_url="${download_url}/darwin/stable"
     elif doIsWindows
     then
-      download_url="${download_url}/VSCode-win32-x64-1.31.1.zip"
+      download_url="${download_url}/win32-x64-user/stable"
     else
-      download_url="${download_url}/code-stable-1549938209.tar.gz"
+      download_url="${download_url}/linux-x64/stable"
+      software_extension=".tgz"
     fi
-    doInstall "${VSCODE_HOME}" "${download_url}"
-    if doIsMacOs
+    doInstall "${VSCODE_HOME}" "${download_url}" "vscode" "${software_version}" "" "${software_extension}"
+    if [ "${?}" = 0 ]
     then
-      mkdir "${VSCODE_HOME}/bin"
-      echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
-      chmod a+x "${VSCODE_HOME}/bin/code"
+      if doIsMacOs
+      then
+        mkdir "${VSCODE_HOME}/bin"
+        echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
+        chmod a+x "${VSCODE_HOME}/bin/code"
+      fi
+      echo "******* Notice *******"
+      echo "Installing plugins (extension-pack) into VS code..."
+      echo "Please wait until VSCode has successfully installed all plugins."
+      echo "You may then use or close VSCode as you like."
+      doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
     fi
-    echo "******* Notice *******"
-    echo "Installing plugins (extension-pack) into VS code..."
-    echo "Please wait until VSCode has successfully installed all plugins."
-    echo "You may then use or close VSCode as you like."
-    doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
   fi
 }
 
