@@ -86,14 +86,14 @@ pushd %CD%
 :iterate_backwards
 if exist scripts\environment-project.bat (
   call scripts\environment-project.bat
-  echo devon-ide environment variables have been set for %CD%
+  echo devon-ide environment variables have been set for %CD% (workspace %WORKSPACE%)
   popd
   goto :eof
 )
 if "%CD%" == "%CD:~0,3%" (
   popd
   echo You are not inside a devon IDE installation: %CD%
-  goto :cli
+  goto :eof
 )
 set last_folder=%folder%
 for %%a in (.) do set folder=%%~na
@@ -102,7 +102,7 @@ if "%folder%" == "workspaces" (
     set WORKSPACE=%last_folder%
   )
 )
-cd..  
+cd ..  
 goto :iterate_backwards
 
 goto :eof
