@@ -74,8 +74,9 @@ then
 fi
 if [ -z "${WORKSPACE}" ]
 then
-  export WORKSPACE=main
+  WORKSPACE=main
 fi
+export WORKSPACE
 export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
 if [ ! -d "${WORKSPACE_PATH}" ]
 then
