@@ -3,7 +3,7 @@ source "$(dirname "${0}")"/../functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateScripts() {
-  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-scripts" "${target_version}" ".tar.gz" "${devon_ide_version}"
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
   then
     cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
