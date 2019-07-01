@@ -60,8 +60,36 @@ function doUpdateSettings() {
   fi
 }
 
+# $1: current folder in ${SETTINGS_PATH}/devon
+# $2: current folder in ${DEVON_IDE_HOME}
+function doSetupConf() {
+  for template in "${1}/"*
+  do
+    local basename="${template/*\//}"
+    local conf="${2}/${basenane}"
+    if [ -d "${template}" ]
+    then
+      doSetupConf "${template}" "${conf}"
+    elif [ -f "${template}" ]
+    then
+      if [ -f "${conf}" ]
+      then
+        echo "Configuration ${conf} already exists - skip ."
+      else
+        doRunCommand "cp '${template}' '${conf}'" "copying "
+      fi
+    fi
+  done
+}
+
 function doSetup() {
   doUpdateSettings ${@}
+  if [ -d "${SETTINGS_PATH}/devon" ]
+  then
+    doSetupConf "${SETTINGS_PATH}/devon" "${DEVON_IDE_HOME}"
+  else
+    doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to update your settings."
+  fi  
   if [ -z "${DEVON_IDE_TOOLS}" ]
   then
     doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (devon.properties)."
