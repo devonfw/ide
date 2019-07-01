@@ -18,11 +18,6 @@ function doSetup() {
       then
         mkdir -p "${M2_DIR}"
       fi
-      M2_CONF=${M2_DIR}/settings.xml
-      if [ ! -e "${M2_CONF}" ]
-      then
-        doRunCommand "cp '${SETTINGS_PATH}/maven/settings.xml' '${M2_CONF}'" "copy maven settings.xml"
-      fi
       if [ ! -e "${M2_DIR}/settings-security.xml" ]
       then
         MASTER_PASSWORD="$(head -c 20 /dev/random | base64)"

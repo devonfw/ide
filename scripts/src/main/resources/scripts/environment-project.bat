@@ -7,19 +7,9 @@ if exist "%DEVON_IDE_HOME%\variables.bat" (
   call :load_properties "%DEVON_IDE_HOME%\devon.properties"
 )
 rem copy defaults
-if not exist "%DEVON_IDE_HOME%\conf" (
-  md "%DEVON_IDE_HOME%\conf"
-)
 if exist "%SETTINGS_PATH%" (
   if exist "%SETTINGS_PATH%\devon\devon.properties" (
     call :load_properties "%SETTINGS_PATH%\devon\devon.properties"
-  )
-  if not exist "%DEVON_IDE_HOME%\conf\devon.properties" (
-    if exist "%SETTINGS_PATH%\devon\conf\devon.properties" (
-      copy "%SETTINGS_PATH%\devon\conf\devon.properties" "%DEVON_IDE_HOME%\conf\"
-    ) else (
-      echo: > "%DEVON_IDE_HOME%\conf\devon.properties"
-    )
   )
 ) else (
   echo:
