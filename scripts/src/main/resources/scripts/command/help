@@ -3,7 +3,7 @@ source "$(dirname "${0}")"/../functions
 echo
 doLogo
 echo
-echo "Current version of devon-scripts is ${devon_ide_version}"
+echo "Current version of devon-scripts is $[devon_ide_version]"
 echo
 if [ -z "${1}" ]
 then

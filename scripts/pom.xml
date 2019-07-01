@@ -50,6 +50,10 @@
                 <nonFilteredFileExtension>reg</nonFilteredFileExtension>
               </nonFilteredFileExtensions>
               <includeEmptyDirs>true</includeEmptyDirs>
+              <delimiters>
+                <delimiter>$[*]</delimiter>
+              </delimiters>
+              <useDefaultDelimiters>false</useDefaultDelimiters>
             </configuration>
           </execution>
         </executions>

@@ -109,4 +109,4 @@ goto :eof
 
 rem subroutine to print version
 :print_version
-echo ${devon_ide_version}
+echo $[devon_ide_version]
