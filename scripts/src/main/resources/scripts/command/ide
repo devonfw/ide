@@ -54,29 +54,31 @@ function doUpdateSettings() {
       git commit -m "Initial settings downloaded from ${SETTINGS_URL}"
       cd -
     fi
-  else
-    #doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
-    echo
   fi
 }
 
 # $1: current folder in ${SETTINGS_PATH}/devon
 # $2: current folder in ${DEVON_IDE_HOME}
 function doSetupConf() {
-  for template in "${1}/"*
+  for template in "${1}/"* "${1}/".*
   do
     local basename="${template/*\//}"
-    local conf="${2}/${basenane}"
-    if [ -d "${template}" ]
+    if [ "${basename}" != "." ] && [ "${basename}" != ".." ] && [ "${basename}" != '*' ]
     then
-      doSetupConf "${template}" "${conf}"
-    elif [ -f "${template}" ]
-    then
-      if [ -f "${conf}" ]
+      local conf="${2}/${basename}"
+      if [ -d "${template}" ]
       then
-        echo "Configuration ${conf} already exists - skip ."
-      else
-        doRunCommand "cp '${template}' '${conf}'" "copying "
+        mkdir -p "${conf}"
+        doSetupConf "${template}" "${conf}"
+      elif [ -f "${template}" ]
+      then
+        if [ -f "${conf}" ]
+        then
+          doEcho "Configuration ${conf} already exists - skipping to copy from ${template}."
+        else
+          doEcho "Copying template ${template} to ${conf}."
+          cp "${template}" "${conf}"
+        fi
       fi
     fi
   done
