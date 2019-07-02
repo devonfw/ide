@@ -75,5 +75,6 @@ doDevonCommand build set-version "${next_version}" "${current_version}" ""
 git add -u
 git commit -m "set next version to ${next_version}"
 doAskToContinue "Local commits and tag need to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
+git push
 git push --tags
 echo "Done."
