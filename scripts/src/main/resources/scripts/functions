@@ -631,7 +631,7 @@ function doConfigureWorkspace() {
   then
     touch "${replacement_patterns_path}"
   fi
-  doRunCommand "java -jar '${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-${devon_ide_version}.jar' -cp '${DEVON_IDE_HOME}/scripts/lib/*.jar' -t '${1}' -w '${2}' -v '${replacement_patterns_path}' ${3}"
+  doRunCommand "java -jar '${DEVON_IDE_HOME}/scripts/lib/devon-ide-configurator-*.jar' -cp '${DEVON_IDE_HOME}/scripts/lib/*.jar' -t '${1}' -w '${2}' -v '${replacement_patterns_path}' ${3}"
   local result=${?}
   local action="changed"
   if [ "${3}" = "-u" ]

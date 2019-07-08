@@ -18,11 +18,6 @@ function doSetup() {
       then
         mkdir -p "${M2_DIR}"
       fi
-      M2_CONF=${M2_DIR}/settings.xml
-      if [ ! -e "${M2_CONF}" ]
-      then
-        doRunCommand "cp '${SETTINGS_PATH}/maven/settings.xml' '${M2_CONF}'" "copy maven settings.xml"
-      fi
       if [ ! -e "${M2_DIR}/settings-security.xml" ]
       then
         MASTER_PASSWORD="$(head -c 20 /dev/random | base64)"
@@ -43,21 +38,24 @@ function doSetup() {
 # $@: optional maven arguments
 function doGetProjectVersion() {
   doSetup
-  local maven_project_version
-  local version_list="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' ${@})"
-  if [ "${?}" = 0 ]
+  local maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+  if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
-    maven_project_version="$(echo "${version_list}" | grep -v '^dev\(-SNAPSHOT\)*$' | sort -u )"
-    if [ -z "${maven_project_version}" ]
-    then
-      maven_project_version="$(echo "${version_list}" | sort -u )"
-    fi
-    if [[ "${maven_project_version}" == *$'\n'* ]]
-    then
-      doFail "Multiple versions in reactor:\n${maven_project_version}"
-    fi
-  else
-    doFail "${version_list}\nYour maven project has errors. Please run 'mvn install' and retry."
+    local cwd="${PWD}"
+    for pom in $(find . -name "pom.xml")
+    do
+      cd "$(dirname ${pom})"
+      maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+      if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+      then
+        break;
+      fi
+    done
+    cd "${cwd}"
+  fi
+  if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
+  then
+    doFail "Cound not determine project version at ${PWD} - got version output:\n${maven_project_version}"
   fi
   echo ${maven_project_version}
 }
