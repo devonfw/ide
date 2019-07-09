@@ -77,11 +77,6 @@ function doSetup() {
 
 function doConfigureEclipse() {
   local mode="${1}"
-  if [ -e "${WORKSPACE_PATH}/.metadata/.lock" ]
-  then
-    # TODO 
-    echo doFail "Eclipse workspace ${WORKSPACE} is locked.\nIt seems as if Eclipse is already running for this workspace.\nOtherwise consider deleting this file\n${WORKSPACE_PATH}/.metadata/.lock"
-  fi
   if [ ! -d "${WORKSPACE_PATH}/.metadata" ]
   then
     if [ -z "${mode}" ]
@@ -153,7 +148,7 @@ function doAddPlugin() {
 }
 
 function doStartEclipse() {
-  doConfigureEclipse
+  doConfigureEclipse -u
   echo "launching Eclipse..."
   eclipse -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
 }

@@ -7,6 +7,7 @@ import com.devonfw.tools.ide.configurator.merge.DirectoryMerger;
 import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
 import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
 import com.devonfw.tools.ide.configurator.resolve.VariableResolverImpl;
+import com.devonfw.tools.ide.locking.EclipseWorkspaceLockChecker;
 import com.devonfw.tools.ide.logging.Log;
 
 /**
@@ -168,6 +169,11 @@ public class Configurator {
       Log.warn("Missing command option. Using update (" + command + ") as fallback.");
     }
     try {
+      File lockfile = new File(this.workspaceFolder, ".metadata/.lock");
+      if (EclipseWorkspaceLockChecker.isLocked(lockfile)) {
+        System.err.println("Your workspace is locked at " + lockfile);
+        return 1;
+      }
       this.resolver = createResolver(variablesFile);
       this.setupFolder = new File(templatesFolder, FOLDER_SETUP);
       this.updateFolder = new File(templatesFolder, FOLDER_UPDATE);
