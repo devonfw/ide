@@ -13,8 +13,6 @@ public class XmlNamespaceReplacement extends AbstractXmlMigration {
 
   private String replacement;
 
-  public static final String SINGLE_SPACE = " ";
-
   /**
    * The constructor.
    *
@@ -41,8 +39,7 @@ public class XmlNamespaceReplacement extends AbstractXmlMigration {
       Node node = childAttr.item(i);
       short nodeType = node.getNodeType();
       if (nodeType == Node.ATTRIBUTE_NODE) {
-        if (this.search.trim().replaceAll("\\s+", SINGLE_SPACE)
-            .equals(node.getNodeValue().trim().replaceAll("\\s+", SINGLE_SPACE))) {
+        if (removeSpaces(this.search).equals(removeSpaces(node.getNodeValue()))) {
           node.setNodeValue(this.replacement);
           updated = true;
         }
