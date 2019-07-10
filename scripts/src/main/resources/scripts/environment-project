@@ -48,23 +48,10 @@ function load_properties() {
 load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
 load_properties "${DEVON_IDE_HOME}/devon.properties"
 # copy defaults
-if [ ! -d "${DEVON_IDE_HOME}/conf" ]
-then
-  mkdir "${DEVON_IDE_HOME}/conf"
-fi
 if [ -d "${SETTINGS_PATH}" ]
 then
   load_properties "${SETTINGS_PATH}/devon/devon.properties"
-  if ! [ -f "${DEVON_IDE_HOME}/conf/devon.properties" ]
-  then
-    if [ -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
-    then
-      cp "${SETTINGS_PATH}/devon/conf/devon.properties" "${DEVON_IDE_HOME}/conf/"
-    else
-      touch "${DEVON_IDE_HOME}/conf/devon.properties"
-    fi
-  fi
-elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
+elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
 then
   echo
   echo "*** ATTENTION ***"
@@ -74,8 +61,9 @@ then
 fi
 if [ -z "${WORKSPACE}" ]
 then
-  export WORKSPACE=main
+  WORKSPACE=main
 fi
+export WORKSPACE
 export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
 if [ ! -d "${WORKSPACE_PATH}" ]
 then

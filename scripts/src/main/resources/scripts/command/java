@@ -8,13 +8,8 @@ function doSetup() {
     export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
     echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
   fi
-  if [ -d "${JAVA_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "Java is already installed at ${JAVA_HOME}"
-    fi
-  else
     local software_version="${JAVA_VERSION:-11.0.2}"
     local download_url="https://download.java.net/java/GA/jdk${software_version/\.*/}/9/GPL/openjdk-${software_version}"
     local software_dir="${JAVA_HOME}"
@@ -28,12 +23,15 @@ function doSetup() {
     else
       download_url="${download_url}_linux-x64_bin.tar.gz"
     fi
-    doInstall "${software_dir}" "${download_url}" 'jdk-*'
-    if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
+    doInstall "${software_dir}" "${download_url}" "java" "${software_version}" 'jdk-*'
+    if [ "${?}" = 0 ]
     then
-      echo "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
-      doExtendPath "${JAVA_HOME}"
+      if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
+      then
+        echo "Creating symlink as workaround for Java on MacOS"
+        doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
+        doExtendPath "${JAVA_HOME}"
+      fi
     fi
   fi
   if [ -n "${1}" ]

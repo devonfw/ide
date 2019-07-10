@@ -4,7 +4,7 @@
 
 if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
 then
-  echo "${devon_ide_version}"
+  echo "$[devon_ide_version]"
   return 0 2>/dev/null
   exit 0
 fi
@@ -16,15 +16,6 @@ while true
 do
   if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
   then
-    source scripts/environment-project
-    if [ -z "${DEVON_IDE_HOME}" ]
-    then
-      export DEVON_IDE_HOME="${PWD}"
-    fi
-    if [ -z "${1}" ]
-    then
-      echo "devon-ide has environment variables have been set for ${PWD}"
-    fi
     L_RESTDIR=${L_BASEDIR:${#PWD}}
     WORKSPACE=main
     if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]
@@ -36,15 +27,19 @@ do
         L_WKS=${PWD}/workspaces/${L_RESTDIR}
         if [ -d "${L_WKS}" ]
         then
-          if [ -f "${L_WKS}/variables" ]
-          then
-            source "${L_WKS}/variables"
-          fi
           WORKSPACE="${L_RESTDIR}"
         fi
       fi
     fi
-    export WORKSPACE
+    source scripts/environment-project
+    if [ -z "${DEVON_IDE_HOME}" ]
+    then
+      export DEVON_IDE_HOME="${PWD}"
+    fi
+    if [ -z "${1}" ]
+    then
+      echo "devon-ide has environment variables have been set for ${PWD} (workspace ${WORKSPACE})"
+    fi
     cd "${L_PWD}"
     break
   fi

@@ -11,6 +11,9 @@
       <directory>src/main/settings</directory>
       <outputDirectory>./settings</outputDirectory>
       <useDefaultExcludes>false</useDefaultExcludes>
+      <excludes>
+        <exclude>**/.DS_Store</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
 </assembly>

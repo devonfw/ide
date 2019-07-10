@@ -3,16 +3,11 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -d "${MAVEN_HOME}" ]
+  if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "Maven is already installed at ${MAVEN_HOME}"
-    fi
-  else
     local software_version=${MAVEN_VERSION:-3.6.0}
     local download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
-    doInstall "${MAVEN_HOME}" "${download_url}" 'apache-maven-*'
+    doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" 'apache-maven-*' "" "all"
   fi
   if [ -n "${1}" ]
   then
@@ -22,11 +17,6 @@ function doSetup() {
       if [ ! -e "${M2_DIR}" ]
       then
         mkdir -p "${M2_DIR}"
-      fi
-      M2_CONF=${M2_DIR}/settings.xml
-      if [ ! -e "${M2_CONF}" ]
-      then
-        doRunCommand "cp '${SETTINGS_PATH}/maven/settings.xml' '${M2_CONF}'" "copy maven settings.xml"
       fi
       if [ ! -e "${M2_DIR}/settings-security.xml" ]
       then
@@ -48,21 +38,24 @@ function doSetup() {
 # $@: optional maven arguments
 function doGetProjectVersion() {
   doSetup
-  local maven_project_version
-  local version_list="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' ${@})"
-  if [ "${?}" = 0 ]
+  local maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+  if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
-    maven_project_version="$(echo "${version_list}" | grep -v '^dev\(-SNAPSHOT\)*$' | sort -u )"
-    if [ -z "${maven_project_version}" ]
-    then
-      maven_project_version="$(echo "${version_list}" | sort -u )"
-    fi
-    if [[ "${maven_project_version}" == *$'\n'* ]]
-    then
-      doFail "Multiple versions in reactor:\n${maven_project_version}"
-    fi
-  else
-    doFail "${version_list}\nYour maven project has errors. Please run 'mvn install' and retry."
+    local cwd="${PWD}"
+    for pom in $(find . -name "pom.xml")
+    do
+      cd "$(dirname ${pom})"
+      maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+      if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+      then
+        break;
+      fi
+    done
+    cd "${cwd}"
+  fi
+  if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
+  then
+    doFail "Cound not determine project version at ${PWD} - got version output:\n${maven_project_version}"
   fi
   echo ${maven_project_version}
 }
