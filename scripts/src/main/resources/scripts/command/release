@@ -22,6 +22,12 @@ then
   doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
 fi
 
+if git remote -v | grep -q github.com/${USER}
+then
+  git remote -v
+  doConfirmWarning "You seem to work on a fork. Releases should be done on the original repository!\nWe strongly recommend to abort and rerun on original repository."
+fi
+
 if [ -z "${force}" ] 
 then
   if ! doDevonCommand build check-top-level-project
