@@ -118,15 +118,17 @@ function doConfirmWarning() {
   doAskToContinue
 }
 
-# $1: optional message
+# $1: optional question
 # $2: if 'return' will return with 255 otherwise exit if not continued
 function doAskToContinue() {
+  local question="Do you want to continue? (yes/no) "
   if [ -n "${1}" ]
   then
-    doEcho "${1}"
+    question="${1} (yes/no) "
   fi
   if [ -n "${force}" ]
   then
+    doEcho "${question}"
     return
   fi
   if [ -z "${batch}" ] 
@@ -134,13 +136,13 @@ function doAskToContinue() {
     local answer
     while true
     do
-      read -p "Do you want to continue? (yes/no) " answer
+      read -p "${question}" answer
       if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
       then
         return
       elif [ "${answer}" = "no" ]
       then
-        doEcho "Do not continue..."
+        doEcho "No..."
         if [ "${2}" = "return" ]
         then
           return 255
@@ -727,6 +729,31 @@ function doVersionCompare() {
     v2=${v2#*.}
   done
   return 0
+}
+
+#$1: version to increase
+function doGetNextVersion() {
+  local version="${1}"
+  local suffix="${version##*[0-9]}"
+  local prefix=""
+  local next=""
+  local begin="${version:0:(${#version}-${#suffix})}"
+  if [ -n "${begin}" ]
+  then
+    local i
+    for ((i=(${#begin}-1); i>0; i=i-1))
+    do
+      if [[ ! "${begin:(${i}):1}" =~ [0-9] ]]
+      then
+        i=${i}+1
+        break
+      fi
+    done
+    prefix="${begin:0:(${i})}"
+    next="${begin:(${i}):(${#begin}-${i})}"
+    next=$((next+1))
+  fi
+  echo "${prefix}${next}${suffix}"
 }
 
 function doIsMacOs() {

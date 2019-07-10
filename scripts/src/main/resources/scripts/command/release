@@ -33,8 +33,7 @@ fi
 doEcho "Trying to determine current version of your project..."
 current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
 release_version="${current_version/-SNAPSHOT/}"
-last_segment="${release_version/*./}"
-next_version="${release_version:0:${#release_version}-${#last_segment}}$[last_segment+1]"
+next_version=$(doGetNextVersion "${release_version}")
 if [ "${current_version}" = "${release_version}-SNAPSHOT" ]
 then
   next_version="${next_version}-SNAPSHOT"
@@ -53,7 +52,7 @@ do
     doWarning "Next version is not a SNAPSHOT version!"
   fi
   echo
-  if doAskToContinue "" "return"
+  if doAskToContinue "Is next version correct?" "return"
   then
     break
   else
@@ -74,7 +73,8 @@ echo "Setting version of your project to ${next_version} ..."
 doDevonCommand build set-version "${next_version}" "${current_version}" ""
 git add -u
 git commit -m "set next version to ${next_version}"
-doAskToContinue "Local commits and tag need to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
+doEcho "Local commits and tag need to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
+doAskToContinue
 git push
 git push --tags
 echo "Done."
