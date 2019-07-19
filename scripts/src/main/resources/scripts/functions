@@ -598,7 +598,7 @@ function doInstall() {
   fi
   doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
   echo "${4}" > "${1}/.devon.software.version"
-  echo "Successfully installed ${1}"
+  echo "Successfully installed ${3}"
   if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
     doExtendPath "${1}"
