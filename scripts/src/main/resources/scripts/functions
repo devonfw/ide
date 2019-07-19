@@ -489,7 +489,7 @@ function doUpgradeMavenArtifact() {
     archive_folder="settings"
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}" "${artifact_id}" "" "${archive_folder}"
+  doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${archive_folder}"
 }
 
 # $1: target
@@ -602,7 +602,10 @@ function doInstall() {
     doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
   fi
   doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
-  echo "${4}" > "${1}/.devon.software.version"
+  if [ "${1}" != "${DEVON_IDE_HOME}" ]
+  then
+    echo "${4}" > "${1}/.devon.software.version"
+  fi
   echo "Successfully installed ${3}"
   if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
