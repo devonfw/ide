@@ -382,7 +382,12 @@ function doReplaceExtracted() {
     do
       if [ -e "${extracted_file}" ]
       then
-        doReplaceExtractedFile "${extracted_file}" "${2}/${extracted_file/*\//}" "${backup_dir}"
+        if [ "${extracted_file/*\//}" == "workspaces" ]
+        then
+          doEcho "as the target already exists, omitting ${extracted_file}"
+        else
+          doReplaceExtractedFile "${extracted_file}" "${2}/${extracted_file/*\//}" "${backup_dir}"
+        fi
       fi
     done
   else
