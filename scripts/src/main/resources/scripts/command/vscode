@@ -97,10 +97,10 @@ do
   elif [ "${1}" = "setup" ]
   then
     doSetup setup
-    doCreateIdeScript eclipse
+    doCreateIdeScript vscode
   elif [ "${1}" = "create-script" ]
   then
-    doCreateIdeScript eclipse
+    doCreateIdeScript vscode
   else
     doFail "Undefined argument: ${1}"
   fi
