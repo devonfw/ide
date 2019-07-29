@@ -158,6 +158,12 @@ function doUninstall() {
 
 target_version="LATEST"
 
+case "${DEVON_IDE_HOME}" in
+  *\ * )
+   doConfirmWarning "Your devon-ide installation path contains whitespace(s):\n${DEVON_IDE_HOME}\nThis will cause severe bugs (https://github.com/devonfw/devon-ide/issues/100)!\nWe strongly encourage you to abort and choose a different installation path."
+   ;;
+esac
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then

@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if [ -n "${1}" ] || [ ! -d "${NODE_HOME}" ]
+  then
+    local software_version="${NODE_VERSION:-v10.16.0}"
+    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-win-x64.zip
+    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-darwin-x64.tar.gz
+    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-linux-x64.tar.xz
+    local download_url="https://nodejs.org/dist/${software_version}/node-${software_version}"
+    local software_dir="${NODE_HOME}"
+    if doIsMacOs
+    then
+      download_url="${download_url}-darwin-x64.tar.gz"
+    elif doIsWindows
+    then
+      download_url="${download_url}-win-x64.zip"
+    else
+      download_url="${download_url}-linux-x64.tar.xz"
+    fi
+    doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}" 'node-*'
+  fi
+  if [ -n "${1}" ]
+  then
+    doRunCommand "'${NODE_HOME}/bin/node' -v" "verify installation of node.js"
+  fi
+}
+
+function doRun() {
+  doSetup
+  doEcho "Running: node ${*}"
+  if doIsQuiet
+  then
+    node ${*} > /dev/null
+  else
+    node ${*}
+  fi
+}
+
+if [ -z "${NODE_HOME}" ]
+then
+  NODE_HOME="${DEVON_IDE_HOME}/software/node"
+fi
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run yarn."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup angular-cli (install and verify)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call maven with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+if [ "${1}" = "setup" ]
+then
+  doSetup setup
+else
+  doRun ${*}
+fi
