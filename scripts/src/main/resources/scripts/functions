@@ -830,11 +830,6 @@ function doLoadProperties() {
   done < "${1}"
 }
 
-DEVON_HOME_DIR=~
-if [ "${OSTYPE}" = "cygwin" ]
-then
-  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
-fi
 DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 if [ -z "${DEVON_IDE_HOME}" ]
 then

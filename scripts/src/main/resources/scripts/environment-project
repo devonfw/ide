@@ -44,8 +44,15 @@ function load_properties() {
   done < "${1}"
 }
 
+# determine proper home directory
+DEVON_HOME_DIR=~
+if [ "${OSTYPE}" = "cygwin" ]
+then
+  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
+fi
 # load and setup configuration
 load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
+load_properties "${DEVON_HOME_DIR}/devon.properties"
 load_properties "${DEVON_IDE_HOME}/devon.properties"
 # copy defaults
 if [ -d "${SETTINGS_PATH}" ]

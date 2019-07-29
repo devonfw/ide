@@ -3,9 +3,8 @@ rem This batch is not supposed to be called manually
 
 set DEVON_IDE_HOME=%CD%
 call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
-if exist "%DEVON_IDE_HOME%\variables.bat" (
-  call :load_properties "%DEVON_IDE_HOME%\devon.properties"
-)
+call :load_properties "%USERPROFILE%\devon.properties"
+call :load_properties "%DEVON_IDE_HOME%\devon.properties"
 rem copy defaults
 if exist "%SETTINGS_PATH%" (
   if exist "%SETTINGS_PATH%\devon\devon.properties" (
