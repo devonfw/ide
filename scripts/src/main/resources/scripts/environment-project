@@ -50,6 +50,7 @@ if [ "${OSTYPE}" = "cygwin" ]
 then
   DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
 fi
+export DEVON_HOME_DIR
 # load and setup configuration
 load_properties "${DEVON_IDE_HOME}/scripts/devon.properties"
 load_properties "${DEVON_HOME_DIR}/devon.properties"
