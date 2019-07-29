@@ -111,7 +111,27 @@ public class Migrations {
             "implements $1Dao, io.oasp.module.jpa.common.base.LegacyDaoQuerySupport<$1Entity>",
             FileFilterPattern.reject("Application(MasterData)?DaoImpl\\.java")) //
         .and() //
-        .next().build();
+        .next().to(VersionIdentifier.ofDevon4j("3.1.0")) //
+        .pom().replaceProperty("devon4j.version", "3.1.0") //
+        .replaceProperty("spring.boot.version", "2.1.6.RELEASE") //
+        // only for oasp4j legacy project (flyway.version not present in projects created from devon4j)
+        .replaceProperty("flyway.version", "5.2.4") //
+        .replaceDependency(new VersionIdentifier("org.hibernate.javax.persistence", "hibernate-jpa-2.1-api", null),
+            new VersionIdentifier("javax.persistence", "javax.persistence-api", null))
+        .and().java()
+        .replace("import org.dozer.DozerBeanMapper;", "import com.github.dozermapper.core.DozerBeanMapper;")
+        .replace("import org.dozer.Mapper;",
+            "import com.github.dozermapper.core.DozerBeanMapperBuilder;\n import com.github.dozermapper.core.Mapper;")
+        .replace("return new DozerBeanMapper(beanMappings);",
+            "Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles(beanMappings).build();\n return mapper;")//
+        .and().xml("dozer-mapping.xml")
+        .replaceNamespace("http://dozer.sourceforge.net", "http://dozermapper.github.io/schema/bean-mapping")
+        .replaceNamespace("http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd",
+            "http://dozermapper.github.io/schema/bean-mapping http://dozermapper.github.io/schema/bean-mapping.xsd")
+        .replaceCommentNode(
+            "<!DOCTYPE mappings PUBLIC \"-//DOZER//DTD MAPPINGS//EN\" \"http://dozer.sourceforge.net/dtd/dozerbeanmapping.dtd\">",
+            "<!DOCTYPE mappings PUBLIC \"-//DOZER//DTD MAPPINGS//EN\" \"https://github.com/DozerMapper/DozerMapper.github.io/blob/master/dtd/bean-mapping.dtd\">")
+        .and().next().build();
   }
 
 }
