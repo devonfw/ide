@@ -65,13 +65,16 @@ function doSetup() {
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "command -v eclipse" "verify installation of Eclipse"
-    if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
+    if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
     then
-      doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"
-    else
-      doRunCommand "cat '${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct'"
+      doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
     fi
+    local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
+    if [ ! -e "${eclipseproduct}" ]
+    then
+      eclipseproduct="${ECLIPSE_HOME}/.eclipseproduct"
+    fi
+    doRunCommand "cat '${eclipseproduct}'"
   fi
 }
 
