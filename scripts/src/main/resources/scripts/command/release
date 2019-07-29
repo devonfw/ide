@@ -72,9 +72,23 @@ doDevonCommand build set-version "${release_version}" "${current_version}" clean
 git add -u
 git commit -m "set release version to ${release_version}"
 git tag -a "release/${release_version}" -m "tagged version ${release_version}"
-echo
-echo "Building and deploying the release..."
-doDevonCommand build release || doFail "Release build failed! You should reset your local commits via 'git reset HEAD^'."
+while true
+do
+  echo
+  echo "Building and deploying the release..."
+  doDevonCommandAndReturn build release
+  result=${?}
+  if [ "${result}" == 0 ]
+  then
+    break
+  else
+    doEchoAttention "Release build failed!"
+    if ! doAskToContinue "Do you want to retry the build (e.g. in case of a temporary network error)?" "return"
+    then
+      doFail "Release build failed and process aborted!\nYou should reset your local commits via 'git reset HEAD^'."
+    fi
+  fi
+done
 echo "Setting version of your project to ${next_version} ..."
 doDevonCommand build set-version "${next_version}" "${current_version}" ""
 git add -u
