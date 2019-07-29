@@ -169,10 +169,12 @@ public class Configurator {
       Log.warn("Missing command option. Using update (" + command + ") as fallback.");
     }
     try {
-      File lockfile = new File(this.workspaceFolder, ".metadata/.lock");
-      if (EclipseWorkspaceLockChecker.isLocked(lockfile)) {
-        System.err.println("Your workspace is locked at " + lockfile);
-        return 1;
+      if (templatesFolder.getParentFile().getName().equals("eclipse")) {
+        File lockfile = new File(this.workspaceFolder, ".metadata/.lock");
+        if (EclipseWorkspaceLockChecker.isLocked(lockfile)) {
+          System.err.println("Your workspace is locked at " + lockfile);
+          return 1;
+        }
       }
       this.resolver = createResolver(variablesFile);
       this.setupFolder = new File(templatesFolder, FOLDER_SETUP);
