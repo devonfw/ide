@@ -381,12 +381,12 @@ function doReplaceExtractedSkipSingleFolder() {
   local target_dir="${2}"
   local backup_dir="${3}"
   shift 3
-  if [ "${#*}" == 1 ] && [ -d "${1}" ]
+  
+  if [ "${#*}" == 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
-    doReplaceExtractedFile "${1}" "${target_dir}" "${backup_dir}"
-  else
-    doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
+    source_dir="${1}"
   fi
+  doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
 
 # $1: path of the extracted name to install (move to target)
