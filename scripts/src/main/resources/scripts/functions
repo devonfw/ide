@@ -705,14 +705,20 @@ function doRunConfigurator() {
 
 # $1: name of ide
 function doCreateIdeScript() {
+  local script_file="${DEVON_IDE_HOME}/${1}-${WORKSPACE}"
+  local script_data
   if doIsWindows
   then
-    echo -e "@echo off\r\npushd %~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
-    echo "Created script ${1}-${WORKSPACE}.bat"
+    script_data="@echo off\r\npushd %~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd"
+    script_file="${script_file}.bat"
   else
-    echo -e "#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
-    chmod a+x ${1}-${WORKSPACE}
-    echo "Created script ${1}-${WORKSPACE}"
+    script_data="#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}"
+  fi
+  if [ ! -x "${script_file}" ]
+  then
+    echo -e "${script_data}" > "${script_file}"
+    chmod a+x "${script_file}"
+    echo "Created script ${script_file}"
   fi
 }
 
