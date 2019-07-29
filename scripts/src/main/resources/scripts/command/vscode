@@ -13,7 +13,7 @@ function doSetup() {
       download_url="${download_url}/darwin/stable"
     elif doIsWindows
     then
-      download_url="${download_url}/win32-x64-user/stable"
+      download_url="${download_url}/win32-x64-archive/stable"
     else
       download_url="${download_url}/linux-x64/stable"
       software_extension=".tgz"
