@@ -23,7 +23,7 @@ function doSetup() {
     else
       download_url="${download_url}_linux-x64_bin.tar.gz"
     fi
-    doInstall "${software_dir}" "${download_url}" "java" "${software_version}" 'jdk-*'
+    doInstall "${software_dir}" "${download_url}" "java" "${software_version}"
     if [ "${?}" = 0 ]
     then
       if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]

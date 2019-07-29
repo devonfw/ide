@@ -20,7 +20,7 @@ function doSetup() {
     else
       download_url="${download_url}-linux-x64.tar.xz"
     fi
-    doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}" 'node-*'
+    doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}"
   fi
   if [ -n "${1}" ]
   then

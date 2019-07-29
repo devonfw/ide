@@ -18,7 +18,7 @@ function doSetup() {
       download_url="${download_url}/linux-x64/stable"
       software_extension=".tgz"
     fi
-    doInstall "${VSCODE_HOME}" "${download_url}" "vscode" "${software_version}" "" "${software_extension}"
+    doInstall "${VSCODE_HOME}" "${download_url}" "vscode" "${software_version}" "${software_extension}"
     if [ "${?}" = 0 ]
     then
       if doIsMacOs

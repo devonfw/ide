@@ -7,7 +7,7 @@ function doSetup() {
   then
     local software_version=${MAVEN_VERSION:-3.6.0}
     local download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
-    doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" 'apache-maven-*' "" "all"
+    doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" "" "all"
   fi
   if [ -n "${1}" ]
   then

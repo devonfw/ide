@@ -373,6 +373,23 @@ function doReplaceExtractedFile() {
 }
 
 # $1: path of the extracted name to install (move to target)
+# $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
+# $3: backup path
+# $4-$N: contents of $1
+function doReplaceExtractedSkipSingleFolder() {
+  local source_dir="${1}"
+  local target_dir="${2}"
+  local backup_dir="${3}"
+  shift 3
+  if [ "${#*}" == 1 ] && [ -d "${1}" ]
+  then
+    doReplaceExtractedFile "${1}" "${target_dir}" "${backup_dir}"
+  else
+    doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
+  fi
+}
+
+# $1: path of the extracted name to install (move to target)
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
   local backup_dir="updates/backups/$(date +"%y-%m-%d/%H-%M-%S")"
@@ -391,7 +408,7 @@ function doReplaceExtracted() {
       fi
     done
   else
-    doReplaceExtractedFile "${1}" "${2}" "${backup_dir}"
+    doReplaceExtractedSkipSingleFolder "${1}" "${2}" "${backup_dir}" "${1}"/*
   fi
 }
 
@@ -529,9 +546,8 @@ function doGitPullOrClone() {
 # $2: URL
 # $3: name of software
 # $4: version of software
-# $5: optional archive folder to rename (may also be a glob pattern like 'apache-maven-*')
-# $6: optional file extension (default is taken from download URL)
-# $7: optional OS architecture indicator (e.g. 'all' if architecture independent)
+# $5: optional file extension (default is taken from download URL)
+# $6: optional OS architecture indicator (e.g. 'all' if architecture independent)
 function doInstall() {
   if [ -z "${1}" ] || [ -z "${2}" ] || [ -z "${3}" ]
   then
@@ -561,9 +577,9 @@ function doInstall() {
     filename=${download_url/*\//}
   else
     filename="${3}-${4}"
-    if [ -n "${7}" ]
+    if [ -n "${6}" ]
     then
-      filename="${filename}-${7}"
+      filename="${filename}-${6}"
     else
       if doIsMacOs
       then
@@ -575,12 +591,12 @@ function doInstall() {
         filename="${filename}-linux"
       fi
     fi
-    local extension="${6:-.tgz}"
+    local extension="${5:-.tgz}"
     if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
     then
       download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}${extension}"
     else
-      if [ -z "${6}" ]
+      if [ -z "${5}" ]
       then
         local file="${download_url/*\//}"
         extension=${file/*\.tar\./.tar.}
@@ -594,13 +610,7 @@ function doInstall() {
   fi
   echo "Starting installation of ${3} to ${1} from ${download_url}"
   doDownload "${download_url}" "${filename}"
-  if [ -n "${5}" ]
-  then
-    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}"
-    doMoveGlobSafe "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${DEVON_IDE_HOME}/updates/extracted/"${5}
-  else
-    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
-  fi
+  doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
   doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
   if [ "${1}" != "${DEVON_IDE_HOME}" ]
   then
