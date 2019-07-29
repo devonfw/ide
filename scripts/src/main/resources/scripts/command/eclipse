@@ -23,7 +23,7 @@ function doSetup() {
   then
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
-    local software_version="${ECLIPSE_VERSION:-2018-12}"
+    local software_version="${ECLIPSE_VERSION:-2019-06}"
     local eclipse_edition=java
     local extract_folder=
     #eclipse_edition=jee
