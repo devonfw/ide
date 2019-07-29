@@ -42,9 +42,12 @@ function doSetup() {
     then
       if doIsMacOs
       then
-        echo "Doing workarounds for MacOS quirks..."
-        echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
-        chmod a+x "${ECLIPSE_HOME}/eclipse"
+        if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
+        then
+          echo "Doing workarounds for MacOS quirks..."
+          echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
+          chmod a+x "${ECLIPSE_HOME}/eclipse"
+        fi
       fi
       if [ -z "${ECLIPSE_PLUGINS}" ]
       then
