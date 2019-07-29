@@ -20,11 +20,16 @@ function doSetup() {
     else
       download_url="${download_url}-linux-x64.tar.xz"
     fi
-    doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}" 'node-*'
+    doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}"
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "'${NODE_HOME}/bin/node' -v" "verify installation of node.js"
+    local node_binary="${NODE_HOME}/node.exe"
+    if [ ! -x "${node_binary}" ]
+    then
+      node_binary="${NODE_HOME}/bin/node"
+    fi
+    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
   fi
 }
 

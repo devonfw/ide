@@ -65,13 +65,16 @@ function doSetup() {
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "command -v eclipse" "verify installation of Eclipse"
-    if [ -e "${ECLIPSE_HOME}/.eclipseproduct" ]
+    if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
     then
-      doRunCommand "cat '${ECLIPSE_HOME}/.eclipseproduct'"
-    else
-      doRunCommand "cat '${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct'"
+      doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
     fi
+    local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
+    if [ ! -e "${eclipseproduct}" ]
+    then
+      eclipseproduct="${ECLIPSE_HOME}/.eclipseproduct"
+    fi
+    doRunCommand "cat '${eclipseproduct}'"
   fi
 }
 
@@ -103,9 +106,8 @@ function doAddPlugin() {
       doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
     elif [ "${1}" = "cobigen" ]
     then
-      echo "***** ERROR *****"
-      echo "CobiGen still has no public update site - see https://github.com/devonfw/devon-ide/issues/84"
-      echo doInstallEclipsePlugin "https://github.com/devonfw/tools-cobigen/releases" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      doInstallEclipsePlugin https://dl.bintray.com/devonfw/cobigen.p2/ "com.devonfw.cobigen.eclipse.feature.feature.group"
+      #doInstallEclipsePlugin https://dl.bintray.com/devonfw/cobigen.p2/ "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin.com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
     elif [ "${1}" = "terminal" ]
     then
       echo "***** ERROR *****"
