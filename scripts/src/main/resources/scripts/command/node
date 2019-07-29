@@ -24,7 +24,12 @@ function doSetup() {
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "'${NODE_HOME}/bin/node' -v" "verify installation of node.js"
+    local node_binary="${NODE_HOME}/node.exe"
+    if [ ! -x "${node_binary}" ]
+    then
+      node_binary="${NODE_HOME}/bin/node"
+    fi
+    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
   fi
 }
 
