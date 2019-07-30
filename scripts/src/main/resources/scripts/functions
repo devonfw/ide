@@ -5,8 +5,7 @@
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
 function doFail() {
-  echo
-  echo "******** ATTENTION ********"
+  doEchoAttention
   echo -e "ERROR: ${1}"
   echo "We are sorry for the inconvenience. Please check the above errors, resolve them and try again."
   if [ -n "${2}" ]
@@ -15,6 +14,15 @@ function doFail() {
     exit ${2}
   else
     exit 255
+  fi
+}
+
+function doEchoAttention() {
+  echo
+  echo "******** ATTENTION ********"
+  if [ -n "${1}" ]
+  then
+    echo -e ${@}
   fi
 }
 
@@ -224,6 +232,15 @@ function doLicenseAgreement() {
 # ${1}: devon command name
 # ${n+1}: additional args
 function doDevonCommand() {
+  doDevonCommandAndReturn ${@}
+  result=${?}
+  if [ ${result} != 0 ]
+  then
+    exit ${result}
+  fi
+}
+
+function doDevonCommandAndReturn() {
   if [ -z "${1}" ]
   then
     doFail "Command is required and can not be omitted!"
@@ -245,9 +262,9 @@ function doDevonCommand() {
     if [ ${result} != 0 ]
     then
       doEcho "ERROR: command '${command_name} ${@}' failed with exit code ${result}"
-      exit ${result}
+      return ${result}
     fi
-  fi
+  fi  
 }
 
 # $1: the URL to download
@@ -688,14 +705,20 @@ function doRunConfigurator() {
 
 # $1: name of ide
 function doCreateIdeScript() {
+  local script_file="${DEVON_IDE_HOME}/${1}-${WORKSPACE}"
+  local script_data
   if doIsWindows
   then
-    echo -e "@echo off\r\npushd %~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd" > ${1}-${WORKSPACE}.bat
-    echo "Created script ${1}-${WORKSPACE}.bat"
+    script_data="@echo off\r\npushd %~dp0\r\ncd workspaces/${WORKSPACE}\r\ncall devon.bat ${1}\r\npopd"
+    script_file="${script_file}.bat"
   else
-    echo -e "#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}" > ${1}-${WORKSPACE}
-    chmod a+x ${1}-${WORKSPACE}
-    echo "Created script ${1}-${WORKSPACE}"
+    script_data="#\!/usr/bin/env bash\ncd \$(dirname \"\${0}\")\ncd workspaces/${WORKSPACE}\nsource ${DEVON_IDE_HOME}/scripts/devon ${1}"
+  fi
+  if [ ! -x "${script_file}" ]
+  then
+    echo -e "${script_data}" > "${script_file}"
+    chmod a+x "${script_file}"
+    echo "Created script ${script_file}"
   fi
 }
 
@@ -830,11 +853,6 @@ function doLoadProperties() {
   done < "${1}"
 }
 
-DEVON_HOME_DIR=~
-if [ "${OSTYPE}" = "cygwin" ]
-then
-  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
-fi
 DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 if [ -z "${DEVON_IDE_HOME}" ]
 then

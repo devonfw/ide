@@ -7,7 +7,7 @@ function doSetup() {
   then
     #mirror="https://mirror.math.princeton.edu"
     mirror="https://ftp.osuosl.org"
-    software_version="${INTELLIJ_VERSION:-2018.3.5}"
+    software_version="${INTELLIJ_VERSION:-2019.2}"
     eclipse_edition=java
     #eclipse_edition=jee
     if doIsMacOs
@@ -21,7 +21,7 @@ function doSetup() {
     fi
     download_url="https://download-cf.jetbrains.com/idea/ideaIC-${software_version}.${software_type}"
     doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}"
-    if doIsMacOs
+    if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
       mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA CE.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
