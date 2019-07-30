@@ -1,0 +1,36 @@
+#!/bin/bash
+success=0
+failure=0
+total=0
+rm -rf integration-test
+mkdir -p integration-test
+cd integration-test
+for testpath in "$(dirname $0)"/test-*
+do
+  testcase="${testpath/*\//}"
+  echo "Running test #${total}: ${testcase}"
+  mkdir "${testcase}"
+  cd "${testcase}"
+  "${testpath}"
+  result=${?}
+  if [ "${result}" == 0 ]
+  then
+    echo "[SUCCESS] Succeeded running test #${total}: ${testcase}"
+    let "success++"
+  else
+    echo "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
+    let "failure++"
+  fi
+  let "total++"
+  cd ..
+done
+echo
+echo "*****************************************************"
+echo "Executed #${total} test(s), #${success} succeeded and #${failure} failed"
+if [ "${failure}" == 0 ]
+then
+  echo "All test succeeded. Fine!"
+else
+  echo "There are test failures! Please check the logs and fix errors."
+  exit 1
+fi

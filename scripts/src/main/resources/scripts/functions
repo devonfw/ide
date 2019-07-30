@@ -603,6 +603,10 @@ function doInstall() {
     fi
   fi
   local dir=${target_path/*\//}
+  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  then
+    mkdir -p "${DEVON_IDE_HOME}/software"
+  fi
   local filename
   if [ -z "${version}" ]
   then
