@@ -33,12 +33,15 @@ function doUpdateSettings() {
       read -p "Settings URL: " answer
       if [ -z "${answer}" ]
       then
-        SETTINGS_URL="${DEVON_IDE_REPO_URL}/devon-ide-settings"
-        doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
+        SETTINGS_URL="-"
       else
         SETTINGS_URL="${answer}"
-        doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
       fi
+    fi
+    if [ "${SETTINGS_URL}" == "-" ]
+    then
+      SETTINGS_URL="${DEVON_IDE_REPO_URL}/devon-ide-settings"
+      doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
     else
       doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
     fi
@@ -91,7 +94,7 @@ function doSetup() {
     doSetupConf "${SETTINGS_PATH}/devon" "${DEVON_IDE_HOME}"
   else
     doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to update your settings."
-  fi  
+  fi
   if [ -z "${DEVON_IDE_TOOLS}" ]
   then
     doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (devon.properties)."
