@@ -375,18 +375,31 @@ function doReplaceExtractedFile() {
     target="${2}"
     target_dir="$(dirname "${2}")"
   fi
-  if [ -e "${target}" ]
-  then
-    local backup_dir="${DEVON_IDE_HOME}/${3}"
-    mkdir -p "${backup_dir}"
-    echo "moving existing ${target} to ${3}"
-    mv "${target}" "${backup_dir}/"
-  elif [ ! -d "${target_dir}" ]
+  doBackup "${target}" "${3}"
+  if [ ! -d "${target_dir}" ]
   then
     echo "mkdir -p ${target_dir}"
     mkdir -p "${target_dir}"
   fi
   doRunCommand "mv '${1}' '${target}'"
+}
+
+# $1: source file or directory to backup
+# $2: optional relative timestamp path
+function doBackup() {
+  local source="${1}"
+  local timestamp="${2}"
+  if [ -e "${1}" ]
+  then
+    if [ -z "${timestamp}" ]
+    then
+      timestamp="$(date +"%y-%m-%d/%H-%M-%S")"
+    fi
+    local backup_dir="${DEVON_IDE_HOME}/updates/backups/${timestamp}"
+    mkdir -p "${backup_dir}"
+    echo "Creating backup by moving existing ${source} to ${backup_dir}"
+    mv "${source}" "${backup_dir}/"
+  fi
 }
 
 # $1: path of the extracted name to install (move to target)
@@ -409,7 +422,7 @@ function doReplaceExtractedSkipSingleFolder() {
 # $1: path of the extracted name to install (move to target)
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
-  local backup_dir="updates/backups/$(date +"%y-%m-%d/%H-%M-%S")"
+  local backup_dir="$(date +"%y-%m-%d/%H-%M-%S")"
   if [ "${2}" = "${DEVON_IDE_HOME}" ]
   then
     for extracted_file in "${1}"/*
@@ -517,13 +530,8 @@ function doUpgradeMavenArtifact() {
       fi
     fi
   fi
-  local archive_folder=""
-  if [ "${artifact_id}" = "devon-ide-settings" ]
-  then
-    archive_folder="settings"
-  fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${archive_folder}"
+  doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${suffix}" "-"
 }
 
 # $1: target
@@ -560,43 +568,53 @@ function doGitPullOrClone() {
 }
 
 # $1: absolute target path
-# $2: URL
+# $2: download URL
 # $3: name of software
 # $4: version of software
 # $5: optional file extension (default is taken from download URL)
 # $6: optional OS architecture indicator (e.g. 'all' if architecture independent)
 function doInstall() {
-  if [ -z "${1}" ] || [ -z "${2}" ] || [ -z "${3}" ]
+  local target_path="${1}"
+  local download_url="${2}"
+  local software="${3}"
+  local version="${4}"
+  local extension="${5:-.tgz}"
+  local os="${6}"
+  if [ -z "${target_path}" ] || [ -z "${download_url}" ] || [ -z "${software}" ]
   then
     doFail "missing arguments for doInstall: ${@}"
   fi
-  if [ "${2/*\.//.}" = ".git" ]
+  if [ "${download_url/*\.//.}" = ".git" ]
   then
-    doGitPullOrClone "${1}" "${2}"
+    doGitPullOrClone "${target_path}" "${download_url}"
     return
   fi
-  if [ -e "${1}/.devon.software.version" ]
+  local version_file="${target_path}/.devon.software.version"
+  local current_version=
+  if [ -e "${version_file}" ]
   then
-    local current_version="$(cat "${1}/.devon.software.version")"
-    if [ "${current_version}" == "${4}" ]
+    current_version="$(cat "${version_file}")"
+    if [ "${current_version}" == "${version}" ]
     then
-      doEcho "Version ${4} of ${3} is already installed."
+      doEcho "Version ${version} of ${software} is already installed."
       return 1
     else
-      doEcho "Updating ${3} from version ${current_version} to version ${4}..."
+      doEcho "Updating ${software} from version ${current_version} to version ${version}..."
     fi
   fi
-  local dir=${1/*\//}
-  local download_url="${2}"
+  local dir=${target_path/*\//}
   local filename
-  if [ -z "${4}" ]
+  if [ -z "${version}" ]
   then
     filename=${download_url/*\//}
   else
-    filename="${3}-${4}"
-    if [ -n "${6}" ]
+    filename="${software}-${version}"
+    if [ -n "${os}" ]
     then
-      filename="${filename}-${6}"
+      if [ "${os}" != "-" ]
+      then
+        filename="${filename}-${os}"
+      fi
     else
       if doIsMacOs
       then
@@ -608,10 +626,9 @@ function doInstall() {
         filename="${filename}-linux"
       fi
     fi
-    local extension="${5:-.tgz}"
     if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
     then
-      download_url="${DEVON_SOFTWARE_REPOSITORY}/${3}/${4}/${filename}${extension}"
+      download_url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}${extension}"
     else
       if [ -z "${5}" ]
       then
@@ -625,19 +642,49 @@ function doInstall() {
     fi
     filename="${filename}${extension}"
   fi
-  echo "Starting installation of ${3} to ${1} from ${download_url}"
-  doDownload "${download_url}" "${filename}"
-  doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
-  doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${1}"
-  if [ "${1}" != "${DEVON_IDE_HOME}" ]
+  echo "Starting installation of ${software} to ${target_path} from ${download_url}"
+  if [ -L "${target_path}" ]
   then
-    echo "${4}" > "${1}/.devon.software.version"
+    doEcho "Deleting old installation as it is a symlink: ${target_path}"
+    rm "${target_path}"
   fi
-  echo "Successfully installed ${3}"
-  if [ "${1}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  local install_path="${target_path}"
+  if [ -n "${DEVON_SOFTWARE_PATH}" ] && [ "${target_path}" != "${DEVON_IDE_HOME}" ]
   then
-    doExtendPath "${1}"
-    echo "To be fully functional please rerun 'devon' command to update your PATH properly."
+    install_path="${DEVON_SOFTWARE_PATH}/${software}/${version}"
+    version_file="${install_path}/.devon.software.version"
+  fi
+  if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
+  then
+    doDownload "${download_url}" "${filename}"
+    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
+    doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
+    if [ "${install_path}" != "${DEVON_IDE_HOME}" ]
+    then
+      echo "${version}" > "${version_file}"
+    fi
+    echo "Successfully installed ${software}"
+  else
+    current_version=
+    if [ -e "${version_file}" ]
+    then
+      current_version="$(cat "${version_file}")"
+    fi
+    if [ "${current_version}" != "${version}" ]
+    then
+      doFail "Installation corrupt at ${install_path}\nDetected version: ${current_version}\nExpected version: ${version}"
+    fi
+  fi
+  if [ "${install_path}" != "${target_path}" ]
+  then
+    doBackup "${target_path}"
+    doEcho "Linking ${install_path} to ${target_path}"
+    ln -s "${install_path}" "${target_path}"
+  fi
+  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  then
+    doExtendPath "${target_path}"
+    doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
 }
 
@@ -862,6 +909,7 @@ then
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
+doLoadProperties "${DEVON_HOME_DIR}/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
 doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
 doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
