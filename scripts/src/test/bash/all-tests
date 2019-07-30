@@ -2,6 +2,8 @@
 success=0
 failure=0
 total=0
+mkdir -p ~/.devon
+touch ~/.devon/.license.agreement
 rm -rf integration-test
 mkdir -p integration-test
 cd integration-test
