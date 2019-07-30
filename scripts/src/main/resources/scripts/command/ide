@@ -96,12 +96,7 @@ function doSetup() {
   then
     doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (devon.properties)."
   fi
-  for tool in "${DEVON_IDE_TOOLS[@]}"
-  do
-    echo
-    echo "*** Setting up ${tool} ***"
-    doDevonCommand ${tool} setup
-  done
+  doSetupTools
   if doIsWindows
   then
     if [ -e "${DEVON_IDE_HOME}/console.bat" ]
@@ -109,6 +104,15 @@ function doSetup() {
       echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
     fi
   fi
+}
+
+function doSetupTools() {
+  for tool in "${DEVON_IDE_TOOLS[@]}"
+  do
+    echo
+    echo "*** Setting up ${tool} ***"
+    doDevonCommand ${tool} setup
+  done
 }
 
 # $1: home directory
@@ -189,6 +193,7 @@ then
   then
     doUpdateScripts
     doUpdateSettings
+    doSetupTools
   else
     if [ "${3}" = "to" ]
     then
