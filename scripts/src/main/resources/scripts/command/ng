@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 source "$(dirname "${0}")"/../functions
 
+# $1: optional setup
+function doSetup() {
+  if command -v ng &> /dev/null
+  then
+    if [ -n "${1}" ]
+    then
+      echo "angluar-cli (ng) is already installed at $(command -v ng)"
+    fi
+  else
+    doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"
+  fi
+}
+
 #CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -16,20 +29,13 @@ fi
 
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  setup=true
-fi
-
-if command -v ng &> /dev/null
+  doSetup setup
+elif [ "${1}" = "create" ]
 then
-  if [ "${setup}" = "true" ]
-  then
-    echo "angluar-cli (ng) is already installed at $(command -v ng)"
-  fi
+  shift
+  doSetup
+  ng new ${@}
 else
-  doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"
-fi
-
-if [ "${setup}" != "true" ]
-then
+  doSetup
   ng ${@}
 fi
