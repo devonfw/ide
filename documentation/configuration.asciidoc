@@ -6,11 +6,12 @@ toc::[]
 The `devon-ide` aims to be highly configurable and flexible. The configuration of the link:cli.asciidoc[devon] command and environment variables takes place via `devon.properties` files. The following list shows these configuration files in the order they are loaded so files can override variables from files above in the list:
 
 0. build in defaults (for `JAVA_VERSION`, `ECLIPSE_PLUGINS`, etc.)
-1. `https://github.com/devonfw/devon-ide/blob/master/scripts/src/main/resources/scripts/devon.properties[scripts/devon.properties]` - defaults provided by `devon-ide`. Never directly modify this file!
-2. `devon.properties` - vender variables for custom distributions, may e.g. tweak `SETTINGS_PATH` or predefine `SETTINGS_URL`.
-3. `https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/devon.properties[settings/devon.properties]` (`$SETTINGS_PATH/devon.properties`) - project specific configurations from link:settings.asciidoc[settings].
-4. `workspaces/${WORKSPACE}/devon.properties` (`$WORKSPACE_PATH/devon.properties`) - optional workspace specific configurations (espeically helpful in projects using docker).
-5. `https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/devon.properties[conf/devon.properties]` - user specific configurations (e.g. `M2_REPO=~/.m2/repository`). During setup this file is created by copying a template from `$SETTINGS_PATH/devon/conf/devon.properties`.
+1. `~/devon.properties` - user specific global defaults (on windows in `%USERPROFILE%/devon.properties`)
+2. `https://github.com/devonfw/devon-ide/blob/master/scripts/src/main/resources/scripts/devon.properties[scripts/devon.properties]` - defaults provided by `devon-ide`. Never directly modify this file!
+3. `devon.properties` - vender variables for custom distributions, may e.g. tweak `SETTINGS_PATH` or predefine `SETTINGS_URL`.
+4. `https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/devon.properties[settings/devon.properties]` (`$SETTINGS_PATH/devon.properties`) - project specific configurations from link:settings.asciidoc[settings].
+5. `workspaces/${WORKSPACE}/devon.properties` (`$WORKSPACE_PATH/devon.properties`) - optional workspace specific configurations (espeically helpful in projects using docker).
+6. `https://github.com/devonfw/devon-ide/blob/master/settings/src/main/settings/devon/conf/devon.properties[conf/devon.properties]` - user specific configurations (e.g. `M2_REPO=~/.m2/repository`). During setup this file is created by copying a template from `$SETTINGS_PATH/devon/conf/devon.properties`.
 
 == devon.properties
 

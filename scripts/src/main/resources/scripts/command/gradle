@@ -5,7 +5,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
   then
-    software_version="${GRADLE_VERSION:-5.2.1}"
+    software_version="${GRADLE_VERSION:-5.5.1}"
     download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
     doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" "" "all"
   fi
