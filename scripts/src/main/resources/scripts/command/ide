@@ -212,6 +212,9 @@ then
     elif [ "${2}" = "settings" ]
     then
       doUpdateSettings
+    elif [ "${2}" = "tools" ]
+    then
+      doSetupTools
     else
       doFail "Undefined package ${2}"
     fi
