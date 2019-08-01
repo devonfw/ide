@@ -26,8 +26,10 @@ public class Migrations {
         .replaceProperty("flyway.version", "5.0.7") //
         .replaceDependency(new VersionIdentifier("org.hibernate", "hibernate-validator", null),
             new VersionIdentifier("org.hibernate.validator", "hibernate-validator", null))
-        .and() //
-        .java().replace("org.hibernate.Query", "org.hibernate.query.Query")
+        .addDependency(new VersionIdentifier("*-core", null),
+            new VersionIdentifier(VersionIdentifier.GROUP_ID_OASP4J_MODULES, "oasp4j-jpa", null))
+        .and().java() //
+        .replace("org.hibernate.Query", "org.hibernate.query.Query")
         .replace("com.mysema.query.alias.Alias", "com.querydsl.core.alias.Alias")
         .replace("com.mysema.query.jpa.impl.JPAQuery", "com.querydsl.jpa.impl.JPAQuery")
         .replace("com.mysema.query.types.path.EntityPathBase", "com.querydsl.core.types.dsl.EntityPathBase")
