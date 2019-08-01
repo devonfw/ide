@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +33,11 @@ import com.devonfw.tools.ide.migrator.xml.XmlMigration;
  */
 public class MigrationsTest extends Assertions {
 
+  /**
+   * Test of {@link Migrations#devon4j()}.
+   *
+   * @throws Exception on error.
+   */
   @Test
   public void testMigrations() throws Exception {
 
@@ -38,6 +47,10 @@ public class MigrationsTest extends Assertions {
     List<VersionIdentifier> versions = new ArrayList<>(oasp4jVersions);
     List<String> devon4jVersions = determineDevon4jVersions();
     assertThat(devon4jVersions.size()).isGreaterThan(3);
+    String latestDevon4jVersion = devon4jVersions.get(devon4jVersions.size() - 1);
+    Path archetypeCatalog = Paths.get("../settings/src/main/settings/eclipse/archetype-catalog.xml");
+    List<String> archetypeCatalogLines = Files.readAllLines(archetypeCatalog, StandardCharsets.UTF_8);
+    assertThat(archetypeCatalogLines).contains("      <version>" + latestDevon4jVersion + "</version>");
     for (String devon4jVersion : devon4jVersions) {
       versions.add(VersionIdentifier.ofDevon4j(devon4jVersion));
     }
