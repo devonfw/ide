@@ -12,6 +12,7 @@ function doSetup() {
   then
     local software_version="${JAVA_VERSION:-11.0.4_11}"
     local major_version="${software_version/\.*/}"
+    major_version="${major_version/u*/}"
     local jdk_folder="jdk-${software_version/_/%2B}"
     if [ "${major_version}" = "8" ]
     then
