@@ -73,6 +73,9 @@ if "%1%" == "bash" (
   "%BASH%"
 ) else (
   "%BASH%" -c 'source ~/.devon/devon %*'
+  if not %ERRORLEVEL% == 0 (
+    exit /b %ERRORLEVEL%
+  )
 )
 if not "%DEVON_PATH%" == "" (
   set "DEVON_OLD_PATH=%PATH%"

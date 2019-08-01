@@ -63,8 +63,7 @@ public class Migrator {
       }
     }
     Log.init("migrator-" + migrationName, true);
-    migration.migrate(projectFolder, startVersion, singleStep);
-    return 0;
+    return migration.migrate(projectFolder, startVersion, singleStep);
   }
 
 }

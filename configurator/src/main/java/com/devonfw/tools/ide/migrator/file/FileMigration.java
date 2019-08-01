@@ -24,6 +24,14 @@ public abstract class FileMigration implements Migration {
     this.namePattern = namePattern;
   }
 
+  /**
+   * @return the name {@link Pattern}.
+   */
+  public Pattern getNamePattern() {
+
+    return this.namePattern;
+  }
+
   @Override
   public final void migrate(File file) throws Exception {
 

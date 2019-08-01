@@ -9,8 +9,8 @@ The arguments (`devon java «args»`) are explained by the following table:
 .Usage of `devon java`
 [options="header"]
 |=======================
-|*Argument(s)*                      |*Meaning*
-|`setup`                            |setup OpenJDK (install and verify), link:configuration.asciidoc[configurable] via `JAVA_VERSION`
-|`create`                           |create a new Java project based on https://github.com/devonfw/devon4j[devon4j].
-|`update` [from «version»] [single] |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version. If for some reasons the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide it manually after the 'from' argument. Also the 'single' option allows to migrate only to the next available version."
+|*Argument(s)*                       |*Meaning*
+|`setup`                             |setup OpenJDK (install or update and verify), link:configuration.asciidoc[configurable] via `JAVA_VERSION` (e.g. `8u222b10` or `11.0.4_11`)
+|`create`                            |create a new Java project based on https://github.com/devonfw/devon4j[devon4j].
+|`migrate` [from «version»] [single] |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version. If for some reasons the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide it manually after the 'from' argument. Also the 'single' option allows to migrate only to the next available version."
 |=======================

@@ -21,7 +21,7 @@ function doSetup() {
       if [ ! -e "${M2_DIR}/settings-security.xml" ]
       then
         MASTER_PASSWORD="$(head -c 20 /dev/random | base64)"
-        MASTER_PASSWORD="$(mvn --encrypt-master-password ${MASTER_PASSWORD})"
+        MASTER_PASSWORD="$("${MVN}" --encrypt-master-password ${MASTER_PASSWORD})"
         echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
         echo "Successfully created ${M2_DIR}/settings-security.xml"
         MASTER_PASSWORD=
@@ -31,21 +31,21 @@ function doSetup() {
       echo "Please run the following command to fix:"
       echo "devon setup"
     fi
-    doRunCommand "mvn -v" "verify installation of maven"
+    doRunCommand "'${MVN}' -v" "verify installation of maven"
   fi
 }
 
 # $@: optional maven arguments
 function doGetProjectVersion() {
   doSetup
-  local maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+  local maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
   if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     local cwd="${PWD}"
     for pom in $(find . -name "pom.xml")
     do
       cd "$(dirname ${pom})"
-      maven_project_version="$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+      maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
       if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
       then
         break;
@@ -100,7 +100,7 @@ function doSetProjectVersion() {
       return
     fi
   fi
-  local module_list="$(mvn -q exec:exec -Dexec.executable=pwd)"
+  local module_list="$('${MAVEN_HOME/mvn' -q exec:exec -Dexec.executable=pwd)"
   if [ "${?}" = 0 ]
   then
     local cwd="${PWD}"
@@ -128,7 +128,7 @@ function doSetPomVersion() {
     fi
   fi
   doSetup
-  local maven_project_version="$(mvn -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
+  local maven_project_version="$("${MVN}" -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
   if [ "${maven_project_version}" = "${1}" ] 
   then
     echo "No changes needed for ${PWD}/pom.xml"
@@ -195,7 +195,7 @@ function doCheckTopLevelProject() {
 }
 
 function doRunBuild() {
-  local maven_cmd="mvn"
+  local maven_cmd="${MVN}"
   if [ -x mvnw ]
   then
     maven_cmd="./mvnw"
@@ -205,14 +205,17 @@ function doRunBuild() {
   doEcho "Running: ${maven_cmd} ${@}"
   if doIsQuiet
   then
-    ${maven_cmd} -q ${@}
+    "${maven_cmd}" -q ${@}
+    exit ${?}
   else
-    ${maven_cmd} ${@}
+    "${maven_cmd}" ${@}
+    exit ${?}
   fi
 }
 
 # CLI
 MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
+MVN="${MAVEN_HOME}/bin/mvn"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup or run maven build tool."

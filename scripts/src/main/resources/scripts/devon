@@ -97,6 +97,7 @@ then
 fi
 
 # proceed with CLI
+result=0
 if [ -n "${1}" ]
 then
   command="${1}"
@@ -140,10 +141,15 @@ then
     if [ -n "${args}" ]
     then
       "${DEVON_IDE_HOME}/scripts/command/${command}" ${args}
+      result=${?}
     else
       "${DEVON_IDE_HOME}/scripts/command/${command}" ${@}
+      result=${?}
     fi
   else
     echo "Unknown command ${command}"
+    result=255
   fi  
 fi
+return ${result} 2>/dev/null
+exit ${result}

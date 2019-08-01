@@ -11,8 +11,9 @@ for testpath in "$(dirname $0)"/test-*
 do
   testcase="${testpath/*\//}"
   echo "Running test #${total}: ${testcase}"
-  mkdir "${testcase}"
+  mkdir -p "${testcase}/conf"
   cd "${testcase}"
+  echo "export M2_REPO=~/.m2/repository" > "conf/devon.properties"
   "${testpath}"
   result=${?}
   if [ "${result}" == 0 ]
