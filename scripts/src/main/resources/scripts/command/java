@@ -46,6 +46,7 @@ function doSetup() {
 #$@ args (see help)
 function doMigrate() {
   doRunConfigurator com.devonfw.tools.ide.migrator.Migrator ${@}
+  exit ${?}
 }
 
 # CLI

@@ -56,33 +56,39 @@ public class MigrationImpl implements Migration {
    *        However, if that fails it may be provided manually.
    * @param singleStep - {@code true} to only migrate to the next version, {@code false} otherwise (migrate to latest
    *        version).
-   * @throws Exception on error.
+   * @return the status code with {@code 0} for success and anything else for an error.
    */
-  public void migrate(File projectFolder, VersionIdentifier startVersion, boolean singleStep) throws Exception {
+  public int migrate(File projectFolder, VersionIdentifier startVersion, boolean singleStep) {
 
     if (startVersion == null) {
-      startVersion = this.versionDetector.detectVersion(projectFolder);
+      try {
+        startVersion = this.versionDetector.detectVersion(projectFolder);
+      } catch (Exception e) {
+        Output.get().err("Failed to determine start version for migration!", e.getMessage());
+        e.printStackTrace();
+        return -1;
+      }
     }
     int migrations = 0;
     VersionIdentifier version = startVersion;
     while (true) {
       MigrationStep step = this.fromVersion2MigrationStepMap.get(version);
       if (step == null) {
-        complete(migrations, startVersion, version);
-        return;
+        return complete(migrations, startVersion, version);
       } else {
         try {
           Output.get().banner("Migrating from version %s to %s ...", step.getFrom().toString(),
               step.getTo().toString());
           step.migrate(projectFolder);
           if (singleStep) {
-            return;
+            return 0;
           }
           migrations++;
         } catch (Exception e) {
           Output.get().err("Migration from %s to %s failed: %s", step.getFrom().toString(), step.getTo().toString(),
               e.getMessage());
           e.printStackTrace();
+          return -1;
         }
         version = step.getTo();
       }
@@ -94,14 +100,16 @@ public class MigrationImpl implements Migration {
    * @param startVersion the initial {@link VersionIdentifier} before the migration.
    * @param endVersion the final {@link VersionIdentifier} after the migration.
    */
-  private void complete(int migrations, VersionIdentifier startVersion, VersionIdentifier endVersion) {
+  private int complete(int migrations, VersionIdentifier startVersion, VersionIdentifier endVersion) {
 
     if (migrations == 0) {
       Output.get().warn("Project is already on version %s. No migrations available to update.",
           startVersion.toString());
+      return 1;
     } else {
       Output.get().banner("Successfully applied %s migrations to migrate project from version %s to %s.",
           Integer.toString(migrations), startVersion.toString(), endVersion.toString());
+      return 0;
     }
   }
 
