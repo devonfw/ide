@@ -10,6 +10,48 @@ function doExtract() {
   fi
 }
 
+function doGetVersion() {
+  cat pom.xml | grep "\(devon\|oasp\)4j.version>" | sed "s/.*>\([^<]*\)<.*/\1/"
+}
+
+echo "JAVA_VERSION=8u222b10" >> "conf/devon.properties"
 doExtract ../../devon-ide-scripts-*.tar.gz
-./setup "-"
+./setup "-" || exit 1
+CLI="${PWD}/scripts/devon"
+cd workspaces/main
+"${CLI}" java create com.example.demoapp
+cd demoapp
+#"${CLI}" build
+DEVON4J_VERSION="$(doGetVersion)"
+cd ..
+"${CLI}" mvn archetype:generate -DarchetypeGroupId=io.oasp.java.templates -DarchetypeArtifactId=oasp4j-template-server -DarchetypeVersion=2.6.0 -Dpackage=com.example -DgroupId=com.example.legacyapp -DartifactId=legacyapp -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false
+cd legacyapp
+OLD_VERSION="undefined"
+NEW_VERSION="$(doGetVersion)"
+status=0
+while [ "${status}" = 0 ]
+do
+  OLD_VERSION="${NEW_VERSION}"
+  "${CLI}" java migrate single
+  status=${?}
+  NEW_VERSION="$(doGetVersion)"
+  if [ "${status}" = 0 ]
+  then
+    #"${CLI}" build
+    result=${?}
+    #if [ "${result}" != 0 ]
+    #then
+    #  echo "Failed migration at ${NEW_VERSION} (from ${OLD_VERSION}) with exit code ${result}"
+    #  exit ${result}
+    #fi
+  else
+    if [ "${NEW_VERSION}" = "${DEVON4J_VERSION}" ]
+    then
+      echo "Successfully upgraded to devon4j ${DEVON4J_VERSION}."
+    else
+      echo "Failed to properly upgrade to devon4j ${DEVON4J_VERSION} - final version is ${NEW_VERSION}"
+      exit 1
+    fi
+  fi
+done
 exit ${?}
