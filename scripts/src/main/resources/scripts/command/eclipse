@@ -164,7 +164,8 @@ then
   echo "Manage Eclipse IDE and workspace."
   echo
   echo "Arguments:"
-  echo " setup                    setup Eclipse (install and verify)"
+  echo " --all                    if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                    setup Eclipse (install or update)"
   echo " add-plugin «id» [«url»]  install an additional plugin"
   echo " run | start              launch Eclipse IDE (default if no argument is given)"
   echo " ws-up[date]              update eclipse workspace"
@@ -178,6 +179,11 @@ if [ -z "${1}" ]
 then
   doSetup
   doStartEclipse
+fi
+if [ "${1}" = "--all" ]
+then
+  shift
+  doDevonCommandAllWorkspaces eclipse ${@}
 fi
 while [ -n "${1}" ]
 do

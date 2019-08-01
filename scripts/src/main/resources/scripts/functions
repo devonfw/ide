@@ -240,6 +240,23 @@ function doDevonCommand() {
   fi
 }
 
+function doDevonCommandAllWorkspaces() {
+  cd "${DEVON_IDE_HOME}/workspaces"
+  for file in *
+  do
+    if [ -d "${file}" ]
+    then
+      cd "${file}"
+      doEcho "Repeating command ${@} in workspace ${PWD}"
+      "${DEVON_IDE_HOME}/scripts/devon" ${@}
+      cd ..
+    elif [ "${file}" != "readme.txt" ]
+    then
+      doWarning "The workspaces should only contain folder but ${file} is not"
+    fi
+  done
+}
+
 function doDevonCommandAndReturn() {
   if [ -z "${1}" ]
   then

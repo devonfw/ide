@@ -3,19 +3,19 @@ toc::[]
 
 = vscode
 
-The `vscode` commandlet allows to install, configure, and launch https://code.visualstudio.com/[Visual Studio Code].
-To launch VSCode for your current workspace and devon-ide installation simply run:
-`devon vscode`
+The `intellij` commandlet allows to install, configure, and launch https://www.jetbrains.com/idea/[IntelliJ].
+To launch IntelliJ for your current workspace and devon-ide installation simply run:
+`devon intellij`
 
-You may also supply additional arguments as `devon vscode «args»`. These are explained by the following table:
+You may also supply additional arguments as `devon intellij «args»`. These are explained by the following table:
 
-.Usage of `devon vscode`
+.Usage of `devon intellij`
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
 |`--all`         |if provided as first arg then to command will be invoked for each workspace
-|`setup`         |setup VSCode (install or update)
-|`run`           |launch VSCode (default if no argument is given)
+|`setup`         |setup IntelliJ (install or update)
+|`run`           |launch IntelliJ (default if no argument is given)
 |`start`         |same as `run`
 |`ws-up[date]`   |update workspace
 |`ws-re[verse]`  |reverse merge changes from workspace into settings

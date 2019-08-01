@@ -64,6 +64,8 @@ then
   echo "Launch Visual Studio Code and/or manage VSCode workspace."
   echo
   echo "Arguments:"
+  echo " --all                if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                setup VSCode (install or update)"
   echo " run | start          launch VSCode IDE (default if no argument is given)"
   echo " ws-up[date]          update VSCode workspace"
   echo " ws-re[verse]         reverse merge changes from workspace into settings"
@@ -78,6 +80,11 @@ if [ -z "${1}" ]
 then
   doSetup
   doStartVsCode
+fi
+if [ "${1}" = "--all" ]
+then
+  shift
+  doDevonCommandAllWorkspaces vscode ${@}
 fi
 while [ -n "${1}" ]
 do

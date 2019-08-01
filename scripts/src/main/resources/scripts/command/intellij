@@ -71,7 +71,8 @@ then
   echo "Manage IntelliJ IDE and workspace."
   echo
   echo "Arguments:"
-  echo " setup              setup IntelliJ (install and verify)"
+  echo " --all              if provided as first arg then to command will be invoked for each workspace"
+  echo " setup              setup IntelliJ (install or update)"
   echo " run | start        launch IntelliJ IDE (default if no argument is given)"
   echo " ws-up[date]        update IntelliJ workspace"
   echo " ws-re[verse]       reverse merge changes from workspace into settings"
@@ -84,6 +85,11 @@ if [ -z "${1}" ]
 then
   doSetup
   doStartIntellij
+fi
+if [ "${1}" = "--all" ]
+then
+  shift
+  doDevonCommandAllWorkspaces intellij ${@}
 fi
 while [ -n "${1}" ]
 do
