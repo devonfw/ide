@@ -33,7 +33,7 @@ function doResult() {
   then
     doEcho "Succeeded to ${1}"
   else
-    if [ -z "$2" ]
+    if [ -z "${2}" ]
     then
       doFail "Failed to ${1} (internal error missing exit code)"
     else
@@ -463,6 +463,10 @@ ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
 # $2: optional groupId
 # $3: optional artifactId 
 function doMavenArchetype() {
+  if [ -z "${1}" ]
+  then
+    doFail "Missing arguments for doMavenArchetype ${@}"
+  fi
   local target_db_type="h2" #TODO
   local target_package="${1}"
   local target_group_id="${2}"
