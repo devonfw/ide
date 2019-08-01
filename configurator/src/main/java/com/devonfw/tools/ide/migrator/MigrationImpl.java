@@ -105,4 +105,13 @@ public class MigrationImpl implements Migration {
     }
   }
 
+  /**
+   * @param start the {@link VersionIdentifier} to with the current version to start from.
+   * @return the {@link MigrationStep} to migrate to the next version.
+   */
+  public MigrationStep get(VersionIdentifier start) {
+
+    return this.fromVersion2MigrationStepMap.get(start);
+  }
+
 }

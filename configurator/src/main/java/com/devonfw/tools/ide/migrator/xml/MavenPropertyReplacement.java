@@ -41,6 +41,30 @@ public class MavenPropertyReplacement extends AbstractXmlMigration {
     this.newValue = newValue;
   }
 
+  /**
+   * @return propertyName
+   */
+  public String getPropertyName() {
+
+    return this.propertyName;
+  }
+
+  /**
+   * @return newPropertyName
+   */
+  public String getNewPropertyName() {
+
+    return this.newPropertyName;
+  }
+
+  /**
+   * @return newValue
+   */
+  public String getNewValue() {
+
+    return this.newValue;
+  }
+
   @Override
   public boolean migrateXml(Document xml) throws Exception {
 
