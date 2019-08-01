@@ -10,31 +10,35 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local software_version="${JAVA_VERSION:-11.0.2}"
-    local download_url="https://download.java.net/java/GA/jdk${software_version/\.*/}/9/GPL/openjdk-${software_version}"
+    local software_version="${JAVA_VERSION:-11.0.4_11}"
+    local major_version="${software_version/\.*/}"
+    local jdk_folder="jdk-${software_version/_/%2B}"
+    if [ "${major_version}" = "8" ]
+    then
+      software_version="${software_version/_/b}"
+      local jdk_folder="jdk${software_version/b/-b}"
+    fi
+    local os
+    local extension=".tar.gz"
     local software_dir="${JAVA_HOME}"
     if doIsMacOs
     then
+      os="mac"
       software_dir="${DEVON_IDE_HOME}/software/jdk"
-      download_url="${download_url}_osx-x64_bin.tar.gz"
     elif doIsWindows
     then
-      download_url="${download_url}_windows-x64_bin.zip"
+      os="windows"
+      extension=".zip"
     else
-      download_url="${download_url}_linux-x64_bin.tar.gz"
+      os="linux"
     fi
+    local download_url="https://github.com/AdoptOpenJDK/openjdk${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
     doInstall "${software_dir}" "${download_url}" "java" "${software_version}"
-    if [ "${?}" = 0 ]
+    if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
-      if [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-      then
-        if [ ! -d "${JAVA_HOME}" ]
-        then
-          echo "Creating symlink as workaround for Java on MacOS"
-          doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
-        fi
-        doExtendPath "${JAVA_HOME}"
-      fi
+      echo "Creating symlink as workaround for Java on MacOS"
+      doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
+      doExtendPath "${JAVA_HOME}"
     fi
   fi
   if [ -n "${1}" ]
