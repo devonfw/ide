@@ -353,6 +353,9 @@ function doExtract() {
   elif [ "${ext}" = ".tar" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
+  elif [ "${ext}" = ".xz" ]
+  then
+    doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".tgz" ]
   then
     doRunCommand "tar xfz '${1}' -C '${target_dir}'"
