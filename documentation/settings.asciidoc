@@ -18,11 +18,13 @@ The settings folder (`link:variables.asciidoc[SETTINGS_PATH]`) has to following 
 ----
 /settings
 ├──/devon
-|  ├──conf
-|  |  ├──variables
-|  |  └──variables.bat
-|  ├──variables
-|  └──variables.bat
+|  ├──/conf
+|  |  ├──/.m2
+|  |  |  └──settings.xml
+|  |  ├──/npm
+|  |  |  └──.npmrc
+|  |  └──devon.properties
+|  └──devon.properties
 ├──/eclipse
 |  ├──/workspace
 |  |  ├──/setup
