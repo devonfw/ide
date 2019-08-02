@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
@@ -23,9 +24,9 @@ function doSetup() {
     mkdir -p "${JENKINS_HOME}"
     doRunCommand "mv ~/Downloads/jenkins.war '${JENKINS_HOME}/jenkins.war'"
     local cwd="${PWD}"
-    cd "${JENKINS_HOME}"
+    cd "${JENKINS_HOME}" || exit 255
     doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
-    cd "${cwd}"
+    cd "${cwd}" || exit 255
   fi
   if [ -n "${1}" ]
   then
@@ -42,14 +43,15 @@ function doStart() {
 }
 
 function doJenkinsCli() {
-  echo java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" ${@}
-  java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" ${@}
+  echo java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
+  java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
 }
 
 function doStop() {
   doJenkinsCli shutdown
 }
 
+# shellcheck disable=SC2120
 function doAdd() {
   if [ ! -d .git ]
   then
@@ -60,11 +62,11 @@ function doAdd() {
   then
     doFail "Could not find Jenkinsfile (${JENKINSFILE})."
   fi
-  cat "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@GIT@~file://${PWD}~" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_HOME}/jenkins-cli.jar"  -s http://localhost:${JENKINS_PORT:-9999} -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename ${PWD})"
+  sed "s~@GIT@~file://${PWD}~" "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename "${PWD}")"
 }
 
 function doRemove() {
-  doJenkinsCli delete-job "$(basename ${PWD})"
+  doJenkinsCli delete-job "$(basename "${PWD}")"
 }
 
 # CLI
@@ -97,5 +99,5 @@ elif [ "${1}" = "remove" ]
 then
   doRemove
 else
-  doFail "undefined argument ${@}"
+  doFail "undefined argument ${*}"
 fi

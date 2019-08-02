@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 function doBuild() {
-  doDevonCommand ${@}
+  doDevonCommand "${@}"
 }
 
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
@@ -23,20 +24,18 @@ fi
 
 if [ -f pom.xml ]
 then
-  doBuild mvn ${@}
+  doBuild mvn "${@}"
 elif [ -f build.gradle ]
 then
-  doBuild gradle ${@}
-  #BUILD_OPTS="${BUILD_GRADLE_OPTS:-clean dist}"
+  doBuild gradle "${@}"
 elif [ -f package.json ]
 then
   if [ -f yarn.lock ]
   then
-    doBuild yarn ${@}
+    doBuild yarn "${@}"
   else
-    doBuild npm ${@}
+    doBuild npm "${@}"
   fi
-  #BUILD_OPTS="${BUILD_NPM_OPTS:-build}"
 else
   doFail "Currently not in a buildable project or build system could not be auto-detected"
 fi

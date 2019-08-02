@@ -28,16 +28,17 @@ function load_properties() {
       fi
       if [ -z "${value}" ]
       then
-        unset ${key}
+        unset "${key}"
       else
         if [ "${value:0:1}" != "(" ]
         then
           value=\"${value}\"
         fi
-        eval ${key}=${value}
+        eval "${key}=${value}"
         if [ "${export}" = "true" ]
         then
-          export ${key}
+          # shellcheck disable=SC2086
+          export ${key?}
         fi
       fi
     fi
@@ -48,7 +49,7 @@ function load_properties() {
 DEVON_HOME_DIR=~
 if [ "${OSTYPE}" = "cygwin" ]
 then
-  DEVON_HOME_DIR="$(cygpath ${USERPROFILE})"
+  DEVON_HOME_DIR="$(cygpath "${USERPROFILE}")"
 fi
 export DEVON_HOME_DIR
 # load and setup configuration
@@ -128,6 +129,7 @@ then
     # Load custom configuration of software
     if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
     then
+      # shellcheck disable=SC1090
       source "${SOFTWARE_FOLDER}/ide-config"
     fi
   done

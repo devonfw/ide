@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # CLI
@@ -22,7 +23,7 @@ then
   doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
 fi
 
-if git remote -v | grep -q github.com/${USER}
+if git remote -v | grep -q "github.com/${USER}"
 then
   git remote -v
   doConfirmWarning "You seem to work on a fork. Releases should be done on the original repository!\nWe strongly recommend to abort and rerun on original repository."
@@ -62,7 +63,7 @@ do
   then
     break
   else
-    read -p "Please enter next version: " next_version
+    read -r -p "Please enter next version: " next_version
     echo
   fi
 done
