@@ -124,12 +124,17 @@ public class Migrations {
         .replaceProperty("flyway.version", "5.2.4") //
         .replaceDependency(new VersionIdentifier("org.hibernate.javax.persistence", "hibernate-jpa-2.1-api", null),
             new VersionIdentifier("javax.persistence", "javax.persistence-api", null))
-        .and().java()
-        .replace("import org.dozer.DozerBeanMapper;", "import com.github.dozermapper.core.DozerBeanMapper;")
+        .and().java() //
+        .replace("org.dozer.DozerBeanMapper", "com.github.dozermapper.core.DozerBeanMapper")
         .replace("import org.dozer.Mapper;",
             "import com.github.dozermapper.core.DozerBeanMapperBuilder;\n import com.github.dozermapper.core.Mapper;")
         .replace("return new DozerBeanMapper(beanMappings);",
             "Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles(beanMappings).build();\n return mapper;")//
+        .replace("org.dozer.loader.api.BeanMappingBuilder", "com.github.dozermapper.core.loader.api.BeanMappingBuilder") //
+        .replace("org.dozer.CustomConverter", "com.github.dozermapper.core.CustomConverter") //
+        .replace("org.dozer.MappingException", "com.github.dozermapper.core.MappingException") //
+        .replace("org.dozer.loader.api.FieldsMappingOptions",
+            "com.github.dozermapper.core.loader.api.FieldsMappingOptions") //
         .and().xml("dozer-mapping.xml")
         .replaceNamespace("http://dozer.sourceforge.net", "http://dozermapper.github.io/schema/bean-mapping")
         .replaceNamespace("http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd",
