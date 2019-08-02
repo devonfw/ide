@@ -10,6 +10,7 @@ function doSetup() {
       echo "angluar-cli (ng) is already installed at $(command -v ng)"
     fi
   else
+    doDevonCommand npm setup
     doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"
   fi
 }

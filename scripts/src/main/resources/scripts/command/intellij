@@ -3,6 +3,10 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}"
 
 function doSetup() {
+  if [ -n "${1}" ]
+  then
+    doDevonCommand java setup
+  fi
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
     #mirror="https://mirror.math.princeton.edu"
