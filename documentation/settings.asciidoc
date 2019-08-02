@@ -11,7 +11,7 @@ To test `devon-ide` or for small projects you can also use these default setting
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
 
 == Structure
-The settings folder (`link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
+The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
 
 .File structure of settings
 [source]
@@ -46,7 +46,7 @@ The settings folder (`link:variables.asciidoc[SETTINGS_PATH]`) has to following 
 ----
 
 As you can see the `settings` folder contains sub-folders for tools of the IDE.
-So the `devon` folder contains `variables[.bat]` files for the link:configuration.asciidoc[configuration] of your environment.
+So the `devon` folder contains `devon.properties` files for the link:configuration.asciidoc[configuration] of your environment.
 Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode] the according folders contain the templates to manage the workspace via our link:configurator.asciidoc[configurator].
 
 == Configuration Philosophy
