@@ -66,7 +66,7 @@ public class MigrationStepImpl implements MigrationStep {
     if (name.startsWith(".") && (name.length() > 1)) {
       return true;
     }
-    if (name.equals("node_modules")) {
+    if (name.equals("node_modules") || name.equals("target") || name.equals("eclipse-target")) {
       return true;
     }
     return false;

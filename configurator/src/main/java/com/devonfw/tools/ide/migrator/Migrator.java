@@ -51,6 +51,8 @@ public class Migrator {
         arg = arguments.next();
         if (arg.startsWith("oasp4j:")) {
           startVersion = VersionIdentifier.ofOasp4j(arg.substring(7));
+        } else if (arg.startsWith("devon4j:")) {
+          startVersion = VersionIdentifier.ofDevon4j(arg.substring(8));
         } else if (arg.startsWith("2.")) {
           startVersion = VersionIdentifier.ofOasp4j(arg);
         } else {
