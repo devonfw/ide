@@ -130,7 +130,9 @@ public class Migrations {
             "import com.github.dozermapper.core.DozerBeanMapperBuilder;\n import com.github.dozermapper.core.Mapper;")
         .replace("return new DozerBeanMapper(beanMappings);",
             "Mapper mapper = DozerBeanMapperBuilder.create().withMappingFiles(beanMappings).build();\n return mapper;")//
-        .replace("org.dozer.loader.api.BeanMappingBuilder", "com.github.dozermapper.core.BeanMappingBuilder") //
+        .replace("org.dozer.loader.api.BeanMappingBuilder", "com.github.dozermapper.core.loader.api.BeanMappingBuilder") //
+        .replace("org.dozer.CustomConverter", "com.github.dozermapper.core.CustomConverter") //
+        .replace("org.dozer.MappingException", "com.github.dozermapper.core.MappingException") //
         .replace("org.dozer.loader.api.FieldsMappingOptions",
             "com.github.dozermapper.core.loader.api.FieldsMappingOptions") //
         .and().xml("dozer-mapping.xml")
