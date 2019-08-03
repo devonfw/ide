@@ -94,7 +94,8 @@ then
   doStop
 elif [ "${1}" = "add" ]
 then
-  doAdd
+  shift
+  doAdd "${@}"
 elif [ "${1}" = "remove" ]
 then
   doRemove
