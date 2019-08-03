@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
@@ -50,7 +51,7 @@ function doSetup() {
 
 #$@ args (see help)
 function doMigrate() {
-  doRunConfigurator com.devonfw.tools.ide.migrator.Migrator ${@}
+  doRunConfigurator com.devonfw.tools.ide.migrator.Migrator "${@}"
   exit ${?}
 }
 
@@ -76,11 +77,11 @@ elif [ "${1}" = "create" ]
 then
   doSetup
   shift
-  doMavenArchetype ${@}
+  doMavenArchetype "${@}"
 elif [ "${1}" = "migrate" ]
 then
   shift
-  doMigrate ${@}
+  doMigrate "${@}"
 else
   doFail "Unknown argument ${1}"
 fi

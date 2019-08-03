@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-cd "${DEVON_IDE_HOME}"
+cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
@@ -48,7 +49,7 @@ function doConfigureVsCode() {
   fi
   if [ -n "${mode}" ]
   then
-    doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" ${mode}
+    doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" "${mode}"
   fi
 }
 
@@ -84,7 +85,7 @@ fi
 if [ "${1}" = "--all" ]
 then
   shift
-  doDevonCommandAllWorkspaces vscode ${@}
+  doDevonCommandAllWorkspaces vscode "${@}"
 fi
 while [ -n "${1}" ]
 do
@@ -94,13 +95,13 @@ do
     doStartVsCode
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
-    configurator_mode="-u"
+    doConfigureVsCode -u
   elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
   then
-    configurator_mode="-i"
+    doConfigureVsCode -i
   elif [ "${1}" = "ws-reverse-add" ]
   then
-    configurator_mode="-x"
+    doConfigureVsCode -x
   elif [ "${1}" = "setup" ]
   then
     doSetup setup

@@ -4,6 +4,7 @@
 
 if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
 then
+  # shellcheck disable=SC2007,SC2154
   echo "$[devon_ide_version]"
   return 0 2>/dev/null
   exit 0
@@ -40,13 +41,13 @@ do
     then
       echo "devon-ide has environment variables have been set for ${PWD} (workspace ${WORKSPACE})"
     fi
-    cd "${L_PWD}"
+    cd "${L_PWD}" || exit 255
     break
   fi
   L_LINKDIR="$(readlink "${PWD}")"
   if [ "${?}" = 0 ]
   then
-    cd "${L_LINKDIR}"
+    cd "${L_LINKDIR}" || exit 255
     L_BASEDIR="${PWD}"
   else
     cd ..
@@ -54,7 +55,7 @@ do
   if [ "${PWD}" = "/" ]
   then
     echo "You are not inside a devon IDE installation: ${L_PWD}"
-    cd "${L_PWD}"
+    cd "${L_PWD}" || exit 255
     break
   fi
 done
@@ -72,7 +73,7 @@ then
   then
     touch ~/.bashrc
   fi
-  if ! grep -q "~/.devon/devon" ~/.bashrc
+  if ! grep -q "alias devon=" ~/.bashrc
   then
     echo "Installing devon alias to your .bashrc"
     echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.bashrc
@@ -81,7 +82,7 @@ then
   then
     touch ~/.zshrc
   fi
-  if ! grep -q "~/.devon/devon" ~/.zshrc
+  if ! grep -q "alias devon=" ~/.zshrc
   then
     echo "Installing devon alias to your .zshrc"
     echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.zshrc
@@ -109,13 +110,14 @@ then
   args=
   if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
   then
-    args=(${command})
+    args="${command}"
     command="help"
   fi
   if [ -z "${DEVON_IDE_HOME}" ]
   then
     if [ -f ~/.devon/home ]
     then
+      # shellcheck disable=SC1090
       source ~/.devon/home
     fi
   fi
@@ -140,10 +142,10 @@ then
     fi
     if [ -n "${args}" ]
     then
-      "${DEVON_IDE_HOME}/scripts/command/${command}" ${args}
+      "${DEVON_IDE_HOME}/scripts/command/${command}" "${args}"
       result=${?}
     else
-      "${DEVON_IDE_HOME}/scripts/command/${command}" ${@}
+      "${DEVON_IDE_HOME}/scripts/command/${command}" "${@}"
       result=${?}
     fi
   else

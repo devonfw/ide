@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
@@ -17,7 +18,9 @@ function doSetup() {
 function doGetProjectVersion() {
   if [ -f package.json ]
   then
-    local version_line="$(cat package.json | grep "\"version\"")" || doFail "Could not determine your version! Please check your package.json."
+    local version_line
+    version_line="$(grep "\"version\"" package.json)" || doFail "Could not determine your version! Please check your package.json."
+    # shellcheck disable=SC2001
     echo "${version_line}" | sed "s/.*:[ ]*\"\([^\"]*\)\".*/\1/"
   else
     doFail "No package.json - not an npm project."
@@ -28,7 +31,7 @@ function doSetProjectVersion() {
   if [ -f package.json ]
   then
     cp package.json package.json.bak
-    cat package.json.bak | sed "s/\"version\"\:[ ]*\"[^\"]*\"/\"version\": \"${1}\"/" > package.json
+    sed "s/\"version\"\:[ ]*\"[^\"]*\"/\"version\": \"${1}\"/" package.json.bak > package.json
     rm package.json.bak
   else
     doFail "No package.json - not an npm project."
@@ -46,16 +49,16 @@ function doCheckTopLevelProject() {
 function doRunBuild() {
   doSetup
   local extra_arg=""
-  if [ ! -d node_modules ] && [[ "${@}" != *install* ]]
+  if [ ! -d node_modules ] && [[ "${*}" != *install* ]]
   then
     extra_arg="install"
   fi
-  doEcho "Running: npm ${extra_arg} ${@}"
+  doEcho "Running: npm ${extra_arg} ${*}"
   if doIsQuiet
   then
-    npm --quiet ${extra_arg} ${@}
+    npm --quiet ${extra_arg} "${@}"
   else
-    npm ${extra_arg} ${@}
+    npm ${extra_arg} "${@}"
   fi
 }
 
@@ -74,6 +77,7 @@ then
 fi
 if [ -z "${1}" ]
 then
+  # shellcheck disable=SC2086
   doRunBuild ${NPM_BUILD_OPTS:-build}
 elif [ "${1}" = "setup" ]
 then
@@ -85,16 +89,16 @@ else
   elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
   then
     shift
-    doSetProjectVersion ${@}
+    doSetProjectVersion "${@}"
   elif [ "${1}" = "check-top-level-project" ]
   then
     shift
-    doCheckTopLevelProject ${@}
+    doCheckTopLevelProject "${@}"
   elif [ "${1}" = "release" ]
   then
-    # TODO
+    # shellcheck disable=SC2086
     doRunBuild ${NPM_RELEASE_OPTS:-release}
   else
-    doRunBuild ${@}
+    doRunBuild "${@}"
   fi
 fi

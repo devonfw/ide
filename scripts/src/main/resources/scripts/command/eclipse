@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-cd "${DEVON_IDE_HOME}"
+cd "${DEVON_IDE_HOME}" || exit 255
 
 # $1: plugin URL (update site)
 # $2: plugin feature group ID
 function doInstallEclipsePlugin() {
   local plugin="${2/\.feature\.group*/}"
   echo "Installing eclipse plugin ${plugin} from ${1}"
-  ${ECLIPSE_HOME}/eclipse -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${1}" -installIU "${2}" -vmargs ${ECLIPSE_VMARGS}
+  # shellcheck disable=SC2086
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${1}" -installIU "${2}" -vmargs ${ECLIPSE_VMARGS}
   result=${?}
   if [ "${result}" != 0 ]
   then
@@ -28,9 +30,7 @@ function doSetup() {
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
     local software_version="${ECLIPSE_VERSION:-2019-06}"
-    local eclipse_edition=java
-    local extract_folder=
-    #eclipse_edition=jee
+    local eclipse_edition=java #jee
     local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
     if doIsMacOs
     then
@@ -159,7 +159,8 @@ function doAddPlugin() {
 function doStartEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse..."
-  eclipse -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation ${WORKSPACE} -vmargs ${ECLIPSE_VMARGS} &
+  # shellcheck disable=SC2086
+  "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
 }
 
 # CLI
@@ -187,7 +188,7 @@ fi
 if [ "${1}" = "--all" ]
 then
   shift
-  doDevonCommandAllWorkspaces eclipse ${@}
+  doDevonCommandAllWorkspaces eclipse "${@}"
 fi
 while [ -n "${1}" ]
 do
@@ -214,7 +215,7 @@ do
   elif [ "${1}" = "add-plugin" ]
   then
     shift
-    doAddPlugin ${@}
+    doAddPlugin "${@}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"

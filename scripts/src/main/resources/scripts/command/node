@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
@@ -38,9 +39,9 @@ function doRun() {
   doEcho "Running: node ${*}"
   if doIsQuiet
   then
-    node ${*} > /dev/null
+    node "${*}" > /dev/null
   else
-    node ${*}
+    node "${*}"
   fi
 }
 
@@ -69,5 +70,5 @@ if [ "${1}" = "setup" ]
 then
   doSetup setup
 else
-  doRun ${*}
+  doRun "${*}"
 fi

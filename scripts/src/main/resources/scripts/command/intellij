@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-cd "${DEVON_IDE_HOME}"
+cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   if [ -n "${1}" ]
@@ -9,11 +10,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    #mirror="https://mirror.math.princeton.edu"
-    mirror="https://ftp.osuosl.org"
     software_version="${INTELLIJ_VERSION:-2019.2}"
-    eclipse_edition=java
-    #eclipse_edition=jee
     if doIsMacOs
     then
       software_type="dmg"
@@ -23,6 +20,8 @@ function doSetup() {
     else
       software_type="tar.gz"
     fi
+    #mirror="https://mirror.math.princeton.edu"
+    #mirror="https://ftp.osuosl.org"
     download_url="https://download-cf.jetbrains.com/idea/ideaIC-${software_version}.${software_type}"
     doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}"
     if [ "${?}" = 0 ] && doIsMacOs
@@ -64,9 +63,14 @@ function doConfigureIntellij() {
 }
 
 function doStartIntellij() {
-  doConfigureIntellij
+  doConfigureIntellij "-u"
   echo "launching IntelliJ..."
-  "${IDEA_HOME}/idea" &
+  if doIsMacOs
+  then
+    open "${IDEA_HOME}/idea" --args "${@}"
+  else
+    "${IDEA_HOME}/idea" "${@}" &
+  fi
 }
 
 # CLI
@@ -93,22 +97,23 @@ fi
 if [ "${1}" = "--all" ]
 then
   shift
-  doDevonCommandAllWorkspaces intellij ${@}
+  doDevonCommandAllWorkspaces intellij "${@}"
 fi
 while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    doStartIntellij
+    shift
+    doStartIntellij "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
-    doConfigureEclipse -u
+    doConfigureEclipse "-u"
   elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
   then
-    doConfigureEclipse -i
+    doConfigureEclipse "-i"
   elif [ "${1}" = "ws-reverse-add" ]
   then
-    doConfigureEclipse -x
+    doConfigureEclipse "-x"
   elif [ "${1}" = "setup" ]
   then
     doSetup setup

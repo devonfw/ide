@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
@@ -10,7 +11,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
     local software_version=${MAVEN_VERSION:-3.6.1}
-    local download_url=http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz
+    local download_url="http://ftp.fau.de/apache/maven/maven-3/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz"
     doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" "" "all"
   fi
   if [ -n "${1}" ]
@@ -25,8 +26,8 @@ function doSetup() {
       if [ ! -e "${M2_DIR}/settings-security.xml" ]
       then
         MASTER_PASSWORD="$(head -c 20 /dev/random | base64)"
-        MASTER_PASSWORD="$("${MVN}" --encrypt-master-password ${MASTER_PASSWORD})"
-        echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > ${M2_DIR}/settings-security.xml
+        MASTER_PASSWORD="$("${MVN}" --encrypt-master-password "${MASTER_PASSWORD}")"
+        echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > "${M2_DIR}/settings-security.xml"
         echo "Successfully created ${M2_DIR}/settings-security.xml"
         MASTER_PASSWORD=
       fi
@@ -42,26 +43,29 @@ function doSetup() {
 # $@: optional maven arguments
 function doGetProjectVersion() {
   doSetup
-  local maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+  local maven_project_version
+  maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
   if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     local cwd="${PWD}"
-    for pom in $(find . -name "pom.xml")
+    local poms
+    poms="$(find . -name "pom.xml")"
+    for pom in ${poms}
     do
-      cd "$(dirname ${pom})"
+      cd "$(dirname "${pom}")" || exit 255
       maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
       if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
       then
         break;
       fi
     done
-    cd "${cwd}"
+    cd "${cwd}" || exit 255
   fi
   if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
   then
     doFail "Cound not determine project version at ${PWD} - got version output:\n${maven_project_version}"
   fi
-  echo ${maven_project_version}
+  echo "${maven_project_version}"
 }
 
 # $1: new version
@@ -81,7 +85,8 @@ function doSetProjectVersion() {
   if [ -e ".mvn/maven.config" ]
   then
     # https://maven.apache.org/maven-ci-friendly.html
-    local maven_config="$(cat .mvn/maven.config)"
+    local maven_config
+    maven_config="$(cat .mvn/maven.config)"
     local current_revision="${2/-SNAPSHOT/}"
     if [ "${maven_config/${current_revision}/}" = "${maven_config}" ]
     then
@@ -89,14 +94,12 @@ function doSetProjectVersion() {
     fi
     local revision="${1/-SNAPSHOT/}"
     local changelist=""
-    local mvn_version_arg=""
-    if [ "${revision}" = "${1}" ]
+    if [ "${revision}" != "${1}" ]
     then
-      mvn_version_arg="-Dchangelist="
-    else
       changelist="-SNAPSHOT"
     fi
-    local updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
+    local updated_config
+    updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
     if [ "${updated_config}" != "${maven_config}" ]
     then
       echo "${updated_config}" > .mvn/maven.config
@@ -104,16 +107,17 @@ function doSetProjectVersion() {
       return
     fi
   fi
-  local module_list="$('${MAVEN_HOME/mvn' -q exec:exec -Dexec.executable=pwd)"
+  local module_list
+  module_list="$("${MVN}" -q exec:exec -Dexec.executable=pwd)"
   if [ "${?}" = 0 ]
   then
     local cwd="${PWD}"
     for folder in ${module_list}
     do
-      cd "${folder}"
-      doSetPomVersion ${@}
+      cd "${folder}" || exit 255
+      doSetPomVersion "${@}"
     done
-    cd "${cwd}"
+    cd "${cwd}" || exit 255
   else
     doFail "${module_list}"
   fi
@@ -132,7 +136,9 @@ function doSetPomVersion() {
     fi
   fi
   doSetup
-  local maven_project_version="$("${MVN}" -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
+  local maven_project_version
+  # shellcheck disable=SC2016
+  maven_project_version="$("${MVN}" -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
   if [ "${maven_project_version}" = "${1}" ] 
   then
     echo "No changes needed for ${PWD}/pom.xml"
@@ -143,7 +149,8 @@ function doSetPomVersion() {
     doEcho "Creating backup of ${PWD}/pom.xml"
     cp pom.xml pom.xml.bak
   fi
-  local pom_elements="$(cat pom.xml.bak | grep ${2})"
+  local pom_elements
+  pom_elements="$(grep "${2}" pom.xml.bak)"
   if [ "${?}" != 0 ]
   then
     doFail "Version ${2} not found in POM ${PWD}/pom.xml"
@@ -153,7 +160,7 @@ function doSetPomVersion() {
   then
     doConfirmWarning "Multiple matches of version in your pom.xml:\n${pom_elements}"
   fi
-  cat pom.xml.bak | sed "s/${2}/${1}/g" > pom.xml
+  sed "s/${2}/${1}/g" pom.xml.bak > pom.xml
   if [ "${3}" != "keepBackup" ] && [ "${3}" != "cleanKeepBackup" ]
   then
     doEcho "Cleaning backup ${PWD}/pom.xml.bak"
@@ -178,7 +185,7 @@ function doCheckTopLevelProject() {
       then
         relative_path=""
       else
-        relative_path="$(echo $relativePath | sed 's/.*\<relativePath>\(.*\)\<\/relativePath>/\1/')"
+        relative_path="$(echo "${relative_path}" | sed 's/.*\<relativePath>\(.*\)\<\/relativePath>/\1/')"
       fi
     else
       relative_path="../pom.xml"
@@ -206,13 +213,13 @@ function doRunBuild() {
   else
     doSetup
   fi
-  doEcho "Running: ${maven_cmd} ${@}"
+  doEcho "Running: ${maven_cmd} ${*}"
   if doIsQuiet
   then
-    "${maven_cmd}" -q ${@}
+    "${maven_cmd}" -q "${@}"
     exit ${?}
   else
-    "${maven_cmd}" ${@}
+    "${maven_cmd}" "${@}"
     exit ${?}
   fi
 }
@@ -236,6 +243,7 @@ then
   echo "Options:"
 elif [ -z "${1}" ]
 then
+  # shellcheck disable=SC2086
   doRunBuild ${MVN_BUILD_OPTS:-clean install}
 elif [ "${1}" = "setup" ]
 then
@@ -246,15 +254,17 @@ then
 elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
 then
   shift
-  doSetProjectVersion ${@}
+  doSetProjectVersion "${@}"
 elif [ "${1}" = "check-top-level-project" ]
 then
   shift
-  doCheckTopLevelProject ${@}
+  doCheckTopLevelProject "${@}"
 elif [ "${1}" = "release" ]
 then
-  export GPG_TTY=$(tty)
+  GPG_TTY=$(tty)
+  export GPG_TTY
+  # shellcheck disable=SC2086
   doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}
 else
-  doRunBuild ${@}
+  doRunBuild "${@}"
 fi
