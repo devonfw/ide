@@ -7,9 +7,6 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${NODE_HOME}" ]
   then
     local software_version="${NODE_VERSION:-v10.16.0}"
-    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-win-x64.zip
-    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-darwin-x64.tar.gz
-    #https://nodejs.org/dist/v10.16.0/node-v10.16.0-linux-x64.tar.xz
     local download_url="https://nodejs.org/dist/${software_version}/node-${software_version}"
     local software_dir="${NODE_HOME}"
     if doIsMacOs
