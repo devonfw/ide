@@ -329,36 +329,14 @@ function doExtract() {
     target_dir="${target_dir}/${2}"
   fi
   mkdir -p "${target_dir}"
-  local ext=${filename/*\./.}
-  if [ "${ext}" = ".gz" ]
-  then
-    local pre_ext=${filename/\.gz/}
-    pre_ext=${pre_ext/*\./.}
-    if [ "${pre_ext}" == ".tar" ]
-    then
-      ext=".tgz"
-    fi
-  elif [ "${ext}" = ".bz2" ]
-  then
-    local pre_ext=${filename/\.gz/}
-    pre_ext=${pre_ext/*\./.}
-    if [ "${pre_ext}" == ".tar" ]
-    then
-      ext=".tbz2"
-    fi    
-  fi
-  if [ "${ext}" = ".zip" ]
-  then
-    doRunCommand "unzip -q '${1}' -d '${target_dir}'"
-  elif [ "${ext}" = ".tar" ]
+  local ext="${filename/*\./.}"
+  local filename_base="${filename:0:(${#filename}-${#ext})}"
+  if [ "${filename_base/*\./.}" = ".tar" ] || [ "${ext}" = ".tar" ] || [ "${ext}" = ".tgz" ] || [ "${ext}" = ".tbz2" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
-  elif [ "${ext}" = ".tgz" ]
+  elif [ "${ext}" = ".zip" ]
   then
-    doRunCommand "tar xfz '${1}' -C '${target_dir}'"
-  elif [ "${ext}" = ".tbz2" ]
-  then
-    doRunCommand "tar xfj '${1}' -C '${target_dir}'"
+    doRunCommand "unzip -q '${1}' -d '${target_dir}'"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"

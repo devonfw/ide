@@ -39,7 +39,7 @@ function doSetup() {
     if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
       echo "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "ln -s 'jdk/Contents/Home' '${JAVA_HOME}'"
+      doRunCommand "ln -sf 'jdk/Contents/Home' '${JAVA_HOME}'"
       doExtendPath "${JAVA_HOME}"
     fi
   fi

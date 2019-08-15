@@ -16,7 +16,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ]
   then
-    doRunCommand "gradle -v" "verify installation of gradle"
+    doRunCommand "'${GRADLE}' -v" "verify installation of gradle"
   fi
 }
 
@@ -49,7 +49,7 @@ function doCheckTopLevelProject() {
 }
 
 function doRunBuild() {
-  local gradle_cmd="gradle"
+  local gradle_cmd="${GRADLE}"
   if [ -x gradlew ]
   then
     gradle_cmd="./gradlew"
@@ -59,9 +59,9 @@ function doRunBuild() {
   doEcho "Running: ${gradle_cmd} ${*}"
   if doIsQuiet
   then
-    ${gradle_cmd} -q "${@}"
+    "${gradle_cmd}" -q "${@}"
   else
-    ${gradle_cmd} "${@}"
+    "${gradle_cmd}" "${@}"
   fi
 }
 
@@ -83,6 +83,7 @@ then
   exit
 fi
 GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
+GRADLE="${GRADLE_HOME}/bin/gradle"
 if [ -z "${1}" ]
 then
   # shellcheck disable=SC2086
