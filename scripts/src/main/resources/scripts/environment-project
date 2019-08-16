@@ -59,7 +59,7 @@ load_properties "${DEVON_IDE_HOME}/devon.properties"
 # copy defaults
 if [ -d "${SETTINGS_PATH}" ]
 then
-  load_properties "${SETTINGS_PATH}/devon/devon.properties"
+  load_properties "${SETTINGS_PATH}/devon.properties"
 elif [ "${1}" != "ide" ] || [ "${2}" != "setup" ]
 then
   echo
