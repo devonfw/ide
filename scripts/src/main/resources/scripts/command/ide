@@ -42,14 +42,12 @@ function doUpdateSettings() {
     fi
     if [ "${SETTINGS_URL}" == "-" ]
     then
-      SETTINGS_URL="${DEVON_IDE_REPO_URL}/devon-ide-settings"
-      doUpgradeMavenArtifact "${SETTINGS_PATH}" "${DEVON_IDE_REPO_URL}" "devon-ide-settings" "${target_version}" ".zip"
-    else
-      doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
+      SETTINGS_URL="https://github.com/devonfw/devon-ide-settings.git"
     fi
-    if [ ! -d "${SETTINGS_PATH}" ]
+    doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
+    if [ ! -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
     then
-      doFail "Installation of settings failed!"
+      doFail "Installation of settings failed!\nFile not found: ${SETTINGS_PATH}/devon/conf/devon.properties"
     fi
     if [ ! -d "${SETTINGS_PATH}/.git" ]
     then
