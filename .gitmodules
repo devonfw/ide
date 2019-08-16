@@ -1,0 +1,4 @@
+[submodule "devon-ide-settings"]
+	path = settings/src/main/settings
+	url = https://github.com/devonfw/devon-ide-settings.git
+	branch = master
