@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><archetypeCatalogs><catalog type="system" id="nexusIndexer" enabled="true"/><catalog type="system" id="internal" enabled="true"/><catalog type="system" id="defaultLocal" enabled="true"/><catalog type="local" location="${client.env.home}/${SETTINGS_PATH}/eclipse/archetype-catalog.xml" description="Devonfw" enabled="true"/></archetypeCatalogs>
