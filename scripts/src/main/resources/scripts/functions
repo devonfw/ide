@@ -584,7 +584,7 @@ function doInstall() {
     doFail "missing arguments for doInstall: ${@}"
   fi
   local result=0
-  if [ "${download_url/*\.//.}" = ".git" ]
+  if [ "${download_url/*\./.}" = ".git" ]
   then
     doGitPullOrClone "${target_path}" "${download_url}"
     return
