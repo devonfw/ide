@@ -454,31 +454,119 @@ function doMavenGetLatestVersion() {
 ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
 ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
 
+# ${1}-${n-1}: array
+# ${n}: prefix to check if array contains element starting with
+function doArrayContainsItemWithPrefix() {
+  local n
+  local element
+  n=${#}
+  element="${!n}"
+  for ((i=1; i < ${#}; i++)) {
+    if [[ "${!i}" == ${element}* ]]
+    then
+      return 0
+    fi
+  }
+  return 1
+}
+
 # $1: java package
 # $2: optional groupId
 # $3: optional artifactId 
 function doMavenArchetype() {
   if [ -z "${1}" ]
   then
-    doFail "Missing arguments for doMavenArchetype ${@}"
+    doFail "Missing arguments for doMavenArchetype ${*}"
   fi
-  local target_db_type="h2" #TODO
-  local target_package="${1}"
-  local target_group_id="${2}"
-  if [ -z "${target_group_id}" ]
+  local old_args
+  old_args="${*}"
+  local target_package
+  local target_group_id
+  local target_artifact_id
+  declare -a target_args
+  while [ -n "${1}" ]
+  do
+    if [ "${1:0:1}" = "-" ]
+    then
+      target_args+=("${1}")
+    else
+      if [ -z "${target_package}" ]
+      then
+        target_package="${1}"
+      elif [ -z "${target_group_id}" ]
+      then
+        target_group_id="${1}"
+      elif [ -z "${target_artifact_id}" ]
+      then
+        target_artifact_id="${1}"
+      else
+        doFail "Too many args: ${*}"
+      fi
+    fi
+    shift
+  done
+  if [ -n "${target_package}" ]
   then
-    target_group_id="${target_package}"
+    # package
+    if doArrayContainsItemWithPrefix ${target_args[@]} "-Dpackage="
+    then
+      doFail "Duplicate package for archetype: ${old_args}"
+    else
+      target_args+=("-Dpackage=${target_package}")
+    fi
+    # artifactId
+    if doArrayContainsItemWithPrefix ${target_args[@]} "-DartifactId="
+    then
+      if [ -n "${target_artifact_id}" ]
+      then
+        doFail "Duplicate artifactId for archetype: ${old_args}"
+      fi
+    else
+      if [ -z "${target_artifact_id}" ]
+      then
+        target_artifact_id="${target_package/*\./}"
+      fi
+      target_args+=("-DartifactId=${target_artifact_id}")
+    fi
+    # groupId
+    if doArrayContainsItemWithPrefix ${target_args[@]} "-DgroupId="
+    then
+      if [ -n "${target_group_id}" ]
+      then
+        doFail "Duplicate groupId for archetype: ${old_args}"
+      fi
+    else
+      if [ -z "${target_group_id}" ]
+      then
+        local artifact_id="${target_package/*\./}"
+        if [ "$artifact_id" = "${target_package}" ]
+        then
+          target_group_id="${target_package}"
+        else
+          target_group_id="${target_package:0:(${#target_package}-${#artifact_id}-1)}"
+        fi
+      fi
+      target_args+=("-DgroupId=${target_group_id}")
+    fi
   fi
-  local target_artifact_id="${3}"
+  if ! doArrayContainsItemWithPrefix ${target_args[@]} "-Dversion="
+  then
+    target_args+=("-Dversion=1.0.0-SNAPSHOT")
+  fi
   if [ -z "${target_artifact_id}" ]
   then
-    target_artifact_id="${target_group_id/*\./}"
+    for ((i=1; i < ${#}; i++)) {
+      if [[ "${!i}" == -DartifactId=* ]]
+      then
+        target_artifact_id="${!i:13}" # "-DartifactId=" is 13 chars long
+      fi
+    }
   fi
   if [ -e "${target_artifact_id}" ]
   then
     doFail "Project ${target_artifact_id} already exsits at ${PWD}"
   fi
-  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -Dpackage=${target_package} -DgroupId=${target_group_id} -DartifactId=${target_artifact_id} -Dversion=1.0.0-SNAPSHOT -DdbType=${target_db_type} -DinteractiveMode=false
+  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -DinteractiveMode=false ${target_args[@]}
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
