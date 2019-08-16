@@ -21,90 +21,86 @@ This document contains the instructions for the tool `devon-ide` to setup and ma
 
 :toc:
 
-:leveloffset: 1
-
-include::features.asciidoc[]
+include::features.asciidoc[leveloffset=1]
 
 <<<<
 
-include::setup.asciidoc[]
+include::setup.asciidoc[leveloffset=1]
 
 <<<<
 
-include::usage.asciidoc[]
+include::usage.asciidoc[leveloffset=1]
 
 <<<<
 
-include::configuration.asciidoc[]
+include::configuration.asciidoc[leveloffset=1]
 
 <<<<
 
-include::variables.asciidoc[]
+include::variables.asciidoc[leveloffset=1]
 
 <<<<
 
-include::cli.asciidoc[]
+include::cli.asciidoc[leveloffset=1]
 
-:leveloffset: 2
+include::build.asciidoc[leveloffset=2]
 
-include::build.asciidoc[]
+include::eclipse.asciidoc[leveloffset=2]
 
-include::eclipse.asciidoc[]
+include::gradle.asciidoc[leveloffset=2]
 
-include::gradle.asciidoc[]
+include::help.asciidoc[leveloffset=2]
 
-include::help.asciidoc[]
+include::ide.asciidoc[leveloffset=2]
 
-include::ide.asciidoc[]
+include::intellij.asciidoc[leveloffset=2]
 
-include::intellij.asciidoc[]
+include::java.asciidoc[leveloffset=2]
 
-include::java.asciidoc[]
+include::jenkins.asciidoc[leveloffset=2]
 
-include::jenkins.asciidoc[]
+include::mvn.asciidoc[leveloffset=2]
 
-include::mvn.asciidoc[]
+include::ng.asciidoc[leveloffset=2]
 
-include::ng.asciidoc[]
+include::node.asciidoc[leveloffset=2]
 
-include::node.asciidoc[]
+include::npm.asciidoc[leveloffset=2]
 
-include::npm.asciidoc[]
+include::release.asciidoc[leveloffset=2]
 
-include::release.asciidoc[]
+include::sonar.asciidoc[leveloffset=2]
 
-include::sonar.asciidoc[]
+include::vscode.asciidoc[leveloffset=2]
 
-include::vscode.asciidoc[]
-
-include::yarn.asciidoc[]
+include::yarn.asciidoc[leveloffset=2]
 
 <<<<
 
-:leveloffset: 1
+include::structure.asciidoc[leveloffset=1]
 
-include::structure[]
+include::conf.asciidoc[leveloffset=2]
 
-:leveloffset: 2
+include::log.asciidoc[leveloffset=2]
 
-include::conf[]
+include::scripts.asciidoc[leveloffset=2]
 
-include::log[]
+include::settings.asciidoc[leveloffset=2]
 
-include::scripts[]
+include::software.asciidoc[leveloffset=2]
 
-include::settings[]
+include::system.asciidoc[leveloffset=2]
 
-include::software[]
+include::updates.asciidoc[leveloffset=2]
 
-include::system[]
-
-include::updates[]
-
-include::workspaces[]
+include::workspaces.asciidoc[leveloffset=2]
 
 <<<<
 
-:leveloffset: 1
+== Support
 
-include::license[]
+include::migration-from-devonfw-3.0.0-or-lower.asciidoc[leveloffset=2]
+
+<<<<
+
+include::license.asciidoc[leveloffset=1]
