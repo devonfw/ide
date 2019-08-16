@@ -5,10 +5,11 @@ toc::[]
 
 The `devon-ide` requires `settings` with configuration templates for the arbitrary tools.
 
-To get an initial set of these settings we provide the https://github.com/devonfw/devon-ide/tree/master/settings/src/main/settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
+To get an initial set of these settings we provide the https://github.com/devonfw/devon-ide-settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
 
-To test `devon-ide` or for small projects you can also use these default settings.
+To test `devon-ide` or for small projects you can also use these the latest default settings.
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
+Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/devon-ide-settings[devon-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/devon-ide-settings[devon-ide-settings] back into the project specific `settings` "fork".
 
 == Structure
 The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
