@@ -1,9 +1,9 @@
 #Thu Jun 11 17:51:24 CEST 2015
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.resourceCopyExclusionFilter=*.launch,*.ucls,*.useq
-org.eclipse.jdt.core.classpathVariable.ECLIPSE_HOME=${client.env.home}/software/eclipse/
-org.eclipse.jdt.core.classpathVariable.JRE_LIB=${client.env.home}/software/java/jre/lib/rt.jar
-org.eclipse.jdt.core.classpathVariable.JRE_SRC=${client.env.home}/software/java/src.zip
+org.eclipse.jdt.core.classpathVariable.ECLIPSE_HOME=${DEVON_IDE_HOME}/software/eclipse/
+org.eclipse.jdt.core.classpathVariable.JRE_LIB=${DEVON_IDE_HOME}/software/java/jre/lib/rt.jar
+org.eclipse.jdt.core.classpathVariable.JRE_SRC=${DEVON_IDE_HOME}/software/java/src.zip
 org.eclipse.jdt.core.classpathVariable.JRE_SRCROOT=
 org.eclipse.jdt.core.classpathVariable.M2_REPO=${M2_REPO}
 org.eclipse.jdt.core.classpathVariable.MAVEN_REPO=${M2_REPO}
