@@ -7,9 +7,7 @@ call :load_properties "%USERPROFILE%\devon.properties"
 call :load_properties "%DEVON_IDE_HOME%\devon.properties"
 rem copy defaults
 if exist "%SETTINGS_PATH%" (
-  if exist "%SETTINGS_PATH%\devon\devon.properties" (
-    call :load_properties "%SETTINGS_PATH%\devon\devon.properties"
-  )
+  call :load_properties "%SETTINGS_PATH%\devon.properties"
 ) else (
   echo:
   echo *** ATTENTION ***
