@@ -210,7 +210,7 @@
       <id>hohwille</id>
       <name>J&#246;rg Hohwiller</name>
       <email>hohwille@users.sourceforge.net</email>
-      <organization></organization>
+      <organization>Capgemini</organization>
       <organizationUrl/>
       <roles>
         <role>admin</role>
@@ -228,6 +228,54 @@
       <organizationUrl/>
       <roles>
         <role>developer</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+    <developer>
+      <id>markusschuh</id>
+      <name>Markus Schuh</name>
+      <email></email>
+      <organization>Capgemini</organization>
+      <organizationUrl/>
+      <roles>
+        <role>contributor</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+    <developer>
+      <id>maybeec</id>
+      <name>Malte Brunnlieb</name>
+      <email></email>
+      <organization>Capgemini</organization>
+      <organizationUrl/>
+      <roles>
+        <role>contributor</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+    <developer>
+      <id>ediekman</id>
+      <name>Erik Diekmann</name>
+      <email></email>
+      <organization>Capgemini</organization>
+      <organizationUrl/>
+      <roles>
+        <role>contributor</role>
+      </roles>
+      <timezone>+1</timezone>
+      <properties/>
+    </developer>
+    <developer>
+      <id>nricheton</id>
+      <name>Nicolas Richeton</name>
+      <email></email>
+      <organization>Capgemini</organization>
+      <organizationUrl/>
+      <roles>
+        <role>contributor</role>
       </roles>
       <timezone>+1</timezone>
       <properties/>
