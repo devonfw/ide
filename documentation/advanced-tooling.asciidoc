@@ -88,3 +88,6 @@ Need to visualise complex graph structures? Convert them to https://en.wikipedia
 
 === up your screen capture game
 Capture any part of your screen with a single click, directly upload to dropbox, or run an svn commit (oops sorry git ;-) ) all in one go with http://getgreenshot.org/[Greenshot].
+
+=== Fast Search in Windows
+https://voidtools.com/[Everything] is a desktop search utility for Windows that can rapidly find files and folders by name. 
