@@ -6,7 +6,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ -n "${1}" ]
   then
-    doDevonCommand java setup
+    doDevonCommand java -q setup
   fi
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then

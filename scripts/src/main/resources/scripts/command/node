@@ -20,7 +20,7 @@ function doSetup() {
     fi
     doInstall "${software_dir}" "${download_url}" "node.js" "${software_version}"
   fi
-  if [ -n "${1}" ]
+  if [ -n "${1}" ] && ! doIsQuiet
   then
     local node_binary="${NODE_HOME}/node.exe"
     if [ ! -x "${node_binary}" ]

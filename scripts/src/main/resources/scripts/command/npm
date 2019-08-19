@@ -11,7 +11,7 @@ function doSetup() {
       doEcho "npm is already installed at $(command -v npm)"
     fi
   else
-    doDevonCommand node setup
+    doDevonCommand node -q setup
   fi
 }
 

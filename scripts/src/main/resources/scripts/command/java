@@ -43,7 +43,7 @@ function doSetup() {
       doExtendPath "${JAVA_HOME}"
     fi
   fi
-  if [ -n "${1}" ]
+  if [ -n "${1}" ] && ! doIsQuiet
   then
     doRunCommand "'${JAVA_HOME}/bin/java' -version" "verify installation of Java"
   fi
