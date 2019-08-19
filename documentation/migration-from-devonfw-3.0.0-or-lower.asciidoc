@@ -4,7 +4,7 @@ toc::[]
 = Migration from oasp4j-ide
 
 The `devon-ide` is a completely new and innovative solution for managing the local development environment that has been created from scratch.
-Releases of https://github.com/oasp/[OASP] as well as releases of https://github.com/devonfw[devonfw] until version 3.0.x are based on the old `oasp4j-ide` that is now considered deprecated. As `devon-ide` is a complete redesign this will have some impact for the users. This section should help and assist so you do not get lost.
+Releases of https://github.com/oasp/[OASP] as well as releases of https://github.com/devonfw[devonfw] until version 3.1.x are based on the old `oasp4j-ide` that is now considered deprecated. As `devon-ide` is a complete redesign this will have some impact for the users. This section should help and assist so you do not get lost.
 
 == Get familiar with devon-ide
 
@@ -21,7 +21,7 @@ For all the details you should study the documentation starting from the link:Ho
 
 == Migration of existing oasp4j-ide installation
 
-TODO
+TODO see https://github.com/devonfw/devon-ide/issues/190[#190]
 
 * extract new `link:scripts.asciidoc[devon-ide-scripts]` on top of your existing installation
 * run `setup`
@@ -33,7 +33,6 @@ If you get errors:
 * you need to merge the `https://github.com/devonfw/devon-ide-settings/tree/master/devon[devon]` folder into your settings
 * you need to merge the `https://github.com/devonfw/devon-ide-settings/blob/master/devon.properties[devon.properties]` into your settings
 * you should check your `variables[-customized][.bat]` and merge required customizations into the proper link:configuration.asciidoc[configuration]
-* TODO: It would indeed make sense to support this migration with (partial) automatic scripts
 
 == Hints for users after migration
 
@@ -50,6 +49,8 @@ Getting used to all the new commands might be tedious when starting after a migr
 |`create-or-update-workspace-vs`|`devon vscode ws-update`
 
 |`devcon workspace create «workspace»`|Simply create the `«workspace»` directory (e.g. `cd workspaces && mkdir examples`)|
+
+|`scripts/update-eclipse-workspace-settings`|`devon eclipse ws-reverse`|To add new properties (old option `--new`) use `devon eclipse ws-reverse-add`
 
 |`devcon project build` +
 `devcon devon4j build` +
