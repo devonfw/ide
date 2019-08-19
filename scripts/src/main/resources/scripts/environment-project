@@ -40,7 +40,7 @@ function doLoadProperties() {
         fi
       fi
     fi
-  done < "${1}"
+  done < <(tr -d '\r' < "${1}")
 }
 
 # determine proper home directory
