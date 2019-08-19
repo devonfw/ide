@@ -663,7 +663,7 @@ function doGitPullOrClone() {
     then
       doFail "Not a git repository: ${1}"
     else
-      doRunCommand "git clone '${2}' '${1}'"
+      doRunCommand "git clone '${2}' '${1}' --config core.autocrlf=false"
     fi
   fi
 }
