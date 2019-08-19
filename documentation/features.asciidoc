@@ -20,6 +20,8 @@ For your project you should copy these link:settings.asciidoc[settings] to an ow
 * *Customizable* +
 You need an additional tool that we never heard of? Put it in the `software` folder of the link:structure.asciidoc[structure]. The `devon` link:cli.asciidoc[CLI] will then automatically add it to your `PATH` variable. +
 Further you can create your own link:cli.asciidoc#commandlets[commandlet] for your additional tool. For closed-source tools you can create your own archive and distribute to your team members as long as you care about the terms and licenses of these tools.
+* *Multi-platform* +
+Works on all major platforms, which are Windows, Mac, and Linux.
 * *Multi-tenancy* +
 Have as many instances of the `devon-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. No physical installation and no tweaking of your operating system. "Installations" of `devon-ide` do not interfere with each other nor with other installed software.
 * *Multiple Workspaces* +
