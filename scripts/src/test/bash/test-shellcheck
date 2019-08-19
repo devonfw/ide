@@ -9,4 +9,4 @@ fi
 cd ../../../../scripts/src/main/resources || exit 1
 OPTS="-e SC2181"
 #shellcheck ${OPTS} -a devon
-shellcheck -x -e SC2181 setup scripts/environment-project scripts/devon scripts/command/*
+shellcheck -x -e SC2181 setup scripts/devon scripts/environment-project scripts/functions scripts/command/*

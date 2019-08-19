@@ -2,16 +2,28 @@
 # Functions to be reused in devon-ide commands. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
+if [ -z "${DEVON_IDE_HOME}" ]
+then
+  cd "$(dirname "${BASH_SOURCE:-$0}")/.." || exit 1
+  DEVON_IDE_HOME="${PWD}"
+  cd - > /dev/null || exit 1
+  echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
+fi
+
+# shellcheck source=scripts/environment-project
+source "${DEVON_IDE_HOME}/scripts/environment-project"
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
+
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
 function doFail() {
-  doEchoAttention
+  doEchoAttention ""
   echo -e "ERROR: ${1}"
   echo "We are sorry for the inconvenience. Please check the above errors, resolve them and try again."
   if [ -n "${2}" ]
   then
     echo "Exit code was ${2}"
-    exit ${2}
+    exit "${2}"
   else
     exit 255
   fi
@@ -22,7 +34,7 @@ function doEchoAttention() {
   echo "******** ATTENTION ********"
   if [ -n "${1}" ]
   then
-    echo -e ${@}
+    echo -e "${@}"
   fi
 }
 
@@ -51,17 +63,17 @@ function doRunCommand() {
   then
     if [ -d "${3}" ]
     then
-      cd "${3}"
+      cd "${3}" || exit 1
     else
       doFail "Working directory ${3} does not exist."
     fi
   fi
   doEcho "Running command: ${1}"
-  eval ${1}
+  eval "${1}"
   result=${?}
   if [ -n "${3}" ]
   then
-    cd "${cwd}"
+    cd "${cwd}" || exit 1
   fi
   local message
   if [ -z "${2}" ]
@@ -111,19 +123,19 @@ function doEcho() {
   then
     return
   fi
-  echo -e ${@}
+  echo -e "${@}"
 }
 
 # $@: warning message
 function doWarning() {
-  echo -e "WARNING: ${@}"
+  echo -e "WARNING: ${*}"
 }
 
 # $@: warning message
 function doConfirmWarning() {
-  doWarning ${@}
+  doWarning "${@}"
   echo
-  doAskToContinue
+  doAskToContinue ""
 }
 
 # $1: optional question
@@ -144,7 +156,7 @@ function doAskToContinue() {
     local answer
     while true
     do
-      read -p "${question}" answer
+      read -r -p "${question}" answer
       if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
       then
         return
@@ -180,7 +192,8 @@ function doLogo() {
 "     .....  //////////            ddddd      eeeeee         v          oooo     nnn      nnn  ff           w   w       "
 "      ...  //////////                                                                                                  "
   )
-  local len="$(tput cols)"
+  local len
+  len="$(tput cols)"
   if [ "$?" != 0 ]
   then
     len=80
@@ -214,7 +227,7 @@ function doLicenseAgreement() {
     fi
     while true
     do
-      read -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
+      read -r -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
           echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/devon-ide/wiki/license" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
@@ -232,7 +245,7 @@ function doLicenseAgreement() {
 # ${1}: devon command name
 # ${n+1}: additional args
 function doDevonCommand() {
-  doDevonCommandAndReturn ${@}
+  doDevonCommandAndReturn "${@}"
   result=${?}
   if [ ${result} != 0 ]
   then
@@ -241,15 +254,15 @@ function doDevonCommand() {
 }
 
 function doDevonCommandAllWorkspaces() {
-  cd "${DEVON_IDE_HOME}/workspaces"
+  cd "${DEVON_IDE_HOME}/workspaces" || exit 1
   for file in *
   do
     if [ -d "${file}" ]
     then
-      cd "${file}"
-      doEcho "Repeating command ${@} in workspace ${PWD}"
-      "${DEVON_IDE_HOME}/scripts/devon" ${@}
-      cd ..
+      cd "${file}" || exit 1
+      doEcho "Repeating command ${*} in workspace ${PWD}"
+      "${DEVON_IDE_HOME}/scripts/devon" "${@}"
+      cd .. || exit 1
     elif [ "${file}" != "readme.txt" ]
     then
       doWarning "The workspaces should only contain folder but ${file} is not"
@@ -274,11 +287,12 @@ function doDevonCommandAndReturn() {
       chmod a+x "${command}"
     fi
     shift
-    "${command}" ${force} ${quiet} ${batch} ${@}
+    # shellcheck disable=SC2086
+    "${command}" ${force} ${quiet} ${batch} "${@}"
     result=${?}
     if [ ${result} != 0 ]
     then
-      doEcho "ERROR: command '${command_name} ${@}' failed with exit code ${result}"
+      doEcho "ERROR: command '${command_name} ${*}' failed with exit code ${result}"
       return ${result}
     fi
   fi  
@@ -417,7 +431,8 @@ function doReplaceExtractedSkipSingleFolder() {
 # $1: path of the extracted name to install (move to target)
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
-  local backup_dir="$(date +"%y-%m-%d/%H-%M-%S")"
+  local backup_dir
+  backup_dir="$(date +"%y-%m-%d/%H-%M-%S")"
   if [ "${2}" = "${DEVON_IDE_HOME}" ]
   then
     for extracted_file in "${1}"/*
@@ -437,12 +452,10 @@ function doReplaceExtracted() {
   fi
 }
 
-MAVEN_REPO_URL="https://repo.maven.apache.org/maven2"
-
 # $1: URL (to artifactId)
 function doMavenGetLatestVersion() {
   echo "Trying to determine the latest available version from ${1}/maven-metadata.xml"
-  LATEST_VERSION="$(curl -fs ${1}/maven-metadata.xml | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/")"
+  LATEST_VERSION="$(curl -fs "${1}/maven-metadata.xml" | grep latest | sed "s/.*<latest>\([^<]*\)<\/latest>.*/\1/")"
   result=${?}
   if [ "${result}" != 0 ] || [ -z "${LATEST_VERSION}" ]
   then
@@ -508,14 +521,14 @@ function doMavenArchetype() {
   if [ -n "${target_package}" ]
   then
     # package
-    if doArrayContainsItemWithPrefix ${target_args[@]} "-Dpackage="
+    if doArrayContainsItemWithPrefix "${target_args[@]}" "-Dpackage="
     then
       doFail "Duplicate package for archetype: ${old_args}"
     else
       target_args+=("-Dpackage=${target_package}")
     fi
     # artifactId
-    if doArrayContainsItemWithPrefix ${target_args[@]} "-DartifactId="
+    if doArrayContainsItemWithPrefix "${target_args[@]}" "-DartifactId="
     then
       if [ -n "${target_artifact_id}" ]
       then
@@ -529,7 +542,7 @@ function doMavenArchetype() {
       target_args+=("-DartifactId=${target_artifact_id}")
     fi
     # groupId
-    if doArrayContainsItemWithPrefix ${target_args[@]} "-DgroupId="
+    if doArrayContainsItemWithPrefix "${target_args[@]}" "-DgroupId="
     then
       if [ -n "${target_group_id}" ]
       then
@@ -549,7 +562,7 @@ function doMavenArchetype() {
       target_args+=("-DgroupId=${target_group_id}")
     fi
   fi
-  if ! doArrayContainsItemWithPrefix ${target_args[@]} "-Dversion="
+  if ! doArrayContainsItemWithPrefix "${target_args[@]}" "-Dversion="
   then
     target_args+=("-Dversion=1.0.0-SNAPSHOT")
   fi
@@ -566,7 +579,7 @@ function doMavenArchetype() {
   then
     doFail "Project ${target_artifact_id} already exsits at ${PWD}"
   fi
-  doDevonCommand mvn archetype:generate -DarchetypeGroupId=${ARCHETYPE_GROUP_ID} -DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID} -DinteractiveMode=false ${target_args[@]}
+  doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
@@ -636,7 +649,8 @@ function doMoveGlobSafe() {
 function doGitPullOrClone() {
   if [ -d "${1}/.git" ]
   then
-    local remotes=$(cd "${1}";git remote)
+    local remotes
+    remotes=$(cd "${1}" && git remote)
     if [ -n "${remotes}" ]
     then
       doRunCommand "git pull" "" "${1}"
@@ -649,7 +663,7 @@ function doGitPullOrClone() {
     then
       doFail "Not a git repository: ${1}"
     else
-      doRunCommand "git clone '${2}' '${1}'"
+      doRunCommand "git clone '${2}' '${1}' --config core.autocrlf=false"
     fi
   fi
 }
@@ -669,7 +683,7 @@ function doInstall() {
   local os="${6}"
   if [ -z "${target_path}" ] || [ -z "${download_url}" ] || [ -z "${software}" ]
   then
-    doFail "missing arguments for doInstall: ${@}"
+    doFail "missing arguments for doInstall: ${*}"
   fi
   local result=0
   if [ "${download_url/*\./.}" = ".git" ]
@@ -954,60 +968,6 @@ function doIsWindows() {
   fi
   return 255
 }
-
-function doLoadProperties() {
-  if ! [ -f "${1}" ]
-  then
-    return
-  fi
-  local key
-  local value
-  local export
-  while IFS='=' read -r key value
-  do
-    if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
-    then
-      export=""
-      if [ "${value:0:1}" = "~" ]
-      then
-        value="${DEVON_HOME_DIR}${value:1}"
-      fi
-      if [ "${key:0:7}" = "export " ]
-      then
-        export="true"
-        key="${key:7}"
-      fi
-      if [ -z "${value}" ]
-      then
-        unset ${key}
-      else
-        if [ "${value:0:1}" != "(" ]
-        then
-          value=\"${value}\"
-        fi
-        eval ${key}=${value}
-        if [ "${export}" = "true" ]
-        then
-          export ${key}
-        fi
-      fi
-    fi
-  done < "${1}"
-}
-
-DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
-if [ -z "${DEVON_IDE_HOME}" ]
-then
-  cd "$(dirname ${BASH_SOURCE:-$0})/.."
-  DEVON_IDE_HOME="${PWD}"
-  cd - > /dev/null
-  echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
-fi
-doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
-doLoadProperties "${DEVON_HOME_DIR}/devon.properties"
-doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
-doLoadProperties "${SETTINGS_PATH}/devon/devon.properties"
-doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
 
 batch=""
 force=""

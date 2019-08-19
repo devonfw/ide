@@ -11,8 +11,13 @@ function doSetup() {
       echo "angluar-cli (ng) is already installed at $(command -v ng)"
     fi
   else
-    doDevonCommand npm setup
-    doRunCommand "npm install -g @angular/cli@latest --unsafe" "install angular-cli"
+    doDevonCommand npm -q setup
+    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
+    if [ ! -x "${npm_command}" ]
+    then
+      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
+    fi
+    doRunCommand "'${npm_command}' install -g @angular/cli@latest --unsafe" "install angular-cli"
   fi
 }
 

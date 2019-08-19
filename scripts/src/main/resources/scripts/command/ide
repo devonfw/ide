@@ -25,7 +25,6 @@ function doUpdateSettings() {
     fi    
     if [ -z "${SETTINGS_URL}" ]
     then
-      echo "*** ATTENTION ***"
       echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
       echo "Further details can be found here:"
       echo "https://github.com/devonfw/devon-ide/wiki/settings"
@@ -110,6 +109,26 @@ function doSetup() {
 }
 
 function doSetupTools() {
+  local current_devon_version
+  current_devon_version="$(~/.devon/devon -v)"
+  local my_devon_version
+  my_devon_version="$("${DEVON_IDE_HOME}/scripts/devon" -v)"
+  doVersionCompare "${my_devon_version}" "${current_devon_version}"
+  result=${?}
+  if [ "${result}" != 0 ]
+  then
+    echo "You have version ${current_devon_version} of devon-ide installed in ~/.devon/devon"
+    echo "This is version ${my_devon_version} of devon-ide in ${DEVON_IDE_HOME}"
+    if [ "${result}" = 2 ]
+    then
+      echo "To update this devon-ide installation use the following command:"
+      echo "devon ide update"
+    else
+      echo "Updating ~/.devon/devon"
+      cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+    fi
+  fi
+  
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     echo

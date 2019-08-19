@@ -32,11 +32,11 @@ do
         fi
       fi
     fi
-    source scripts/environment-project
-    if [ -z "${DEVON_IDE_HOME}" ]
+    if [ -z "${1}" ]
     then
-      export DEVON_IDE_HOME="${PWD}"
+      source scripts/environment-project
     fi
+    export DEVON_IDE_HOME="${PWD}"
     if [ -z "${1}" ]
     then
       echo "devon-ide has environment variables have been set for ${PWD} (workspace ${WORKSPACE})"
