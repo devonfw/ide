@@ -11,7 +11,7 @@ public abstract class AbstractXmlMigration extends AbstractXmlSupport implements
   public static final String SINGLE_SPACE = " ";
 
   /**
-   * @param str
+   * @param str the {@link String} to trim.
    * @return trim and single space string
    */
   public static String removeSpaces(String str) {
