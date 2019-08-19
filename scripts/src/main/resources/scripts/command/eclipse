@@ -159,8 +159,13 @@ function doAddPlugin() {
 function doStartEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse..."
-  # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+  if doIsWindows
+  then
+    # shellcheck disable=SC2086
+    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+  else
+    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+  fi
 }
 
 # CLI
