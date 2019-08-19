@@ -25,7 +25,6 @@ function doUpdateSettings() {
     fi    
     if [ -z "${SETTINGS_URL}" ]
     then
-      echo "*** ATTENTION ***"
       echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
       echo "Further details can be found here:"
       echo "https://github.com/devonfw/devon-ide/wiki/settings"
