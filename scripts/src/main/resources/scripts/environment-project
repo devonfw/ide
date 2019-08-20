@@ -119,19 +119,6 @@ do
   fi
 done
 
-if [ "${0}" != "${DEVON_IDE_HOME}/scripts/command/help" ] && [ "${0}" != "${DEVON_IDE_HOME}/scripts/command/ide" ] 
-then
-  if [ ! -d "${SETTINGS_PATH}" ]
-  then
-    echo
-    echo "*** ATTENTION ***"
-    echo "Your devon-ide is missing the settings at ${SETTINGS_PATH}"
-    echo "Please run the following command to complete your IDE setup:"
-    echo "devon ide setup [«settings-url»]"
-  fi
-fi
-
-
 # node.js support
 if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
 then
