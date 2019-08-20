@@ -14,7 +14,7 @@ Releases of `devon-ide` are published to maven central. You can download them fr
 
 == Install
 Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devon-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
-That's all. To get started read the ink:usage.asciidoc[usage].
+That's all. To get started read the link:usage.asciidoc[usage].
 
 == Uninstall
 To "uninstall" your `devon-ide` you only need to call the following command:
