@@ -1,0 +1,59 @@
+#!/bin/bash
+
+cd ../../../../scripts/src/main/resources || exit 1
+exitcode=0
+# https://github.com/devonfw/devon-ide/issues/202
+source scripts/functions
+echo "Testing version comparison"
+function doTestVersionCompare() {
+  doVersionCompare "${1}" "${3}"
+  result=${?}
+  result_op="$(doGetComparator "${result}")"
+  if [ "${result_op}" = "${2}" ]
+  then
+    echo "${1} ${2} ${3} ? OK"
+  else
+    echo "${1} ${2} ${3} ? FAILED! Was: ${1} ${result_op} ${3}"
+    exitcode=1
+  fi
+  if [ "${result}" != 0 ]
+  then
+    doVersionCompare "${3}" "${1}"
+    inverse_result=${?}
+    if [ "${result}" = 1 ]
+    then
+      expected_result=2
+    else
+      expected_result=1
+    fi
+    if [ "${inverse_result}" != "${expected_result}" ]
+    then
+      echo "${3} $(doGetComparator ${expected_result}) ${1} ? FAILED! Was ${3} $(doGetComparator ${inverse_result}) ${1}"
+    fi
+  fi
+}
+function doGetComparator() {
+  if [ "${1}" = 0 ]
+  then
+    echo '='
+  elif [ "${1}" = 1 ]
+  then
+    echo '>'
+  elif [ "${1}" = 2 ]
+  then
+    echo '<'
+  else
+    echo "undefined:${1}"
+  fi
+}
+doTestVersionCompare 3.0.0-beta9 '<' 3.0.0-beta14
+doTestVersionCompare 3.0.0-beta9 '=' 3.0.0-beta9
+doTestVersionCompare 3.1.1 '>' 3.1.0
+doTestVersionCompare 3.0.0-beta8 '>' 3.0.0-alpha9
+doTestVersionCompare 3.0.0.beta8 '>' 3.0.0.alpha9
+doTestVersionCompare 3.0.0.pre1 '<' 3.0.0.rc2
+doTestVersionCompare 3.0.0 '>' 3.0.0-beta1
+doTestVersionCompare 3.0.0 '>' 3.0.0.beta1
+doTestVersionCompare 3.0.0.rc2 '<' 3.0.0
+
+exit "${exitcode}"

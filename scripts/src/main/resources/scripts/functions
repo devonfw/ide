@@ -880,21 +880,24 @@ function doCreateIdeScript() {
 
 # $1: version1
 # $2: version2
+# returns 0 if equal, 1 if $1 > $2, 2 if $1 < $2
 function doVersionCompare() {
   if [ "${1}" = "${2}" ]
   then
     return 0
   fi
-  v1="${1}."
-  v2="${2}."
-  while [ -n "${v1}" ]
+  local v1="${1}."
+  local v2="${2}."
+  while [ -n "${v1}" ] || [ -n "${v2}" ]
   do
-    s1=${v1/[.]*/}
-    s2=${v2/[.]*/}
+    local s1="${v1/[.]*/}"
+    local s2="${v2/[.]*/}"
     if [ "${s1}" != "${s2}" ]
     then
-      n1=${v1/[^0-9]*/}
-      n2=${v2/[^0-9]*/}
+      local p1="${v1/[^0-9]*/}"
+      local p2="${v2/[^0-9]*/}"
+      local n1="${p1}"
+      local n2="${p2}"
       if [ -z "${n1}" ]
       then
         n1=0
@@ -905,7 +908,6 @@ function doVersionCompare() {
       fi
       if [ ${n1} -gt ${n2} ]
       then
-        echo '>'
         return 1
       elif [ ${n1} -lt ${n2} ]
       then
@@ -914,11 +916,58 @@ function doVersionCompare() {
         if [ "${s1}" = "${s2/-SNAPSHOT/}" ]
         then
           return 1
-        elif [ "${s1}" \> "${s2}" ]
+        elif [ "${s2}" = "${s1/-SNAPSHOT/}" ]
         then
-          return 1
-        else
           return 2
+        else
+          local r1="${s1:${#p1}}"
+          local r2="${s2:${#p2}}"
+          n1="${r1//[^0-9]/}"
+          n2="${r2//[^0-9]/}"
+          local x1="${r1:0:(${#r1}-${#n1})}"
+          local x2="${r2:0:(${#r2}-${#n2})}"
+          x1="${x1//[-_+]/}"
+          x2="${x2//[-_+]/}"
+          if [ "${x1}" = "${x2}" ]
+          then
+            if [ -z "${n1}" ]
+            then
+              n1=0
+            fi
+            if [ -z "${n2}" ]
+            then
+              n2=0
+            fi
+            if [ ${n1} -gt ${n2} ]
+            then
+              return 1
+            elif [ ${n1} -lt ${n2} ]
+            then
+              return 2
+            fi
+          else
+            # assuming ascii infix (alpha,beta,etc.) is less than nothing
+            if [ -z "${x1}" ]
+            then
+              return 1
+            elif [ -z "${x2}" ]
+            then
+              return 2
+            fi
+            # assuming alphabetic order fits: alpha < beta < pre < rc
+            if [ "${x1}" \> "${x2}" ]
+            then
+              return 1
+            else
+              return 2
+            fi
+          fi
+          if [ "${s1}" \> "${s2}" ]
+          then
+            return 1
+          else
+            return 2
+          fi
         fi
       fi
     fi
