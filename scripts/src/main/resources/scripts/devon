@@ -66,7 +66,10 @@ L_RESTDIR=
 # Auto-install oursevles...
 if [  -f ~/.devon/devon ]
 then
-  cp -u "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+  if [ "${DEVON_IDE_HOME}/scripts/devon" -nt ~/.devon/devon ]
+  then
+    cp -f "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+  fi
 else
   echo "Copying devon CLI script to your home directory..."
   mkdir -p ~/.devon  
