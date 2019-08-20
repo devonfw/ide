@@ -602,6 +602,10 @@ function doUpgradeMavenArtifact() {
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
+  if [ "${current_version}" = "0" ]
+  then
+    return 1
+  fi
   echo "*** Software Update of ${artifact_id} ***"
   echo "Updating ${1} from ${download_url}"
   if [ "${target_version}" = "LATEST" ]
@@ -709,6 +713,7 @@ function doInstall() {
   then
     mkdir -p "${DEVON_IDE_HOME}/software"
   fi
+  local repo="default"
   local filename
   if [ -z "${version}" ]
   then
@@ -736,6 +741,11 @@ function doInstall() {
     then
       download_url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}${extension}"
       result=1
+      repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
+      local host="${repo/\/*/}"
+      repo="${repo:${#host}}"
+      host="${host/:/_}"
+      repo="${host}/${repo//[^A-Za-z0-9._-]/_}"
     else
       if [ -z "${5}" ]
       then
@@ -758,7 +768,7 @@ function doInstall() {
   local install_path="${target_path}"
   if [ -n "${DEVON_SOFTWARE_PATH}" ] && [ "${target_path}" != "${DEVON_IDE_HOME}" ]
   then
-    install_path="${DEVON_SOFTWARE_PATH}/${software}/${version}"
+    install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
     version_file="${install_path}/.devon.software.version"
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
