@@ -162,7 +162,10 @@ function doUninstall() {
   then
     if [ "${OSTYPE}" = "cygwin" ]
     then
-      doUninstallFromHome "$(cygpath "${USERPROFILE}")"
+      local winhome
+      winhome="$(cygpath "${USERPROFILE}")"
+      doUninstallFromHome "${winhome}"
+      doRunCommand "rm -f '${winhome}/scripts/devon.bat'"
     else
       if [ -d "/c/cygwin64" ]
       then
@@ -171,6 +174,7 @@ function doUninstall() {
       then
         doUninstallFromHome "/c/cygwin/home/${USER}"
       fi
+      doRunCommand "rm -f '${USERPROFILE}/scripts/devon.bat'"
     fi
     echo "To uninstall the windows explorer integrations we need to apply changes to the windows registry:"
     echo "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
