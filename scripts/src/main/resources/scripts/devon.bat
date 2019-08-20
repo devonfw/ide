@@ -74,7 +74,7 @@ if not exist "%HOME%\.devon\devon" (
       pushd %~dp0
       "%BASH%" -c 'source devon'
       popd
-	)
+    )
   )
 )
 if "%1%" == "bash" (
