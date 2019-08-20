@@ -2,7 +2,7 @@
 
 This folder contains configurations to integrate `devon-ide` into MacOS.
 
-== CMD
+== CMD
 If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devon-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell. Therefore you once have to follow these steps:
 
 * Right-click on the file `IDEenv.reg` from `cmd` sub-folder and choose `Merge` from Context-Menu.
