@@ -42,17 +42,18 @@ function doSetup() {
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
     doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
-    if [ "${?}" = 0 ]
+    local result=${?}
+    if doIsMacOs
     then
-      if doIsMacOs
+      if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
       then
-        if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
-        then
-          echo "Doing workarounds for MacOS quirks..."
-          echo -e "#!/usr/bin/env bash\n${DEVON_IDE_HOME}/software/eclipse/Eclipse.app/Contents/MacOS/eclipse \$@" > "${ECLIPSE_HOME}/eclipse"
-          chmod a+x "${ECLIPSE_HOME}/eclipse"
-        fi
+        echo "Doing workarounds for MacOS quirks..."
+        echo -e "#!/usr/bin/env bash\nECLIPSE_HOME=\"\$(dirname \"\${0}\")\"\n\"\${ECLIPSE_HOME}/Eclipse.app/Contents/MacOS/eclipse\" \$@" > "${ECLIPSE_HOME}/eclipse"
+        chmod a+x "${ECLIPSE_HOME}/eclipse"
       fi
+    fi
+    if [ "${result}" = 0 ]
+    then
       if [ -z "${ECLIPSE_PLUGINS}" ]
       then
         doAddPlugin startexplorer
