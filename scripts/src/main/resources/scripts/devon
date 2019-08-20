@@ -64,8 +64,10 @@ L_BASEDIR=
 L_RESTDIR=
 
 # Auto-install oursevles...
-if ! [  -f ~/.devon/devon ]
+if [  -f ~/.devon/devon ]
 then
+  cp -u "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+else
   echo "Copying devon CLI script to your home directory..."
   mkdir -p ~/.devon  
   cp "${BASH_SOURCE:-$0}" ~/.devon/devon

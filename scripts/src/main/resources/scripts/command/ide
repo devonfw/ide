@@ -109,8 +109,6 @@ function doSetup() {
 }
 
 function doSetupTools() {
-  cp -u "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
-  
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     echo
