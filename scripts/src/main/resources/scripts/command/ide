@@ -176,9 +176,6 @@ function doUninstall() {
       fi
       doRunCommand "rm -f '${USERPROFILE}/scripts/devon.bat'"
     fi
-    echo "To uninstall the windows explorer integrations we need to apply changes to the windows registry:"
-    echo "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
-    echo "Simply confirm the popup with Yes or otherwise review and merge the registry file manually."
     reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
   echo "So sad that you did not like devon-ide. It has been uninstalled from your system."
