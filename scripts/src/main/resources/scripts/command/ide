@@ -109,26 +109,6 @@ function doSetup() {
 }
 
 function doSetupTools() {
-  local current_devon_version
-  current_devon_version="$(~/.devon/devon -v)"
-  local my_devon_version
-  my_devon_version="$("${DEVON_IDE_HOME}/scripts/devon" -v)"
-  doVersionCompare "${my_devon_version}" "${current_devon_version}"
-  result=${?}
-  if [ "${result}" != 0 ]
-  then
-    echo "You have version ${current_devon_version} of devon-ide installed in ~/.devon/devon"
-    echo "This is version ${my_devon_version} of devon-ide in ${DEVON_IDE_HOME}"
-    if [ "${result}" = 2 ]
-    then
-      echo "To update this devon-ide installation use the following command:"
-      echo "devon ide update"
-    else
-      echo "Updating ~/.devon/devon"
-      cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
-    fi
-  fi
-  
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     echo
@@ -162,7 +142,10 @@ function doUninstall() {
   then
     if [ "${OSTYPE}" = "cygwin" ]
     then
-      doUninstallFromHome "$(cygpath "${USERPROFILE}")"
+      local winhome
+      winhome="$(cygpath "${USERPROFILE}")"
+      doUninstallFromHome "${winhome}"
+      doRunCommand "rm -f '${winhome}/scripts/devon.bat'"
     else
       if [ -d "/c/cygwin64" ]
       then
@@ -171,11 +154,9 @@ function doUninstall() {
       then
         doUninstallFromHome "/c/cygwin/home/${USER}"
       fi
+      doRunCommand "rm -f '${USERPROFILE}/scripts/devon.bat'"
     fi
-    echo "To uninstall the windows explorer integrations we need to apply changes to the windows registry:"
-    echo "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
-    echo "Simply confirm the popup with Yes or otherwise review and merge the registry file manually."
-    regedit.exe "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
+    reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
   echo "So sad that you did not like devon-ide. It has been uninstalled from your system."
   echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
