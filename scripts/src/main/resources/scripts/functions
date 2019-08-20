@@ -300,9 +300,16 @@ function doDevonCommandAndReturn() {
 
 # $1: the URL to download
 # $2: the optional, explicit filename to save to
+# $3: the optional, target directory to save to
 function doDownload() {
   doLicenseAgreement
-  local target_dir="${DEVON_DOWNLOAD_DIR}"
+  local target_dir
+  if [ -z "${3}" ]
+  then
+    target_dir="${DEVON_DOWNLOAD_DIR}"
+  else
+    target_dir="${3}"
+  fi
   local filename
   if [ -n "${2}" ]
   then
@@ -402,7 +409,7 @@ function doBackup() {
   then
     if [ -z "${timestamp}" ]
     then
-      timestamp="$(date +"%y-%m-%d/%H-%M-%S")"
+      timestamp="$(date +"%y-%m-%d")"
     fi
     local backup_dir="${DEVON_IDE_HOME}/updates/backups/${timestamp}"
     mkdir -p "${backup_dir}"
@@ -432,7 +439,7 @@ function doReplaceExtractedSkipSingleFolder() {
 # $2: target (e.g. "${DEVON_IDE_HOME}/software/")
 function doReplaceExtracted() {
   local backup_dir
-  backup_dir="$(date +"%y-%m-%d/%H-%M-%S")"
+  backup_dir="$(date +"%y-%m-%d")"
   if [ "${2}" = "${DEVON_IDE_HOME}" ]
   then
     for extracted_file in "${1}"/*
