@@ -1,4 +1,24 @@
 = devon-ide
 
 Tool to automate setup and update of development environment.
-See our https://github.com/devonfw/devon-ide/wiki[wiki] for further details.
+
+image:https://img.shields.io/github/license/devonfw/devon-ide.svg?label=License["Apache License, Version 2.0",link=https://github.com/devonfw/devon-ide/blob/master/LICENSE]
+image:https://img.shields.io/maven-central/v/com.devonfw.tools.ide/devon-ide-scripts.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:com.devonfw.tools.ide]
+image:https://travis-ci.com/devonfw/devon-ide.svg?branch=master["Build Status",link="https://travis-ci.com/devonfw/devon-ide"]
+
+== Documentation
+
+* link:documentation/Home.asciidoc[Home]
+* link:documentation/features.asciidoc[Features]
+* link:documentation/setup.asciidoc[Download & Setup]
+* link:documentation/usage.asciidoc[Usage]
+* link:documentation/license.asciidoc[License]
+* link:documentation/structure.asciidoc[Structure]
+* link:documentation/cli.asciidoc[Command Line Interface]
+* link:documentation/variables.asciidoc[Variables]
+* link:documentation/configuration.asciidoc[Configuration]
+* link:documentation/scripts.asciidoc[Scripts]
+* link:documentation/settings.asciidoc[Settings]
+* link:documentation/software.asciidoc[Software]
+* link:documentation/integration.asciidoc[Integration]
+* link:documentation/advanced-tooling.asciidoc[Advanced-tooling]
