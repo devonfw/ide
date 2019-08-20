@@ -1,20 +1,10 @@
 rem This batch is not supposed to be called manually
 @echo off
 
-set DEVON_IDE_HOME=%CD%
 call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
 call :load_properties "%USERPROFILE%\devon.properties"
 call :load_properties "%DEVON_IDE_HOME%\devon.properties"
-rem copy defaults
-if exist "%SETTINGS_PATH%" (
-  call :load_properties "%SETTINGS_PATH%\devon.properties"
-) else (
-  echo:
-  echo *** ATTENTION ***
-  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
-  echo Please run the following command to complete your IDE setup:
-  echo devon ide setup [^<settings-url^>]
-)
+call :load_properties "%SETTINGS_PATH%\devon.properties"
 if "%WORKSPACE%" == "" (
   set WORKSPACE=main
 )
@@ -34,13 +24,12 @@ if not defined DEVON_OLD_PATH (
   set "DEVON_OLD_PATH=%PATH%"
 )
 set "SOFTWARE_PATH=%CD%\software"
-if not exist "%SOFTWARE_PATH%" (
+if not exist "%SETTINGS_PATH%" (
   echo:
   echo *** ATTENTION ***
-  echo Your devon-ide is missing the software at %SOFTWARE_PATH%
+  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
   echo Please run the following command to complete your IDE setup:
   echo devon ide setup [^<settings-url^>]
-  goto :variables
 )
 setlocal EnableDelayedExpansion
 for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
@@ -69,9 +58,7 @@ if exist "%SOFTWARE_PATH%\nodejs" (
 
 :variables
 rem load user settings late so variables like M2_REPO can be overriden
-if exist "%DEVON_IDE_HOME%\conf\devon.properties" (
-  call :load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
-)
+call :load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
 goto :eof
 
 rem subroutine to load properties as environment variables with

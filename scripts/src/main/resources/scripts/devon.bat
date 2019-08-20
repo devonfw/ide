@@ -68,6 +68,14 @@ if not exist "%HOME%\.devon\devon" (
   pushd %~dp0
   "%BASH%" -c 'source devon'
   popd
+) else (
+  if "%1" == "ide" (
+    if "%2" == "setup" (
+      pushd %~dp0
+      "%BASH%" -c 'source devon'
+      popd
+	)
+  )
 )
 if "%1%" == "bash" (
   "%BASH%"
@@ -82,12 +90,14 @@ if not "%DEVON_PATH%" == "" (
   set "PATH=%DEVON_PATH%"
   set "DEVON_PATH="
 )
+goto :eof
 
 :setup_env
 set "WORKSPACE=main"
 pushd %CD%
 :iterate_backwards
 if exist scripts\environment-project.bat (
+  set DEVON_IDE_HOME=%CD%
   call scripts\environment-project.bat
   echo devon-ide environment variables have been set for %CD% (workspace %WORKSPACE%)
   popd
