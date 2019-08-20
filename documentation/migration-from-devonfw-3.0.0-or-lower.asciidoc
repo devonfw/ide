@@ -21,8 +21,6 @@ For all the details you should study the documentation starting from the link:Ho
 
 == Migration of existing oasp4j-ide installation
 
-TODO see https://github.com/devonfw/devon-ide/issues/190[#190]
-
 * extract new `link:scripts.asciidoc[devon-ide-scripts]` on top of your existing installation
 * run `setup`
 * done

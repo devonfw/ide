@@ -88,11 +88,55 @@ function doSetupConf() {
 
 function doSetup() {
   doUpdateSettings "${@}"
+  if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
+  then
+    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon.properties" "devon.properties" "${SETTINGS_PATH}"
+  fi
+  if [ ! -d "${SETTINGS_PATH}/devon" ]
+  then
+    doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to properly merge and update your settings."
+    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/devon.properties" "devon.properties" "${SETTINGS_PATH}/devon/conf"
+    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/.m2/settings.xml" "devon.properties" "${SETTINGS_PATH}/devon/conf/.m2"
+    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/npm/.npmrc" ".npmrc" "${SETTINGS_PATH}/devon/conf/npm"
+  fi
   if [ -d "${SETTINGS_PATH}/devon" ]
   then
     doSetupConf "${SETTINGS_PATH}/devon" "${DEVON_IDE_HOME}"
-  else
-    doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to update your settings."
+  fi
+  if [ -f "${DEVON_IDE_HOME}/variables" ] || [ -f "${DEVON_IDE_HOME}/variables.bat" ]
+  then
+    echo "Found old oasp4j-ide installation. Trying to migrate to devon-ide automatically..."
+    if [ -f "${DEVON_IDE_HOME}/variables-customized.bat" ]
+    then
+      echo -e "\n# Migrated from variables-customized.bat" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      grep "^set" "${DEVON_IDE_HOME}/variables-customized.bat" | sed 's/set //' >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      doBackup "${DEVON_IDE_HOME}/variables-customized.bat"
+    fi
+    if [ -f "${DEVON_IDE_HOME}/variables-customized" ]
+    then
+      echo -e "\n# Migrated from variables-customized" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      cat "${DEVON_IDE_HOME}/variables-customized" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      doBackup "${DEVON_IDE_HOME}/variables-customized"
+    fi
+    doBackup "${DEVON_IDE_HOME}/console-cygwin.bat"
+    doBackup "${DEVON_IDE_HOME}/console-git-bash.bat"
+    doBackup "${DEVON_IDE_HOME}/console.bat"
+    doBackup "${DEVON_IDE_HOME}/create-or-update-workspace"
+    doBackup "${DEVON_IDE_HOME}/create-or-update-workspace.bat"
+    doBackup "${DEVON_IDE_HOME}/env.sh"
+    doBackup "${DEVON_IDE_HOME}/ps-console.bat"
+    doBackup "${DEVON_IDE_HOME}/s2-init.bat"
+    doBackup "${DEVON_IDE_HOME}/s2-create.bat"
+    doBackup "${DEVON_IDE_HOME}/update-all-workspaces"
+    doBackup "${DEVON_IDE_HOME}/update-all-workspaces.bat"
+    doBackup "${DEVON_IDE_HOME}/variables"
+    doBackup "${DEVON_IDE_HOME}/variables.bat"
+    doBackup "${DEVON_IDE_HOME}/initialize.sh"
+    doBackup "${DEVON_IDE_HOME}/uninstallUI.sh"
+    doBackup "${DEVON_IDE_HOME}/devcon"
+    doBackup "${DEVON_IDE_HOME}/devcon.bat"
+    doBackup "${DEVON_IDE_HOME}/devon"
+    doBackup "${DEVON_IDE_HOME}/devon.bat"
   fi
   if [ -z "${DEVON_IDE_TOOLS}" ]
   then
