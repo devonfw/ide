@@ -32,14 +32,14 @@ do
         fi
       fi
     fi
+    export DEVON_IDE_HOME="${PWD}"
     if [ -z "${1}" ]
     then
       source scripts/environment-project
     fi
-    export DEVON_IDE_HOME="${PWD}"
     if [ -z "${1}" ]
     then
-      echo "devon-ide has environment variables have been set for ${PWD} (workspace ${WORKSPACE})"
+      echo "devon-ide has environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
     fi
     cd "${L_PWD}" || exit 255
     break
