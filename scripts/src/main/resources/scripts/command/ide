@@ -165,10 +165,12 @@ function doSetupTools() {
 function doUninstallFromHome() {
   if [ -f "${1}/.bashrc" ]
   then
+    doEcho "Uninstalling from ${1}/.bashrc"
     grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.bashrc" | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" "${1}/.bashrc"
   fi
   if [ -f "${1}/.zshrc" ]
   then
+    doEcho "Uninstalling from ${1}/.zshrc"
     grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.zshrc" | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
   fi
   if [ -f "${1}/scripts/devon" ]
