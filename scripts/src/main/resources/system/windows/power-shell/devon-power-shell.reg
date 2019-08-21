@@ -3,8 +3,8 @@ Windows Registry Editor Version 5.00
 [HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_ps]
 @="Open Devon PowerShell here"
 [HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_ps\command]
-@="powershell.exe -NoExit -Command Set-Location -LiteralPath '%L';devon.bat"
+@="cmd.exe /s /c devon.bat & powershell.exe -NoExit -Command Set-Location -LiteralPath '%L'"
 [HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_ps]
 @="Open Devon PowerShell here"
 [HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_ps\command]
-@="powershell.exe -NoExit -Command Set-Location -LiteralPath '%V';devon.bat"
+@="cmd.exe /s /c devon.bat & powershell.exe -NoExit -Command Set-Location -LiteralPath '%V'"
