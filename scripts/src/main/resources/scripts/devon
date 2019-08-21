@@ -32,14 +32,14 @@ do
         fi
       fi
     fi
+    export DEVON_IDE_HOME="${PWD}"
     if [ -z "${1}" ]
     then
       source scripts/environment-project
     fi
-    export DEVON_IDE_HOME="${PWD}"
     if [ -z "${1}" ]
     then
-      echo "devon-ide has environment variables have been set for ${PWD} (workspace ${WORKSPACE})"
+      echo "devon-ide has environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
     fi
     cd "${L_PWD}" || exit 255
     break
@@ -71,9 +71,17 @@ then
     cp -f "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
   fi
 else
-  echo "Copying devon CLI script to your home directory..."
-  mkdir -p ~/.devon  
-  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  if [ "${OSTYPE}" = "cygwin" ]
+  then
+    ln -s "$(cygpath "${USERPROFILE}")/.devon" ~/.devon
+  else
+    mkdir -p ~/.devon  
+  fi
+  if [ ! -f ~/.devon/devon ]
+  then
+    echo "Copying devon CLI script to your home directory..."
+    cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  fi
   if [ ! -e ~/.bashrc ]
   then
     touch ~/.bashrc
