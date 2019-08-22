@@ -23,6 +23,9 @@ This subfolder needs to contain the tool in that version for every operating sys
 
 By default each installation of devon-ide has its own physical installations of the required tools in the desired versions stored in its local `software` folder.
 While this is great for isolation of devon-ide installations and to prevent side-effects, it can cause a huge waste of disc resources in case you are having many installations of devon-ide. If you are a power-user of devon-ide with more then 10 or even up to hundreds of installations on your machine, you might love to share installations of a software tool in a particular version between multiple devon-ide installations.
+
+CAUTION: If you use this power-feature you are taking responsibility for side-effects and should not expect support. Also if you are using Windows please read https://www.joshkel.com/2018/01/18/symlinks-in-windows/[Symlinks in Windows] and make your mind if you really want to do so. You might also use this link:advanced-tooling.asciidoc#create-symbolic-links[hint] and maintain it manually without enabling the following feature.
+
 In order to do so, you only need to link:configuration.asciidoc[configure] the variable `DEVON_SOFTWARE_PATH` in your `~/devon.properties` pointing to an existing directory on your disc (e.g. `/projects/software` or `C:\projects\software`). Then devon-ide will install required software into `${DEVON_SOFTWARE_PATH}/${software_name}/${software_version}` as needed and create a symbolic link to it in `${DEVON_IDE_HOME}/software/${software_name}`. 
 
 As a benefit another devon-ide installation will using the same software with the same version can re-use the existing installation and only needs to create the symbolic link. No more waste of having many identical JDK installations on your disc.
