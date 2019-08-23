@@ -907,8 +907,8 @@ function doVersionCompare() {
   local v2="${2}."
   while [ -n "${v1}" ] || [ -n "${v2}" ]
   do
-    local s1="${v1/[.]*/}"
-    local s2="${v2/[.]*/}"
+    local s1="${v1/[.-]*/}"
+    local s2="${v2/[.-]*/}"
     if [ "${s1}" != "${s2}" ]
     then
       local p1="${v1/[^0-9]*/}"
@@ -988,8 +988,8 @@ function doVersionCompare() {
         fi
       fi
     fi
-    v1=${v1#*.}
-    v2=${v2#*.}
+    v1=${v1#*[.-]}
+    v2=${v2#*[.-]}
   done
   return 0
 }
