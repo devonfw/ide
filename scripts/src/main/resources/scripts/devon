@@ -71,17 +71,9 @@ then
     cp -f "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
   fi
 else
-  if [ "${OSTYPE}" = "cygwin" ]
-  then
-    ln -s "$(cygpath "${USERPROFILE}")/.devon" ~/.devon
-  else
-    mkdir -p ~/.devon  
-  fi
-  if [ ! -f ~/.devon/devon ]
-  then
-    echo "Copying devon CLI script to your home directory..."
-    cp "${BASH_SOURCE:-$0}" ~/.devon/devon
-  fi
+  mkdir -p ~/.devon  
+  echo "Copying devon CLI script to your home directory..."
+  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
   if [ ! -e ~/.bashrc ]
   then
     touch ~/.bashrc

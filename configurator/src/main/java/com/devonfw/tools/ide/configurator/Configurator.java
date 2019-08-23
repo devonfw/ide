@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.configurator;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import com.devonfw.tools.ide.configurator.merge.DirectoryMerger;
 import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
@@ -98,9 +99,9 @@ public class Configurator {
     putVariable(variables, VariableResolver.VARIABLE_DEVON_IDE_HOME, CURRENT_WORKING_DIRECTORY);
     putVariable(variables, VariableResolver.VARIABLE_WORKSPACE_PATH, this.workspaceFolder.getPath());
     putSystemProperty(variables, "java.home");
-    putEnvironmentVariable(variables, "JAVA_HOME");
-    putEnvironmentVariable(variables, "ECLIPSE_HOME");
-    putEnvironmentVariable(variables, "SETTINGS_PATH");
+    putEnvironmentVariable(variables, "JAVA_HOME", () -> CURRENT_WORKING_DIRECTORY + "/software/java");
+    putEnvironmentVariable(variables, "ECLIPSE_HOME", () -> CURRENT_WORKING_DIRECTORY + "/software/eclipse");
+    putEnvironmentVariable(variables, "SETTINGS_PATH", () -> CURRENT_WORKING_DIRECTORY + "/settings");
     return new VariableResolverImpl(variables);
   }
 
@@ -109,9 +110,15 @@ public class Configurator {
     putVariable(properties, key, System.getProperty(key));
   }
 
-  private static void putEnvironmentVariable(Properties properties, String key) {
+  private static void putEnvironmentVariable(Properties properties, String key, Supplier<String> fallback) {
 
-    putVariable(properties, key, System.getenv(key));
+    String value = System.getenv(key);
+    if ((value == null) || value.isEmpty()) {
+      if (fallback != null) {
+        value = fallback.get();
+      }
+    }
+    putVariable(properties, key, value);
   }
 
   private static void putVariable(Properties properties, String key, String value) {
