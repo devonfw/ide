@@ -391,13 +391,18 @@ function doReplaceExtractedFile() {
     target="${2}"
     target_dir="$(dirname "${2}")"
   fi
-  doBackup "${target}" "${3}"
-  if [ ! -d "${target_dir}" ]
+  if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    echo "mkdir -p ${target_dir}"
-    mkdir -p "${target_dir}"
+    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
+  else
+    doBackup "${target}" "${3}"
+    if [ ! -d "${target_dir}" ]
+    then
+      echo "mkdir -p ${target_dir}"
+      mkdir -p "${target_dir}"
+    fi
+    doRunCommand "mv '${1}' '${target}'"
   fi
-  doRunCommand "mv '${1}' '${target}'"
 }
 
 # $1: source file or directory to backup

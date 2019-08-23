@@ -12,6 +12,7 @@ function doUpdateScripts() {
     if doIsWindows
     then
       cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
+      doFail "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
     fi
   fi
 }
