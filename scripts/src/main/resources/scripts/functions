@@ -809,7 +809,16 @@ function doInstall() {
   then
     doBackup "${target_path}"
     doEcho "Linking ${install_path} to ${target_path}"
-    ln -s "${install_path}" "${target_path}"
+    if doIsWindows
+    then
+      cmd //c mklink "${install_path}" "${target_path}"
+      if [ "${?}" != 0 ]
+      then
+        doFail "Creating symbolic links is not supported on your windows operating system.\nPlease read the documentation how to properly configure your OS or disable this feature by removing the DEVON_SOFTWARE_PATH variable."
+      fi
+    else
+      ln -s "${install_path}" "${target_path}"
+    fi
   fi
   return ${result}
 }
