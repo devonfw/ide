@@ -29,6 +29,7 @@ do
         if [ -d "${L_WKS}" ]
         then
           WORKSPACE="${L_RESTDIR}"
+          export WORKSPACE
         fi
       fi
     fi
