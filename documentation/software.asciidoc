@@ -13,11 +13,11 @@ Then `devon-ide` will download all software from this repository only instead of
 This repository (URL) should be accessible within your network via HTTPS (or HTTP) and without any authentication.
 The repository needs to have the following structure:
 ```
-${DEVON_SOFTWARE_REPOSITORY}/«tool»/«version»/«tool»-«version»-«os».tgz
+${DEVON_SOFTWARE_REPOSITORY}/«tool»/«version»/«tool»-«version»[-«os»].tgz
 ```
 So for every tool `«tool»` (link:java.asciidoc[java], link:mvn.asciidoc[maven], link:vscode.asciidoc[vscode], link:eclipse.asciidoc[eclipse], etc.) you need to provide a folder in your repository.
 Within this folder for every supported version `«version»` you need a subfolder.
-This subfolder needs to contain the tool in that version for every operating system `«os»` (`windows`, `linux`, or `mac` and `all` for OS independent software such as `maven`).
+This subfolder needs to contain the tool in that version for every operating system `«os»` (`windows`, `linux`, or `mac` - omitted if platform independent, e.g. for `maven`).
 
 == Shared
 

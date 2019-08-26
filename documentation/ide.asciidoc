@@ -4,13 +4,49 @@ toc::[]
 = ide
 
 The `ide` commandlet manages your `devon-ide`.
+You need to supply additional arguments as `devon ide «args»`. These are explained by the following table:
+
+.Usage of `devon ide`
+[options="header"]
+|=======================
+|*Argument(s)*                   |*Meaning*
+|`setup [«SETTINGS_URL»]`        |setup devon-ide (cloing the settings from the given URL)
+|`update [«package»]`            |update devon-ide
+|`update scripts [to «version»]` |update devon-ide
+|`uninstall`                     |uninstall devon-ide (if you want remote it entirely from your system)
+|=======================
 
 == setup
-Run `devon ide setup` to initially setup your `devon-ide`. The `setup` script in the toplevel directory (`$DEVON_IDE_HOME`) is technically just a shortcut to run this command. The setup only needs to be called once after a new `devon-ide` instance has been created. It will do the following things:
+Run `devon ide setup` to initially setup your `devon-ide`. It is recommended to run the `setup` script in the toplevel directory (`$DEVON_IDE_HOME`). However, in case you want to skip some system specific integrations, you may also run this command directly instead. The setup only needs to be called once after a new `devon-ide` instance has been created. It will do the following things:
 
 * link:setup.asciidoc#install[install] the `devon` command on your system (if not already installed).
-* install all required tools from `DEVON_IDE_TOOLS` link:variables.asciidoc[variable] (if not already installed).
+* clone the link:settings.asciidoc[settings] (you may provide a git URL directly as argument or you will be prompted for it).
+* install all required link:software.asciidoc[software] from `DEVON_IDE_TOOLS` link:variables.asciidoc[variable] (if not already installed).
 * configure all these tools
+* create IDE launch scripts
+* perform OS specific system integration such as WindowsExplorer integration (only done from `setup` script and not from `devon ide setup`)
 
 == update
 Run `devon ide update` to update your `devon-ide`. This will check for updates and link:setup.asciidoc#install[install] them automatically.
+The optinal extrag argument (`«package»`) behaves as following:
+
+* `scripts`: check if a new version of `devon-ide-scripts` is available. If so it will be downloaded and installed. As Windows is using file-locks, it is tricky to update a script while it is executed. Therefore, we update the `scripts` folder as an async background task and have to abort further processing at this point on windows as a workaround.
+* `settings`: update the link:settings.asciidoc[settings] (`git pull`).
+* `software`: update the link:software.asciidoc[software] (e.g. if versions have changed via `scripts` or `settings` update).
+* `all`: do all the above sequentially. 
+* none: `settings` and `software` is updated by default if no extra argument is given. This is the regular usage for project developers. Only perform an update of `scripts` when you are requested to do so by your technical lead. Espcially bigger projects need to test updates before rolling them out to the entire team. If developers would always update to the latest release of the `scripts` which is released globally, some project functionality might break causing problems and extra efforts in the teams.
+
+In order to update to a specific version of `scripts` an explicit version can be specified after the additional `to` argument:
+```
+devon ide update scripts to 3.1.99
+```
+The above example will update to the exact version `3.1.99` no matter if this is an upgrade or a downgrade of your current installed version.
+If you just use `devon ide update scripts` then the latest available version will be installed. In larger teams it is recommended to communicate exact version updates to avoid that a new release can interfere and break anything. Therefore some pilot user will test a new version for the entire team and only after successful test will communicate to the team to update to that exact version by providing the complete command as in the above example.
+
+== uninstall
+We hope you love `devon-ide`. However, if you don't and want to get rid of it entirely and completely remove all integrations, you can use this command:
+```
+devon ide uninstall
+```
+This will remove `devon-ide` from all central places of your OS (user home directory such as `scripts`, `.devon`, `.bashrc`, as well as windows registry, etc.).
+However, it will not remove your actual installations (or shared link:software.asciidoc[software] folder). So after running this `uninstall`, simply remove your `DEVON_IDE_HOME` directory of all devon-ide installations and potential shared link:software.asciidoc[software] folder. You may also want to clean up your `~/Downloads` directory from files downloaded by `devon-ide`. We do not automate this as deleting a directory is a very simple manual step and we do not want to take responsibility for severe data loss if your workspaces contained valuable work.

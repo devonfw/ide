@@ -618,6 +618,7 @@ function doUpgradeMavenArtifact() {
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
+  local current_repo="${DEVON_SOFTWARE_REPOSITORY}"
   if [ "${current_version}" = "0" ]
   then
     return 1
@@ -628,7 +629,11 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
-    echo "LATEST = $target_version"
+    if [[ "${target_version}" =~ "alpha|beta|rc|test" ]]
+    then 
+      doAskToContinue "Latest version seems unstable: ${doAskToContinue}\n Are you sure you want to install this version?"
+    fi
+    DEVON_SOFTWARE_REPOSITORY=
   fi
   if [ -n "${current_version}" ]
   then
@@ -636,12 +641,12 @@ function doUpgradeMavenArtifact() {
     result=${?}
     if [ "${result}" = 0 ]
     then
-      echo "The ${artifact_id} package is already at the latest version ${target_version}"
+      echo "The ${artifact_id} package is already at the correct version ${target_version}"
       return 1
     else
       echo "You are using version ${current_version} of ${artifact_id} "
       echo "The new version to install is ${target_version}"
-      if [ "${result}" = 2 ] && [ "${3}" != "LATEST" ]
+      if [ "${result}" = 2 ] && [ "${4}" != "LATEST" ]
       then
         echo "You are using a newer version than the latest release version."
         echo "Hence there is nothing to update."
@@ -652,6 +657,7 @@ function doUpgradeMavenArtifact() {
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
   doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${suffix}" "-"
+  DEVON_SOFTWARE_REPOSITORY="${current_repo}"
 }
 
 # $1: target
@@ -699,7 +705,7 @@ function doInstall() {
   local download_url="${2}"
   local software="${3}"
   local version="${4}"
-  local extension="${5:-.tgz}"
+  local extension="${5}"
   local os="${6}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${download_url}" ] || [ -z "${software}" ]
@@ -765,7 +771,7 @@ function doInstall() {
       repo="${host}/${repo//[^A-Za-z0-9._-]/_}"
       download_dir="${download_dir}/${repo}"
     else
-      if [ -z "${5}" ]
+      if [ -z "${extension}" ]
       then
         local file="${download_url/*\//}"
         extension=${file/*\.tar\./.tar.}

@@ -12,7 +12,7 @@ function doSetup() {
   then
     software_version="${GRADLE_VERSION:-5.5.1}"
     download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-    doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" "" "all"
+    doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" "" "-"
   fi
   if [ -n "${1}" ]
   then
