@@ -17,7 +17,7 @@ ${DEVON_SOFTWARE_REPOSITORY}/«tool»/«version»/«tool»-«version»-«os».tg
 ```
 So for every tool `«tool»` (link:java.asciidoc[java], link:mvn.asciidoc[maven], link:vscode.asciidoc[vscode], link:eclipse.asciidoc[eclipse], etc.) you need to provide a folder in your repository.
 Within this folder for every supported version `«version»` you need a subfolder.
-This subfolder needs to contain the tool in that version for every operating system `«os»` (`windows`, `linux`, or `mac` amd `all` for OS independent software such as `maven`).
+This subfolder needs to contain the tool in that version for every operating system `«os»` (`windows`, `linux`, or `mac` and `all` for OS independent software such as `maven`).
 
 == Shared
 
