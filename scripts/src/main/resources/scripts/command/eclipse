@@ -117,12 +117,7 @@ function doAddPlugin() {
       doInstallEclipsePlugin https://dl.bintray.com/devonfw/cobigen.p2/ "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
     elif [ "${1}" = "terminal" ]
     then
-      echo "***** ERROR *****"
-      echo "TM Terminal does not have an update-site but only a marketplace site."
-      echo "We currently have no clue how to automatically install plugins from marketplace"
-      echo "Until this issue is resolved, you need to manually install TM Terminal from the below marketplace URL:"
-      echo http://marketplace.eclipse.org/content/tm-terminal
-      echo doInstallEclipsePlugin "https://TODO" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
+      doInstallEclipsePlugin "http://download.eclipse.org/tm/terminal/marketplace" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
     elif [ "${1}" = "anyedit" ]
     then
       doInstallEclipsePlugin "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
