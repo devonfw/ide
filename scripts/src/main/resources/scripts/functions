@@ -629,8 +629,6 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
-    # shellcheck is completely wrong here and without quotes 
-    # shellcheck disable=SC2076
     if [[ "${target_version}" =~ alpha|beta|rc|pre|test ]]
     then 
       doAskToContinue "Latest version seems unstable: ${target_version}\n Are you sure you want to install this version?"
