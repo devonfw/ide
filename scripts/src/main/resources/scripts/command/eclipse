@@ -153,7 +153,7 @@ function doAddPlugin() {
 
 function doStartEclipse() {
   doConfigureEclipse -u
-  echo "launching Eclipse..."
+  echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   if doIsWindows
   then
     # shellcheck disable=SC2086
