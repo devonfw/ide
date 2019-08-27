@@ -5,6 +5,18 @@
 
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
+   0. Source Code vs. Software Release
+
+      This Apache License applies to the source-code of this software.
+      However, a release of this software also contains other third-party
+      components, for which the respective open source license terms apply.
+      The open-source components of third parties are not from us and must be
+      licensed directly from the respective third party.
+      Therefore, in addition to Apache License you also need to agree to our terms
+      of use:
+      
+      https://github.com/devonfw/devon-ide/blob/master/documentation/license.asciidoc
+
    1. Definitions.
 
       "License" shall mean the terms and conditions for use, reproduction,
@@ -187,7 +199,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2015-2018 Capgemini SE.
+   Copyright 2015-2019 Capgemini SE.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
