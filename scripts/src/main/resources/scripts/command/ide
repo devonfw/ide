@@ -8,10 +8,16 @@ function doUpdateScripts() {
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
   then
-    cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+    if [ "${target_version}" = "LATEST" ]
+    then
+      cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
+    fi
     if doIsWindows
     then
-      cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
+      if [ "${target_version}" = "LATEST" ]
+      then
+        cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
+      fi
       doFail "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
     fi
   fi
@@ -143,7 +149,7 @@ function doSetup() {
   then
     doFail "Variable DEVON_IDE_TOOLS is undefined. Please check your configuration (devon.properties)."
   fi
-  doSetupTools
+  doUpdateSoftware
   if doIsWindows
   then
     if [ -e "${DEVON_IDE_HOME}/console.bat" ]
@@ -153,7 +159,7 @@ function doSetup() {
   fi
 }
 
-function doSetupTools() {
+function doUpdateSoftware() {
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     echo
@@ -225,9 +231,11 @@ then
   echo
   echo "Arguments:"
   echo "setup [«SETTINGS_URL»]           setup devon-ide (getting the settings from the given URL)"
-  echo "update                           check for updates and install if newer version is available"
-  echo "update «package» [to «version»]  update (or downgrade) specified package (to specified version)"
-  echo "                                 packages are e.g. 'scripts' or 'settings'"
+  echo "update scripts [to «version»]    update (or downgrade) devon-ide-scripts (to specified or latest version)"
+  echo "update settings                  update settings (git pull)"
+  echo "update software                  update all software tools to configured version"
+  echo "update all                       update scripts, settings and software"
+  echo "update                           update settings and software"
   echo "uninstall                        uninstall devon-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
@@ -241,15 +249,14 @@ elif [ "${1}" = "update" ]
 then
   if [ -z "${2}" ]
   then
-    doUpdateScripts
     doUpdateSettings
-    doSetupTools
+    doUpdateSoftware
   else
-    if [ "${3}" = "to" ]
+    if [ "${3}" = "to" ] && [ "${2}" != "scripts" ]
     then
       if [ -z "${4}" ]
       then
-        doFail "Missing version argument!\ndevon ide update to «version»"
+        doFail "Missing version argument!\ndevon ide update scripts to «version»"
       fi
       target_version="${4}"
     elif [ -n "${3}" ]
@@ -262,9 +269,14 @@ then
     elif [ "${2}" = "settings" ]
     then
       doUpdateSettings
-    elif [ "${2}" = "tools" ]
+    elif [ "${2}" = "software" ]
     then
-      doSetupTools
+      doUpdateSoftware
+    elif [ "${2}" = "all" ]
+    then
+      doUpdateScripts
+      doUpdateSettings
+      doUpdateSoftware
     else
       doFail "Undefined package ${2}"
     fi
