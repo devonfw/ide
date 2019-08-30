@@ -93,7 +93,48 @@ function doSetupConf() {
   done
 }
 
+# $1: devon or devon.bat
+function doUpdateCliScript() {
+  # shellcheck disable=SC2007
+  local my_ide_version="$[devon_ide_version]"
+  if [ "${my_ide_version}" = "0" ]
+  then
+    return
+  fi
+  local current_devon_version
+  local devon_cli
+  if [ "${1}" = "devon.bat" ]
+  then
+    if ! doIsWindows
+    then
+      return
+    fi
+    devon_cli="${DEVON_HOME_DIR}/scripts/devon.bat"
+  elif [ "${1}" = "devon" ]
+  then
+    devon_cli="${DEVON_HOME_DIR}/.devon/devon"
+  else
+    doFail "Illegal argument: doUpdateCliScript ${1}"
+  fi
+  if [ -x "${devon_cli}" ]
+  then
+    current_devon_version="$("${devon_cli}" -v)"
+    doVersionCompare "${my_ide_version}" "${current_devon_version}"
+    if [ "$?" = "1" ]
+    then
+      echo "Updating ${devon_cli} from ${current_devon_version} to ${my_ide_version}..."
+      cp "${DEVON_IDE_HOME}/scripts/${1}" "${devon_cli}"
+    fi
+  fi
+}
+
+function doUpdateCli() {
+  doUpdateCliScript devon
+  doUpdateCliScript devon.bat
+}
+
 function doSetup() {
+  doUpdateCli
   doUpdateSettings "${@}"
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
