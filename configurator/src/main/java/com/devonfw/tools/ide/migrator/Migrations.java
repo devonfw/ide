@@ -142,7 +142,12 @@ public class Migrations {
         .replaceCommentNode(
             "<!DOCTYPE mappings PUBLIC \"-//DOZER//DTD MAPPINGS//EN\" \"http://dozer.sourceforge.net/dtd/dozerbeanmapping.dtd\">",
             "<!DOCTYPE mappings PUBLIC \"-//DOZER//DTD MAPPINGS//EN\" \"https://github.com/DozerMapper/DozerMapper.github.io/blob/master/dtd/bean-mapping.dtd\">")
-        .and().next().build();
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.1.1")) //
+        .pom().replaceProperty("devon4j.version", "3.1.1") //
+        .replaceProperty("jackson.version", "2.9.9.20190727") //
+        .and() //
+        .next().build();
   }
 
 }
