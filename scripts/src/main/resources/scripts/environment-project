@@ -28,16 +28,16 @@ function doLoadProperties() {
       then
         unset "${key}"
       else
-        if [ "${value:0:1}" != "(" ]
-        then
-          value=\"${value}\"
-        fi
         if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
         then
-          if [[ "${value}" =~ ^[A-Za-z]:(/|\\) ]]
+          if [[ "${value}" =~ ^[A-Za-z]:[\\/] ]]
           then
             value="$(cygpath "${value}")"
           fi
+        fi
+        if [ "${value:0:1}" != "(" ]
+        then
+          value=\"${value}\"
         fi
         eval "${key}=${value}"
         if [ "${export_key}" = "true" ]
