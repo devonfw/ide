@@ -116,7 +116,7 @@ function doUpdateCliScript() {
   else
     doFail "Illegal argument: doUpdateCliScript ${1}"
   fi
-  if [ -x "${devon_cli}" ]
+  if [ -f "${devon_cli}" ]
   then
     current_devon_version="$("${devon_cli}" -v)"
     doVersionCompare "${my_ide_version}" "${current_devon_version}"
