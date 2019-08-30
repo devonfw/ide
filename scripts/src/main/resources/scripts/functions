@@ -582,6 +582,11 @@ function doMavenArchetype() {
   then
     target_args+=("-Dversion=1.0.0-SNAPSHOT")
   fi
+  if ! doArrayContainsItemWithPrefix "${target_args[@]}" "-DarchetypeVersion="
+  then
+    doMavenGetLatestVersion "https://repo.maven.apache.org/maven2/${ARCHETYPE_GROUP_ID//.//}/${ARCHETYPE_ARTIFACT_ID}"
+    target_args+=("-DarchetypeVersion=${LATEST_VERSION}")
+  fi
   if [ -z "${target_artifact_id}" ]
   then
     for ((i=1; i < ${#}; i++)) {
