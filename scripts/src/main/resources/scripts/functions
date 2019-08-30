@@ -804,7 +804,7 @@ function doInstall() {
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
     doDownload "${download_url}" "${filename}" "${download_dir}"
-    doExtract "${DEVON_DOWNLOAD_DIR}/${filename}" "${dir}"
+    doExtract "${download_dir}/${filename}" "${dir}"
     doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
     if [ "${install_path}" != "${DEVON_IDE_HOME}" ]
     then
