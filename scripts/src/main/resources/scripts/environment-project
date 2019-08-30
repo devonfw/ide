@@ -34,7 +34,7 @@ function doLoadProperties() {
         fi
         if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
         then
-          if [[ "${value}" =~ ^[A-Za-z]:(/|\\\\) ]]
+          if [[ "${value}" =~ ^[A-Za-z]:(/|\\) ]]
           then
             value="$(cygpath "${value}")"
           fi
