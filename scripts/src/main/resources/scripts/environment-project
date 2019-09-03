@@ -85,7 +85,7 @@ then
 else
   if [[ "${DEVON_OLD_PATH}" == *"C:\\WINDOWS"* ]]
   then
-    # https://github.com/devonfw/devon-ide/issues/49
+    # https://github.com/devonfw/ide/issues/49
     DEVON_OLD_PATH=
     IFS=':'
     set -f

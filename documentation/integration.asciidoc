@@ -6,7 +6,7 @@ The `devon-ide` already brings a lot of integration out of the box. This page is
 OASP4J-IDE ships with a script `IDEenv.bat` that checks if you are currently in a directory (CWD) that belongs to an `devon-ide` project. In that case the script will automatically set the environment variables for that projects. Otherwise the script will have no effect and do no harm.
 Preparation:
 
-* Please copy `IDEenv.bat` from https://github.com/devonfw/devon-ide/tree/master/scripts/src/main/resources/system[system] folder into a central `scripts` folder (e.g. `C:\Users\«MyLogin»\scripts` or `C:\Program Files\scripts`)
+* Please copy `IDEenv.bat` from https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/system[system] folder into a central `scripts` folder (e.g. `C:\Users\«MyLogin»\scripts` or `C:\Program Files\scripts`)
 * Ensure that this `scripts` directory is added to your system path:
 ** Got to `Computer > Properties > Advanced system settings > Environment Variables`
 ** In the upper group (`User variables for ...`) select the variable `PATH`
@@ -17,7 +17,7 @@ Preparation:
 === CMD
 If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devon-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell. Therefore you once have to follow these steps:
 
-* Right-click on the file `IDEenv.reg` from https://github.com/devonfw/devon-ide/tree/master/scripts/src/main/resources/system[system] and choose `Merge` from Context-Menu.
+* Right-click on the file `IDEenv.reg` from https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/system[system] and choose `Merge` from Context-Menu.
 * Confirm the dialog `User Account Control` with `Yes`.
 * Confrim the dialog `Registry Editor` with `Yes`.
 * Click `OK`.
