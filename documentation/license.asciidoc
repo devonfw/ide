@@ -1,6 +1,5 @@
 = License
 
-This documentation is licensed under http://creativecommons.org/licenses/by-nd/4.0/[Creative Commons License (Attribution-NoDerivatives 4.0 International)].
-The source-code of the `devon-ide` software itself is licensed under https://github.com/devonfw/devon-ide/blob/master/LICENSE[Apache Software License 2.0]. However, this software involves several third party components under different open-source licenses.
-You therefore have to apply to our https://github.com/devonfw/devon-ide/blob/master/scripts/src/main/resources/TERMS_OF_USE.adoc[terms of use] before using it.
+This software is licensed as Open-Source product for free usage including commercial use.
+You need to apply to our https://github.com/devonfw/devon-ide/blob/master/TERMS_OF_USE.adoc[terms of use] before using it.
 
