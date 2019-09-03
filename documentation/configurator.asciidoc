@@ -3,7 +3,7 @@ toc::[]
 
 = Configurator
 
-The `devon-ide` maintains and includes a tool called https://github.com/devonfw/devon-ide/tree/master/configurator[devon-ide-configurator]. This allows to synchronize and manage complex configurations. Initially it was written for Eclipse that stores its information in a `.metadata` folder of your workspace. Unfortunately it contains different file-formats (including XML as String value inside properties files), temporary data as well as important configurations with sometimes mixtures of project specific, developer specific, and UI specific settings. To make it short it is a mess. Instead of bashing on Eclipse we want to make this IDE more usable and created a way to manage important parts of such configuration strcutures.
+The `devon-ide` maintains and includes a tool called https://github.com/devonfw/ide/tree/master/configurator[devon-ide-configurator]. This allows to synchronize and manage complex configurations. Initially it was written for Eclipse that stores its information in a `.metadata` folder of your workspace. Unfortunately it contains different file-formats (including XML as String value inside properties files), temporary data as well as important configurations with sometimes mixtures of project specific, developer specific, and UI specific settings. To make it short it is a mess. Instead of bashing on Eclipse we want to make this IDE more usable and created a way to manage important parts of such configuration strcutures.
 
 == How to use
 The easiest way is that you do not care. When you launch the IDE of your choice (e.g. via `devon eclipse`, `devon vscode` or by running `eclipse-main` script), this will happen automatically.
@@ -32,7 +32,7 @@ In other words this means:
 
 == How to customize
 
-Many fundamental settings for Eclipse can be found in the sub-folder `https://github.com/devonfw/devon-ide/tree/master/settings/src/main/settings/eclipse/workspace/update/.metadata/.plugins/org.eclipse.core.runtime/.settings[.metadata/.plugins/org.eclipse.core.runtime/.settings]`. Of course you could manually edit these settings with a text editor. However, this requires a lot of knowledge. As we want to provide a great user-experience with `devon-ide` you can also do the following:
+Many fundamental settings for Eclipse can be found in the sub-folder `https://github.com/devonfw/ide/tree/master/settings/src/main/settings/eclipse/workspace/update/.metadata/.plugins/org.eclipse.core.runtime/.settings[.metadata/.plugins/org.eclipse.core.runtime/.settings]`. Of course you could manually edit these settings with a text editor. However, this requires a lot of knowledge. As we want to provide a great user-experience with `devon-ide` you can also do the following:
 
 * launch your IDE (e.g. `devon eclipse`).
 * do the desired modification of the configuration within the IDE's GUI (e.g. in Eclipse preferences)

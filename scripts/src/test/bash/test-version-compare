@@ -2,7 +2,7 @@
 
 cd ../../../../scripts/src/main/resources || exit 1
 exitcode=0
-# https://github.com/devonfw/devon-ide/issues/202
+# https://github.com/devonfw/ide/issues/202
 source scripts/functions
 echo "Testing version comparison"
 function doTestVersionCompare() {

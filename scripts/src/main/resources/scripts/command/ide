@@ -34,7 +34,7 @@ function doUpdateSettings() {
     then
       echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
       echo "Further details can be found here:"
-      echo "https://github.com/devonfw/devon-ide/wiki/settings"
+      echo "https://github.com/devonfw/ide/wiki/settings"
       echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
       echo "In case you just want to test devon-ide you may simply hit return to install default settings."
       echo
@@ -48,7 +48,7 @@ function doUpdateSettings() {
     fi
     if [ "${SETTINGS_URL}" == "-" ]
     then
-      SETTINGS_URL="https://github.com/devonfw/devon-ide-settings.git"
+      SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
     fi
     doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
     if [ ! -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
@@ -261,7 +261,7 @@ target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
   *\ * )
-   doConfirmWarning "Your devon-ide installation path contains whitespace(s):\n${DEVON_IDE_HOME}\nThis will cause severe bugs (https://github.com/devonfw/devon-ide/issues/100)!\nWe strongly encourage you to abort and choose a different installation path."
+   doConfirmWarning "Your devon-ide installation path contains whitespace(s):\n${DEVON_IDE_HOME}\nThis will cause severe bugs (https://github.com/devonfw/ide/issues/100)!\nWe strongly encourage you to abort and choose a different installation path."
    ;;
 esac
 

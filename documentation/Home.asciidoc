@@ -22,4 +22,4 @@ TL;DR?
 5. happy hacking!
 
 == License
-The `devon-ide` is free and open-source. For details read our https://github.com/devonfw/devon-ide/blob/master/TERMS_OF_USE.adoc[TERMS_OF_USE].
+The `devon-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].
