@@ -18,7 +18,7 @@
   <licenses>
     <license>
       <name>Terms of use for devon-ide</name>
-      <url>https://github.com/devonfw/devon-ide/blob/master/TERMS_OF_USE.asciidoc</url>
+      <url>https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc</url>
       <distribution>repo</distribution>
       <comments>This software is licensed as Open-Source product for free usage including commercial use. As it makes use of components of third-parties a combination of multiple licenses applies.</comments>
     </license>
