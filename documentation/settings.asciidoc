@@ -5,11 +5,11 @@ toc::[]
 
 The `devon-ide` requires `settings` with configuration templates for the arbitrary tools.
 
-To get an initial set of these settings we provide the https://github.com/devonfw/devon-ide-settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
+To get an initial set of these settings we provide the https://github.com/devonfw/ide-settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
 
 To test `devon-ide` or for small projects you can also use these the latest default settings.
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
-Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/devon-ide-settings[devon-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/devon-ide-settings[devon-ide-settings] back into the project specific `settings` "fork".
+Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/ide-settings[devon-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/ide-settings[devon-ide-settings] back into the project specific `settings` "fork".
 
 == Structure
 The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
@@ -18,30 +18,30 @@ The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to follow
 [subs=+macros]
 ----
 /settings
-├──/ https://github.com/devonfw/devon-ide-settings/tree/master/devon[devon]
-│  ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/devon/conf[conf]
-│  │  ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/devon/.m2[.m2]
-│  │  │  └── https://github.com/devonfw/devon-ide-settings/blob/master/devon/.m2/settings.xml[settings.xml]
-│  │  ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/devon/npm[npm]
-│  │  │  └── https://github.com/devonfw/devon-ide-settings/blob/master/devon/npm/.npmrc[.npmrc]
-│  │  └── https://github.com/devonfw/devon-ide-settings/blob/master/devon/conf/devon.properties[devon.properties]
-├──/ https://github.com/devonfw/devon-ide-settings/tree/master/eclipse[eclipse]
-│  ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/eclipse/workspace[workspace]
-│  │  ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/eclipse/workspace/setup[setup]
-│  │  └──/ https://github.com/devonfw/devon-ide-settings/tree/master/eclipse/workspace/update[update]
-│  ├── https://github.com/devonfw/devon-ide-settings/blob/master/eclipse/lifecycle-mapping-metadata.xml[lifecycle-mapping-metadata.xml]
-│  └── https://github.com/devonfw/devon-ide-settings/blob/master/eclipse/project.dictionary[project.dictionary]
+├──/ https://github.com/devonfw/ide-settings/tree/master/devon[devon]
+│  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/conf[conf]
+│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/.m2[.m2]
+│  │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/.m2/settings.xml[settings.xml]
+│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/npm[npm]
+│  │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/npm/.npmrc[.npmrc]
+│  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/conf/devon.properties[devon.properties]
+├──/ https://github.com/devonfw/ide-settings/tree/master/eclipse[eclipse]
+│  ├──/ https://github.com/devonfw/ide-settings/tree/master/eclipse/workspace[workspace]
+│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/eclipse/workspace/setup[setup]
+│  │  └──/ https://github.com/devonfw/ide-settings/tree/master/eclipse/workspace/update[update]
+│  ├── https://github.com/devonfw/ide-settings/blob/master/eclipse/lifecycle-mapping-metadata.xml[lifecycle-mapping-metadata.xml]
+│  └── https://github.com/devonfw/ide-settings/blob/master/eclipse/project.dictionary[project.dictionary]
 ├──/ ...
-├──/ https://github.com/devonfw/devon-ide-settings/tree/master/sonarqube[sonarqube]
-│  └──/ https://github.com/devonfw/devon-ide-settings/tree/master/sonarqube/profiles[profiles]
+├──/ https://github.com/devonfw/ide-settings/tree/master/sonarqube[sonarqube]
+│  └──/ https://github.com/devonfw/ide-settings/tree/master/sonarqube/profiles[profiles]
 │     ├── Devon-C#.xml
 │     ├── ...
 │     └── Devon-XML.xml
-├──/ https://github.com/devonfw/devon-ide-settings/tree/master/vscode[vscode]
-│  └──/ https://github.com/devonfw/devon-ide-settings/tree/master/vscode/workspace[workspace]
-│     ├──/ https://github.com/devonfw/devon-ide-settings/tree/master/vscode/workspace/setup[setup]
-│     └──/ https://github.com/devonfw/devon-ide-settings/tree/master/vscode/workspace/update[update]
-└── https://github.com/devonfw/devon-ide-settings/blob/master/devon.properties[devon.properties]
+├──/ https://github.com/devonfw/ide-settings/tree/master/vscode[vscode]
+│  └──/ https://github.com/devonfw/ide-settings/tree/master/vscode/workspace[workspace]
+│     ├──/ https://github.com/devonfw/ide-settings/tree/master/vscode/workspace/setup[setup]
+│     └──/ https://github.com/devonfw/ide-settings/tree/master/vscode/workspace/update[update]
+└── https://github.com/devonfw/ide-settings/blob/master/devon.properties[devon.properties]
 ----
 
 As you can see the `settings` folder contains sub-folders for tools of the IDE.

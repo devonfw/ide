@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: pom.xml 6 2013-09-13 10:20:34Z hohwille $ -->
 <project  xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.devonfw.tools.ide.dev</groupId>
@@ -8,7 +7,7 @@
   <version>dev-SNAPSHOT</version>
   <name>${project.artifactId}</name>
   <description>This project provides automatic setup and update of the local development environment.</description>
-  <url>https://github.com/devonfw/devon-ide/wiki</url>
+  <url>https://github.com/devonfw/ide/wiki</url>
   <inceptionYear>2013</inceptionYear>
 
   <properties>

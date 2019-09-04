@@ -15,6 +15,15 @@
   <name>${project.artifactId}</name>
   <description>Scripts to setup and update the development environment.</description>
 
+  <licenses>
+    <license>
+      <name>Terms of use for devon-ide</name>
+      <url>https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc</url>
+      <distribution>repo</distribution>
+      <comments>This software is licensed as Open-Source product for free usage including commercial use. As it makes use of components of third-parties a combination of multiple licenses applies.</comments>
+    </license>
+  </licenses>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -54,6 +63,25 @@
                 <delimiter>$[*]</delimiter>
               </delimiters>
               <useDefaultDelimiters>false</useDefaultDelimiters>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-terms</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>..</directory>
+                  <includes>
+                    <include>TERMS_OF_USE.asciidoc</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
