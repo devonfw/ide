@@ -164,6 +164,26 @@ function doStartEclipse() {
   fi
 }
 
+function doImportMavenProjects() {
+  local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
+  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/workspace.setup"
+  local ws_setup="${oomph_dir}/workspace.setup"
+  if [ ! -f "${ws_setup}" ]
+  then
+    echo ""
+    echo "Could not find file ${ws_setup}"
+    echo "Please run 'devon eclipse' at least once in this workspace."
+  else
+    cp "${ws_setup}" "${ws_setup}.bak"
+    cp -r "${templ_setup}" "${oomph_dir}"
+    sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
+    doStartEclipse
+  fi
+  # TO-DO:
+  # delete workspace.setup from ${oomph_dir}
+  # rename workspace.setup.bak to workspace.setup in ${oomph_dir}
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -174,10 +194,11 @@ then
   echo " setup                    setup Eclipse (install or update)"
   echo " add-plugin «id» [«url»]  install an additional plugin"
   echo " run | start              launch Eclipse IDE (default if no argument is given)"
-  echo " ws-up[date]              update eclipse workspace"
+  echo " ws-up[date]              update Eclipse workspace"
   echo " ws-re[verse]             reverse merge changes from workspace into settings"
   echo " ws-reverse-add           reverse merge adding new properties"
   echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
+  echo " mvn-import               import all Maven projects from current workspace"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -218,6 +239,9 @@ do
     shift
     doAddPlugin "${@}"
     exit ${?}
+  elif [ "${1}" = "mvn-import" ]
+  then
+    doImportMavenProjects
   else
     doFail "Unknown argument: ${1}"
   fi
