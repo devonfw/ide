@@ -151,38 +151,80 @@ function doAddPlugin() {
   fi
 }
 
-function doImportMavenProjects() {
-
+function doImportProjects() {
+  local projectMaven=0
+  local projectGradle=0
+  local projectType=""
+  local importWay=""
   local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
-  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/maven/allProjects/workspace.setup"
+  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup"
   local ws_setup="${oomph_dir}/workspace.setup"
+  echo projectMaven>${WORKSPACE_PATH}/tempProjectMavenFile
+  echo projectGradle>${WORKSPACE_PATH}/tempProjectGradleFile
+  
+ 
+  directoryArray="`find ${WORKSPACE_PATH} -maxdepth 3 -type d`"
+  
+ 
+
+    for file in ${directoryArray[*]}; do
+    ( 
+      if [ -e ${file}/pom.xml ]
+      then
+        projectMaven=1
+        
+        echo ${projectMaven} > ${WORKSPACE_PATH}/temProjectMavenFile
+      elif [ -f build.gradle ]
+      then
+        projectGradle = 1
+        echo ${projectGradle} > ${WORKSPACE_PATH}/temProjectGradleFile
+      fi ) done 
+   
+     echo nachfor
+     projectMaven=$(cat ${WORKSPACE_PATH}/projectMaven) 
+     echo ${projectMaven}
+     echo ${2}
+    if [ "${2}" = "--all" ] 
+    then
+    echo nachall
+    if [ [ ${projectGradel} = 1 ] && [ ${projectMaven} = 1 ] ] 
+    then
+       projectTyp="mavenGradle"
+       importWay="allProjects"
+    elif [ ${projectMaven} = 1 ] 
+    then
+      projectType="maven"
+      importWay="allProjects"
+    elif [ ${projectGradle} = 1 ]
+    then
+      projectType="gradle"
+      importWay="allProjects"
+    else
+      echo ""
+      echo "Sorry, no projects found"
+      
+    fi
+  fi 
+ templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup"   
   if [ ! -f "${ws_setup}" ]
   then
     echo ""
     echo "Could not find file ${ws_setup}"
     echo "Please run 'devon eclipse' at least once in this workspace."
   else
+    
+    echo ${templ_setup}
     cp "${ws_setup}" "${ws_setup}.bak"
     cp -r "${templ_setup}" "${oomph_dir}"
     sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
-    doStartEclipse
+    #doStartEclipse
   fi
-  # TO-DO:
-  # delete workspace.setup from ${oomph_dir}
-  # rename workspace.setup.bak to workspace.setup in ${oomph_dir}
 }
 
 function doStartEclipse() {
-  doConfigureEclipse -u
+  
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
-  local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
-  local ws_setup="${oomph_dir}/workspace.setup"
-  if [ -e "${ws_setup}.bak" ]
-  then
-    cp -v "${ws_setup}.bak" "${ws_setup}"
-    rm -v "${ws_setup}.bak"
-  fi
-
+ 
   if doIsWindows
   then
     # shellcheck disable=SC2086
@@ -222,6 +264,10 @@ then
   shift
   doDevonCommandAllWorkspaces eclipse "${@}"
 fi
+if [ "${1}" = "importProjects" ]
+  then 
+    doImportProjects "${@}"
+fi
 while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
@@ -249,11 +295,10 @@ do
     shift
     doAddPlugin "${@}"
     exit ${?}
-  elif [ "${1}" = "importMavenAll" ]
-  then 
-    doImportMavenProjects
   else
     doFail "Unknown argument: ${1}"
   fi
   shift
 done
+
+
