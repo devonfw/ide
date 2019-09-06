@@ -173,15 +173,15 @@ function doImportProjects() {
       then
         projectMaven=1
         
-        echo ${projectMaven} > ${WORKSPACE_PATH}/temProjectMavenFile
+        echo ${projectMaven} > ${WORKSPACE_PATH}/tempProjectMavenFile
       elif [ -f build.gradle ]
       then
         projectGradle = 1
-        echo ${projectGradle} > ${WORKSPACE_PATH}/temProjectGradleFile
+        echo ${projectGradle} > ${WORKSPACE_PATH}/tempProjectGradleFile
       fi ) done 
    
      echo nachfor
-     projectMaven=$(cat ${WORKSPACE_PATH}/projectMaven) 
+     projectMaven=$(cat ${WORKSPACE_PATH}/tempProjectMavenFile) 
      echo ${projectMaven}
      echo ${2}
     if [ "${2}" = "--all" ] 
@@ -206,8 +206,8 @@ function doImportProjects() {
     fi
   fi 
  templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup" 
- rm  ${WORKSPACE_PATH}/temProjectMavenFile
- rm  ${WORKSPACE_PATH}/temProjectGradleFile
+ rm  ${WORKSPACE_PATH}/tempProjectMavenFile
+ rm  ${WORKSPACE_PATH}/tempProjectGradleFile
   if [ ! -f "${ws_setup}" ]
   then
     echo ""
