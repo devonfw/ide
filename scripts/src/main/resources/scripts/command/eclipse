@@ -205,7 +205,9 @@ function doImportProjects() {
       
     fi
   fi 
- templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup"   
+ templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup" 
+ rm  ${WORKSPACE_PATH}/temProjectMavenFile
+ rm  ${WORKSPACE_PATH}/temProjectGradleFile
   if [ ! -f "${ws_setup}" ]
   then
     echo ""
