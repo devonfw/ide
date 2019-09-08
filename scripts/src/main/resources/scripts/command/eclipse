@@ -151,75 +151,132 @@ function doAddPlugin() {
   fi
 }
 
-function doImportProjects() {
-  local projectMaven=0
-  local projectGradle=0
-  local projectType=""
-  local importWay=""
+function doImport() {
+  local project_maven=0
+  local project_plain=0
+  local project_type=""
+  local import_way=""
   local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
-  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup"
+  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup"
   local ws_setup="${oomph_dir}/workspace.setup"
-  echo projectMaven>${WORKSPACE_PATH}/tempProjectMavenFile
-  echo projectGradle>${WORKSPACE_PATH}/tempProjectGradleFile
+  echo project_maven>${WORKSPACE_PATH}/tempproject_mavenFile
+  echo project_plain>${WORKSPACE_PATH}/tempproject_plainFile
   
  
-  directoryArray="`find ${WORKSPACE_PATH} -maxdepth 3 -type d`"
-  
+  #test="$(cut -d'/' -f4 <<< ${2})"
  
 
-    for file in ${directoryArray[*]}; do
-    ( 
-      if [ -e ${file}/pom.xml ]
-      then
-        projectMaven=1
-        
-        echo ${projectMaven} > ${WORKSPACE_PATH}/tempProjectMavenFile
-      elif [ -f build.gradle ]
-      then
-        projectGradle = 1
-        echo ${projectGradle} > ${WORKSPACE_PATH}/tempProjectGradleFile
-      fi ) done 
-   
-     echo nachfor
-     projectMaven=$(cat ${WORKSPACE_PATH}/tempProjectMavenFile) 
-     echo ${projectMaven}
-     echo ${2}
     if [ "${2}" = "--all" ] 
     then
-    echo nachall
-    if [ [ ${projectGradel} = 1 ] && [ ${projectMaven} = 1 ] ] 
-    then
-       projectTyp="mavenGradle"
-       importWay="allProjects"
-    elif [ ${projectMaven} = 1 ] 
-    then
-      projectType="maven"
-      importWay="allProjects"
-    elif [ ${projectGradle} = 1 ]
-    then
-      projectType="gradle"
-      importWay="allProjects"
-    else
-      echo ""
-      echo "Sorry, no projects found"
+      directoryArray="`find ${WORKSPACE_PATH} -maxdepth 4 -type d`"
+      for file in ${directoryArray[*]}; do
+      ( 
+        if [ -e ${file}/pom.xml ]
+        then
+          project_maven=1
+          echo Maven Project detected
+          echo ${project_maven} > ${WORKSPACE_PATH}/tempproject_mavenFile
+        elif [ -e ${file}/.project ]
+        then
+          project_plain=1
+          echo Plain Project detected 
+          echo ${project_plain} > ${WORKSPACE_PATH}/tempproject_plainFile
+        fi ) done 
+   
+     project_maven=$(cat ${WORKSPACE_PATH}/tempproject_mavenFile)
+     project_plain=$(cat ${WORKSPACE_PATH}/tempproject_plainFile)
+    
+     
+      if [ ${project_maven} = 1 ]  &&  [ ${project_plain} = 1 ] 
+      then
+      # does not work importing both
+        echo point Found Plain and Maven, importing Maven
+        project_type="maven"
+        import_way="allProjects"
+        IMPORT_PATH=${WORKSPACE_PATH:2}
+        
+      elif [ ${project_maven} = 1 ] 
+      then
+        project_type="maven"
+        import_way="allProjects"
+        IMPORT_PATH=${WORKSPACE_PATH:2}
+      elif [ ${project_plain} = 1 ]
+      then
+        project_type="plain"
+        import_way="allProjects"
+        IMPORT_PATH=${WORKSPACE_PATH:2}
+      else
+        echo ""
+        echo "Sorry, no projects found"
+        echo ""
       
-    fi
-  fi 
- templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${projectType}/${importWay}/workspace.setup" 
- rm  ${WORKSPACE_PATH}/tempProjectMavenFile
- rm  ${WORKSPACE_PATH}/tempProjectGradleFile
+      fi
+
+     
+    elif [ "${2:0:4}" = "http" ] 
+    then
+    echo http detected
+        # todo import does not work
+        project_type="maven"
+        import_way="githubProject"
+      
+    
+      templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup" 
+      rm  ${WORKSPACE_PATH}/tempproject_mavenFile
+      rm  ${WORKSPACE_PATH}/tempproject_plainFile
+      echo point 09 ${templ_setup}
+      cp "${ws_setup}" "${ws_setup}.bak"
+      cp -r "${templ_setup}" "${oomph_dir}"
+      GITHUBFORKNAME="$(cut -d'/' -f4 <<< ${2})"
+      tempGithubName="$(cut -d'/' -f5 <<< ${2})"
+      GITHUBREMOTENAME="$(cut -d'.' -f1 <<< ${tempGithubName})"
+      echo point 10 ${GITHUBREMOTENAME}
+      echo point 11 ${tempGithubName}
+      echo point 12 ${ws_setup}
+      echo point 13 ${WORKSPACE_PATH}
+      sed -i "s~@GITHUBFORKNAME@~${GITHUBFORKNAME}~g" "${ws_setup}"
+      sed -i "s~@GITHUBREMOTENAME@~${GITHUBREMOTENAME}~g" "${ws_setup}"
+      sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
+    elif [ -e ${WORKSPACE_PATH}/${2}/pom.xml ]
+    then
+      
+      project_type="maven"
+      import_way="oneProject"
+      IMPORT_PATH=${WORKSPACE_PATH:2}/${2} 
+    
+    elif  [ -e ${WORKSPACE_PATH}/${2}/.project ]
+    then
+      
+      project_type="plain"
+      import_way="oneProject"
+      IMPORT_PATH=${WORKSPACE_PATH:2}/${2} 
+    elif [ -e ${2}/pom.xml ]
+    then
+  
+      project_type="maven"
+      import_way="oneProject"
+      IMPORT_PATH=${2} 
+    elif [ -e ${2}/.project ]
+    then
+    
+      project_type="plain"
+      import_way="oneProject"
+      IMPORT_PATH=${2} 
+    fi 
+ 
   if [ ! -f "${ws_setup}" ]
   then
     echo ""
     echo "Could not find file ${ws_setup}"
     echo "Please run 'devon eclipse' at least once in this workspace."
   else
-    
-    echo ${templ_setup}
-    cp "${ws_setup}" "${ws_setup}.bak"
-    cp -r "${templ_setup}" "${oomph_dir}"
-    sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
-    #doStartEclipse
+     templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup" 
+     rm  ${WORKSPACE_PATH}/tempproject_mavenFile
+     rm  ${WORKSPACE_PATH}/tempproject_plainFile
+     cp "${ws_setup}" "${ws_setup}.bak"
+     cp -r "${templ_setup}" "${oomph_dir}"
+     sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"
+     doStartEclipse
   fi
 }
 
@@ -266,9 +323,9 @@ then
   shift
   doDevonCommandAllWorkspaces eclipse "${@}"
 fi
-if [ "${1}" = "importProjects" ]
+if [ "${1}" = "import" ]
   then 
-    doImportProjects "${@}"
+    doImport "${@}"
 fi
 while [ -n "${1}" ]
 do
