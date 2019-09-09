@@ -164,42 +164,54 @@ function doStartEclipse() {
   fi
 }
 
+
+function doStartEclipseBlocking() {
+  if doIsWindows
+  then
+    # shellcheck disable=SC2086
+    "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+  else
+    # shellcheck disable=SC2086
+    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+  fi
+}
+
+# $1: optional project path
 function doImportMavenProjects() {
   local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
-  local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/workspace.setup"
-  local ws_setup="${oomph_dir}/workspace.setup"
+  local setup_templ="${DEVON_IDE_HOME}/scripts/templates/oomph/workspace.setup"
+  local setup_ws="${oomph_dir}/workspace.setup"
+  local root_path="${OLDPWD}"
+  
+  if [ ! -z "${1}" ]
+  then
+    root_path="$(echo "/${1}" | sed 's~\\~\/~g')"
+  fi
 
-  if [ ! -f "${ws_setup}" ]
+  echo "ROOT_PATH: ${root_path}"
+  
+  if [ ! -f "${setup_ws}" ]
   then
     echo "Could not find file 'workspace.setup' in C:${oomph_dir:2}/"
     echo "Please run 'devon eclipse start' in this workspace first ..."
     return
   fi
 
-  if [ ! -f "${ws_setup}.bak" ]
+  if [ ! -f "${setup_ws}.bak" ]
   then
-    cp "${ws_setup}" "${ws_setup}.bak"
-    cp -r "${templ_setup}" "${oomph_dir}"
-    sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
+    cp "${setup_ws}" "${setup_ws}.bak"
+    cp -r "${setup_templ}" "${oomph_dir}"
+    sed -i "s~@ROOT@~${root_path:2}~" "${setup_ws}"
   fi
-
   echo "Please close the Eclipse instance once all Startup Tasks are completed to finalize the import ..."
+  # read -n 1 -s -r -p "Press any key to continue ..." # DEBUG
+  doStartEclipseBlocking
   
-  if doIsWindows
+  if [ -f "${setup_ws}.bak" ]
   then
-    # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
-  else
-    # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    cp -r "${setup_ws}.bak" "${setup_ws}"
+    rm "${setup_ws}.bak"
   fi
-
-  if [ -f "${ws_setup}.bak" ]
-  then
-    cp -r "${ws_setup}.bak" "${ws_setup}"
-    rm "${ws_setup}.bak"
-  fi
-  
   echo "Maven project import for workspace '${WORKSPACE}' successful!"
 }
 
@@ -217,7 +229,7 @@ then
   echo " ws-re[verse]             reverse merge changes from workspace into settings"
   echo " ws-reverse-add           reverse merge adding new properties"
   echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
-  echo " mvn-import               import all Maven projects from current workspace"
+  echo " mvn-import               import Maven projects from current workspace"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -260,7 +272,9 @@ do
     exit ${?}
   elif [ "${1}" = "mvn-import" ]
   then
-    doImportMavenProjects
+    shift
+    doImportMavenProjects "${@}"
+    exit ${?}
   else
     doFail "Unknown argument: ${1}"
   fi
