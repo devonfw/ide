@@ -164,7 +164,6 @@ function doStartEclipse() {
   fi
 }
 
-
 function doStartEclipseBlocking() {
   if doIsWindows
   then
@@ -176,43 +175,55 @@ function doStartEclipseBlocking() {
   fi
 }
 
-# $1: optional project path
-function doImportMavenProjects() {
-  local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
-  local setup_templ="${DEVON_IDE_HOME}/scripts/templates/oomph/workspace.setup"
-  local setup_ws="${oomph_dir}/workspace.setup"
+# $1: project type
+# $2: optional project path
+function doImportProject() {
+  local setup_ws="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup/workspace.setup"
+  local setup_templ="${DEVON_IDE_HOME}/scripts/templates/oomph"
   local root_path="${OLDPWD}"
-  
-  if [ ! -z "${1}" ]
+  if [ "${1}" = "mvn" ]
   then
-    root_path="$(echo "/${1}" | sed 's~\\~\/~g')"
-  fi
-
-  echo "ROOT_PATH: ${root_path}"
-  
-  if [ ! -f "${setup_ws}" ]
+    setup_templ="${setup_templ}/import_mvn.setup"
+  elif [ "${1}" = "plain" ]
   then
-    echo "Could not find file 'workspace.setup' in C:${oomph_dir:2}/"
-    echo "Please run 'devon eclipse start' in this workspace first ..."
+    setup_templ="${setup_templ}/import_plain.setup"
+  else
+    echo "You must specify the project type (mvn/plain)!"
     return
   fi
 
-  if [ ! -f "${setup_ws}.bak" ]
+  if [ -n "${2}" ]
   then
-    cp "${setup_ws}" "${setup_ws}.bak"
-    cp -r "${setup_templ}" "${oomph_dir}"
-    sed -i "s~@ROOT@~${root_path:2}~" "${setup_ws}"
+    root_path="${2}"
   fi
-  echo "Please close the Eclipse instance once all Startup Tasks are completed to finalize the import ..."
-  # read -n 1 -s -r -p "Press any key to continue ..." # DEBUG
+  if [ ! -f "${setup_ws}" ]
+  then
+    echo "Could not find file 'workspace.setup' in C:${setup_ws:2:-15}"
+    echo "Please run 'devon eclipse start' in this workspace first ..."
+    return
+  fi
+  if [ -f "${setup_ws}.bak" ]
+  then
+  	echo "A backup of 'workspace.setup' already exists in C:${setup_ws:2:-15}"
+    echo "Skipping backup creation ..."
+  else
+    cp "${setup_ws}" "${setup_ws}.bak"
+  	echo "Created backup of 'workspace.setup' in C:${setup_ws:2:-15}"
+  fi
+  cp -r "${setup_templ}" "${setup_ws}"
+  sed -i "s~@ROOT@~${root_path:2}~" "${setup_ws}"
+  echo -n "Please close the Eclipse instance once all Startup Tasks are completed to finalize the import ... "
   doStartEclipseBlocking
-  
   if [ -f "${setup_ws}.bak" ]
   then
     cp -r "${setup_ws}.bak" "${setup_ws}"
     rm "${setup_ws}.bak"
+    echo "CLEANUP SUCCESSFUL!"
+    echo "Eclipse project import for workspace '${WORKSPACE}' finished!"
+  else
+    echo "CLEANUP UNSUCCESSFUL!"
+    echo "No backup of 'workspace.setup' found in C:${setup_ws:2:-15}"
   fi
-  echo "Maven project import for workspace '${WORKSPACE}' successful!"
 }
 
 # CLI
@@ -229,7 +240,7 @@ then
   echo " ws-re[verse]             reverse merge changes from workspace into settings"
   echo " ws-reverse-add           reverse merge adding new properties"
   echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
-  echo " mvn-import               import Maven projects from current workspace"
+  echo " import «type» [«path»]   import Maven/Plain projects from the current directory or a given path"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -270,10 +281,10 @@ do
     shift
     doAddPlugin "${@}"
     exit ${?}
-  elif [ "${1}" = "mvn-import" ]
+  elif [ "${1}" = "import" ]
   then
     shift
-    doImportMavenProjects "${@}"
+    doImportProject "${@}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"
