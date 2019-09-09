@@ -225,7 +225,10 @@ function doImport() {
       rm  ${WORKSPACE_PATH}/tempproject_mavenFile
       rm  ${WORKSPACE_PATH}/tempproject_plainFile
       echo point 09 ${templ_setup}
-      cp "${ws_setup}" "${ws_setup}.bak"
+      if [ ! -e "${ws_setup}.bak" ]
+      then
+        cp "${ws_setup}" "${ws_setup}.bak"
+      fi
       cp -r "${templ_setup}" "${oomph_dir}"
       GITHUBFORKNAME="$(cut -d'/' -f4 <<< ${2})"
       tempGithubName="$(cut -d'/' -f5 <<< ${2})"
@@ -236,7 +239,7 @@ function doImport() {
       echo point 13 ${WORKSPACE_PATH}
       sed -i "s~@GITHUBFORKNAME@~${GITHUBFORKNAME}~g" "${ws_setup}"
       sed -i "s~@GITHUBREMOTENAME@~${GITHUBREMOTENAME}~g" "${ws_setup}"
-      sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
+     # sed -i "s~@ROOT@~${WORKSPACE_PATH:2}~" "${ws_setup}"
     elif [ -e ${WORKSPACE_PATH}/${2}/pom.xml ]
     then
       
@@ -273,7 +276,11 @@ function doImport() {
      templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup" 
      rm  ${WORKSPACE_PATH}/tempproject_mavenFile
      rm  ${WORKSPACE_PATH}/tempproject_plainFile
-     cp "${ws_setup}" "${ws_setup}.bak"
+     if [ ! -e "${ws_setup}.bak" ]
+     then
+        cp "${ws_setup}" "${ws_setup}.bak"
+    fi
+     #cp "${ws_setup}" "${ws_setup}.bak"
      cp -r "${templ_setup}" "${oomph_dir}"
      sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"
      #doStartEclipse
