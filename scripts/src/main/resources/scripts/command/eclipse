@@ -152,85 +152,51 @@ function doAddPlugin() {
 }
 
 function doImport() {
-  local project_maven=0
-  local project_plain=0
   local project_type=""
   local import_way=""
   local oomph_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
   local templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup"
   local ws_setup="${oomph_dir}/workspace.setup"
-  local flag=1
-  echo project_maven>${WORKSPACE_PATH}/tempproject_mavenFile
-  echo project_plain>${WORKSPACE_PATH}/tempproject_plainFile
-  if [ "${2}" = "--all" ] 
+  local http_flag=1
+  local root_path="${OLDPWD}"
+  if [ "${2}" = "maven" ] 
   then
-    directoryArray="`find ${WORKSPACE_PATH} -maxdepth 4 -type d`"
-    for file in ${directoryArray[*]}; do
-    ( 
-      if [ -e ${file}/pom.xml ]
-      then
-        project_maven=1
-        echo Maven Project detected
-        echo ${project_maven} > ${WORKSPACE_PATH}/tempproject_mavenFile
-      elif [ -e ${file}/.project ]
-      then
-        project_plain=1
-        echo Plain Project detected 
-        echo ${project_plain} > ${WORKSPACE_PATH}/tempproject_plainFile
-      fi ) done   
-    project_maven=$(cat ${WORKSPACE_PATH}/tempproject_mavenFile)
-    project_plain=$(cat ${WORKSPACE_PATH}/tempproject_plainFile)    
-    if [ ${project_maven} = 1 ]  &&  [ ${project_plain} = 1 ] 
-    then
-    # does not work importing both
-      echo point Found Plain and Maven, importing Maven
-      project_type="maven"
-      import_way="allProjects"
-      IMPORT_PATH=${WORKSPACE_PATH:2}   
-    elif [ ${project_maven} = 1 ] 
-    then
-      project_type="maven"
-      import_way="allProjects"
-      IMPORT_PATH=${WORKSPACE_PATH:2}
-    elif [ ${project_plain} = 1 ]
-    then
-      project_type="plain"
-      import_way="allProjects"
-      IMPORT_PATH=${WORKSPACE_PATH:2}
-    else
-      echo ""
-      echo "Sorry, no projects found"
-      echo ""    
-    fi  
+    project_type="maven"
+    import_way="allProjects"
+    IMPORT_PATH=${root_path:2}
+  elif [ "${2}"  = "plain" ]
+  then
+    project_type="plain"
+    import_way="allProjects"
+    IMPORT_PATH=${rooth_path:2}  
   elif [ "${2:0:4}" = "http" ] || [ "${2:0:3}" = "ssh" ]
   then
     echo http/ ssh detected       
     project_type="maven"
     import_way="githubProject"    
-    templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup" 
-    rm  ${WORKSPACE_PATH}/tempproject_mavenFile
-    rm  ${WORKSPACE_PATH}/tempproject_plainFile     
+    templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup"      
     if [ ! -e "${ws_setup}.bak" ]
     then
       cp "${ws_setup}" "${ws_setup}.bak"
     fi
+    echo " Please enter branch to checkout"
     cp -r "${templ_setup}" "${oomph_dir}"
     GITHUBFORKNAME="$(cut -d'/' -f4 <<< ${2})"
     tempGithubName="$(cut -d'/' -f5 <<< ${2})"
     GITHUBREMOTENAME="$(cut -d'.' -f1 <<< ${tempGithubName})"
     sed -i "s~@GITHUBFORKNAME@~${GITHUBFORKNAME}~g" "${ws_setup}"
     sed -i "s~@GITHUBREMOTENAME@~${GITHUBREMOTENAME}~g" "${ws_setup}"     
-    flag=0
-  elif [ -e ${WORKSPACE_PATH}/${2}/pom.xml ]
+    http_flag=0
+  elif [ -e ${root_path}/${2}/pom.xml ]
   then      
     project_type="maven"
     import_way="oneProject"
-    IMPORT_PATH=${WORKSPACE_PATH:2}/${2}    
-  elif  [ -e ${WORKSPACE_PATH}/${2}/.project ]
+    IMPORT_PATH=${rooth_path:2}/${2}    
+  elif  [ -e ${root_path}/${2}/.project ]
   then     
     project_type="plain"
     import_way="oneProject"
-    IMPORT_PATH=${WORKSPACE_PATH:2}/${2} 
+    IMPORT_PATH=${root_path:2}/${2} 
   elif [ -e ${2}/pom.xml ]
   then
     project_type="maven"
@@ -243,7 +209,7 @@ function doImport() {
     IMPORT_PATH=${2} 
   else
     echo ""
-    echo "Sorry unknown path"
+    echo "Sorry please enter import plain, maven or a path"
     echo ""
   fi 
   if [ ! -f "${ws_setup}" ]
@@ -251,26 +217,33 @@ function doImport() {
     echo ""
     echo "Could not find file ${ws_setup}"
     echo "Please run 'devon eclipse' at least once in this workspace."
-  elif [ ${flag} = 1 ]
+  elif [ ${http_flag} = 1 ] 
   then
     templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup" 
-    rm  "${WORKSPACE_PATH}/tempproject_mavenFile"
-    rm  "${WORKSPACE_PATH}/tempproject_plainFile"
     if [ ! -e "${ws_setup}.bak" ]
     then
       cp "${ws_setup}" "${ws_setup}.bak"
     fi
-    cp -r "${templ_setup}" "${oomph_dir}"
-    sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"      
+    if [ -e ${templ_setup} ]
+    then
+      cp -r "${templ_setup}" "${oomph_dir}"
+      sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"      
+      echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+    fi
   fi
-  echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
-  if doIsWindows
+  if [ -e ${templ_setup} ]
   then
-    # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    if doIsWindows
+    then
+      # shellcheck disable=SC2086
+      start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+      else
+      # shellcheck disable=SC2086
+      "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    fi
   else
-    # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    echo "Please use: devon eclipse import maven/plain/absolue path/ relative path"
+    
   fi
   
 }
