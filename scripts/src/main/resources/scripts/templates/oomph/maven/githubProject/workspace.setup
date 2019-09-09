@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Workspace
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
+    xmlns:maven="http://www.eclipse.org/oomph/setup/maven/1.0"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/maven/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Maven.ecore"
+    name="@GITHUBREMOTENAME@"
+    label="@GITHUBREMOTENAME@">
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="github.fork.name"
+      defaultValue="@GITHUBFORKNAME@"
+      storageURI="scope://Workspace"
+      label="Fork Name"/>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="github.repo.name"
+      defaultValue="@GITHUBREMOTENAME@"
+      storageURI="scope://Workspace"
+      label="Repository Name"/>
+  <setupTask
+      xsi:type="setup:VariableTask"
+      name="github.remote.uri"
+      storageURI="scope://Workspace"
+      label="Remote URL (HTTPS/SSH)">
+    <choice
+        value="https://github.com/${github.fork.name}/${github.repo.name}.git"
+        label="HTTPS"/>
+    <choice
+        value="ssh://github.com/${github.fork.name}/${github.repo.name}.git"
+        label="SSH"/>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="git.clone"
+      location="${workspace.location/${scope.workspace.label}}"
+      remoteURI="${github.remote.uri}"
+      pushURI="${github.remote.uri}">
+    <description>Clones a repository from GitHub.</description>
+  </setupTask>
+  <setupTask
+      xsi:type="maven:MavenImportTask">
+    <sourceLocator
+        rootFolder="${git.clone.location}"
+        locateNestedProjects="true"/>
+    <description>Imports Maven projects contained in the cloned Repo.</description>
+  </setupTask>
+  <!--stream name="master"
+      label="Master">
+    <description>Branch to check out.</description>
+  </stream-->
+  <description>This imports any project from GitHub.</description>
+</setup:Workspace>
