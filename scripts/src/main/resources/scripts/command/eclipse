@@ -170,8 +170,7 @@ function doImport() {
     import_way="allProjects"
     IMPORT_PATH=${rooth_path:2}  
   elif [ "${2:0:4}" = "http" ] || [ "${2:0:3}" = "ssh" ]
-  then
-    echo http/ ssh detected       
+  then      
     project_type="maven"
     import_way="githubProject"    
     templ_setup="${DEVON_IDE_HOME}/scripts/templates/oomph/${project_type}/${import_way}/workspace.setup"      
@@ -179,7 +178,7 @@ function doImport() {
     then
       cp "${ws_setup}" "${ws_setup}.bak"
     fi
-    echo " Please enter branch to checkout"
+    echo "Please enter branch to checkout"
     cp -r "${templ_setup}" "${oomph_dir}"
     GITHUBFORKNAME="$(cut -d'/' -f4 <<< ${2})"
     tempGithubName="$(cut -d'/' -f5 <<< ${2})"
@@ -191,12 +190,13 @@ function doImport() {
   then      
     project_type="maven"
     import_way="oneProject"
-    IMPORT_PATH=${rooth_path:2}/${2}    
+    IMPORT_PATH=${WORKSPACE_PATH:2}/${2}
+    echo importpath ${IMPORT_PATH}    
   elif  [ -e ${root_path}/${2}/.project ]
   then     
     project_type="plain"
     import_way="oneProject"
-    IMPORT_PATH=${root_path:2}/${2} 
+    IMPORT_PATH=${WORKSPACE_PATH:2}/${2}
   elif [ -e ${2}/pom.xml ]
   then
     project_type="maven"
@@ -206,7 +206,7 @@ function doImport() {
   then 
     project_type="plain"
     import_way="oneProject"
-    IMPORT_PATH=${2} 
+    IMPORT_PATH=${2}
   else
     echo ""
     echo "Sorry please enter import plain, maven or a path"
@@ -224,12 +224,9 @@ function doImport() {
     then
       cp "${ws_setup}" "${ws_setup}.bak"
     fi
-    if [ -e ${templ_setup} ]
-    then
-      cp -r "${templ_setup}" "${oomph_dir}"
-      sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"      
-      echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
-    fi
+    cp -r "${templ_setup}" "${oomph_dir}"
+    sed -i "s~@ROOT@~${IMPORT_PATH}~" "${ws_setup}"      
+    echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   fi
   if [ -e ${templ_setup} ]
   then
