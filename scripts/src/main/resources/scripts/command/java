@@ -55,6 +55,19 @@ function doMigrate() {
   exit ${?}
 }
 
+function doDemoSetup() {
+  local mts_branch="develop"
+  local mts_repo="my-thai-star-${mts_branch}"
+  local mvn_dir="${DEVON_IDE_HOME}/workspaces/main/${mts_repo}/java/mtsj/"
+  doDownload "https://github.com/devonfw/my-thai-star/archive/${mts_branch}.zip"
+  doExtract "${DEVON_HOME_DIR}/Downloads/develop.zip"
+  cp -r "${DEVON_IDE_HOME}/updates/extracted/${mts_repo}" "${DEVON_IDE_HOME}/workspaces/main/${mts_repo}"
+  rm -rf "${DEVON_IDE_HOME}/updates/extracted/${mts_repo}"
+  pushd "${mvn_dir}" > /dev/null
+  doDevonCommand "eclipse" "import" "mvn" "${mvn_dir}"
+  popd > /dev/null
+} 
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -69,6 +82,7 @@ then
   echo "                                    the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
   echo "                                    it manually after the 'from' argument. Also the 'single' option allows to migrate only to"
   echo "                                    the next available version."
+  echo " demo                               download the MyThaiStar demo app to the 'main' workspace and import it into Eclipse."
   echo
   echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
@@ -83,6 +97,9 @@ elif [ "${1}" = "migrate" ]
 then
   shift
   doMigrate "${@}"
+elif [ "${1}" = "demo" ]
+then
+  doDemoSetup
 else
   doFail "Unknown argument ${1}"
 fi
