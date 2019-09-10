@@ -159,6 +159,7 @@ function doImport() {
   local ws_setup="${oomph_dir}/workspace.setup"
   local http_flag=1
   local root_path="${OLDPWD}"
+  echo workspace ${WORKSPACE}
   if [ "${2}" = "maven" ] 
   then
     project_type="maven"
@@ -168,7 +169,7 @@ function doImport() {
   then
     project_type="plain"
     import_way="allProjects"
-    IMPORT_PATH=${rooth_path:2}  
+    IMPORT_PATH=${root_path:2}  
   elif [ "${2:0:4}" = "http" ] || [ "${2:0:3}" = "ssh" ]
   then      
     project_type="maven"
@@ -190,13 +191,12 @@ function doImport() {
   then      
     project_type="maven"
     import_way="oneProject"
-    IMPORT_PATH=${WORKSPACE_PATH:2}/${2}
-    echo importpath ${IMPORT_PATH}    
+    IMPORT_PATH=${root_path:2}/${2}   
   elif  [ -e ${root_path}/${2}/.project ]
   then     
     project_type="plain"
     import_way="oneProject"
-    IMPORT_PATH=${WORKSPACE_PATH:2}/${2}
+    IMPORT_PATH=${root_path:2}/${2}
   elif [ -e ${2}/pom.xml ]
   then
     project_type="maven"
