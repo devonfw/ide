@@ -151,34 +151,38 @@ function doAddPlugin() {
   fi
 }
 
+# $1 optional blocking flag -b
 function doStartEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   if doIsWindows
   then
-    # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    if [ "${1}" = "-b" ]
+    then
+      # shellcheck disable=SC2086
+      "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    else
+      # shellcheck disable=SC2086
+      start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    fi
   else
-    # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
-  fi
-}
-
-function doStartEclipseBlocking() {
-  if doIsWindows
-  then
-    # shellcheck disable=SC2086
-    "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
-  else
-    # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    if [ "${1}" = "-b" ]
+    then
+      # shellcheck disable=SC2086
+      "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    else
+      # shellcheck disable=SC2086
+      "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    fi
   fi
 }
 
 # $1: project type
 # $2: optional project path
 function doImportProject() {
-  local setup_ws="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup/workspace.setup"
+  local setup_ws_path="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
+  local setup_ws_name="workspace.setup"
+  local setup_ws="${setup_ws_path}/${setup_ws_name}"
   local setup_templ="${DEVON_IDE_HOME}/scripts/templates/oomph"
   local root_path="${OLDPWD}"
   if [ "${1}" = "mvn" ]
@@ -191,38 +195,36 @@ function doImportProject() {
     echo "You must specify the project type (mvn/plain)!"
     return
   fi
-
   if [ -n "${2}" ]
   then
     root_path="${2}"
   fi
   if [ ! -f "${setup_ws}" ]
   then
-    echo "Could not find file 'workspace.setup' in C:${setup_ws:2:-15}"
+    echo "Could not find file '${setup_ws_name}' in ${setup_ws_path}"
     echo "Please run 'devon eclipse start' in this workspace first ..."
     return
   fi
   if [ -f "${setup_ws}.bak" ]
   then
-  	echo "A backup of 'workspace.setup' already exists in C:${setup_ws:2:-15}"
+  	echo "A backup of '${setup_ws_name}' already exists in ${setup_ws_path}"
     echo "Skipping backup creation ..."
   else
     cp "${setup_ws}" "${setup_ws}.bak"
-  	echo "Created backup of 'workspace.setup' in C:${setup_ws:2:-15}"
+  	echo "Created backup of '${setup_ws_name}' in ${setup_ws_path}"
   fi
-  cp -r "${setup_templ}" "${setup_ws}"
+  cp "${setup_templ}" "${setup_ws}"
   sed -i "s~@ROOT@~${root_path:2}~" "${setup_ws}"
   echo -n "Please close the Eclipse instance once all Startup Tasks are completed to finalize the import ... "
-  doStartEclipseBlocking
+  doStartEclipse -b
   if [ -f "${setup_ws}.bak" ]
   then
-    cp -r "${setup_ws}.bak" "${setup_ws}"
-    rm "${setup_ws}.bak"
+    mv -f "${setup_ws}.bak" "${setup_ws}"
     echo "CLEANUP SUCCESSFUL!"
     echo "Eclipse project import for workspace '${WORKSPACE}' finished!"
   else
     echo "CLEANUP UNSUCCESSFUL!"
-    echo "No backup of 'workspace.setup' found in C:${setup_ws:2:-15}"
+    echo "No backup of '${setup_ws_name}' found in ${setup_ws_path}"
   fi
 }
 
@@ -240,7 +242,7 @@ then
   echo " ws-re[verse]             reverse merge changes from workspace into settings"
   echo " ws-reverse-add           reverse merge adding new properties"
   echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
-  echo " import «type» [«path»]   import Maven/Plain projects from the current directory or a given path"
+  echo " import «type» [«path»]   import Maven/Plain projects from the current directory or a given absolute path"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"

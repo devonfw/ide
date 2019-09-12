@@ -56,16 +56,13 @@ function doMigrate() {
 }
 
 function doDemoSetup() {
-  local mts_branch="develop"
-  local mts_repo="my-thai-star-${mts_branch}"
-  local mvn_dir="${DEVON_IDE_HOME}/workspaces/main/${mts_repo}/java/mtsj/"
-  doDownload "https://github.com/devonfw/my-thai-star/archive/${mts_branch}.zip"
+  local mtsj_branch="develop"
+  local mtsj_repo="my-thai-star-${mtsj_branch}"
+  local mtsj_dir="${DEVON_IDE_HOME}/workspaces/main/${mtsj_repo}/java/mtsj/"
+  doDownload "https://github.com/devonfw/my-thai-star/archive/${mtsj_branch}.zip"
   doExtract "${DEVON_HOME_DIR}/Downloads/develop.zip"
-  cp -r "${DEVON_IDE_HOME}/updates/extracted/${mts_repo}" "${DEVON_IDE_HOME}/workspaces/main/${mts_repo}"
-  rm -rf "${DEVON_IDE_HOME}/updates/extracted/${mts_repo}"
-  pushd "${mvn_dir}" > /dev/null
-  doDevonCommand "eclipse" "import" "mvn" "${mvn_dir}"
-  popd > /dev/null
+  mv "${DEVON_IDE_HOME}/updates/extracted/${mtsj_repo}" "${DEVON_IDE_HOME}/workspaces/main/${mtsj_repo}"
+  doDevonCommand "eclipse" "import" "mvn" "${mtsj_dir}"
 } 
 
 # CLI

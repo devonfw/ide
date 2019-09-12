@@ -22,7 +22,7 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |`ws-re[verse]`           |reverse merge changes from workspace into settings
 |`ws-reverse-add`         |reverse merge adding new properties
 |`create-script`          |create launch script for this IDE, your current workspace and your OS
-|`import «type» [«path»]` |import Maven/Plain projects from the current directory or a given path
+|`import «type» [«path»]` |import Maven/Plain projects from the current directory or a given absolute path
 |=======================
 
 == plugins
