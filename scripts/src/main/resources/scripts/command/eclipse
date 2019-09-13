@@ -240,6 +240,7 @@ function doImportProject() {
   
   # we have to wait until the project import is done for sure before we clean up
   echo -n "Please close the Eclipse instance once all startup tasks are completed to finalize the import ... "
+  read -n 1 -s -r -p "Press any key to continue ..." #DEBUG
   # doStartEclipse 
 
   if [ -f "${setup_ws}.bak" ] #CLEANUP
