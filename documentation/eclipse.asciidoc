@@ -12,16 +12,17 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 .Usage of `devon eclipse`
 [options="header"]
 |=======================
-|*Argument(s)*   |*Meaning*
-|`--all`                  |if provided as first arg then to command will be invoked for each workspace
-|`setup`                  |setup Eclipse (install or update)
-|`add-plugin «id» [«url»]`|install an additional plugin
-|`run`                    |launch Eclipse (default if no argument is given)
-|`start`                  |same as `run`
-|`ws-up[date]`            |update workspace
-|`ws-re[verse]`           |reverse merge changes from workspace into settings
-|`ws-reverse-add`         |reverse merge adding new properties
-|`create-script`          |create launch script for this IDE, your current workspace and your OS
+|*Argument(s)*                  |*Meaning*
+|`--all`                        |if provided as first arg then to command will be invoked for each workspace
+|`setup`                        |setup Eclipse (install or update)
+|`add-plugin «id» [«url»]`      |install an additional plugin
+|`run`                          |launch Eclipse (default if no argument is given)
+|`start`                        |same as `run`
+|`ws-up[date]`                  |update workspace
+|`ws-re[verse]`                 |reverse merge changes from workspace into settings
+|`ws-reverse-add`               |reverse merge adding new properties
+|`create-script`                |create launch script for this IDE, your current workspace and your OS
+|`import «type» [«path/url»]`   |import `mvn`/`plain` projects from the current working directory or an absolute path, or clone and subsequently import them from a given Git remote URL
 |=======================
 
 == plugins
