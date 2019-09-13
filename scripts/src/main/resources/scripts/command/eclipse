@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+CWD="${PWD}"
 cd "${DEVON_IDE_HOME}" || exit 255
 
 # $1: plugin URL (update site)
@@ -164,20 +165,110 @@ function doStartEclipse() {
   fi
 }
 
+# $1 some URI/URL
+function doIsGitHttpsUrl() {
+  if [[ "${1}" =~ ^https.*git$ ]]
+  then
+    return
+  fi
+  return 255
+}
+
+# $1 project type
+# $2 optional absolute path or Git-URL
+function doImportProject() {
+  local setup_templ_dir="${DEVON_IDE_HOME}/scripts/templates/oomph"
+  local setup_templ_name=""
+  local setup_ws_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
+  local setup_ws_name="workspace.setup"
+  local git_url=""
+  local proj_dir="${2:-${CWD}}" # if no 2nd argument: defaults to current working directory
+  local proj_name="$(basename ${2:-${CWD}})" # if no 2nd argument: defaults to current working directory
+
+  if [ "${1}" = "mvn" ]
+  then
+    if doIsGitHttpsUrl "${2}" # if ${2} is a Git-URL, derive several values from it, select correct setup template
+    then
+      git_url="${2}"
+      proj_name="$(basename ${git_url} .git)"
+      proj_dir="${WORKSPACE_PATH}/${proj_name}"
+      setup_templ_name="mvn_clone.setup"
+    else
+      setup_templ_name="mvn.setup"
+    fi
+  elif [ "${1}" = "plain" ]
+  then
+    if doIsGitHttpsUrl "${2}" # if ${2} is a Git-URL, derive several values from it, select correct setup template
+    then
+      git_url="${2}"
+      proj_name="$(basename ${git_url} .git)"
+      proj_dir="${WORKSPACE_PATH}/${proj_name}"
+      setup_templ_name="plain_clone.setup"
+    else
+      setup_templ_name="plain.setup"
+    fi
+  else
+    echo "You must specify the project type to import (mvn/plain)!"
+  fi
+
+  local setup_templ="${setup_templ_dir}/${setup_templ_name}"
+  local setup_ws="${setup_ws_dir}/${setup_ws_name}"
+  
+  echo "SETUP_TEMPL: ${setup_templ}" #DEBUG
+  echo "PROJ_NAME:   ${proj_name}" #DEBUG
+  echo "PROJ_DIR:    ${proj_dir}" #DEBUG
+
+  if [ ! -f "${setup_ws}" ]
+  then
+    echo "Could not find file '${setup_ws_name}' in ${setup_ws_dir}"
+    echo "Please run 'devon eclipse' in this workspace first to initalize this file ..."
+    return
+  fi
+
+  if [ -f "${setup_ws}.bak" ] #BACKUP
+  then
+  	echo "A backup of '${setup_ws_name}' already exists in ${setup_ws_dir}"
+    echo "Skipping backup creation ..."
+  else
+    cp "${setup_ws}" "${setup_ws}.bak"
+  	echo "Created a backup of '${setup_ws_name}' in ${setup_ws_dir}"
+  fi
+
+  cp "${setup_templ}" "${setup_ws}"
+  sed -i "s~@PROJ_DIR@~${proj_dir:2}~" "${setup_ws}" # this is not portable! (https://github.com/devonfw/ide/pull/247/files#r323880888)
+  sed -i "s~@GIT_URL@~${git_url}~" "${setup_ws}"
+  
+  # we have to wait until the project import is done for sure before we clean up
+  echo -n "Please close the Eclipse instance once all startup tasks are completed to finalize the import ... "
+  # doStartEclipse 
+
+  if [ -f "${setup_ws}.bak" ] #CLEANUP
+  then
+    mv -f "${setup_ws}.bak" "${setup_ws}"
+    echo "CLEANUP SUCCESSFUL!"
+    echo "Eclipse ${1} project import for workspace '${WORKSPACE}' instance finished!"
+  else
+    echo "CLEANUP UNSUCCESSFUL!"
+    echo "No backup of '${setup_ws_name}' found in ${setup_ws_path}"
+  fi
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Manage Eclipse IDE and workspace."
   echo
   echo "Arguments:"
-  echo " --all                    if provided as first arg then to command will be invoked for each workspace"
-  echo " setup                    setup Eclipse (install or update)"
-  echo " add-plugin «id» [«url»]  install an additional plugin"
-  echo " run | start              launch Eclipse IDE (default if no argument is given)"
-  echo " ws-up[date]              update eclipse workspace"
-  echo " ws-re[verse]             reverse merge changes from workspace into settings"
-  echo " ws-reverse-add           reverse merge adding new properties"
-  echo " create-script            create eclipse-${WORKSPACE} script if not already exists"
+  echo " --all                      if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                      setup Eclipse (install or update)"
+  echo " add-plugin «id» [«url»]    install an additional plugin"
+  echo " run | start                launch Eclipse IDE (default if no argument is given)"
+  echo " ws-up[date]                update eclipse workspace"
+  echo " ws-re[verse]               reverse merge changes from workspace into settings"
+  echo " ws-reverse-add             reverse merge adding new properties"
+  echo " create-script              create eclipse-${WORKSPACE} script if not already exists"
+  echo " import «type» [«path/url»] import mvn/plain projects from the current working directory or an absolute path,"
+  echo "                            or clone and subsequently import them from a given Git remote URL"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -217,6 +308,11 @@ do
   then
     shift
     doAddPlugin "${@}"
+    exit ${?}
+  elif [ "${1}" = "import" ]
+  then
+    shift
+    doImportProject "${@}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"
