@@ -14,7 +14,7 @@ Without any arguments the `devon` command will determine your `DEVON_IDE_HOME` a
 You are not inside a devon IDE installation: /
 [/]$ cd /projects/my-project/workspaces/test/my-git-repo
 [my-git-repo]$ devon
-devon-ide has environment variables have been set for /projects/my-project
+devon-ide has environment variables have been set for /projects/my-project in workspace main
 [my-git-repo]$ echo $DEVON_IDE_HOME
 /projects/devon
 [my-git-repo]$ echo $JAVA_HOME
