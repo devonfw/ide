@@ -8,25 +8,25 @@
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
     xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://de-mucevolve02/oomph/tasks/models/Git.ecore http://www.eclipse.org/oomph/setup/maven/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Maven.ecore"
     name="devon.ide"
-    label="devon-ide">
+    label="ide">
   <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone.devon.ide"
       location="${workspace.location/${scope.project.label}}"
       remoteURI="${github.remote.uri}"
       pushURI="${github.remote.uri}">
-    <description>Clones the devon-ide  repository from Github</description>
+    <description>Clones the ide  repository from Github</description>
   </setupTask>
   <setupTask
       xsi:type="setup:VariableTask"
       name="github.remote.uri"
       storageURI="scope://Workspace"
-      label="devon-ide Remote URI">
+      label="ide Remote URI">
     <choice
-        value="https://github.com/${github.fork.name}/devon-ide.git"
+        value="https://github.com/${github.fork.name}/ide.git"
         label="HTTPS"/>
     <choice
-        value="ssh://git@github.com/${github.fork.name}/devon-ide.git"
+        value="ssh://git@github.com/${github.fork.name}/ide.git"
         label="SSH"/>
   </setupTask>
   <setupTask
@@ -34,7 +34,7 @@
       name="github.fork.name"
       defaultValue="devonfw"
       storageURI="scope://Workspace"
-      label="devon-ide fork"/>
+      label="ide fork"/>
   <setupTask
       xsi:type="maven:MavenImportTask">
     <sourceLocator
@@ -44,6 +44,6 @@
       label="Master"/>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
-      href="http://devonfw.github.io/devon-ide/oomph/projects/catalog_devonfw.setup#/"/>
+      href="http://devonfw.github.io/ide/oomph/projects/catalog_devonfw.setup#/"/>
   <description>tool to automate setup and update of development environment</description>
 </setup:Project>

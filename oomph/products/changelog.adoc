@@ -1,4 +1,4 @@
-= Change log for devon-ide oomph setup
+= Change log for ide oomph setup
 
 == Versions
 

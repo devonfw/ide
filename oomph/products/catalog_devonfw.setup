@@ -46,7 +46,7 @@
     <repository
         url="${oomph.update.url}"/>
   </setupTask>
-  <product href="http://devonfw.github.io/devon-ide/oomph/products/DevonIde.setup#/"/>
+  <product href="http://devonfw.github.io/ide/oomph/products/DevonIde.setup#/"/>
   <product href="http://devonfw.github.io/tools-cobigen/oomph/products/CobiGenDevelopmentIDE.setup#/"/>
   <product href="http://devonfw.github.io/tools-cobigen/oomph/products/CobiGenDevelopmentResearchIDE.setup#/"/>
   <description>This product catalog provides IDEs from the devonfw project</description>

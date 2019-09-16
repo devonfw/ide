@@ -65,7 +65,7 @@
     <description>${workspace.location}</description>
   </setupTask>
   <project href="http://devonfw.github.io/devcon/oomph/projects/Devcon.setup#/"/>
-  <project href="http://devonfw.github.io/devon-ide/oomph/projects/DevonIde.setup#/"/>
+  <project href="http://devonfw.github.io/ide/oomph/projects/DevonIde.setup#/"/>
   <project href="http://devonfw.github.io/devon/oomph/projects/Devon.setup#/"/>
   <project href="http://devonfw.github.io/devonfw-locale/oomph/projects/DevonfwLocale.setup#/"/>
   <project href="http://devonfw.github.io/module-owasp-appsensor/oomph/projects/ModuleOwaspAppsensor.setup#/"/>
