@@ -152,9 +152,9 @@ function doAddPlugin() {
   fi
 }
 
-# $1 no-backgrounding flag -nb
+# $1 optional no-backgrounding flag -b
 function doStartEclipse() {
-  if [ "${1}" = "-nb" ]
+  if [ "${1}" = "-b" ]
   then
     if doIsWindows
     then
@@ -223,13 +223,14 @@ function doImportProject() {
   else
     echo "You must specify the project type to import (mvn/plain)!"
   fi
-
+  
   local setup_templ="${setup_templ_dir}/${setup_templ_name}"
   local setup_ws="${setup_ws_dir}/${setup_ws_name}"
 
-  if doIsWindows # cut drive letter from Windows path only (not neccesarry under macOS/Linux)
+  if command -v cygpath >/dev/null        # if cygwin/git bash are being used
   then
-    proj_dir=${proj_dir:2} # for example 'C:/Users/' becomes '/Users/'
+    proj_dir="$(cygpath -m ${proj_dir})"  # convert Unix-style path to Windows-style path
+    proj_dir="${proj_dir:2}"              # cut drive letter and ':' (as in 'C:/Users/')
   fi
 
   echo "SETUP_TEMPL: ${setup_templ}" #DEBUG
@@ -258,7 +259,7 @@ function doImportProject() {
   
   echo -n "Please close the Eclipse instance once all startup tasks are completed to finalize the import ... "
   # read -n 1 -s -r -p "Press any key to continue ..." #DEBUG
-  doStartEclipse -nb
+  doStartEclipse -b
 
   if [ -f "${setup_ws}.bak" ] #CLEANUP
   then
