@@ -1,8 +1,0 @@
-= Contributing
-
-Great to see you here and thanks for contributing to https://devonfw.com[devonfw].
-Please read our central https://github.com/devonfw/devonfw/blob/master/documentation/contributing.asciidoc#contributing[contributing guide] for hints and conventions of this project.
-We are looking forward to your contribution.
-
-Thank you so much
-  the devonfw community
