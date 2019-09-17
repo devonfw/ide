@@ -195,15 +195,15 @@ function doImportProject() {
   local setup_ws_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
   local setup_ws_name="workspace.setup"
   local git_url=""
-  local proj_dir="${2:-${CWD}}" # if no 2nd argument: defaults to current working directory
-  local proj_name="$(basename ${2:-${CWD}})" # if no 2nd argument: defaults to current working directory
+  local proj_dir="${2:-${CWD}}" # if no 2nd argument: default to current working directory
+  local proj_name="$(basename ${proj_dir})" # derive the project name from the project directory
 
   if [ "${1}" = "mvn" ]
   then
     if doIsGitHttpsUrl "${2}" # if ${2} is a Git-URL, derive several values from it, select correct setup template
     then
       git_url="${2}"
-      proj_name="$(basename ${git_url} .git)"
+      proj_name="$(basename "${git_url}" .git)"
       proj_dir="${WORKSPACE_PATH}/${proj_name}"
       setup_templ_name="mvn_clone.setup"
     else
@@ -214,7 +214,7 @@ function doImportProject() {
     if doIsGitHttpsUrl "${2}" # if ${2} is a Git-URL, derive several values from it, select correct setup template
     then
       git_url="${2}"
-      proj_name="$(basename ${git_url} .git)"
+      proj_name="$(basename "${git_url}" .git)"
       proj_dir="${WORKSPACE_PATH}/${proj_name}"
       setup_templ_name="plain_clone.setup"
     else
@@ -227,15 +227,15 @@ function doImportProject() {
   local setup_templ="${setup_templ_dir}/${setup_templ_name}"
   local setup_ws="${setup_ws_dir}/${setup_ws_name}"
 
-  if command -v cygpath >/dev/null        # if cygwin/git bash are being used
+  if command -v cygpath >/dev/null # if cygwin/git bash are being used
   then
-    proj_dir="$(cygpath -m ${proj_dir})"  # convert Unix-style path to Windows-style path
-    proj_dir="${proj_dir:2}"              # cut drive letter and ':' (as in 'C:/Users/')
+    proj_dir="$(cygpath -m "${proj_dir}")" # convert Unix-style path to Windows-style path
+    proj_dir="${proj_dir:2}" # cut drive letter and ':' (as in 'C:/Users/')
   fi
 
-  echo "SETUP_TEMPL: ${setup_templ}" #DEBUG
-  echo "PROJ_NAME:   ${proj_name}" #DEBUG
-  echo "PROJ_DIR:    ${proj_dir}" #DEBUG
+  # echo "SETUP_TEMPL: ${setup_templ}" #DEBUG
+  # echo "PROJ_NAME:   ${proj_name}" #DEBUG
+  # echo "PROJ_DIR:    ${proj_dir}" #DEBUG
 
   if [ ! -f "${setup_ws}" ]
   then
@@ -268,7 +268,7 @@ function doImportProject() {
     echo "Eclipse ${1} project import for workspace '${WORKSPACE}' instance finished!"
   else
     echo "CLEANUP UNSUCCESSFUL!"
-    echo "No backup of '${setup_ws_name}' found in ${setup_ws_path}"
+    echo "No backup of '${setup_ws_name}' found in ${setup_ws_dir}"
   fi
 }
 
