@@ -1029,7 +1029,7 @@ function doVersionCompare() {
   return 0
 }
 
-#$1: version to increase
+# $1: version to increase
 function doGetNextVersion() {
   local version="${1}"
   local suffix="${version##*[0-9]}"
@@ -1064,6 +1064,15 @@ function doIsMacOs() {
 
 function doIsWindows() {
   if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
+  then
+    return
+  fi
+  return 255
+}
+
+# $1 some URI/URL
+function doIsHttpsGitUrl() {
+  if [[ "${1}" =~ ^https.*git$ ]]
   then
     return
   fi
