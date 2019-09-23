@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-CWD="${PWD}"
-cd "${DEVON_IDE_HOME}" || exit 255
 
 # $1: plugin URL (update site)
 # $2: plugin feature group ID
@@ -154,6 +152,7 @@ function doAddPlugin() {
 
 # $1 optional no-backgrounding flag -b
 function doStartEclipse() {
+  pushd "${DEVON_IDE_HOME}" >/dev/null
   if [ "${1}" = "-b" ]
   then
     if doIsWindows
@@ -176,6 +175,7 @@ function doStartEclipse() {
       "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
     fi
   fi
+  popd >/dev/null
 }
 
 # $1 project type
@@ -186,7 +186,7 @@ function doImportProject() {
   local setup_ws_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
   local setup_ws_name="workspace.setup"
   local git_url=""
-  local proj_dir="${2:-${CWD}}" # if no 2nd argument: default to current working directory
+  local proj_dir="${2:-${PWD}}" # if no 2nd argument: default to current working directory
   local proj_name=$(basename "${proj_dir}") # derive project name from project directory
 
   if [ "${1}" = "mvn" ]
@@ -197,8 +197,13 @@ function doImportProject() {
       proj_name=$(basename "${git_url}" .git)
       proj_dir="${WORKSPACE_PATH}/${proj_name}"
       setup_templ_name="mvn_clone.setup"
-    else
+    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid realtive/absolute path
+    then
+      proj_dir=$(cd "${proj_dir}" && pwd) # TO-DO: use pushd/popd instead (eliminate output)
+      proj_name=$(basename "${proj_dir}")
       setup_templ_name="mvn.setup"
+    else
+      return
     fi
   elif [ "${1}" = "plain" ]
   then
@@ -208,11 +213,17 @@ function doImportProject() {
       proj_name=$(basename "${git_url}" .git)
       proj_dir="${WORKSPACE_PATH}/${proj_name}"
       setup_templ_name="plain_clone.setup"
-    else
+    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid realtive/absolute path
+    then
+      proj_dir=$(cd "${proj_dir}" && pwd) # TO-DO: use pushd/popd instead (eliminate output)
+      proj_name=$(basename "${proj_dir}")
       setup_templ_name="plain.setup"
+    else
+      return
     fi
   else
     echo "You must specify the type of project to import (mvn/plain)!"
+    return
   fi
   
   local setup_templ="${setup_templ_dir}/${setup_templ_name}"
@@ -224,8 +235,9 @@ function doImportProject() {
     proj_dir=$(echo "${proj_dir}" | cut -d':' -f2-) # if existent, cut drive letter
   fi
 
-  # echo "PROJ_DIR:   ${proj_dir}" #DEBUG
-  # echo "PROJ_NAME:  ${proj_name}" #DEBUG
+  echo "PWD:        ${PWD}" #DEBUG
+  echo "PROJ_DIR:   ${proj_dir}" #DEBUG
+  echo "PROJ_NAME:  ${proj_name}" #DEBUG
 
   if [ ! -f "${setup_ws}" ]
   then
@@ -248,8 +260,8 @@ function doImportProject() {
   sed -i "s|@GIT_URL@|${git_url}|" "${setup_ws}"
   
   echo -n "Please close Eclipse once the import task is finished to finalize the procedure ... "
-  # read -n 1 -s -r -p "Press any key to continue ... " #DEBUG
-  doStartEclipse -b
+  read -n 1 -s -r -p "Press any key to continue ... " #DEBUG
+  # doStartEclipse -b
 
   if [ -f "${setup_ws}.bak" ] #CLEANUP
   then
