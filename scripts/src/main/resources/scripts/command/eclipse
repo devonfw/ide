@@ -113,7 +113,7 @@ function doAddPlugin() {
       doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
     elif [ "${1}" = "cobigen" ]
     then
-      doInstallEclipsePlugin https://dl.bintray.com/devonfw/cobigen.p2/ "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      doInstallEclipsePlugin "https://dl.bintray.com/devonfw/cobigen.p2/" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
     elif [ "${1}" = "terminal" ]
     then
       doInstallEclipsePlugin "http://download.eclipse.org/tm/terminal/marketplace" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
@@ -179,44 +179,40 @@ function doStartEclipse() {
 }
 
 # $1 project type
-# $2 optional absolute path or Git-URL
+# $2 optional path or URL
 function doImportProject() {
   local setup_templ_dir="${DEVON_IDE_HOME}/scripts/templates/oomph"
   local setup_templ_name=""
   local setup_ws_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
   local setup_ws_name="workspace.setup"
-  local git_url=""
-  local proj_dir="${2:-${PWD}}" # if no 2nd argument: default to current working directory
-  local proj_name=$(basename "${proj_dir}") # derive project name from project directory
+  local proj_dir="${2:-${PWD}}" # if no ${2} provided: default to current working directory
 
   if [ "${1}" = "mvn" ]
   then
-    if doIsHttpsGitUrl "${2}" # if ${2} is Git-URL, derive several values, select correct setup template
+    if doIsHttpsGitUrl "${2}" # if ${2} is valid URL, derive project name and directory
     then
-      git_url="${2}"
-      proj_name=$(basename "${git_url}" .git)
-      proj_dir="${WORKSPACE_PATH}/${proj_name}"
+      proj_dir="${WORKSPACE_PATH}/$(basename "${2}" .git)"
       setup_templ_name="mvn_clone.setup"
-    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid realtive/absolute path
+    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid path
     then
-      proj_dir=$(cd "${proj_dir}" && pwd) # TO-DO: use pushd/popd instead (eliminate output)
-      proj_name=$(basename "${proj_dir}")
+      pushd "${proj_dir}" >/dev/null
+      proj_dir="${PWD}"
+      popd >/dev/null
       setup_templ_name="mvn.setup"
     else
       return
     fi
   elif [ "${1}" = "plain" ]
   then
-    if doIsHttpsGitUrl "${2}" # if ${2} is Git-URL, derive several values, select correct setup template
+    if doIsHttpsGitUrl "${2}" # if ${2} is valid URL, derive project name and directory
     then
-      git_url="${2}"
-      proj_name=$(basename "${git_url}" .git)
-      proj_dir="${WORKSPACE_PATH}/${proj_name}"
+      proj_dir="${WORKSPACE_PATH}/$(basename "${2}" .git)"
       setup_templ_name="plain_clone.setup"
-    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid realtive/absolute path
+    elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid path
     then
-      proj_dir=$(cd "${proj_dir}" && pwd) # TO-DO: use pushd/popd instead (eliminate output)
-      proj_name=$(basename "${proj_dir}")
+      pushd "${proj_dir}" >/dev/null
+      proj_dir="${PWD}"
+      popd >/dev/null
       setup_templ_name="plain.setup"
     else
       return
@@ -231,13 +227,11 @@ function doImportProject() {
 
   if command -v cygpath >/dev/null # if cygwin/git bash are used (Windows only)
   then
-    proj_dir=$(cygpath -m "${proj_dir}") # convert Unix-style path to Windows-style path
-    proj_dir=$(echo "${proj_dir}" | cut -d':' -f2-) # if existent, cut drive letter
+    proj_dir=$(cygpath -m "${proj_dir}") # convert Unix-style path to mixed-style path
+    proj_dir=$(echo "${proj_dir}" | cut -d':' -f2-) # cut drive letter if present
   fi
 
-  echo "PWD:        ${PWD}" #DEBUG
-  echo "PROJ_DIR:   ${proj_dir}" #DEBUG
-  echo "PROJ_NAME:  ${proj_name}" #DEBUG
+  # echo -e "\nWORK_DIR:\t${PWD}\nPROJ_DIR:\t${proj_dir}\n" #DEBUG
 
   if [ ! -f "${setup_ws}" ]
   then
@@ -256,12 +250,12 @@ function doImportProject() {
   fi
 
   cp "${setup_templ}" "${setup_ws}"
-  sed -i "s|@PROJ_DIR@|${proj_dir}|" "${setup_ws}"
   sed -i "s|@GIT_URL@|${git_url}|" "${setup_ws}"
+  sed -i "s|@PROJ_DIR@|${proj_dir}|" "${setup_ws}"
   
   echo -n "Please close Eclipse once the import task is finished to finalize the procedure ... "
-  read -n 1 -s -r -p "Press any key to continue ... " #DEBUG
-  # doStartEclipse -b
+  # read -n 1 -s -r -p "Press any key to continue ... " #DEBUG
+  doStartEclipse -b
 
   if [ -f "${setup_ws}.bak" ] #CLEANUP
   then
@@ -288,7 +282,7 @@ then
   echo " ws-re[verse]               reverse merge changes from workspace into settings"
   echo " ws-reverse-add             reverse merge adding new properties"
   echo " create-script              create eclipse-${WORKSPACE} script if not already exists"
-  echo " import «type» [«path/url»] import mvn/plain projects from the current working directory or an absolute path,"
+  echo " import «type» [«path/url»] import mvn/plain or plain projects from the current working directory or a given path,"
   echo "                            or clone and subsequently import them from a given Git remote URL"
   exit
 fi
