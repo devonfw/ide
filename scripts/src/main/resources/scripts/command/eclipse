@@ -152,7 +152,7 @@ function doAddPlugin() {
 
 # $1 optional no-backgrounding flag -b
 function doStartEclipse() {
-  pushd "${DEVON_IDE_HOME}" >/dev/null
+  pushd "${DEVON_IDE_HOME}" >/dev/null || exit 255
   if [ "${1}" = "-b" ]
   then
     if doIsWindows
@@ -175,7 +175,7 @@ function doStartEclipse() {
       "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
     fi
   fi
-  popd >/dev/null
+  popd >/dev/null || exit 255
 }
 
 # $1 project type
@@ -186,18 +186,20 @@ function doImportProject() {
   local setup_ws_dir="${WORKSPACE_PATH}/.metadata/.plugins/org.eclipse.oomph.setup"
   local setup_ws_name="workspace.setup"
   local proj_dir="${2:-${PWD}}" # if no ${2} provided: default to current working directory
+  local git_url=""
 
   if [ "${1}" = "mvn" ]
   then
     if doIsHttpsGitUrl "${2}" # if ${2} is valid URL, derive project name and directory
     then
-      proj_dir="${WORKSPACE_PATH}/$(basename "${2}" .git)"
+      git_url="${2}"
+      proj_dir="${WORKSPACE_PATH}/$(basename "${git_url}" .git)"
       setup_templ_name="mvn_clone.setup"
     elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid path
     then
-      pushd "${proj_dir}" >/dev/null
+      pushd "${proj_dir}" >/dev/null || exit 255
       proj_dir="${PWD}"
-      popd >/dev/null
+      popd >/dev/null || exit 255
       setup_templ_name="mvn.setup"
     else
       return
@@ -206,13 +208,14 @@ function doImportProject() {
   then
     if doIsHttpsGitUrl "${2}" # if ${2} is valid URL, derive project name and directory
     then
-      proj_dir="${WORKSPACE_PATH}/$(basename "${2}" .git)"
+      git_url="${2}"
+      proj_dir="${WORKSPACE_PATH}/$(basename "${git_url}" .git)"
       setup_templ_name="plain_clone.setup"
     elif find "${proj_dir}" -maxdepth 0 -type d >/dev/null # else check if ${2} is valid path
     then
-      pushd "${proj_dir}" >/dev/null
+      pushd "${proj_dir}" >/dev/null || exit 255
       proj_dir="${PWD}"
-      popd >/dev/null
+      popd >/dev/null || exit 255
       setup_templ_name="plain.setup"
     else
       return
@@ -222,6 +225,11 @@ function doImportProject() {
     return
   fi
   
+  if [[ ${PWD} != ${DEVON_IDE_HOME}/workspaces/* ]]
+  then
+    doEchoAttention "You are not in a workspace!\nImporting to default workspace '${WORKSPACE}'.\n"
+  fi
+
   local setup_templ="${setup_templ_dir}/${setup_templ_name}"
   local setup_ws="${setup_ws_dir}/${setup_ws_name}"
 
@@ -231,19 +239,19 @@ function doImportProject() {
     proj_dir=$(echo "${proj_dir}" | cut -d':' -f2-) # cut drive letter if present
   fi
 
-  # echo -e "\nWORK_DIR:\t${PWD}\nPROJ_DIR:\t${proj_dir}\n" #DEBUG
+  # echo -e "\nGIT_URL:\t${git_url:-undefined}\nWORK_DIR:\t${PWD}\nPROJ_DIR:\t${proj_dir}\n" #DEBUG
 
   if [ ! -f "${setup_ws}" ]
   then
     echo "Could not find '${setup_ws_name}' in ${setup_ws_dir}"
-    echo "Please run 'devon eclipse' to initalize this file, then close Eclipse and try importing again"
+    echo "Please run 'devon eclipse' to initalize this file, then close Eclipse and try importing again."
     return
   fi
 
   if [ -f "${setup_ws}.bak" ] #BACKUP
   then
   	echo "Found a backup of '${setup_ws_name}' in ${setup_ws_dir}"
-    echo "Backup creation skipped"
+    echo "Backup creation skipped."
   else
     cp "${setup_ws}" "${setup_ws}.bak"
   	echo "Backed up '${setup_ws_name}' in ${setup_ws_dir}"
@@ -282,7 +290,7 @@ then
   echo " ws-re[verse]               reverse merge changes from workspace into settings"
   echo " ws-reverse-add             reverse merge adding new properties"
   echo " create-script              create eclipse-${WORKSPACE} script if not already exists"
-  echo " import «type» [«path/url»] import mvn/plain or plain projects from the current working directory or a given path,"
+  echo " import «type» [«path/url»] import mvn/plain projects from the current working directory or a given path,"
   echo "                            or clone and subsequently import them from a given Git remote URL"
   exit
 fi
