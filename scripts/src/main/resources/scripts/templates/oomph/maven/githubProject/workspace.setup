@@ -22,6 +22,13 @@
       storageURI="scope://Workspace"
       label="Repository Name"/>
   <setupTask
+   xsi:type="setup:VariableTask"
+   name="workspace.location"
+   defaultValue="@LOCALWORKSPACE@"
+   storageURI="scope://Workspace"
+   label="Workspace Name"/>
+  
+  <setupTask
       xsi:type="setup:VariableTask"
       name="github.remote.uri"
       storageURI="scope://Workspace"
@@ -36,7 +43,7 @@
   <setupTask
       xsi:type="git:GitCloneTask"
       id="git.clone"
-      location="${workspace.location/${scope.workspace.label}}"
+      location="${workspace.location}/${scope.workspace.label}"
       remoteURI="${github.remote.uri}"
       pushURI="${github.remote.uri}">
     <description>Clones a repository from GitHub.</description>
@@ -49,6 +56,7 @@
     <description>Imports Maven projects contained in the cloned Repo.</description>
   </setupTask>
   <!--stream name="master"
+  location="${workspace.location}/${scope.workspace.label}"
       label="Master">
     <description>Branch to check out.</description>
   </stream-->

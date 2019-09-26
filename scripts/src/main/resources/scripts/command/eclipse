@@ -159,17 +159,27 @@ function doImport() {
   local ws_setup="${oomph_dir}/workspace.setup"
   local http_flag=1
   local root_path="${OLDPWD}"
-  echo workspace ${WORKSPACE}
+
   if [ "${2}" = "maven" ] 
   then
     project_type="maven"
     import_way="allProjects"
-    IMPORT_PATH=${root_path:2}
+    if [ ${OSTYPE} = "msys" ]
+    then
+      IMPORT_PATH=${root_path:2}
+    else
+      IMPORT_PATH=${root_path}
+    fi
   elif [ "${2}"  = "plain" ]
   then
     project_type="plain"
     import_way="allProjects"
-    IMPORT_PATH=${root_path:2}  
+    if [ ${OSTYPE} = "msys" ]
+    then
+      IMPORT_PATH=${root_path:2}
+    else
+      IMPORT_PATH=${root_path} 
+    fi 
   elif [ "${2:0:4}" = "http" ] || [ "${2:0:3}" = "ssh" ]
   then      
     project_type="maven"
@@ -184,19 +194,36 @@ function doImport() {
     GITHUBFORKNAME="$(cut -d'/' -f4 <<< ${2})"
     tempGithubName="$(cut -d'/' -f5 <<< ${2})"
     GITHUBREMOTENAME="$(cut -d'.' -f1 <<< ${tempGithubName})"
+    if [ ${OSTYPE} = "msys" ]
+    then
+      local_workspace=${root_path:2}
+    else
+      local_workspace=${root_path} 
+    fi 
     sed -i "s~@GITHUBFORKNAME@~${GITHUBFORKNAME}~g" "${ws_setup}"
-    sed -i "s~@GITHUBREMOTENAME@~${GITHUBREMOTENAME}~g" "${ws_setup}"     
+    sed -i "s~@GITHUBREMOTENAME@~${GITHUBREMOTENAME}~g" "${ws_setup}"
+    sed -i "s~@LOCALWORKSPACE@~${local_workspace}~g" "${ws_setup}"     
     http_flag=0
   elif [ -e ${root_path}/${2}/pom.xml ]
   then      
     project_type="maven"
     import_way="oneProject"
-    IMPORT_PATH=${root_path:2}/${2}   
+    if [ ${OSTYPE} = "msys" ]
+    then
+      IMPORT_PATH=${root_path:2}/${2}
+    else
+      IMPORT_PATH=${root_path}/${2}  
+    fi
   elif  [ -e ${root_path}/${2}/.project ]
   then     
     project_type="plain"
     import_way="oneProject"
-    IMPORT_PATH=${root_path:2}/${2}
+    if [ ${OSTYPE} = "msys" ]
+    then
+      IMPORT_PATH=${root_path:2}/${2}
+    else
+      IMPORT_PATH=${root_path}/${2}
+    fi 
   elif [ -e ${2}/pom.xml ]
   then
     project_type="maven"
