@@ -7,11 +7,11 @@ The `devon-ide` aims to be highly configurable and flexible. The configuration o
 
 0. build in defaults (for `JAVA_VERSION`, `ECLIPSE_PLUGINS`, etc.)
 1. `~/devon.properties` - user specific global defaults (on windows in `%USERPROFILE%/devon.properties`)
-2. `https://github.com/devonfw/devon-ide/blob/master/scripts/src/main/resources/scripts/devon.properties[scripts/devon.properties]` - defaults provided by `devon-ide`. Never directly modify this file!
+2. `https://github.com/devonfw/ide/blob/master/scripts/src/main/resources/scripts/devon.properties[scripts/devon.properties]` - defaults provided by `devon-ide`. Never directly modify this file!
 3. `devon.properties` - vendor variables for custom distributions of `link:scripts.asciidoc[devon-ide-scripts]`, may e.g. tweak `SETTINGS_PATH` or predefine `SETTINGS_URL`.
-4. `https://github.com/devonfw/devon-ide-settings/blob/master/devon.properties[settings/devon.properties]` (`${SETTINGS_PATH}/devon.properties`) - project specific configurations from link:settings.asciidoc[settings].
+4. `https://github.com/devonfw/ide-settings/blob/master/devon.properties[settings/devon.properties]` (`${SETTINGS_PATH}/devon.properties`) - project specific configurations from link:settings.asciidoc[settings].
 5. `workspaces/${WORKSPACE}/devon.properties` - optional workspace specific configurations (espeically helpful in projects using docker).
-6. `https://github.com/devonfw/devon-ide-settings/blob/master/devon/conf/devon.properties[conf/devon.properties]` - user specific configurations (e.g. `M2_REPO=~/.m2/repository`). During setup this file is created by copying a template from `${SETTINGS_PATH}/devon/conf/devon.properties`.
+6. `https://github.com/devonfw/ide-settings/blob/master/devon/conf/devon.properties[conf/devon.properties]` - user specific configurations (e.g. `M2_REPO=~/.m2/repository`). During setup this file is created by copying a template from `${SETTINGS_PATH}/devon/conf/devon.properties`.
 
 == devon.properties
 
