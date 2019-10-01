@@ -11,7 +11,7 @@ Releases of https://github.com/oasp/[OASP] as well as releases of https://github
 First of all you should roughly get familiar with the new `devon-ide`. The key features and changes are:
 
 * platform-agnostic (supports Windows, Mac, and Linux in a single distribution)
-* small core (reduced the download package from ~2 gigabyte to ~2 megebyte)
+* small core (reduced the download package from ~2 gigabyte to ~2 megabyte)
 * fast and easy updates (build in update support)
 * minimum number of scripts (removed tons of end-user scripts making things much simpler)
 * fully automated setup (run `setup` script and you are ready - even for advanced features that had to be configured manually before)
