@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $@: optional maven arguments
+function doSetup() {
+  # We need a JDK
+  doDevonCommand java -q setup
+  if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
+  then
+    local software_version="LATEST"
+    local download_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=templates-devon4j&v=${software_version}"
+    doDownload "${download_url}" "${software_name}.jar" "${COBIGEN_CLI_HOME}"
+    doExtract "${COBIGEN_CLI_HOME}/${software_name}.jar" "${software_name}"
+    doRunCommand "mv '${DEVON_IDE_HOME}/updates/extracted/${software_name}/com' '${DEVON_IDE_HOME}/software/${software_name}'"
+    rm -rf "${DEVON_IDE_HOME}/updates/extracted/${software_name}"
+  fi
+}
+
+# CLI
+software_name="cobigen-cli"
+COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/${software_name}"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup CobiGen CLI."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup CobiGen CLI (install, verify, configure)"
+  echo
+  echo "Options:"
+elif [ -z "${1}" ]
+then
+  doSetup
+elif [ "${1}" = "setup" ]
+then
+  doSetup setup
+else
+  doSetup "${@}"
+fi
