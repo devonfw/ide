@@ -6,27 +6,43 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   # We need a JDK
   doDevonCommand java -q setup
+  # We need Maven for installing plug-ins
+  doDevonCommand mvn -q setup
   if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
   then
     local software_version="LATEST"
     local download_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=templates-devon4j&v=${software_version}"
+
     doDownload "${download_url}" "${software_name}.jar" "${COBIGEN_CLI_HOME}"
-    doExtract "${COBIGEN_CLI_HOME}/${software_name}.jar" "${software_name}"
-    doRunCommand "mv '${DEVON_IDE_HOME}/updates/extracted/${software_name}/com' '${DEVON_IDE_HOME}/software/${software_name}'"
-    rm -rf "${DEVON_IDE_HOME}/updates/extracted/${software_name}"
-  fi
+
+    # We need to extract correct batch files
+    if doIsWindows
+    then
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
+    else
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.sh' -d '${COBIGEN_CLI_HOME}'"
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.sh' -d '${COBIGEN_CLI_HOME}'"
+    fi
+
+    doExtendPath "${COBIGEN_CLI_HOME}"
+    doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
+  else
+    doEcho "Software already installed at ${COBIGEN_CLI_HOME}"
+    doEcho "To force install please run devon cobigen setup."
+  fi 
 }
 
 # CLI
-software_name="cobigen-cli"
-COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/${software_name}"
+software_name="cobigen"
+COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/${software_name}-cli"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup CobiGen CLI."
   echo
   echo "Arguments:"
   echo "                          run default build"
-  echo " setup                    setup CobiGen CLI (install, verify, configure)"
+  echo " setup                    setup CobiGen CLI (install, verify)"
   echo
   echo "Options:"
 elif [ -z "${1}" ]
