@@ -5,7 +5,7 @@ toc::[]
 
 This page is a general guide and collection to boost your productivity by using proper tools.
 
-== Tabs everywere
+== Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:
 
 .Tabs in Firefox
@@ -51,7 +51,7 @@ You need to deal with ZIP files, TGZ, dpkg, etc.? Just install http://www.7-zip.
 === Smarter clipboard
 You want to paste something from the clipboard but meanwhile you had to copy something else? Just one of many things you can easily do with http://ditto-cp.sourceforge.net/[ditto].
 
-=== Sysinternal Tools
+=== Sysinternals Tools
 A real developer will quickly notice that windows build in tools to analyze processes, network connections, autostarts, etc. are quite poor. So what you really want is the https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite[Sysinternals-Suite]. Make process-explorer your https://www.ricksdailytips.com/make-process-explorer-default-task-manager/[default task manager] asap. Use autoruns to prevent nasty backround things to be started automatically. Use tcpview to figure out which process is blocking port 8080, etc.
 
 === Cope with file locks
@@ -61,7 +61,7 @@ See also https://www.howtogeek.com/128680/HOW-TO-DELETE-MOVE-OR-RENAME-LOCKED-FI
 
 === Create symbolic links
 You are used to symbolic and hard links in Linux? You have to work with Windows? You would also like to have such links in Windows? Why not? Windows https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/[supports real links] (not these stupid shortcuts).
-If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. Howerver, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
+If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
 Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate).
