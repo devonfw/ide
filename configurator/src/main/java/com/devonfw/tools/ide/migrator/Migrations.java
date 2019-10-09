@@ -147,6 +147,14 @@ public class Migrations {
         .pom().replaceProperty("devon4j.version", "3.1.1") //
         .replaceProperty("jackson.version", "2.9.9.20190727") //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.2.0")) //
+        .pom().replaceProperty("devon4j.version", "3.2.0") //
+        .and().java()
+        .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadata",
+            "com.devonfw.module.basic.common.api.RevisionMetadata")
+        .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadataType",
+            "com.devonfw.module.basic.common.api.RevisionMetadataType")
+        .and() //
         .next().build();
   }
 
