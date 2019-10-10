@@ -20,9 +20,11 @@ function doSetup() {
     then
       doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
       doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
     else
       doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.sh' -d '${COBIGEN_CLI_HOME}'"
       doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.sh' -d '${COBIGEN_CLI_HOME}'"
+      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
     fi
 
     doExtendPath "${COBIGEN_CLI_HOME}"
