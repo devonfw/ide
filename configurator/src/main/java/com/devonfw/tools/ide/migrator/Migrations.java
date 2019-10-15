@@ -149,7 +149,14 @@ public class Migrations {
         .and() //
         .next().to(VersionIdentifier.ofDevon4j("3.2.0")) //
         .pom().replaceProperty("devon4j.version", "3.2.0") //
+        .replaceDependency(new VersionIdentifier("junit", "junit", null),
+            new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null))
+        .addDependency(new VersionIdentifier("*-core", null),
+            new VersionIdentifier("org.junit.platform", "junit-platform-runner", null))
         .and().java()
+        .replace("import org.junit.Test;",
+            "import org.junit.jupiter.api.extension.ExtendWith;\n import org.junit.jupiter.api.Test;\n import org.springframework.test.context.junit.jupiter.SpringExtension;")
+        .replace("@RunWith(SpringRunner.class)", "@ExtendWith(SpringExtension.class)")
         .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadata",
             "com.devonfw.module.basic.common.api.RevisionMetadata")
         .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadataType",
