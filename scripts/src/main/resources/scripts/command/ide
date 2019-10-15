@@ -293,7 +293,7 @@ then
     doUpdateSettings
     doUpdateSoftware
   else
-    if [ "${3}" = "to" ] && [ "${2}" != "scripts" ]
+    if [ "${3}" = "to" ] && [ "${2}" = "scripts" ]
     then
       if [ -z "${4}" ]
       then

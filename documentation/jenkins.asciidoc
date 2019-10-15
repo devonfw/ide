@@ -11,5 +11,5 @@ The `jenkins` commandlet allows to install, configure, and launch https://jenkin
 |`setup`         |Setup Jenkins (install and verify)
 |`start`         |Start your local Jenkins server
 |`stop`          |Stop your local Jenkins server
-|`add-ci`        |Add current project as CI job to your local Jenkins
+|`add`           |Add current project as CI job to your local Jenkins
 |=======================

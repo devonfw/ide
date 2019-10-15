@@ -14,6 +14,7 @@ function doLoadProperties() {
   do
     if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
     then
+      value="$(echo -n "$value" | tr -d '\r')"
       export_key=""
       if [ "${value:0:1}" = "~" ]
       then
@@ -47,7 +48,7 @@ function doLoadProperties() {
         fi
       fi
     fi
-  done < <(tr -d '\r' < "${1}")
+  done < "${1}"
 }
 
 # determine proper home directory
