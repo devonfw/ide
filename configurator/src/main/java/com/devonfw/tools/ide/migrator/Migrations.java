@@ -149,6 +149,13 @@ public class Migrations {
         .and() //
         .next().to(VersionIdentifier.ofDevon4j("3.2.0")) //
         .pom().replaceProperty("devon4j.version", "3.2.0") //
+        .replaceString("com.devonfw.module.test.common.api.category.CategorySystemTest", "system")
+        .replaceString(
+            "com.devonfw.module.test.common.api.category.CategoryComponentTest,com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
+            "component,subsystem,system")
+        .replaceString(
+            "com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
+            "subsystem,system")
         .replaceDependency(new VersionIdentifier("junit", "junit", null),
             new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null))
         .addDependency(new VersionIdentifier("*-core", null),
