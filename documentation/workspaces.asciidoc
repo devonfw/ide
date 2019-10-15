@@ -13,16 +13,13 @@ Within the workspace folder (e.g. `workspaces/main`) you are again free to creat
 / workspaces
 ├──/ main
 │  ├──/ link:configurator.asciidoc[.metadata]
-│  ├──/ https://github.com/devonfw/tools-cobigen[CobiGen_Templates]
-│  ├──/ https://github.com/devonfw/ide[devon-ide]
+│  ├──/ https://github.com/devonfw/ide[ide]
 │  ├──/ https://github.com/devonfw/devon4j[devon4j]
-│  ├──/ https://github.com/devonfw/my-thai-star[my-thai-star]
-│  └──/ https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin]
+│  └──/ https://github.com/devonfw/my-thai-star[my-thai-star]
 └──/ stable
    ├──/ link:configurator.asciidoc[.metadata]
-   ├──/ https://github.com/devonfw/ide[devon-ide]
-   ├──/ https://github.com/devonfw/devon4j[devon4j]
-   └──/ https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin]
+   ├──/ https://github.com/devonfw/ide[ide]
+   └──/ https://github.com/devonfw/devon4j[devon4j]
 ----
 
 In the `main` workspace you may find the cloned forks for regular work (in the example e.g. `devon4j`) as a base to create pull-requests while in the `stable` workspace there is a clone of `devon4j` from the official https://github.com/devonfw/devon4j/[devon4j].
