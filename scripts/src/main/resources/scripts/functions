@@ -141,10 +141,10 @@ function doConfirmWarning() {
 # $1: optional question
 # $2: if 'return' will return with 255 otherwise exit if not continued
 function doAskToContinue() {
-  local question="Do you want to continue? (yes/no) "
+  local question="Do you want to continue? "
   if [ -n "${1}" ]
   then
-    question="${1} (yes/no) "
+    question="${1}"
   fi
   if [ -n "${force}" ]
   then
@@ -156,7 +156,8 @@ function doAskToContinue() {
     local answer
     while true
     do
-      read -r -p "${question}" answer
+      echo -e "${question}"
+      read -r -p "(yes/no): " answer
       if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
       then
         return
@@ -638,7 +639,7 @@ function doUpgradeMavenArtifact() {
     target_version="${LATEST_VERSION}"
     if [[ "${target_version}" =~ alpha|beta|rc|pre|test ]]
     then 
-      doAskToContinue "Latest version seems unstable: ${target_version}\n Are you sure you want to install this version?"
+      doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
     fi
     DEVON_SOFTWARE_REPOSITORY=
   fi
@@ -653,7 +654,7 @@ function doUpgradeMavenArtifact() {
     else
       echo "You are using version ${current_version} of ${artifact_id} "
       echo "The new version to install is ${target_version}"
-      if [ "${result}" = 2 ] && [ "${4}" != "LATEST" ]
+      if [ "${result}" = 2 ] && [ "${4}" = "LATEST" ]
       then
         echo "You are using a newer version than the latest release version."
         echo "Hence there is nothing to update."

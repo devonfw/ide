@@ -53,7 +53,7 @@ Different tools and configuration files require a different handling:
 
 * Where suitable we directly use these configurations from your `settings` (e.g. for `eclipse/lifecycle-mapping-metadata.xml`, or `eclipse/project.dictionary`).
 * The `devon` folder in `settings` contains templates for configuration files. There are copied to the devon-ide installation during link:setup.asciidoc[setup] (if no such file already exists). This way the `settings` repository can provide reasonable defaults but allows the user to take over control and customize to his personal needs (e.g. `.m2/settings.xml`).
-* Other configurations need to be imported manually. To avoid manual steps and simplify usage we try to automate as much as possible. This currently applies to `sonarqube` profiles but will be automated with https://github.com/devonfw/sonar-devon-plugin[sonar-devon-plugin] in the future.
+* Other configurations need to be imported manually. To avoid manual steps and simplify usage we try to automate as much as possible. This currently applies to `sonarqube` profiles but will be automated with https://github.com/devonfw/sonar-devon4j-plugin[sonar-devon4j-plugin] in the future.
 * For tools with complex configuration structures like link:eclipse.asciidoc[eclipse], link:intellij..asciidoc[intellij], or link:vscode.asciidoc[vscode] we provide a smart mechanism via our link:configurator.asciidoc[configurator].
 
 == Customize Settings
