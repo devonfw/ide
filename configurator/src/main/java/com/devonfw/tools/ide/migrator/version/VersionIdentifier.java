@@ -37,6 +37,7 @@ public class VersionIdentifier {
   /** {@link #getGroupId() GroupId} for devon4j boms: {@value} */
   public static final String GROUP_ID_DEVON4J_BOMS = GROUP_ID_DEVON4J + ".boms";
 
+  /** To add scope test in dependency */
   public static final String SCOPE_TEST = "test";
 
   private final String groupId;
