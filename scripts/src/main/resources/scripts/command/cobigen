@@ -2,7 +2,6 @@
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-# $@: optional maven arguments
 function doSetup() {
   # We need a JDK
   doDevonCommand java -q setup
@@ -15,17 +14,12 @@ function doSetup() {
 
     doDownload "${download_url}" "${software_name}.jar" "${COBIGEN_CLI_HOME}"
 
-    # We need to extract correct batch files
-    if doIsWindows
-    then
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
-    else
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.sh' -d '${COBIGEN_CLI_HOME}'"
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.sh' -d '${COBIGEN_CLI_HOME}'"
-      doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
-    fi
+    # We need to extract all needed files
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg' -d '${COBIGEN_CLI_HOME}'"
 
     doExtendPath "${COBIGEN_CLI_HOME}"
     doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
@@ -33,6 +27,20 @@ function doSetup() {
     doEcho "Software already installed at ${COBIGEN_CLI_HOME}"
     doEcho "To force install please run devon cobigen setup."
   fi 
+}
+
+# $@: optional CobiGen arguments
+function doRunCLI() {
+  local cobigen_cmd="cobigen"
+  doEcho "Running: ${cobigen_cmd} ${@}"
+  if doIsQuiet
+  then
+    "${cobigen_cmd}" "${@}"
+    exit ${?}
+  else
+    "${cobigen_cmd}" "${@} --verbose"
+    exit ${?}
+  fi
 }
 
 # CLI
@@ -45,6 +53,7 @@ then
   echo "Arguments:"
   echo "                          run default build"
   echo " setup                    setup CobiGen CLI (install, verify)"
+  echo " «args»                   call CobiGen CLI with the specified arguments"
   echo
   echo "Options:"
 elif [ -z "${1}" ]
@@ -54,5 +63,5 @@ elif [ "${1}" = "setup" ]
 then
   doSetup setup
 else
-  doSetup "${@}"
+  doRunCLI "${@}"
 fi
