@@ -43,6 +43,8 @@ public class VersionIdentifier {
 
   private final String version;
 
+  private String scope;
+
   /**
    * The constructor.
    *
@@ -91,6 +93,22 @@ public class VersionIdentifier {
   public String getVersion() {
 
     return this.version;
+  }
+
+  /**
+   * @param scope new value of {@link #getscope}.
+   */
+  public void setScope(String scope) {
+
+    this.scope = scope;
+  }
+
+  /**
+   * @return scope
+   */
+  public String getScope() {
+
+    return this.scope;
   }
 
   /**

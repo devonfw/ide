@@ -157,9 +157,17 @@ public class Migrations {
             "com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
             "subsystem,system")
         .replaceDependency(new VersionIdentifier("junit", "junit", null),
-            new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null))
+            new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null) {
+              {
+                setScope("test");
+              }
+            })
         .addDependency(new VersionIdentifier("*-core", null),
-            new VersionIdentifier("org.junit.platform", "junit-platform-runner", null))
+            new VersionIdentifier("org.junit.platform", "junit-platform-runner", null) {
+              {
+                setScope("test");
+              }
+            })
         .and().java()
         .replace("import org.junit.Test;",
             "import org.junit.jupiter.api.extension.ExtendWith;\n import org.junit.jupiter.api.Test;\n import org.springframework.test.context.junit.jupiter.SpringExtension;")
