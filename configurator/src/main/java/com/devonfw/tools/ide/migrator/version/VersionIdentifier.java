@@ -37,13 +37,15 @@ public class VersionIdentifier {
   /** {@link #getGroupId() GroupId} for devon4j boms: {@value} */
   public static final String GROUP_ID_DEVON4J_BOMS = GROUP_ID_DEVON4J + ".boms";
 
+  public static final String SCOPE_TEST = "test";
+
   private final String groupId;
 
   private final String artifactId;
 
   private final String version;
 
-  private String scope;
+  private final String scope;
 
   /**
    * The constructor.
@@ -65,10 +67,24 @@ public class VersionIdentifier {
    */
   public VersionIdentifier(String groupId, String artifactId, String version) {
 
+    this(groupId, artifactId, version, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param groupId - see {@link #getGroupId()}.
+   * @param artifactId - see {@link #getArtifactId()}.
+   * @param version - see {@link #getVersion()}.
+   * @param scope - see {@link #getScope()}.
+   */
+  public VersionIdentifier(String groupId, String artifactId, String version, String scope) {
+
     super();
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.version = version;
+    this.scope = scope;
   }
 
   /**
@@ -93,14 +109,6 @@ public class VersionIdentifier {
   public String getVersion() {
 
     return this.version;
-  }
-
-  /**
-   * @param scope new value of {@link #getscope}.
-   */
-  public void setScope(String scope) {
-
-    this.scope = scope;
   }
 
   /**
