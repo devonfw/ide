@@ -65,13 +65,13 @@ if not "%DEVON_OLD_PATH%" == "" (
 )
 if not exist "%HOME%\.devon\devon" (
   pushd %~dp0
-  "%BASH%" -c 'source devon'
+  "%BASH%" -c 'source ./devon'
   popd
 ) else (
   if "%1" == "ide" (
     if "%2" == "setup" (
       pushd %~dp0
-      "%BASH%" -c 'source devon'
+      "%BASH%" -c 'source ./devon'
       popd
     )
   )
