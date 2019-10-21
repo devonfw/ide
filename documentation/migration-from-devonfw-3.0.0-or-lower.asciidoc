@@ -27,7 +27,7 @@ For all the details you should study the documentation starting from the link:Ho
 
 If you get errors:
 
-* ask your technical lead to fix the `links:settings.asciidoc[settings]` git repo for `devon-ide` or offer him to do it for you.
+* ask your technical lead to fix the `link:settings.asciidoc[settings]` git repo for `devon-ide` or offer him to do it for you.
 * you need to merge the `https://github.com/devonfw/ide-settings/tree/master/devon[devon]` folder into your settings
 * you need to merge the `https://github.com/devonfw/ide-settings/blob/master/devon.properties[devon.properties]` into your settings
 * you should check your `variables[-customized][.bat]` and merge required customizations into the proper link:configuration.asciidoc[configuration]
