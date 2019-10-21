@@ -63,6 +63,8 @@ Getting used to all the new commands might be tedious when starting after a migr
 `devcon dist *`
 |`setup` or `devon ide setup`|
 
+|`console.bat`|-|Simply open terminal in selected folder. On Windows right-click folder in windows-explorer and select `open devonfw CMD here`.
+
 |`devcon help`|`devon help`|
 
 |`devcon doc`|Read the documentation from https://www.devonfw.com/[devonfw.com]|
