@@ -17,7 +17,7 @@ env:
 stages:
   - name: Build
   - name: Documentation
-    if: (branch = develop) AND (type = push)
+    if: (branch = master) AND (type = push)
 jobs:
   include:
     - stage: Build
