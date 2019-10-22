@@ -26,7 +26,7 @@ jobs:
     - stage: Documentation
       script:
         # Clone repositories
-        - git clone -b develop --single-branch https://${GH_REPO_SOURCE}
+        - git clone -b master --single-branch https://${GH_REPO_SOURCE}
         - git clone https://${GH_REPO_DEST}
         - git clone https://${GH_REPO_CONSOLIDATE}
         # Update wiki repository with documentation folder contents
