@@ -147,6 +147,28 @@ public class Migrations {
         .pom().replaceProperty("devon4j.version", "3.1.1") //
         .replaceProperty("jackson.version", "2.9.9.20190727") //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.2.0")) //
+        .pom().replaceProperty("devon4j.version", "3.2.0") //
+        .replaceString("com.devonfw.module.test.common.api.category.CategorySystemTest", "system")
+        .replaceString(
+            "com.devonfw.module.test.common.api.category.CategoryComponentTest,com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
+            "component,subsystem,system")
+        .replaceString(
+            "com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
+            "subsystem,system")
+        .replaceDependency(new VersionIdentifier("junit", "junit", null),
+            new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null, VersionIdentifier.SCOPE_TEST))
+        .addDependency(new VersionIdentifier("*-core", null),
+            new VersionIdentifier("org.junit.platform", "junit-platform-runner", null, VersionIdentifier.SCOPE_TEST))
+        .and().java()
+        .replace("import org.junit.Test;",
+            "import org.junit.jupiter.api.extension.ExtendWith;\n import org.junit.jupiter.api.Test;\n import org.springframework.test.context.junit.jupiter.SpringExtension;")
+        .replace("@RunWith(SpringRunner.class)", "@ExtendWith(SpringExtension.class)")
+        .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadata",
+            "com.devonfw.module.basic.common.api.RevisionMetadata")
+        .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadataType",
+            "com.devonfw.module.basic.common.api.RevisionMetadataType")
+        .and() //
         .next().build();
   }
 

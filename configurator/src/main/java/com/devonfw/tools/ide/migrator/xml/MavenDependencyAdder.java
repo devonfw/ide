@@ -59,6 +59,12 @@ public class MavenDependencyAdder extends AbstractXmlMigration {
           dependencyVersionElement.setTextContent(dependencyVersion);
           dependencyElement.appendChild(dependencyVersionElement);
         }
+        String scope = this.dependency.getScope();
+        if (scope != null) {
+          Element dependencyScopeElement = xml.createElement("scope");
+          dependencyScopeElement.setTextContent(scope);
+          dependencyElement.appendChild(dependencyScopeElement);
+        }
         dependenciesElement.appendChild(dependencyElement);
         return true;
       }
