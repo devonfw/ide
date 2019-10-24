@@ -34,7 +34,7 @@ function doSetup() {
 function doSetupDevon4node() {
   if command -v devon4node &> /dev/null
   then  
-    if [ -n "${1}" ]
+    if [ -z "${1}" ]
     then
       echo "devon4node is already installed at $(command -v devon4node)"
       exit
@@ -88,16 +88,16 @@ case ${1} in
 ;;
 "create" | "c")
   shift
-  doSetupDevon4node
-  devon4node new "${*}"
+  doSetupDevon4node setup
+  devon4node new "${@}"
 ;;
 "generate" | "g")
-  doSetupDevon4node
-  devon4node "${*}"
+  doSetupDevon4node setup
+  devon4node "${@}"
 ;;
 "db")
-  doSetupDevon4node
-  devon4node "${*}"
+  doSetupDevon4node setup
+  devon4node "${@}"
 ;;
 *)
   doRun "${*}"
