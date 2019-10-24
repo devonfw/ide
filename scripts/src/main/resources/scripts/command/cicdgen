@@ -28,6 +28,9 @@ function printCicdgenHelp() {
   echo "Arguments:"
   echo "setup                 setup cicdgen (install and verify)"
   echo "update                update cicdgen (reinstall with @latest version and verify)"
+  echo "java [«args»]         generate cicd files for the currect devon4java project: $PWD"
+  echo "ng [«args»]           generate cicd files for the currect devon4ng project: $PWD"
+  echo "node [«args»]         generate cicd files for the currect devon4node project: $PWD"
   echo "«args»                call cicdgen with the specified arguments"
   echo
   echo "Options:"
@@ -35,18 +38,33 @@ function printCicdgenHelp() {
 }
 
 #CLI
-if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
-then
+case ${1} in 
+"help" | "-h")
   printCicdgenHelp
-fi
-
-if [ -z "${1}" ] || [ "${1}" = "setup" ]
-then
+;;
+"setup" | "s")
   doSetup setup
-elif [ "${1}" = "update" ]
-then
+;;
+"update")
   doSetup update
-else
+;;
+"java")
+  shift
+  doSetup
+  cicdgen generate devon4j "${@}"
+;;
+"ng")
+  shift
+  doSetup
+  cicdgen generate devon4ng "${@}"
+;;
+"node")
+  shift
+  doSetup
+  cicdgen generate devon4node "${@}"
+;;
+*)
   doSetup
   cicdgen "${@}"
-fi
+;;
+esac
