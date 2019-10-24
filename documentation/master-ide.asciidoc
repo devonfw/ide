@@ -1,0 +1,35 @@
+= devonfw ide
+
+== Integrated Development Environment
+
+include::Home[leveloffset=2]
+
+include::features[leveloffset=2]
+
+include::setup[leveloffset=2]
+
+include::usage[leveloffset=2]
+
+include::license[leveloffset=2]
+
+include::structure[leveloffset=2]
+
+include::cli[leveloffset=2]
+
+include::variables[leveloffset=2]
+
+include::configuration[leveloffset=2]
+
+include::scripts[leveloffset=2]
+
+include::settings[leveloffset=2]
+
+include::software[leveloffset=2]
+
+include::integration[leveloffset=2]
+
+include::advanced-tooling[leveloffset=2]
+
+include::eclipse-plugins[leveloffset=2]
+
+
