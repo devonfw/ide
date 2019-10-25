@@ -13,9 +13,9 @@ The arguments (`devon yarn «args»`) are explained by the following table:
 |*Argument(s)*             |*Meaning*
 |                          |run default build, link:configuration.asciidoc[configurable] via `YARN_BUILD_OPTS`
 |`setup`                   |setup yarn (install and verify), link:configuration.asciidoc[configurable] via `YARN_VERSION`
-|`get-version`             |Print the version of your current project.
-|`set-version` «nv» [«cv»] |Set the version of your current project to `«nv»` (assuming your current version is `«cv»`).
-|`check-top-level-project` |Check if you are running on a top-level project or fail if in a module or no NPM project at all.
-|release                   |Start a clean deploy release build, link:configuration.asciidoc[configurable] via `YARN_RELEASE_OPTS`
-|`«args»`        |run yarn with the given arguments (`«args»`)
+|`get-version`             |print the version of your current project
+|`set-version «nv» [«cv»]` |set the version of your current project to `«nv»` (assuming your current version is `«cv»`)
+|`check-top-level-project` |check if you are running on a top-level project or fail if in a module or no NPM project at all
+|`release`                 |start a clean deploy release build, link:configuration.asciidoc[configurable] via `YARN_RELEASE_OPTS`
+|`«args»`                  |run yarn with the given arguments (`«args»`)
 |=======================
