@@ -64,7 +64,7 @@ function doAnalyze() {
 SONARQUBE_HOME="${DEVON_IDE_HOME}/software/sonarqube"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
-  echo "Setup or run Sonar-Qube server on local machnine."
+  echo "Setup or run SonarQube server on local machine."
   echo
   echo "Arguments:"
   echo " start                    start local SonarQube server"

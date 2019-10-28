@@ -11,5 +11,5 @@ The `sonar` commandlet allows to install, configure, and launch https://www.sona
 |`setup`         |Setup SonarQube (install and verify)
 |`start`         |Start your local SonarQube server
 |`stop`          |Stop your local SonarQube server
-|`add-ci`        |Analyze current project with SonarQube
+|`analyze`        |Analyze current project with SonarQube
 |=======================
