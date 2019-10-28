@@ -1,0 +1,63 @@
+﻿#!/usr/bin/env bash
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+    
+  dotnetCommand=$(dotnet --version)
+  downloadDotnetUrl="https://dotnet.microsoft.com/download"
+  
+  if [ -z "$dotnetCommand" ]
+  then
+    printf "${RED}dotnet NOT running${NC} \n"
+    printf "${RED}Please install dotnet SDK.${NC} \n"
+    case "$OSTYPE" in
+      solaris*) echo "SOLARIS : not supported platform" ;;
+      darwin*)  open $downloadDotnetUrl ;; 
+      linux*)   exdg-open $downloadDotnetUrl ;; 
+      bsd*)     echo "BSD : not supported platform" ;;
+      msys*)    start $downloadDotnetUrl ;; 
+      *)        echo "unknown: $OSTYPE.  Not supported platform" ;;
+    esac      
+    exit 1		
+  else   
+    echo "Installing devonfw template Devon4Net.WebAPI.Template ..."
+    dotnet new -i Devon4Net.WebAPI.Template
+  fi
+}
+
+function doRun() {
+  doSetup
+  doEcho "Running: dotnet ${*}"
+  if doIsQuiet
+  then
+    dotnet "${@}" > /dev/null
+  else    
+    dotnet "${@}"
+  fi
+}
+
+#CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run dotnet."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup dotnet (install and verify)"
+  echo " create                   create a new devon4net API application"
+  echo
+  exit
+;;
+"setup" | "s")
+  doSetup setup
+;;
+"create" | "c")
+  shift  
+  dotnet new Devon4NetAPI
+  exit
+;;
+*)
+  doRun "${*}"
+;;
+esac
