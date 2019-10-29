@@ -28,6 +28,7 @@ then
   echo
   echo "Arguments:"
   echo "setup                 setup angular-cli (install and verify)"
+  echo "cicd «args»           generate cicd files for the currect devon4ng project: $PWD"
   echo "«args»                call maven with the specified arguments"
   echo
   echo "Options:"
@@ -42,6 +43,10 @@ then
   shift
   doSetup
   ng new "${@}"
+elif [ "${1}" = "cicd" ]
+then
+  shift
+  doDevonCommand cicdgen ng "${*}"
 else
   doSetup
   ng "${@}"
