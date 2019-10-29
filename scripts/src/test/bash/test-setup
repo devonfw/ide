@@ -15,7 +15,7 @@ function doGetVersion() {
 }
 
 echo "JAVA_VERSION=8u222b10" >> "conf/devon.properties"
-doExtract ../../devonfw-ide-scripts-*.tar.gz
+doExtract ../../devon-ide-scripts-*.tar.gz
 ./setup "-" || exit 1
 CLI="${PWD}/scripts/devon"
 cd workspaces/main
