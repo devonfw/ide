@@ -5,7 +5,7 @@ toc::[]
 
 Every developer needs great tools to work efficient. Setting all this up manually can be tedious and error-prone. Further, different projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
 
-The `devon-ide` will solve all these problems. Here are the features we can offer for you with `devon-ide`:
+The `devonfw-ide` will solve all these problems. Here are the features we can offer for you with `devonfw-ide`:
 
 * *Efficient* +
 Setup your IDE within minutes tailored for the requirements of your project.
@@ -23,11 +23,11 @@ Further you can create your own link:cli.asciidoc#commandlets[commandlet] for yo
 * *Multi-platform* +
 Works on all major platforms, which are Windows, Mac, and Linux.
 * *Multi-tenancy* +
-Have as many instances of the `devon-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. No physical installation and no tweaking of your operating system. "Installations" of `devon-ide` do not interfere with each other nor with other installed software.
+Have as many instances of the `devonfw-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. No physical installation and no tweaking of your operating system. "Installations" of `devonfw-ide` do not interfere with each other nor with other installed software.
 * *Multiple Workspaces* +
 Support working with different link:workspaces.asciidoc[workspaces] on different branches. Create and update new workspaces with few clicks. See the workspace name in the title-bar of your IDE so you do not get confused and work on the right branch.
 * *Free* +
-The `devon-ide` is free just like everything from http://devonfw.com[devonfw]. See https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE] for details.
+The `devonfw-ide` is free just like everything from http://devonfw.com[devonfw]. See https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE] for details.
 
 == IDEs
 We support the following IDEs:
@@ -54,7 +54,7 @@ However, also other IDEs, platforms, or tools can be easily integrated as link:c
 
 == Motiviation
 
-`TL;DR`? Lets talk to developers in the proper language. Here are examples with `devon-ide`:
+`TL;DR`? Lets talk to developers in the proper language. Here are examples with `devonfw-ide`:
 
 [source,bash]
 --------
@@ -64,7 +64,7 @@ You are not inside a devon IDE installation: /
 [devon]$ mvn
 zsh: command not found: mvn
 [devon]$ devon
-devon-ide has environment variables have been set for /projects/devon
+devonfw-ide has environment variables have been set for /projects/devon
 [devon]$ mvn -v
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
 Maven home: /projects/devon/software/maven
@@ -73,7 +73,7 @@ Default locale: en_DE, platform encoding: UTF-8
 OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
 [devon]$ cd /projects/ide-test/workspaces/test/my-project
 [my-project]$ devon
-devon-ide has environment variables have been set for /projects/ide-test
+devonfw-ide has environment variables have been set for /projects/ide-test
 [my-project]$ mvn -v
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
 Maven home: /projects/ide-test/software/maven
@@ -88,7 +88,7 @@ launching Eclipse for workspace test...
 [INFO] BUILD SUCCESS
 --------
 
-This was just a very simple demo of what `devon-ide` can do. For further details have a look at our link:cli.asciidoc[CLI documentation].
+This was just a very simple demo of what `devonfw-ide` can do. For further details have a look at our link:cli.asciidoc[CLI documentation].
 
 Now you might ask:
 

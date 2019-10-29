@@ -1,19 +1,22 @@
 = Windows Integration
 
-This folder contains configurations to integrate `devon-ide` into MacOS.
+This folder contains configurations to integrate `devonfw-ide` into MacOS.
 
 == CMD
-If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devon-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell. Therefore you once have to follow these steps:
+If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devonfw-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell.
+Therefore you once have to follow these steps:
 
 * Right-click on the file `IDEenv.reg` from `cmd` sub-folder and choose `Merge` from Context-Menu.
 * Confirm the dialog `User Account Control` with `Yes`.
 * Confrim the dialog `Registry Editor` with `Yes`.
 * Click `OK`.
 
-Now you have the option `Open Devon CMD here` if you right click on a folder in `Windows Explorer` that will open `CMD` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
+Now you have the option `Open Devon CMD here` if you right click on a folder in `Windows Explorer` that will open `CMD` and automatically setup your environment according to the `devonfw-ide` project containing the folder (if any, see above).
 
 === ConEMU
-https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells. If you like it, you will also want to have it integrated with `devon-ide`. All you need to do is follow these simple steps:
+https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells.
+If you like it, you will also want to have it integrated with `devonfw-ide`.
+All you need to do is follow these simple steps:
 
 * Copy the file `CmdInit.cmd` from your ConEmu installation (`C:\Program Files\ConEmu\ConEmu\CmdInit.cmd`) to a personal folder (e.g. `C:\Users\MYLOGIN\scripts`).
 * Modify this copy of `CmdInit.cmd` by adding the line `IDEenv` (e.g. at line 6) and saving.
@@ -25,7 +28,7 @@ https://conemu.github.io/[ConEmu] is a great extension that brings additional fe
 * Click on the upper `Register` button (for `ConEmu Here`).
 * Click on `Save settings`
 
-Now you have the option `ConEmu here` if you right click on a folder in `Windows Explorer` that will open a new tab in `ConEmu` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
+Now you have the option `ConEmu here` if you right click on a folder in `Windows Explorer` that will open a new tab in `ConEmu` and automatically setup your environment according to the `devonfw-ide` project containing the folder (if any, see above).
 
 === ConEMU and StartExplorer
 
@@ -46,7 +49,7 @@ You can even add a shell login if you installed git bash on your machine. Please
 === Cygwin
 Ensure to have `chere` installed in cygwin. Otherwise go the cygwin setup and install it. Then run a cygwin terminal as administrator and call this command: `chere -i -t mintty`. Now you will have the option `Bash Prompt Here` in your WindowsExplorer context menu. 
 
-In order to integrate with `devon-ide` you simply have to source add the line `. ~/IDEenv.sh` this to your `~/.bashrc`.
+In order to integrate with `devonfw-ide` you simply have to source add the line `. ~/IDEenv.sh` this to your `~/.bashrc`.
 The `IDEenv.sh` shall be located in your unix home directory (`~/IDEenv.sh`) with this content:
 [source,bash]
 --------

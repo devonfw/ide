@@ -16,7 +16,7 @@ public interface VariableResolver {
   @Deprecated
   String VARIABLE_CLIENT_ENV_HOME = "client.env.home";
 
-  /** Variable for top-level directory of 'devon-ide' installation (DEVON_IDE_HOME). */
+  /** Variable for top-level directory of 'devonfw-ide' installation (DEVON_IDE_HOME). */
   String VARIABLE_DEVON_IDE_HOME = "DEVON_IDE_HOME";
 
   /** Variable for directory of the current workspace (WORKSPACE_PATH). */

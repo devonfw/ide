@@ -27,7 +27,7 @@ set "SOFTWARE_PATH=%CD%\software"
 if not exist "%SETTINGS_PATH%" (
   echo:
   echo *** ATTENTION ***
-  echo Your devon-ide is missing the settings at %SETTINGS_PATH%
+  echo Your devonfw-ide is missing the settings at %SETTINGS_PATH%
   echo Please run the following command to complete your IDE setup:
   echo devon ide setup [^<settings-url^>]
 )

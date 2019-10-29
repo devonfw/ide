@@ -1,4 +1,4 @@
-= devon-ide
+= devonfw-ide
 
 Tool to automate setup and update of development environment.
 
