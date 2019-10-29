@@ -57,4 +57,5 @@ To use it all you need to do is to follow these steps:
 * Execute `mvn -v` to verify your environment.
 
 == IntelliJ or WebStorm
-You might want to open a terminal directly as view inside your IDEA IDE, that already ships with a feature for this out of the box. If you start your IDE via the `start-idea` script provided by `devon-ide` then everything is configured and your environment is set automatically.
+You might want to open a terminal directly as view inside your IDEA IDE, that already ships with a feature for this out of the box.
+If you start your IDE via the `start-idea` script provided by `devonfw-ide` then everything is configured and your environment is set automatically.

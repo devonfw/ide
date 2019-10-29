@@ -15,7 +15,7 @@ For further details visit the following links:
 
 TL;DR?
 
-1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devon-ide-scripts/[download]
+1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[download]
 2. extract to `C:\projects\my-project-name` or `/projects/my-project-name`
 3. run `setup` script
 4. run `eclipse-main` to launch Eclipse or `vscode-main` for Visual Studio code
