@@ -31,6 +31,14 @@ function doSetup() {
   fi
 }
 
+function doSetupDevon4node() {
+  if ! command -v devon4node &> /dev/null
+  then  
+    doDevonCommand yarn -q setup
+    doRunCommand "npm install -g @devon4node/cli@latest" "install devon4node"
+  fi
+}
+
 function doRun() {
   doSetup
   doEcho "Running: node ${*}"
@@ -48,24 +56,42 @@ then
 fi
 
 #CLI
-if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
-then
-  echo "Setup or run yarn."
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run NodeJS."
   echo
   echo "Arguments:"
-  echo " setup                    setup angular-cli (install and verify)"
-  echo " get-version              get the current project version"
-  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
-  echo " release                  start a clean deploy release build"
-  echo " «args»                   call maven with the specified arguments"
+  echo " setup                    setup NodeJS (install and verify)"
+  echo " create «name» [«args»]   create a new devon4node application (same as devon4node new)"
+  echo " generate «s» [«args»]    generate devon4node components using the schematic «s» (same as devon4node generate)"
+  echo " db «c» [«args»]          execute a TypeORM command «c» (same as devon4node db)"
+  echo " cicd «args»              generate cicd files for the currect devon4node project: $PWD"
+  echo " «args»                   call NodeJS with the specified arguments"
   echo
   echo "Options:"
   exit
-fi
-if [ "${1}" = "setup" ]
-then
+;;
+"setup" | "s")
   doSetup setup
-else
+;;
+"create" | "c")
+  shift
+  doSetupDevon4node
+  devon4node new "${@}"
+;;
+"generate" | "g")
+  doSetupDevon4node
+  devon4node "${@}"
+;;
+"db")
+  doSetupDevon4node
+  devon4node "${@}"
+;;
+"cicd")
+  shift
+  doDevonCommand cicdgen node "${*}"
+;;
+*)
   doRun "${*}"
-fi
+;;
+esac
