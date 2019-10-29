@@ -1,11 +1,11 @@
 :toc:
 toc::[]
 
-= Devon IDE
+= devonfw-ide
 
-Welcome to the `devon-ide`! 
+Welcome to the `devonfw-ide`! 
 
-The `devon-ide` is a fantastic tool to automatically download, install, setup and update the IDE (integrated development environment) of your software development projects.
+The `devonfw-ide` is a fantastic tool to automatically download, install, setup and update the IDE (integrated development environment) of your software development projects.
 
 For further details visit the following links:
 
@@ -22,4 +22,4 @@ TL;DR?
 5. happy hacking!
 
 == License
-The `devon-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].
+The `devonfw-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].

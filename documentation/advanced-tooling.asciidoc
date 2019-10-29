@@ -31,7 +31,7 @@ If you want to have tabs for your windows command-line you simply install https:
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
 
-See link:guide-integration.asciidoc[] for integration of ConEmu with `devon-ide`.
+See link:guide-integration.asciidoc[] for integration of ConEmu with `devonfw-ide`.
 
 == Browser Plugins
 There are tons of helpful browser plugins out there and it might be a matter of personal taste what you like to have installed. However, as we are heavily using github we want to promote https://github.com/buunguyen/octotree#octotree[octotree].

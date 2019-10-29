@@ -40,7 +40,7 @@ do
     fi
     if [ -z "${1}" ]
     then
-      echo "devon-ide has environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
+      echo "devonfw-ide has environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
     fi
     cd "${L_PWD}" || exit 255
     break

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Functions to be reused in devon-ide commands. Will actually be sourced,
+# Functions to be reused in devonfw-ide commands. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
 if [ -z "${DEVON_IDE_HOME}" ]
@@ -215,7 +215,7 @@ function doLicenseAgreement() {
     echo
     doLogo
     echo
-    echo "Welcome to devon-ide!"
+    echo "Welcome to devonfw-ide!"
     echo "This product and its 3rd party components is open-source software and can be used free (also commercially)."
     echo "However, before using it you need to read and accept the terms of use with all involved licenses agreements."
     echo "With confirming you take notice and agree that there is no warranty for using this product and its 3rd party components."
@@ -233,7 +233,7 @@ function doLicenseAgreement() {
       read -r -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devon-ide terms of use.\nhttps://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
+          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide terms of use.\nhttps://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
           break;;
         no)
           exit 255;;

@@ -4,7 +4,7 @@ toc::[]
 = vscode
 
 The `vscode` commandlet allows to install, configure, and launch https://code.visualstudio.com/[Visual Studio Code].
-To launch VSCode for your current workspace and devon-ide installation simply run:
+To launch VSCode for your current workspace and `devonfw-ide` installation simply run:
 `devon vscode`
 
 You may also supply additional arguments as `devon vscode «args»`. These are explained by the following table:

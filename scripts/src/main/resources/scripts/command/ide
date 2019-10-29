@@ -5,7 +5,7 @@ DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateScripts() {
   # shellcheck disable=SC2007,SC2154
-  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devon-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
   then
     if [ "${target_version}" = "LATEST" ]
@@ -34,9 +34,9 @@ function doUpdateSettings() {
     then
       echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
       echo "Further details can be found here:"
-      echo "https://github.com/devonfw/ide/wiki/settings"
+      echo "https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc"
       echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
-      echo "In case you just want to test devon-ide you may simply hit return to install default settings."
+      echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
       echo
       read -r -p "Settings URL: " answer
       if [ -z "${answer}" ]
@@ -50,7 +50,7 @@ function doUpdateSettings() {
     then
       SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
     fi
-    doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devon-ide-settings"
+    doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devonfw-ide-settings"
     if [ ! -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
     then
       doFail "Installation of settings failed!\nFile not found: ${SETTINGS_PATH}/devon/conf/devon.properties"
@@ -138,14 +138,14 @@ function doSetup() {
   doUpdateSettings "${@}"
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
-    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon.properties" "devon.properties" "${SETTINGS_PATH}"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon.properties" "devon.properties" "${SETTINGS_PATH}"
   fi
   if [ ! -d "${SETTINGS_PATH}/devon" ]
   then
     doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to properly merge and update your settings."
-    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/devon.properties" "devon.properties" "${SETTINGS_PATH}/devon/conf"
-    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/.m2/settings.xml" "devon.properties" "${SETTINGS_PATH}/devon/conf/.m2"
-    doDownload "https://raw.githubusercontent.com/devonfw/devon-ide-settings/master/devon/conf/npm/.npmrc" ".npmrc" "${SETTINGS_PATH}/devon/conf/npm"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/devon.properties" "devon.properties" "${SETTINGS_PATH}/devon/conf"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/.m2/settings.xml" "devon.properties" "${SETTINGS_PATH}/devon/conf/.m2"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/npm/.npmrc" ".npmrc" "${SETTINGS_PATH}/devon/conf/npm"
   fi
   if [ -d "${SETTINGS_PATH}/devon" ]
   then
@@ -153,7 +153,7 @@ function doSetup() {
   fi
   if [ -f "${DEVON_IDE_HOME}/variables" ] || [ -f "${DEVON_IDE_HOME}/variables.bat" ]
   then
-    echo "Found old oasp4j-ide installation. Trying to migrate to devon-ide automatically..."
+    echo "Found old oasp4j-ide installation. Trying to migrate to devonfw-ide automatically..."
     if [ -f "${DEVON_IDE_HOME}/variables-customized.bat" ]
     then
       echo -e "\n# Migrated from variables-customized.bat" >> "${DEVON_IDE_HOME}/conf/devon.properties"
@@ -229,7 +229,7 @@ function doUninstallFromHome() {
 }
 
 function doUninstall() {
-  echo "Uninstalling devon-ide..."
+  echo "Uninstalling devonfw-ide..."
   mkdir -p "${DEVON_IDE_HOME}/updates"
   doUninstallFromHome ~
   if doIsWindows
@@ -252,7 +252,7 @@ function doUninstall() {
     fi
     reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
-  echo "So sad that you did not like devon-ide. It has been uninstalled from your system."
+  echo "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
   echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
   echo "Goodbye and have a nice day!"
 }
@@ -261,23 +261,23 @@ target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
   *\ * )
-   doConfirmWarning "Your devon-ide installation path contains whitespace(s):\n${DEVON_IDE_HOME}\nThis will cause severe bugs (https://github.com/devonfw/ide/issues/100)!\nWe strongly encourage you to abort and choose a different installation path."
+   doConfirmWarning "Your devonfw-ide installation path contains whitespace(s):\n${DEVON_IDE_HOME}\nThis will cause severe bugs (https://github.com/devonfw/ide/issues/100)!\nWe strongly encourage you to abort and choose a different installation path."
    ;;
 esac
 
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
-  echo "Setup and update devon-ide."
+  echo "Setup and update devonfw-ide."
   echo
   echo "Arguments:"
-  echo "setup [«SETTINGS_URL»]           setup devon-ide (getting the settings from the given URL)"
-  echo "update scripts [to «version»]    update (or downgrade) devon-ide-scripts (to specified or latest version)"
+  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the settings from the given URL)"
+  echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
   echo "update all                       update scripts, settings and software"
   echo "update                           update settings and software"
-  echo "uninstall                        uninstall devon-ide and remove all OS hooks (revert devon ide setup)"
+  echo "uninstall                        uninstall devonfw-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
 then
