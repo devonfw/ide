@@ -13,7 +13,7 @@ We try to make it as simple as possible for you. However, there are some minimal
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
-Releases of `devonfw-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devon-ide-scripts/[here]. 
+Releases of `devonfw-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[here]. 
 
 == Install
 Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
