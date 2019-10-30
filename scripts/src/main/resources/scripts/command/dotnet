@@ -24,7 +24,7 @@ function doSetup() {
             DISTRO='unknown'
         fi
 
-        if [DISTRO=='red hat']
+        if [DISTRO=="red hat"]
         then
           DISTRO='redhat'
         fi
