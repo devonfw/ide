@@ -18,42 +18,6 @@ function doSetup() {
     then
       fileSetup="dotnet-sdk-3.0.100-win-x64.exe"
       download_url="https://download.visualstudio.microsoft.com/download/pr/53f250a1-318f-4350-8bda-3c6e49f40e76/e8cbbd98b08edd6222125268166cfc43/dotnet-sdk-3.0.100-win-x64.exe"
-    else
-        DISTRO=$( cat /etc/*-release | tr [:upper:] [:lower:] | grep -Poi '(debian|ubuntu|red hat|centos|suse)' | uniq )
-        if [ -z $DISTRO ]; then
-            DISTRO='unknown'
-        fi
-
-        if [DISTRO=="red hat"]
-        then
-          DISTRO='redhat'
-        fi
-
-        case "$DISTRO" in
-          debian*)            wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg;
-                              sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/;
-                              wget -q https://packages.microsoft.com/config/debian/10/prod.list;
-                              sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list;
-                              sudo chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg;
-                              sudo chown root:root /etc/apt/sources.list.d/microsoft-prod.list;;                                
-
-          ubuntu*)            wget -q https://packages.microsoft.com/config/ubuntu/19.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb ;
-                              sudo dpkg -i packages-microsoft-prod.deb;; 
-
-          redhat*)            sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc;
-                              sudo wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/fedora/30/prod.repo;;
-
-          centos*)            sudo rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm ;;
-
-          suse*)              sudo zypper install libicu;
-                              sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc;
-                              wget -q https://packages.microsoft.com/config/opensuse/42.3/prod.repo;
-                              sudo mv prod.repo /etc/zypp/repos.d/microsoft-prod.repo;
-                              sudo chown root:root /etc/zypp/repos.d/microsoft-prod.repo;; 
-
-          *)                  echo "unknown: $OSTYPE.  Not supported platform" ;
-                              exit;;
-        esac        
     fi
 
     if doIsMacOs || doIsWindows
