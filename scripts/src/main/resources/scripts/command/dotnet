@@ -8,7 +8,7 @@ function doSetup() {
   local dotnetCommand=$(dotnet --version)
   local software_version="3.0.100"
 
-  if [ "$dotnetCommand" == "$software_version" ]
+  if [ "$dotnetCommand" != "$software_version" ]
   then    
     if doIsMacOs
     then
