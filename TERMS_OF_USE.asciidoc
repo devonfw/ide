@@ -31,6 +31,8 @@ This software integrates the following third party components:
 |http://myregexp.com/eclipsePlugin.html[regex tester] |https://en.wikipedia.org/wiki/GNU_General_Public_License[GPL]
 |https://github.com/m-m-m/eclipse-templatevariables/[eclipse-templatevariables] |https://github.com/m-m-m/eclipse-templatevariables/blob/master/LICENSE.txt[ASL 2.0]
 |https://www.genuitec.com/products/devstyle/[DevStyle] |https://www.genuitec.com/products/devstyle/eula/[EULA]
+|https://jenkins.io/[Jenkins] |https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
+|https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
 |https://www.sonarlint.org/eclipse/[SonarLint] |https://github.com/SonarSource/sonarlint-eclipse/blob/master/LICENSE.txt[LGPL 3+]
 |https://nodejs.org/[Node.js] |https://raw.githubusercontent.com/nodejs/node/master/LICENSE[License]
 |https://www.npmjs.com/[NPM] |https://github.com/npm/cli/blob/latest/LICENSE[Artistic License 2.0] (https://www.npmjs.com/policies/terms[Terms])
