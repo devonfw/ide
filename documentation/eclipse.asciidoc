@@ -4,7 +4,7 @@ toc::[]
 = eclipse
 
 The `eclipse` commandlet allows to install, configure, and launch the https://eclipse.org/[Eclipse IDE].
-To launch Eclipse for your current workspace and devon-ide installation simply run:
+To launch Eclipse for your current workspace and devonfw-ide installation simply run:
 `devon eclipse`
 
 You may also supply additional arguments as `devon eclipse «args»`. These are explained by the following table:

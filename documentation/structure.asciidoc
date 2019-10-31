@@ -2,9 +2,9 @@
 toc::[]
 
 = Structure
-The directory layout of your `devon-ide` will look like this:
+The directory layout of your `devonfw-ide` will look like this:
 
-.File structure of your devon-ide
+.File structure of your devonfw-ide
 [subs=+macros]
 ----
 / projects (or C:\Projects, etc.)
@@ -25,4 +25,4 @@ The directory layout of your `devon-ide` will look like this:
 The elements of the above structure are described in the indivudal sections. As they are hyperlinks you can simply click them to get more details.
 
 == TERMS_OF_USE
-You need to agree with the https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.adoc[TERMS_OF_USE] in order to use `devon-ide`. Everything included out of the box applies to open-source licenses. However, due to the many thrid party components with their licenses and terms we want to make this clear to all our users and be compliant.
+You need to agree with the https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.adoc[TERMS_OF_USE] in order to use `devonfw-ide`. Everything included out of the box applies to open-source licenses. However, due to the many thrid party components with their licenses and terms we want to make this clear to all our users and be compliant.

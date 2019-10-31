@@ -98,7 +98,7 @@ pushd %CD%
 if exist scripts\environment-project.bat (
   set DEVON_IDE_HOME=%CD%
   call scripts\environment-project.bat
-  echo devon-ide environment variables have been set for %CD% in workspace %WORKSPACE%
+  echo devonfw-ide environment variables have been set for %CD% in workspace %WORKSPACE%
   popd
   goto :eof
 )

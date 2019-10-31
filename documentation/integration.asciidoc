@@ -1,31 +1,21 @@
 = Integration
 
-The `devon-ide` already brings a lot of integration out of the box. This page is for users that want to get even more out of it. For instance this IDE ships with a `console` script to open a shell with the environment variables properly set for your `devon-ide` installation, so you get the correct version of your tools (Java, Maven, Yarn, etc.). However, you might want to open a shell from your IDE or your file manager. For some of these use-cases you need additional tweaks that are described on this page.
+The `devonfw-ide` already brings a lot of integration out of the box. This page is for users that want to get even more out of it. For instance this IDE ships with a `console` script to open a shell with the environment variables properly set for your `devonfw-ide` installation, so you get the correct version of your tools (Java, Maven, Yarn, etc.). However, you might want to open a shell from your IDE or your file manager. For some of these use-cases you need additional tweaks that are described on this page.
 
 == Windows
-OASP4J-IDE ships with a script `IDEenv.bat` that checks if you are currently in a directory (CWD) that belongs to an `devon-ide` project. In that case the script will automatically set the environment variables for that projects. Otherwise the script will have no effect and do no harm.
-Preparation:
-
-* Please copy `IDEenv.bat` from https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/system[system] folder into a central `scripts` folder (e.g. `C:\Users\«MyLogin»\scripts` or `C:\Program Files\scripts`)
-* Ensure that this `scripts` directory is added to your system path:
-** Got to `Computer > Properties > Advanced system settings > Environment Variables`
-** In the upper group (`User variables for ...`) select the variable `PATH`
-** Click on `Edit`
-** To the end of the `Variable value` append a semicolon (`;`) followed by the absolute path of the `scripts` directory (e.g. append `;C:\Users\«MyLogin»\scripts`)
-** Confirm with `OK` (3 times)
+devonfw-ide automatically integrates with Windows-Explorer during link:setup.asciidoc[setup].
 
 === CMD
-If you want to open a `CMD` (MS Dos Shell) directly from `Windows Explorer` for a folder in your `devon-ide` project you will also want to have the environment variables set properly so that you can run `mvn`, `yarn`, `gulp`, or whatever directly from that shell. Therefore you once have to follow these steps:
+If you want to open a `CMD` (MS Dos Shell) directly from `Windows-Explorer` simply right-click on the  folder in your `devonfw-ide` you want to open. From the context menu click on `Open Devon CMD shell here`. This will open `CMD` and automatically initialize your environment according to the `devonfw-ide` project containing the folder (if any, see above).
 
-* Right-click on the file `IDEenv.reg` from https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/system[system] and choose `Merge` from Context-Menu.
-* Confirm the dialog `User Account Control` with `Yes`.
-* Confrim the dialog `Registry Editor` with `Yes`.
-* Click `OK`.
+=== Git-Bash
+Just like for `CMD` you can also click `Git Bash Here` from Windows-Explorer context-menu to open a git bash. If you have selected a folder in your `devonfw-ide` installation, it will automatically initialize your environment.
 
-Now you have the option `Open CMD here` if you right click on a folder in `Windows Explorer` that will open `CMD` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
+=== Cygwin
+In case you have `cygwin` installed on your machine, the `devonfw-ide` will autodetect this during `setup` and also install a `Windows-Explorer` integration. Just choose `Open Devon Cygwin Bash Here` to open cygwin bash and initialize your `devonfw-ide` environment.
 
 === ConEMU
-https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells. If you like it, you will also want to have it integrated with `devon-ide`. All you need to do is follow these simple steps:
+https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells. If you like it, you will also want to have it integrated with `devonfw-ide`. All you need to do is follow these simple steps:
 
 * Copy the file `CmdInit.cmd` from your ConEmu installation (`C:\Program Files\ConEmu\ConEmu\CmdInit.cmd`) to a personal folder (e.g. `C:\Users\MYLOGIN\scripts`).
 * Modify this copy of `CmdInit.cmd` by adding the line `IDEenv` (e.g. at line 6) and saving.
@@ -37,7 +27,7 @@ https://conemu.github.io/[ConEmu] is a great extension that brings additional fe
 * Click on the upper `Register` button (for `ConEmu Here`).
 * Click on `Save settings`
 
-Now you have the option `ConEmu here` if you right click on a folder in `Windows Explorer` that will open a new tab in `ConEmu` and automatically setup your environment according to the `devon-ide` project containing the folder (if any, see above).
+Now you have the option `ConEmu here` if you right click on a folder in `Windows Explorer` that will open a new tab in `ConEmu` and automatically setup your environment according to the `devonfw-ide` project containing the folder (if any, see above).
 
 === ConEMU and StartExplorer
 
@@ -55,26 +45,6 @@ You can even add a shell login if you installed git bash on your machine. Please
 7. Right click on any folder/file in your eclipse file explorer and select StartExplorer > Custom Commands > ConEMU.
 8. You will get a initialized console at the file/folder location! Have fun!
 
-=== Cygwin
-Ensure to have `chere` installed in cygwin. Otherwise go the cygwin setup and install it. Then run a cygwin terminal as administrator and call this command: `chere -i -t mintty`. Now you will have the option `Bash Prompt Here` in your WindowsExplorer context menu. 
-
-In order to integrate with `devon-ide` you simply add the line `. ~/IDEenv.sh` this to your `~/.bashrc`.
-The `IDEenv.sh` shall be located in your unix home directory (`~/IDEenv.sh`) with this content:
-[source,bash]
---------
-CWD=$PWD
-while ! [ -e scripts/environment-project.sh ] && [ "$PWD" != "/" ]
-do
-  cd ..
-done
-if [ -e scripts/environment-project.sh ]
-then
-  . scripts/environment-project.sh
-fi
-cd $CWD
---------
-
-
 == Eclipse
 You might want to open a terminal directly as view inside your Eclipse IDE. Therefore we provide link:eclipse.asciidoc[eclipse] with the http://marketplace.eclipse.org/content/tm-terminal[TM terminal] plugin.
 Further the link:settings.asciidoc[settings] already configure that plugin so it automatically sets the environment properties correctly. In other words the integration comes out of the box.
@@ -87,4 +57,5 @@ To use it all you need to do is to follow these steps:
 * Execute `mvn -v` to verify your environment.
 
 == IntelliJ or WebStorm
-You might want to open a terminal directly as view inside your IDEA IDE, that already ships with a feature for this out of the box. If you start your IDE via the `start-idea` script provided by `devon-ide` then everything is configured and your environment is set automatically.
+You might want to open a terminal directly as view inside your IDEA IDE, that already ships with a feature for this out of the box.
+If you start your IDE via the `start-idea` script provided by `devonfw-ide` then everything is configured and your environment is set automatically.

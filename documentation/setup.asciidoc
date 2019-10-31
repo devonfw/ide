@@ -13,23 +13,23 @@ We try to make it as simple as possible for you. However, there are some minimal
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
-Releases of `devon-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devon-ide-scripts/[here]. 
+Releases of `devonfw-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[here]. 
 
 == Install
-Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devon-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
+Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
 That's all. To get started read the link:usage.asciidoc[usage].
 
 == Uninstall
-To "uninstall" your `devon-ide` you only need to call the following command:
+To "uninstall" your `devonfw-ide` you only need to call the following command:
 ```
 devon ide uninstall
 ```
-Then you can delete the `devon-ide` top-level folder(s) (link:variables.asciidoc[${DEVON_IDE_HOME}]).
+Then you can delete the `devonfw-ide` top-level folder(s) (link:variables.asciidoc[${DEVON_IDE_HOME}]).
 
-The `devon-ide` is designed to be *not invasive* to your operating system and computer. Therefore it is not "installed" into your system in a classical way. Instead you just create a folder and extract the xref:download[downloaded] archive to it. Only specific prerequisites like `git` have to be installed regularly by you in advance. All other software resists just locally inside the folder of your `devon-ide`. However, there are the following excuses (what is reverted by `devon ide uninstall`):
+The `devonfw-ide` is designed to be *not invasive* to your operating system and computer. Therefore it is not "installed" into your system in a classical way. Instead you just create a folder and extract the xref:download[downloaded] archive to it. Only specific prerequisites like `git` have to be installed regularly by you in advance. All other software resists just locally inside the folder of your `devonfw-ide`. However, there are the following excuses (what is reverted by `devon ide uninstall`):
 
 * The `devon` command is copied to your home directory (`~/.devon/devon`)
 * The `devon` alias is added to your shell config (`~/.bashrc` and `~/.zshrc`, search for `alias devon="source ~/.devon/devon"`).
 * On Windows the `devon.bat` command is copied to your home directory (`%USERPROFILE%\scripts\devon.bat`)
 * On Windows this `%USERPROFILE%\scripts` directory is added to the `PATH` of your user.
-* The `devon-ide` will download third party software to your `~/Downloads` folder to reduce redundant storage.
+* The `devonfw-ide` will download third party software to your `~/Downloads` folder to reduce redundant storage.

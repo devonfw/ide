@@ -3,12 +3,12 @@ toc::[]
 
 = Migration from oasp4j-ide
 
-The `devon-ide` is a completely new and innovative solution for managing the local development environment that has been created from scratch.
-Releases of https://github.com/oasp/[OASP] as well as releases of https://github.com/devonfw[devonfw] until version 3.1.x are based on the old `oasp4j-ide` that is now considered deprecated. As `devon-ide` is a complete redesign this will have some impact for the users. This section should help and assist so you do not get lost.
+The `devonfw-ide` is a completely new and innovative solution for managing the local development environment that has been created from scratch.
+Releases of https://github.com/oasp/[OASP] as well as releases of https://github.com/devonfw[devonfw] until version 3.1.x are based on the old `oasp4j-ide` that is now considered deprecated. As `devonfw-ide` is a complete redesign this will have some impact for the users. This section should help and assist so you do not get lost.
 
-== Get familiar with devon-ide
+== Get familiar with devonfw-ide
 
-First of all you should roughly get familiar with the new `devon-ide`. The key features and changes are:
+First of all you should roughly get familiar with the new `devonfw-ide`. The key features and changes are:
 
 * platform-agnostic (supports Windows, Mac, and Linux in a single distribution)
 * small core (reduced the download package from ~2 gigabyte to ~2 megabyte)
@@ -21,13 +21,13 @@ For all the details you should study the documentation starting from the link:Ho
 
 == Migration of existing oasp4j-ide installation
 
-* extract new `link:scripts.asciidoc[devon-ide-scripts]` on top of your existing installation
+* extract new `link:scripts.asciidoc[devonfw-ide-scripts]` on top of your existing installation
 * run `setup`
 * done
 
 If you get errors:
 
-* ask your technical lead to fix the `link:settings.asciidoc[settings]` git repo for `devon-ide` or offer him to do it for you.
+* ask your technical lead to fix the `link:settings.asciidoc[settings]` git repo for `devonfw-ide` or offer him to do it for you.
 * you need to merge the `https://github.com/devonfw/ide-settings/tree/master/devon[devon]` folder into your settings
 * you need to merge the `https://github.com/devonfw/ide-settings/blob/master/devon.properties[devon.properties]` into your settings
 * you should check your `variables[-customized][.bat]` and merge required customizations into the proper link:configuration.asciidoc[configuration]
@@ -39,7 +39,7 @@ Getting used to all the new commands might be tedious when starting after a migr
 .Comparison of commands
 [options="header"]
 |=======================
-|*oasp4j-ide command*|*devon-ide command*|*Comment*
+|*oasp4j-ide command*|*devonfw-ide command*|*Comment*
 |`create-or-update-workspace`|`devon eclipse ws-update`
 .4+|actually not needed anymore as workspace is updated automatically when IDE is launched. To launch your IDE simply run `devon eclipse`, `devon intellij`, or `devon vscode`. If you like to get launch scripts for your IDE e.g. Eclipse just call `devon eclipse --all create-script`.
 |`create-or-update-workspace «workspace»`|`cd «workspace» && devon eclipse ws-update`

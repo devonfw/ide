@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.devonfw.tools.ide.dev</groupId>
-    <artifactId>devon-ide</artifactId>
+    <artifactId>devonfw-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
-  <artifactId>devon-ide-configurator</artifactId>
+  <artifactId>devonfw-ide-configurator</artifactId>
   <packaging>jar</packaging>
   <version>${revision}${changelist}</version>
   <name>${project.artifactId}</name>

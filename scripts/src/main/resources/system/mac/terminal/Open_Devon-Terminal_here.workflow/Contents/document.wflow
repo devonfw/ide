@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>AMApplicationBuild</key>
-	<string>444.39</string>
+	<string>444.42</string>
 	<key>AMApplicationVersion</key>
 	<string>2.9</string>
 	<key>AMDocumentVersion</key>
@@ -222,7 +222,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>source</key>
-					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	if (count of input) is not 2 then		display dialog item 1 of input &amp; "is not an Devon-IDE directory" &amp; (count of input)	else		tell application "Terminal" to do script "cd " &amp; item 1 of input &amp; " &amp;&amp; " &amp; "devon"		activate application "Terminal"	end ifend run</string>
+					<string>on run {input, parameters}	--set input to quoted form of POSIX path of input	tell application "Terminal" to do script "cd " &amp; item 1 of input &amp; " &amp;&amp; " &amp; "devon"	activate application "Terminal"end run</string>
 				</dict>
 				<key>BundleIdentifier</key>
 				<string>com.apple.Automator.RunScript</string>
@@ -286,7 +286,7 @@ end run</string>
 	</array>
 	<key>connectors</key>
 	<dict>
-		<key>20D8C238-EC82-4219-80CA-309F513A8810</key>
+		<key>A78B5880-FDC9-4E15-A5A6-FE4B0FA0FF30</key>
 		<dict>
 			<key>from</key>
 			<string>DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF - DD8FE9CF-B1A3-4DDA-B199-E127F72B7ACF</string>

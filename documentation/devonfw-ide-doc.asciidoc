@@ -1,7 +1,7 @@
-= devon-ide ${project.version}
+= devonfw-ide ${project.version}
 The devonfw community
 ${project.version}, ${buildtime}: Subtitle {doctitle}
-:description: comprehensive documentation of the devon-ide tool to manage your development tools.
+:description: comprehensive documentation of the devonfw-ide tool to manage your development tools.
 :sectnums:
 :toc:
 :toc-title: Table of Contents
@@ -17,7 +17,7 @@ to building applications which combine best-in-class frameworks and libraries
 as well as industry proven practices and code conventions.
 It massively speeds up development, reduces risks and helps you to deliver better results.
 
-This document contains the instructions for the tool `devon-ide` to setup and maintain your development tools including your favorite IDE (integrated development environment).
+This document contains the instructions for the tool `devonfw-ide` to setup and maintain your development tools including your favorite IDE (integrated development environment).
 
 :toc:
 

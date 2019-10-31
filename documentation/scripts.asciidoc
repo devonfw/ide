@@ -2,7 +2,7 @@
 toc::[]
 
 = scripts
-This directory is the heart of the `devon-ide` and contains the required link:https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts[scripts].
+This directory is the heart of the `devonfw-ide` and contains the required link:https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts[scripts].
 
 .File structure of the conf folder
 [subs=+macros]
@@ -35,7 +35,10 @@ This directory is the heart of the `devon-ide` and contains the required link:ht
 ----
 
 The https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/command[command] folder contains the link:cli.asciidoc#commandlets[commandlets].
-The https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/devon[devon] script is the key link:cli.asciidoc[command line interface] for `devon-ide`. For windows there is also https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/devon.bat[devon.bat] to be used in CMD or PowerShell.
-As the `devon` link:cli.asciidoc[CLI] can be used as global command on your computer from any directory and gets link:setup.asciidoc#install[installed] centrally it aims to be stable, minimal, and leightweight. The key logic to setup the environment variables is therefore in a separate script https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/environment-project[environment-project] and its Windows variant https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/environment-project.bat[environment-project.bat] inside this `scripts` folder.
-The file https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/functions[functions] contains a collection of reusable bash functions. These are sourced and used by the link:cli.asciidoc#commandlets[commandlets].
-Finally the `devon.properties` file contains defaults for the general link:configuration.asciidoc[configuration] of `devon-ide`.
+The https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/devon[devon] script is the key link:cli.asciidoc[command line interface] for `devonfw-ide`.
+For windows there is also https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/devon.bat[devon.bat] to be used in CMD or PowerShell.
+As the `devon` link:cli.asciidoc[CLI] can be used as global command on your computer from any directory and gets link:setup.asciidoc#install[installed] centrally it aims to be stable, minimal, and leightweight.
+The key logic to setup the environment variables is therefore in a separate script https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/environment-project[environment-project] and its Windows variant https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/environment-project.bat[environment-project.bat] inside this `scripts` folder.
+The file https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/functions[functions] contains a collection of reusable bash functions.
+These are sourced and used by the link:cli.asciidoc#commandlets[commandlets].
+Finally the `devon.properties` file contains defaults for the general link:configuration.asciidoc[configuration] of `devonfw-ide`.
