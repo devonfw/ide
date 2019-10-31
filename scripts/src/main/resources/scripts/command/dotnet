@@ -8,7 +8,7 @@ function doSetup() {
   local dotnetCommand=$(dotnet --version)
   local software_version="3.0.100"
 
-  if [ "$dotnetCommand" != "$software_version" ]
+  if [ "$dotnetCommand" == "$software_version" ]
   then    
     if doIsMacOs
     then
@@ -23,7 +23,7 @@ function doSetup() {
     if doIsMacOs || doIsWindows
     then
       doDownload "${download_url}"
-      doRunCommand "~/Downloads/${fileSetup}"
+      doRunCommand "$HOME/Downloads/${fileSetup}"
     fi
 
     if [ -n "$dotnetCommand" ]
