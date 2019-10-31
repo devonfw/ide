@@ -3,15 +3,15 @@ toc::[]
 
 = MacOS Integration
 
-This folder contains configurations to integrate `devon-ide` into MacOS.
+This folder contains configurations to integrate `devonfw-ide` into MacOS.
 
 == Finder
 
-If you want to open a terminal from a folder in `Finder` and automatically get your environment set properly for `devon-ide` you will find the perfect solution here.
+If you want to open a terminal from a folder in `Finder` and automatically get your environment set properly for `devonfw-ide` you will find the perfect solution here.
 
 image:Finder-Integration.png["Devon-ide integration in MacOS Finder",link=Finder-Integration.png]
 
-So after installing (see below) the integration(s) provided here, you can easily open a terminal ready for your `devon-ide`:
+So after installing (see below) the integration(s) provided here, you can easily open a terminal ready for your `devonfw-ide`:
 
 * right click (`[control]` + click) on file or folder in `Finder`
 * Expand the `Quick-Actions` sub-menu

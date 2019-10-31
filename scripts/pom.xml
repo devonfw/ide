@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.devonfw.tools.ide.dev</groupId>
-    <artifactId>devon-ide</artifactId>
+    <artifactId>devonfw-ide</artifactId>
     <version>dev-SNAPSHOT</version>
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
-  <artifactId>devon-ide-scripts</artifactId>
+  <artifactId>devonfw-ide-scripts</artifactId>
   <packaging>pom</packaging>
   <version>${revision}${changelist}</version>
   <name>${project.artifactId}</name>
@@ -17,7 +17,7 @@
 
   <licenses>
     <license>
-      <name>Terms of use for devon-ide</name>
+      <name>Terms of use for devonfw-ide</name>
       <url>https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc</url>
       <distribution>repo</distribution>
       <comments>This software is licensed as Open-Source product for free usage including commercial use. As it makes use of components of third-parties a combination of multiple licenses applies.</comments>
@@ -27,7 +27,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>devon-ide-configurator</artifactId>
+      <artifactId>devonfw-ide-configurator</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
@@ -114,12 +114,12 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>${project.groupId}</groupId>
-                  <artifactId>devon-ide-doc</artifactId>
+                  <artifactId>devonfw-ide-doc</artifactId>
                   <version>${project.version}</version>
                   <type>pdf</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                  <destFileName>devon-ide-doc.pdf</destFileName>
+                  <destFileName>devonfw-ide-doc.pdf</destFileName>
                 </artifactItem>
               </artifactItems>
               <overWriteReleases>false</overWriteReleases>

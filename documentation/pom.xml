@@ -8,14 +8,14 @@
     <version>3.1.0</version>
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
-  <artifactId>devon-ide-doc</artifactId>
+  <artifactId>devonfw-ide-doc</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
-  <name>Documentation for devon-ide (Integrated Development Environment)</name>
-  <description>Documentation for devon-ide (Integrated Development Environment)</description>
+  <name>${project.artifactId}</name>
+  <description>Documentation for devonfw-ide (Integrated Development Environment)</description>
 
   <properties>
-    <docgen.wiki.page>devon-ide-doc</docgen.wiki.page>
+    <docgen.wiki.page>devonfw-ide-doc</docgen.wiki.page>
     <revision>dev</revision>
     <changelist>-SNAPSHOT</changelist>
   </properties>

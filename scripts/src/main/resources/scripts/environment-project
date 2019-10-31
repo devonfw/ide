@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Script to setup devon-ide environment. Will actually be sourced,
+# Script to setup devonfw-ide environment. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
 function doLoadProperties() {
