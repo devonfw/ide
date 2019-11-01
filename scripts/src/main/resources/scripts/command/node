@@ -33,15 +33,9 @@ function doSetup() {
 
 function doSetupDevon4node() {
   if ! command -v devon4node &> /dev/null
-  then  
-    doDevonCommand npm -q setup
-    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
-    if [ ! -x "${npm_command}" ]
-    then
-      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
-    fi
+  then
     doDevonCommand yarn -q setup
-    doRunCommand "'${npm_command}' install -g @devon4node/cli@latest" "install devon4node"
+    doDevonCommand npm install -g @devon4node/cli@latest
   fi
 }
 
