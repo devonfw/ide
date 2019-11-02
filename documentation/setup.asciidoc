@@ -4,7 +4,7 @@ toc::[]
 = Setup
 
 == Prerequisites
-We try to make it as simple as possible for you. However, there are some minimal prerequesites:
+We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
 * You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows use https://www.7-zip.org/[7zip]. On all other platforms this comes out of the box.
 * You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed. 
