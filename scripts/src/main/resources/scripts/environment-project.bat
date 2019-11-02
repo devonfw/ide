@@ -57,7 +57,7 @@ if exist "%SOFTWARE_PATH%\nodejs" (
 )
 
 :variables
-rem load user settings late so variables like M2_REPO can be overriden
+rem load user settings late so variables like M2_REPO can be overridden
 call :load_properties "%DEVON_IDE_HOME%\conf\devon.properties"
 goto :eof
 
