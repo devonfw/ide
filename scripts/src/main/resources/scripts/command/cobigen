@@ -35,10 +35,10 @@ function doRunCLI() {
   doEcho "Running: ${cobigen_cmd} ${*}"
   if doIsQuiet
   then
-    "${cobigen_cmd}" "${*}"
+    "${cobigen_cmd}" "${@}"
     exit ${?}
   else
-    "${cobigen_cmd}" "${*} --verbose"
+    "${cobigen_cmd}" "${@}" --verbose
     exit ${?}
   fi
 }
