@@ -1,11 +1,11 @@
 :toc:
 toc::[]
 
-= Devon IDE
+= devonfw-ide
 
-Welcome to the `devon-ide`! 
+Welcome to the `devonfw-ide`! 
 
-The `devon-ide` is a fantastic tool to automatically download, install, setup and update the IDE (integrated development environment) of your software development projects.
+The `devonfw-ide` is a fantastic tool to automatically download, install, setup and update the IDE (integrated development environment) of your software development projects.
 
 For further details visit the following links:
 
@@ -15,11 +15,11 @@ For further details visit the following links:
 
 TL;DR?
 
-1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devon-ide-scripts/[download]
+1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[download]
 2. extract to `C:\projects\my-project-name` or `/projects/my-project-name`
 3. run `setup` script
 4. run `eclipse-main` to launch Eclipse or `vscode-main` for Visual Studio code
 5. happy hacking!
 
 == License
-The `devon-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].
+The `devonfw-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].

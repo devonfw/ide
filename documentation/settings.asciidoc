@@ -3,13 +3,13 @@ toc::[]
 
 = settings
 
-The `devon-ide` requires `settings` with configuration templates for the arbitrary tools.
+The `devonfw-ide` requires `settings` with configuration templates for the arbitrary tools.
 
-To get an initial set of these settings we provide the https://github.com/devonfw/ide-settings[devon-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devon-ide-settings%22[maven central].
+To get an initial set of these settings we provide the https://github.com/devonfw/ide-settings[devonfw-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devonfw-ide-settings%22[maven central].
 
-To test `devon-ide` or for small projects you can also use these the latest default settings.
+To test `devonfw-ide` or for small projects you can also use these the latest default settings.
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
-Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/ide-settings[devon-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/ide-settings[devon-ide-settings] back into the project specific `settings` "fork".
+Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/ide-settings[devonfw-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/ide-settings[devonfw-ide-settings] back into the project specific `settings` "fork".
 
 == Structure
 The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
@@ -52,7 +52,7 @@ Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asci
 Different tools and configuration files require a different handling:
 
 * Where suitable we directly use these configurations from your `settings` (e.g. for `eclipse/lifecycle-mapping-metadata.xml`, or `eclipse/project.dictionary`).
-* The `devon` folder in `settings` contains templates for configuration files. There are copied to the devon-ide installation during link:setup.asciidoc[setup] (if no such file already exists). This way the `settings` repository can provide reasonable defaults but allows the user to take over control and customize to his personal needs (e.g. `.m2/settings.xml`).
+* The `devon` folder in `settings` contains templates for configuration files. There are copied to the `devonfw-ide` installation during link:setup.asciidoc[setup] (if no such file already exists). This way the `settings` repository can provide reasonable defaults but allows the user to take over control and customize to his personal needs (e.g. `.m2/settings.xml`).
 * Other configurations need to be imported manually. To avoid manual steps and simplify usage we try to automate as much as possible. This currently applies to `sonarqube` profiles but will be automated with https://github.com/devonfw/sonar-devon4j-plugin[sonar-devon4j-plugin] in the future.
 * For tools with complex configuration structures like link:eclipse.asciidoc[eclipse], link:intellij..asciidoc[intellij], or link:vscode.asciidoc[vscode] we provide a smart mechanism via our link:configurator.asciidoc[configurator].
 
