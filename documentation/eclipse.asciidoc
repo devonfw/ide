@@ -41,7 +41,7 @@ too many plugins that may waste resources but are not used by every developer yo
 * https://m-m-m.github.io/eclipse-templatevariables/latest[templatevariables] (for advanced JDT templates)
 * https://www.genuitec.com/updates/devstyle/ci/[devstyle]
 
-The link-titles are the IDs accepted by `devon eclipse add-plugin «id»`. Otherwise the full featureID has to be specified together with the URL of the update site. However this is intendet for project specific configuration. Here is an example how a project can configure the plugins in his `devon.properties` inside the link:settings.asciidoc[settings]:
+The link-titles are the IDs accepted by `devon eclipse add-plugin «id»`. Otherwise the full featureID has to be specified together with the URL of the update site. However this is intended for project specific configuration. Here is an example how a project can configure the plugins in its `devon.properties` inside the link:settings.asciidoc[settings]:
 ```
 ECLIPSE_PLUGINS=("AnyEditTools.feature.group" "http://andrei.gmxhome.de/eclipse/" "com.ess.regexutil.feature.group" "http://regex-util.sourceforge.net/update/")
 ```
