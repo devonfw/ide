@@ -3,7 +3,7 @@ toc::[]
 
 = Configurator
 
-The `devonfw-ide` maintains and includes a tool called https://github.com/devonfw/ide/tree/master/configurator[devonfw-ide-configurator]. This allows to synchronize and manage complex configurations. Initially it was written for Eclipse that stores its information in a `.metadata` folder of your workspace. Unfortunately it contains different file-formats (including XML as String value inside properties files), temporary data as well as important configurations with sometimes mixtures of project specific, developer specific, and UI specific settings. To make it short it is a mess. Instead of bashing on Eclipse we want to make this IDE more usable and created a way to manage important parts of such configuration strcutures.
+The `devonfw-ide` maintains and includes a tool called https://github.com/devonfw/ide/tree/master/configurator[devonfw-ide-configurator]. This allows to synchronize and manage complex configurations. Initially it was written for Eclipse that stores its information in a `.metadata` folder of your workspace. Unfortunately it contains different file-formats (including XML as String value inside properties files), temporary data as well as important configurations with sometimes mixtures of project specific, developer specific, and UI specific settings. To make it short it is a mess. Instead of bashing on Eclipse we want to make this IDE more usable and created a way to manage important parts of such configuration structures.
 
 == How to use
 The easiest way is that you do not care. When you launch the IDE of your choice (e.g. via `devon eclipse`, `devon vscode` or by running `eclipse-main` script), this will happen automatically.
@@ -39,6 +39,6 @@ Many fundamental settings for Eclipse can be found in the sub-folder `https://gi
 * exit your IDE and wait till it is shutdown
 * run `ws-reverse` command for your IDE (e.g. `devon eclipse ws-reverse`) - ensure you do this in the same workspace (without intermediate `cd` commands).
 * review the changes to your link:settings.asciidoc[settings] (git diff)
-* if all looks as expected commit these changes and push them - consider using a feature branch and ask a colleguage to test these changes before you apply this to the main branch.
+* if all looks as expected commit these changes and push them - consider using a feature branch and ask a colleague to test these changes before you apply this to the main branch.
 * otherwise in case you modified an currently unmanaged setting you can try `ws-reverse-add` instead of `ws-reverse` and check the diff again. Be sure not to add undesired settings that should not be managed.
 * in case your changes are in an entirely new configuration file that is currently not managed (in 3.) you need to figure out this file manually and add it to the according location in 3.
