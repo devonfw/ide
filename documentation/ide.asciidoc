@@ -10,7 +10,7 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 [options="header"]
 |=======================
 |*Argument(s)*                   |*Meaning*
-|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloing the settings from the given URL)
+|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL)
 |`update [«package»]`            |update devonfw-ide
 |`update scripts [to «version»]` |update devonfw-ide
 |`uninstall`                     |uninstall devonfw-ide (if you want remote it entirely from your system)
@@ -28,13 +28,13 @@ Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended t
 
 == update
 Run `devon ide update` to update your `devonfw-ide`. This will check for updates and link:setup.asciidoc#install[install] them automatically.
-The optinal extrag argument (`«package»`) behaves as following:
+The optinal extra argument (`«package»`) behaves as following:
 
 * `scripts`: check if a new version of `devonfw-ide-scripts` is available. If so it will be downloaded and installed. As Windows is using file-locks, it is tricky to update a script while it is executed. Therefore, we update the `scripts` folder as an async background task and have to abort further processing at this point on windows as a workaround.
 * `settings`: update the link:settings.asciidoc[settings] (`git pull`).
 * `software`: update the link:software.asciidoc[software] (e.g. if versions have changed via `scripts` or `settings` update).
 * `all`: do all the above sequentially. 
-* none: `settings` and `software` is updated by default if no extra argument is given. This is the regular usage for project developers. Only perform an update of `scripts` when you are requested to do so by your technical lead. Espcially bigger projects need to test updates before rolling them out to the entire team. If developers would always update to the latest release of the `scripts` which is released globally, some project functionality might break causing problems and extra efforts in the teams.
+* none: `settings` and `software` is updated by default if no extra argument is given. This is the regular usage for project developers. Only perform an update of `scripts` when you are requested to do so by your technical lead. Especially bigger projects need to test updates before rolling them out to the entire team. If developers would always update to the latest release of the `scripts` which is released globally, some project functionality might break causing problems and extra efforts in the teams.
 
 In order to update to a specific version of `scripts` an explicit version can be specified after the additional `to` argument:
 ```

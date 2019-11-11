@@ -5,11 +5,11 @@ toc::[]
 
 The `software` folder contains the third party tools for your IDE such as link:mvn.asciidoc[maven], link:npm.asciidoc[npm], link:java.asciidoc[java], etc. 
 With respect to the link:license.asciidoc[licensing terms] you may create a custom archive containing a `devonfw-ide` together with the required software. 
-However, to be platform indepentent and allow lightweight updates the `devonfw-ide` is capable to download and link:install.asciidoc[install] the software automatically for you.
+However, to be platform independent and allow lightweight updates the `devonfw-ide` is capable to download and link:install.asciidoc[install] the software automatically for you.
 
 == Repository
 
-By default software is downloaded via the internet from public download URLs of the according tools. However, some projects may need specific tools or tool versions that are not publically available.
+By default software is downloaded via the internet from public download URLs of the according tools. However, some projects may need specific tools or tool versions that are not publicly available.
 In such case, they can create their own software repository (e.g. in a VPN) and link:configuration.asciidoc[configure] the base URL of it via `DEVON_SOFTWARE_REPOSITORY` link:variables.asciidoc[variable].
 Then `devonfw-ide` will download all software from this repository only instead of the default public download URLs.
 This repository (URL) should be accessible within your network via HTTPS (or HTTP) and without any authentication.
@@ -41,4 +41,4 @@ If you have a sensitive project that should not be affected by such side-effects
 ```
 DEVON_SOFTWARE_PATH=
 ```
-This will disable this feature particulary for that specific sensitive `devonfw-ide` installation but let you use it for all other ones.
+This will disable this feature particularly for that specific sensitive `devonfw-ide` installation but let you use it for all other ones.

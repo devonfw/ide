@@ -52,7 +52,7 @@ We support the following build-systems:
 
 However, also other IDEs, platforms, or tools can be easily integrated as link:cli.asciidoc#commandlet[commandlet]. 
 
-== Motiviation
+== Motivation
 
 `TL;DR`? Lets talk to developers in the proper language. Here are examples with `devonfw-ide`:
 
