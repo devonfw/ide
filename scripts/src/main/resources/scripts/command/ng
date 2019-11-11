@@ -8,7 +8,7 @@ function doSetup() {
   then
     if [ -n "${1}" ]
     then
-      echo "angluar-cli (ng) is already installed at $(command -v ng)"
+      echo "angular-cli (ng) is already installed at $(command -v ng)"
     fi
   else
     doDevonCommand npm -q setup
@@ -28,7 +28,7 @@ then
   echo
   echo "Arguments:"
   echo "setup                 setup angular-cli (install and verify)"
-  echo "cicd «args»           generate cicd files for the currect devon4ng project: $PWD"
+  echo "cicd «args»           generate cicd files for the current devon4ng project: $PWD"
   echo "«args»                call maven with the specified arguments"
   echo
   echo "Options:"
