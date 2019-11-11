@@ -13,6 +13,10 @@ For further details visit the following links:
 * link:setup.asciidoc[download & setup]
 * link:usage.asciidoc[usage]
 
+== ATTENTION
+
+NOTE: The official public release of `devonfw-ide` is still pending due to some final clarification. The download links are not broken, but pointing to the place where the release will appear after the clarification is complete. If you want to use `devonfw-ide` today you can clone it from https://github.com/devonfw/ide.git[ide.git] and run `mvn install` to build it, or contact us (check internal community annoucements).
+
 TL;DR?
 
 1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[download]
