@@ -10,7 +10,7 @@ echo
 if [ -z "${1}" ]
 then
   echo "usage: devon [command [args]]"
-  echo "Setup devonfw IDE environment and optionally lauch commands."
+  echo "Setup devonfw IDE environment and optionally launch commands."
   echo 
   echo "Commands:"
   for command in "${DEVON_IDE_HOME}/scripts/command/"*

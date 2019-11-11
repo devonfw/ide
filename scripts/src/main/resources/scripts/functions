@@ -601,7 +601,7 @@ function doMavenArchetype() {
   fi
   if [ -e "${target_artifact_id}" ]
   then
-    doFail "Project ${target_artifact_id} already exsits at ${PWD}"
+    doFail "Project ${target_artifact_id} already exists at ${PWD}"
   fi
   doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
 }

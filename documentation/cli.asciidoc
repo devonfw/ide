@@ -22,7 +22,7 @@ devonfw-ide has environment variables have been set for /projects/my-project in 
 --------
 
 == Commandlets
-The `devon` command supports a plugable set of _commandlets_. Such commandlet is provided as first argument to the devon command and my take additional arguments:
+The `devon` command supports a pluggable set of _commandlets_. Such commandlet is provided as first argument to the devon command and my take additional arguments:
 
 `devon «commandlet» [«arg»]*`
 

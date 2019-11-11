@@ -4,13 +4,17 @@ toc::[]
 = Setup
 
 == Prerequisites
-We try to make it as simple as possible for you. However, there are some minimal prerequesites:
+We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
 * You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows use https://www.7-zip.org/[7zip]. On all other platforms this comes out of the box.
 * You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed. 
 ** On Windows all you need is download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
 ** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `yum install git-core curl`)
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
+
+== ATTENTION
+
+NOTE: The official public release of `devonfw-ide` is still pending due to some final clarification. The download links are not broken, but pointing to the place where the release will appear after the clarification is complete. If you want to use `devonfw-ide` today you can clone it from https://github.com/devonfw/ide.git[ide.git] and run `mvn install` to build it, or contact us (check internal community annoucements).
 
 == Download
 Releases of `devonfw-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[here]. 

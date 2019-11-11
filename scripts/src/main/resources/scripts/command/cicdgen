@@ -4,7 +4,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if command -v cicdgen &> /dev/null || [ "${1}" != "update" ]
+  if command -v cicdgen &> /dev/null && [ "${1}" != "update" ]
   then
     if [ "${1}" = "setup" ]
     then
@@ -33,9 +33,9 @@ function printCicdgenHelp() {
   echo "Arguments:"
   echo "setup                 setup cicdgen (install and verify)"
   echo "update                update cicdgen (reinstall with @latest version and verify)"
-  echo "java «args»           generate cicd files for the currect devon4java project: $PWD"
-  echo "ng «args»             generate cicd files for the currect devon4ng project: $PWD"
-  echo "node «args»           generate cicd files for the currect devon4node project: $PWD"
+  echo "java «args»           generate cicd files for the current devon4java project: $PWD"
+  echo "ng «args»             generate cicd files for the current devon4ng project: $PWD"
+  echo "node «args»           generate cicd files for the current devon4node project: $PWD"
   echo "«args»                call cicdgen with the specified arguments"
   echo
   echo "Options:"
