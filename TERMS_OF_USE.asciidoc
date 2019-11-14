@@ -14,10 +14,11 @@ This software integrates the following third party components (the column `inclu
 [options="header"]
 |=======================
 |*Component*|*Inclusion*|*License*
+|https://github.com/devonfw/ide[devonfw-ide] | Directly included |https://github.com/devonfw/ide/blob/master/LICENSE[ASL 2.0] and this https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE]
+|https://github.com/eclipse-ee4j/jsonp[JSON-P] API | Directly included |https://github.com/eclipse-ee4j/jsonp/blob/master/LICENSE.md[EPL 2.0]
+|https://github.com/eclipse-ee4j/jsonp[JSON-P] Implementation | Directly included |https://github.com/eclipse-ee4j/jsonp/blob/master/LICENSE.md[EPL 2.0]
 |https://openjdk.java.net/[OpenJDK] / https://adoptopenjdk.net/[AdoptOpenJDK] (Java) |Default Setup| https://openjdk.java.net/legal/gplv2+ce.html[GPLv2]
 |https://maven.apache.org/[Maven] | Default Setup|https://www.apache.org/licenses/LICENSE-2.0[ASL 2.0]
-|https://gradle.org/[Gradle] |Optional |https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
-|https://github.com/eclipse-ee4j/jsonp[JSON-P] (API and RI) | Directly included |https://github.com/eclipse-ee4j/jsonp/blob/master/LICENSE.md[EPL 2.0]
 |https://code.visualstudio.com/[VS Code] |Default Setup| https://github.com/Microsoft/vscode/blob/master/LICENSE.txt[MIT] (https://code.visualstudio.com/#home-terms[Terms])
 |https://github.com/devonfw/extension-pack-vscode[extension-pack-vscode] |Default Setup|https://github.com/devonfw/extension-pack-vscode/blob/master/LICENSE[ASL 2.0]
 |https://www.eclipse.org/[Eclipse] |Default Setup|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0]
@@ -28,15 +29,15 @@ This software integrates the following third party components (the column `inclu
 |https://marketplace.eclipse.org/content/spotbugs-eclipse-plugin[SpotBugs Eclipse plugin] |Default Setup|https://github.com/spotbugs/spotbugs/blob/master/LICENSE[LGPL 2.1]
 |https://www.eclemma.org/[EclEmma] |Default Setup|https://www.eclemma.org/license.html[EPL 1.0]
 |https://basti1302.github.io/startexplorer/[StartExplorer] |Default Setup|http://www.wtfpl.net/txt/copying/[WTFPL 2]
-|http://myregexp.com/eclipsePlugin.html[regex tester] |Default Setup|https://en.wikipedia.org/wiki/GNU_General_Public_License[GPL]
+|http://myregexp.com/eclipsePlugin.html[regex tester] |Default Setup|http://www.gnu.org/licenses/gpl-2.0.html[GPL 2.0] (see https://sourceforge.net/projects/regex-util/[here])
 |https://github.com/m-m-m/eclipse-templatevariables/[eclipse-templatevariables] |Default Setup|https://github.com/m-m-m/eclipse-templatevariables/blob/master/LICENSE.txt[ASL 2.0]
-|https://www.genuitec.com/products/devstyle/[DevStyle] |Optional|https://www.genuitec.com/products/devstyle/eula/[EULA] (Commercial - Free, see https://marketplace.eclipse.org/content/darkest-dark-theme-devstyle[here])
-|https://jenkins.io/[Jenkins] |Optional|https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
-|https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
-|https://www.sonarlint.org/eclipse/[SonarLint] |Optional|https://github.com/SonarSource/sonarlint-eclipse/blob/master/LICENSE.txt[LGPL 3+]
 |https://nodejs.org/[Node.js] |Default Setup|https://raw.githubusercontent.com/nodejs/node/master/LICENSE[License]
 |https://www.npmjs.com/[NPM] |Default Setup|https://github.com/npm/cli/blob/latest/LICENSE[Artistic License 2.0] (https://www.npmjs.com/policies/terms[Terms])
 |https://cli.angular.io/[Angular CLI] (ng) |Default Setup|https://cli.angular.io/license.html[MIT]
+|https://gradle.org/[Gradle] |Optional |https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
+|https://jenkins.io/[Jenkins] |Optional|https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
+|https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
+|https://www.sonarlint.org/eclipse/[SonarLint] |Optional|https://github.com/SonarSource/sonarlint-eclipse/blob/master/LICENSE.txt[LGPL 3+]
 |https://github.com/devonfw/cicdgen[cicdgen] |Optional|https://github.com/devonfw/cicdgen/blob/develop/LICENSE.txt[ASL 2.0]
 |https://github.com/devonfw/devon4j[devon4j] |Optional|https://github.com/devonfw/devon4j/blob/develop/LICENSE.txt[ASL 2.0]
 |https://github.com/devonfw/devon4ng[devon4ng] |Optional|https://github.com/devonfw/devon4ng/blob/master/LICENSE.txt[ASL 2.0]
