@@ -3,6 +3,17 @@ toc::[]
 
 = Windows Tooling
 
+== Integration into Windows-Explorer
+
+After you have link:setup.asciidoc[setup] your `devonfw-ide` on a windows machine,
+you already have windows-explorer integration out-of-the-box.
+Just right-click on the folder you would like to open in a terminal and choose from the context menu:
+
+* `Git Bash`
+* `Open devonfw CMD shell here`
+* `Open devonfw PowerShell here`
+* `Open devonfw Cygwin Bash Here` (only if cygwin was installed during setup)
+
 == Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:
 
