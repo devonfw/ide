@@ -59,21 +59,21 @@ However, also other IDEs, platforms, or tools can be easily integrated as link:c
 [source,bash]
 --------
 [/]$ devon
-You are not inside a devon IDE installation: /
-[/]$ cd /projects/devon
-[devon]$ mvn
+You are not inside a devonfw-ide installation: /
+[/]$ cd /projects/devonfw
+[devonfw]$ mvn
 zsh: command not found: mvn
-[devon]$ devon
-devonfw-ide has environment variables have been set for /projects/devon
-[devon]$ mvn -v
+[devonfw]$ devon
+devonfw-ide environment variables have been set for /projects/devonfw in workspace main
+[devonfw]$ mvn -v
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
-Maven home: /projects/devon/software/maven
-Java version: 1.8.0_191, vendor: Oracle Corporation, runtime: /projects/devon/software/java
+Maven home: /projects/devonfw/software/maven
+Java version: 1.8.0_191, vendor: Oracle Corporation, runtime: /projects/devonfw/software/java
 Default locale: en_DE, platform encoding: UTF-8
 OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
-[devon]$ cd /projects/ide-test/workspaces/test/my-project
+[devonfw]$ cd /projects/ide-test/workspaces/test/my-project
 [my-project]$ devon
-devonfw-ide has environment variables have been set for /projects/ide-test
+devonfw-ide environment variables have been set for /projects/ide-test in workspace main
 [my-project]$ mvn -v
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
 Maven home: /projects/ide-test/software/maven
