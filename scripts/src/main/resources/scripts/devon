@@ -55,7 +55,7 @@ do
   fi
   if [ "${PWD}" = "/" ]
   then
-    echo "You are not inside a devon IDE installation: ${L_PWD}"
+    echo "You are not inside a devonfw-ide installation: ${L_PWD}"
     cd "${L_PWD}" || exit 255
     break
   fi
