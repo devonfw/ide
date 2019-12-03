@@ -99,13 +99,13 @@ include::workspaces.asciidoc[leveloffset=2]
 
 == Advanced Tooling
 
-include::advanced-tooling-generic.asciidoc[leveloffset=3]
+include::advanced-tooling-generic.asciidoc[leveloffset=2]
 
-include::advanced-tooling-windows.asciidoc[leveloffset=3]
+include::advanced-tooling-windows.asciidoc[leveloffset=2]
 
-include::advanced-tooling-mac.asciidoc[leveloffset=3]
+include::advanced-tooling-mac.asciidoc[leveloffset=2]
 
-include::advanced-tooling-linux.asciidoc[leveloffset=3]
+include::advanced-tooling-linux.asciidoc[leveloffset=2]
 
 == Support
 
