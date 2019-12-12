@@ -157,6 +157,9 @@
         <os>
           <family>!Windows</family>
         </os>
+        <property>
+          <name>!skipTests</name>
+        </property>
       </activation>
       <build>
         <plugins>
