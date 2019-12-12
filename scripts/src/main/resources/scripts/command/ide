@@ -29,21 +29,26 @@ function doUpdateSettings() {
     if [ -n "${1}" ]
     then
       SETTINGS_URL="${1}"
-    fi    
+    fi
     if [ -z "${SETTINGS_URL}" ]
     then
-      echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
-      echo "Further details can be found here:"
-      echo "https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc"
-      echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
-      echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
-      echo
-      read -r -p "Settings URL: " answer
-      if [ -z "${answer}" ]
+      if doIsBatch
       then
         SETTINGS_URL="-"
       else
-        SETTINGS_URL="${answer}"
+        echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
+        echo "Further details can be found here:"
+        echo "https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc"
+        echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
+        echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
+        echo
+        read -r -p "Settings URL: " answer
+        if [ -z "${answer}" ]
+        then
+          SETTINGS_URL="-"
+        else
+          SETTINGS_URL="${answer}"
+        fi
       fi
     fi
     if [ "${SETTINGS_URL}" == "-" ]
@@ -203,8 +208,7 @@ function doSetup() {
 function doUpdateSoftware() {
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
-    echo
-    echo "*** Setting up ${tool} ***"
+    doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
 }
@@ -229,7 +233,7 @@ function doUninstallFromHome() {
 }
 
 function doUninstall() {
-  echo "Uninstalling devonfw-ide..."
+  doEcho "Uninstalling devonfw-ide..."
   mkdir -p "${DEVON_IDE_HOME}/updates"
   doUninstallFromHome ~
   if doIsWindows
@@ -271,7 +275,7 @@ then
   echo "Setup and update devonfw-ide."
   echo
   echo "Arguments:"
-  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the settings from the given URL)"
+  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the scripts from the given URL)"
   echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
@@ -282,6 +286,10 @@ then
 elif [ "${1}" = "setup" ]
 then
   shift
+  while doParseOption "${1}"
+  do
+    shift
+  done
   doSetup "${@}"
 elif [ "${1}" = "uninstall" ]
 then
