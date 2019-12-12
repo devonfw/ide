@@ -19,6 +19,7 @@ stages:
 jobs:
   include:
     - stage: Build
+      install: skip
       script:
         - mvn install
     - stage: Documentation
