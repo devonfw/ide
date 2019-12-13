@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.devonfw.tools.ide.dev</groupId>
   <artifactId>devonfw-ide</artifactId>
@@ -20,7 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -44,7 +44,7 @@
     <module>eclipse-m2e</module>
   </modules>
 
-  <build>  
+  <build>
     <plugins>
       <!-- http://mojo.codehaus.org/flatten-maven-plugin/ -->
       <plugin>
@@ -81,22 +81,22 @@
           <target>${java.version}</target>
         </configuration>
       </plugin>
-   
+
       <!-- advanced manifest with versions -->
       <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-jar-plugin</artifactId>
-      <configuration>
-        <archive>
-        <manifest>
-          <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-          <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-        </manifest>
-        </archive>
-      </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -138,6 +138,13 @@
     </pluginManagement>
   </build>
   <profiles>
+    <!-- swtbot test cases module profile,for execution use - 'clean install -U -Peclipse-test'-->
+    <profile>
+      <id>eclipse-test</id>
+      <modules>
+        <module>eclipse-test</module>
+      </modules>
+    </profile>
     <profile>
       <id>deploy</id>
       <build>
@@ -177,7 +184,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
             <configuration>
-            	<keyname>joerg.hohwiller@capgemini.com</keyname>
+               <keyname>joerg.hohwiller@capgemini.com</keyname>
             </configuration>
             <executions>
               <execution>
@@ -193,7 +200,7 @@
       </build>
     </profile>
   </profiles>
-  
+
   <distributionManagement>
     <snapshotRepository>
       <id>ossrh</id>
@@ -204,7 +211,7 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-  
+
   <scm>
     <url>https://github.com/oasp/oasp4j-ide/tree/master</url>
   </scm>
@@ -285,7 +292,7 @@
       <properties/>
     </developer>
   </developers>
-  
+
   <licenses>
     <license>
       <name>Apache Software License, Version 2.0</name>
@@ -294,5 +301,5 @@
       <comments/>
     </license>
   </licenses>
-  
+
 </project>
