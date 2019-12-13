@@ -2,7 +2,7 @@
 
 pushd %~dp0
 echo Setting up your devonfw-ide in %CD%
-call scripts\devon.bat ide setup
+call scripts\devon.bat ide setup %*
 reg import system/windows/cmd/devon-cmd.reg
 reg import system/windows/power-shell/devon-power-shell.reg
 
@@ -13,6 +13,8 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
 )
 
 echo Setup of devonfw-ide completed
-pause
+if not "%1%" == "-b" (
+  pause
+)
 
 popd

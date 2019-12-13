@@ -31,6 +31,7 @@ else
     doDevonCommand "${1}" help
     echo " -b | --batch         run in non-interactive mode (do not ask any questions)."
     echo " -q | --quiet         be quiet and avoid output."
+    echo " -d | --debug         be extra verbose and print more output for debugging."
     echo " -f | --force         force proceeding even in case of warnings."
   fi
 fi
