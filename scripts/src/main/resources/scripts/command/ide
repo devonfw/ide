@@ -221,6 +221,7 @@ function doUpdateSoftware() {
       software_version="${tool%%:*}"
       if [ -n "${software_version}" ]
       then
+        doEcho "\n*** Setting up ${software} ***"
         tool="${tool#*:}"
         arch=""
         if [ "${tool:0:4}" = "all:" ]
@@ -243,7 +244,7 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+        doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
       fi
     fi
   done
