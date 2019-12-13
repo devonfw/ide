@@ -243,7 +243,7 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${software}" "${download_url}" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+        doInstall "${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
       fi
     fi
   done
