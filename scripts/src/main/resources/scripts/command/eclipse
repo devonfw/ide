@@ -66,7 +66,7 @@ function doSetup() {
       else
         for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
         do
-          doAddPlugin "${ECLIPSE_PLUGINS[((${i}+1))]}" "${ECLIPSE_PLUGINS[${i}]}"
+          doAddPlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
         done
       fi
     fi
@@ -144,7 +144,7 @@ function doAddPlugin() {
       echo "Provide full groupId together with URL of update-site."
     fi
   else
-    doInstallEclipsePlugin "${2}" "${1}"
+    doInstallEclipsePlugin "${1}" "${2}"
   fi
 }
 
