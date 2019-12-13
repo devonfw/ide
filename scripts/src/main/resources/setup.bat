@@ -13,6 +13,8 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
 )
 
 echo Setup of devonfw-ide completed
-pause
+if not "%1%" == "-b" (
+  pause
+)
 
 popd
