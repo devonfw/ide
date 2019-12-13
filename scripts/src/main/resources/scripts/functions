@@ -726,7 +726,8 @@ function doGitPullOrClone() {
 # $3: name of software
 # $4: version of software
 # $5: optional file extension (default is taken from download URL)
-# $6: optional OS architecture indicator (e.g. 'all' if architecture independent)
+# $6: optional OS architecture indicator (e.g. '-' if architecture independent)
+# $7: optional overriden software repository (overrides URL/$2)
 function doInstall() {
   local target_path="${1}"
   local download_url="${2}"
@@ -734,6 +735,11 @@ function doInstall() {
   local version="${4}"
   local extension="${5}"
   local os="${6}"
+  local software_repository="${7}"
+  if [ -z "${software_repository}" ]
+  then
+    software_repository="${DEVON_SOFTWARE_REPOSITORY}"
+  fi
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${download_url}" ] || [ -z "${software}" ]
   then
@@ -787,10 +793,10 @@ function doInstall() {
         filename="${filename}-linux"
       fi
     fi
-    if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
+    if [ -n "${software_repository}" ]
     then
       extension=".tgz"
-      download_url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}.tgz"
+      download_url="${software_repository}/${software}/${version}/${filename}.tgz"
       result=1
       repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
       local host="${repo/\/*/}"

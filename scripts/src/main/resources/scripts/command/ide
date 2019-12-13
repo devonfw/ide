@@ -211,6 +211,42 @@ function doUpdateSoftware() {
     doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
+  default_repo=
+  for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
+  do
+    software="${tool%%:*}"
+    if [ -n "${software}" ]
+    then
+      tool="${tool#*:}"
+      software_version="${tool%%:*}"
+      if [ -n "${software_version}" ]
+      then
+        tool="${tool#*:}"
+        arch=""
+        if [ "${tool:0:4}" = "all:" ]
+        then
+          arch="-"
+          tool="${tool:4}"
+        fi
+        repo="${tool}"
+        if [ -n "${repo}" ]
+        then
+          if [ -z "${default_repo}" ]
+          then
+            default_repo="${repo}"
+          fi
+        else
+          if [ -z "${default_repo}" ]
+          then
+            doFail "Illegal value DEVON_IDE_CUSTOM_TOOLS=${DEVON_IDE_CUSTOM_TOOLS}\nFirst entry has to contain software repository."
+          else
+            repo="${default_repo}"
+          fi
+        fi
+        doInstall "${software}" "${download_url}" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+      fi
+    fi
+  done
 }
 
 # $1: home directory
