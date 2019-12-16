@@ -11,6 +11,7 @@ function doSetup() {
       doEcho "yarn is already installed at $(command -v yarn)"
     fi
   else
+    doDevonCommand npm -q setup
     if command -v npm &> /dev/null
     then
       doRunCommand "npm install -g yarn"

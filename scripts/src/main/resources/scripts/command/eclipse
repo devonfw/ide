@@ -21,10 +21,7 @@ function doInstallEclipsePlugin() {
 }
 
 function doSetup() {
-  if [ -n "${1}" ]
-  then
-    doDevonCommand java -q setup
-  fi
+  doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
     #mirror="https://mirror.math.princeton.edu"
