@@ -4,11 +4,6 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -z "${JAVA_HOME}" ]
-  then
-    export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-    echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
-  fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
     local software_version="${JAVA_VERSION:-11.0.5_10}"
@@ -72,7 +67,10 @@ then
   echo " cicd «args»                        generate cicd files for the current project: $PWD"
   echo
   echo "Options:"
-elif [ -z "${1}" ] || [ "${1}" = "setup" ]
+  exit
+fi
+export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
+if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
   doSetup setup
 elif [ "${1}" = "create" ]
