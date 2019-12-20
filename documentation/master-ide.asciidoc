@@ -10,8 +10,6 @@ include::setup[leveloffset=2]
 
 include::usage[leveloffset=2]
 
-include::license[leveloffset=2]
-
 include::structure[leveloffset=2]
 
 include::cli[leveloffset=2]
@@ -32,4 +30,7 @@ include::advanced-tooling[leveloffset=2]
 
 include::eclipse-plugins[leveloffset=2]
 
+=== License
 
+The `devonfw-ide` is open-source software and can be used free (also commercially).
+To use it you need to agree with this https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc[license].

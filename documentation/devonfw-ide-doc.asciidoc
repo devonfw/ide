@@ -113,6 +113,5 @@ include::migration-from-devonfw-3.0.0-or-lower.asciidoc[leveloffset=2]
 
 <<<<
 
-include::license.asciidoc[leveloffset=1]
+include::LICENSE.asciidoc[leveloffset=1]
 
-include::TERMS_OF_USE.asciidoc[leveloffset=2]
