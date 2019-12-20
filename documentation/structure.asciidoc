@@ -19,10 +19,8 @@ The directory layout of your `devonfw-ide` will look like this:
     ├──/ link:workspaces.asciidoc[workspaces]
     ├── link:setup.asciidoc[setup]
     ├── link:setup.asciidoc[setup.bat]
-    └── link:license.asciidoc[TERMS_OF_USE.adoc]
+    └── devon-ide-doc.pdf
 ----
 
 The elements of the above structure are described in the individual sections. As they are hyperlinks you can simply click them to get more details.
 
-== TERMS_OF_USE
-You need to agree with the https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.adoc[TERMS_OF_USE] in order to use `devonfw-ide`. Everything included out of the box applies to open-source licenses. However, due to the many third party components with their licenses and terms we want to make this clear to all our users and be compliant.

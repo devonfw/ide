@@ -17,10 +17,10 @@
 
   <licenses>
     <license>
-      <name>Terms of use for devonfw-ide</name>
-      <url>https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc</url>
+      <name>Apache Software License 2.0 and other 3rd party licenses</name>
+      <url>https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc</url>
       <distribution>repo</distribution>
-      <comments>This software is licensed as Open-Source product for free usage including commercial use. As it makes use of components of third-parties a combination of multiple licenses applies.</comments>
+      <comments>This software is licensed under ASL 2.0 as Open-Source product for free usage including commercial use. As it makes use of components of third-parties also the licenses of these components have to be accepted.</comments>
     </license>
   </licenses>
 
@@ -63,25 +63,6 @@
                 <delimiter>$[*]</delimiter>
               </delimiters>
               <useDefaultDelimiters>false</useDefaultDelimiters>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-terms</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>..</directory>
-                  <includes>
-                    <include>TERMS_OF_USE.asciidoc</include>
-                  </includes>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
             </configuration>
           </execution>
         </executions>
