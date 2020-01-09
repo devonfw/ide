@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.configurator;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -36,7 +37,7 @@ public class Configurator {
   public static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
   /** The directory where java was executed from. */
-  public static final String CURRENT_WORKING_DIRECTORY = System.getProperty("user.dir");
+  public static final String CURRENT_WORKING_DIRECTORY = cwd();
 
   private static final String OPTION_VARIABLES = "-v";
 
@@ -66,6 +67,15 @@ public class Configurator {
   public Configurator() {
 
     this.merger = new DirectoryMerger();
+  }
+
+  private static String cwd() {
+
+    String cwd = System.getProperty("user.dir");
+    if (System.getProperty("os.name").toLowerCase(Locale.US).contains("win")) {
+      cwd = cwd.replace("\\", "/");
+    }
+    return cwd;
   }
 
   /**
