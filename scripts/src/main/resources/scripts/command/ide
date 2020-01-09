@@ -42,7 +42,13 @@ function doUpdateSettings() {
         echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
         echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
         echo
-        read -r -p "Settings URL: " answer
+        if [ "${DEFAULT_SETTING_URL}" == "default" ]
+        then
+          echo  "Settings URL:"  "${DEFAULT_SETTING_URL}"
+          SETTINGS_URL="-"
+        else
+          read -r -p "Settings URL: " answer
+        fi
         if [ -z "${answer}" ]
         then
           SETTINGS_URL="-"
