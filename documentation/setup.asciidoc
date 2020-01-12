@@ -4,7 +4,7 @@ toc::[]
 = Setup
 
 == Prerequisites
-We try to make it as simple as possible for you. However, there are some minimal prerequesites:
+We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
 * You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows use https://www.7-zip.org/[7zip]. On all other platforms this comes out of the box.
 * You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed. 
@@ -13,7 +13,8 @@ We try to make it as simple as possible for you. However, there are some minimal
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
-Releases of `devonfw-ide` are published to maven central. You can download them from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[here]. 
+Releases of `devonfw-ide` are published to https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central].
+The latest release can be downloaded from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/3.2.3/devonfw-ide-scripts-3.2.3.tar.gz[here].
 
 == Install
 Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).

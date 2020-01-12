@@ -68,7 +68,7 @@ function doRunCommand() {
       doFail "Working directory ${3} does not exist."
     fi
   fi
-  doEcho "Running command: ${1}"
+  doDebug "Running command: ${1}"
   eval "${1}"
   result=${?}
   if [ -n "${3}" ]
@@ -82,7 +82,13 @@ function doRunCommand() {
   else
     message="${2} (${1/ */})"
   fi
-  doResult "${message}" ${result}
+  if [ ${result} = 0 ]
+  then
+    doDebug "Succeeded to ${message}"
+  else
+    doEcho "Failed to run command: ${1}"
+    doFail "Failed to ${message}" ${result}
+  fi
 }
 
 function doIsForce() {
@@ -97,6 +103,11 @@ function doIsBatch() {
 
 function doIsQuiet() {
   [ -n "${quiet}" ]
+  return
+}
+
+function doIsDebug() {
+  [ -n "${debug}" ] && [ -z "${quiet}" ]
   return
 }
 
@@ -120,6 +131,14 @@ function doIsIgnoredFolder() {
 # $@: messages to output
 function doEcho() {
   if doIsQuiet
+  then
+    return
+  fi
+  echo -e "${@}"
+}
+
+function doDebug() {
+  if ! doIsDebug
   then
     return
   fi
@@ -209,6 +228,19 @@ function doLogo() {
   done
 }
 
+# $1: file or URL to open
+function doOpen() {
+  if [ "${OSTYPE}" = "cygwin" ]
+  then
+    cygstart "${@}"
+  elif [ "${OSTYPE}" = "msys" ]
+  then
+    start "${@}"
+  else
+    open "${@}"
+  fi
+}
+
 function doLicenseAgreement() {
   if ! [ -f "${DEVON_HOME_DIR}/.devon/.license.agreement" ]
   then
@@ -217,13 +249,17 @@ function doLicenseAgreement() {
     echo
     echo "Welcome to devonfw-ide!"
     echo "This product and its 3rd party components is open-source software and can be used free (also commercially)."
-    echo "However, before using it you need to read and accept the terms of use with all involved licenses agreements."
+    echo "However, before using it you need to read the license agreement with all involved licenses agreements."
     echo "With confirming you take notice and agree that there is no warranty for using this product and its 3rd party components."
     echo "You are solely responsible for all risk implied by using this software."
     echo "You will be able to find it in one of the following locations:"
-    echo "${DEVON_IDE_HOME}/TERMS_OF_USE.asciidoc"
-    echo "https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc"
+    echo "https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc"
+    echo "Also it is included in ${DEVON_IDE_HOME}/devon-ide-doc.pdf"
     echo
+    if ! doIsBatch
+    then
+      doOpen "https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc"
+    fi
     if doIsBatch
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
@@ -233,7 +269,7 @@ function doLicenseAgreement() {
       read -r -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
       case "${answer}" in
         yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide terms of use.\nhttps://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
+          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
           break;;
         no)
           exit 255;;
@@ -601,7 +637,7 @@ function doMavenArchetype() {
   fi
   if [ -e "${target_artifact_id}" ]
   then
-    doFail "Project ${target_artifact_id} already exsits at ${PWD}"
+    doFail "Project ${target_artifact_id} already exists at ${PWD}"
   fi
   doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
 }
@@ -637,10 +673,6 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion "${download_url}"
     target_version="${LATEST_VERSION}"
-    if [[ "${target_version}" =~ alpha|beta|rc|pre|test ]]
-    then 
-      doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
-    fi
     DEVON_SOFTWARE_REPOSITORY=
   fi
   if [ -n "${current_version}" ]
@@ -662,6 +694,10 @@ function doUpgradeMavenArtifact() {
         return 1
       fi
     fi
+  fi
+  if [[ "${target_version}" =~ alpha|beta|rc|pre|test ]]
+  then 
+    doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
   download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
   doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${suffix}" "-"
@@ -707,7 +743,8 @@ function doGitPullOrClone() {
 # $3: name of software
 # $4: version of software
 # $5: optional file extension (default is taken from download URL)
-# $6: optional OS architecture indicator (e.g. 'all' if architecture independent)
+# $6: optional OS architecture indicator (e.g. '-' if architecture independent)
+# $7: optional overriden software repository (overrides URL/$2)
 function doInstall() {
   local target_path="${1}"
   local download_url="${2}"
@@ -715,6 +752,11 @@ function doInstall() {
   local version="${4}"
   local extension="${5}"
   local os="${6}"
+  local software_repository="${7}"
+  if [ -z "${software_repository}" ]
+  then
+    software_repository="${DEVON_SOFTWARE_REPOSITORY}"
+  fi
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${download_url}" ] || [ -z "${software}" ]
   then
@@ -768,10 +810,10 @@ function doInstall() {
         filename="${filename}-linux"
       fi
     fi
-    if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ]
+    if [ -n "${software_repository}" ]
     then
       extension=".tgz"
-      download_url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}.tgz"
+      download_url="${software_repository}/${software}/${version}/${filename}.tgz"
       result=1
       repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
       local host="${repo/\/*/}"
@@ -792,7 +834,7 @@ function doInstall() {
     fi
     filename="${filename}${extension}"
   fi
-  echo "Starting installation of ${software} to ${target_path} from ${download_url}"
+  doEcho "Starting installation of ${software} to ${target_path} from ${download_url}"
   if [ -L "${target_path}" ]
   then
     doEcho "Deleting old installation as it is a symlink: ${target_path}"
@@ -1071,26 +1113,43 @@ function doIsWindows() {
   return 255
 }
 
-batch=""
-force=""
-quiet=""
-while [ -n "${1}" ]
-do
+# $1: single CLI arg
+# returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
+function doParseOption() {
+  if [ -n "${end_options}" ]
+  then
+    return 255
+  fi
   if [ "${1}" = "--" ]
   then
-    shift
-    break
+    end_options="true"
+    return
   elif [ "${1}" = "-b" ] || [ "${1}" = "--batch" ]
   then
     batch="${1}"
+    return
   elif [ "${1}" = "-f" ] || [ "${1}" = "--force" ]
   then
     force="${1}"
+    return
+  elif [ "${1}" = "-d" ] || [ "${1}" = "--debug" ]
+  then
+    debug="${1}"
+    return
   elif [ "${1}" = "-q" ] || [ "${1}" = "--quiet" ]
   then
     quiet="${1}"
-  else
-    break
+    return
   fi
+  return 255
+}
+
+end_options=""
+batch=""
+force=""
+quiet=""
+debug=""
+while [ -n "${1}" ] && doParseOption "${1}"
+do
   shift
 done

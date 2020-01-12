@@ -40,7 +40,7 @@ do
     fi
     if [ -z "${1}" ]
     then
-      echo "devonfw-ide has environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
+      echo "devonfw-ide environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
     fi
     cd "${L_PWD}" || exit 255
     break
@@ -55,7 +55,7 @@ do
   fi
   if [ "${PWD}" = "/" ]
   then
-    echo "You are not inside a devon IDE installation: ${L_PWD}"
+    echo "You are not inside a devonfw-ide installation: ${L_PWD}"
     cd "${L_PWD}" || exit 255
     break
   fi
@@ -64,7 +64,7 @@ L_PWD=
 L_BASEDIR=
 L_RESTDIR=
 
-# Auto-install oursevles...
+# Auto-install ourselves...
 if [ ! -f ~/.devon/devon ]
 then
   mkdir -p ~/.devon  
@@ -90,7 +90,7 @@ then
   fi
   alias devon="source ~/.devon/devon"
   echo "The devon CLI script has been installed to your system."
-  echo "Now in any new shell, you can call devon to setup your IDE enviromennt variables."
+  echo "Now in any new shell, you can call devon to setup your IDE environment variables."
   echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
 fi
 if ! [ -f ~/.devon/home ] && [ -n "${DEVON_IDE_HOME}" ]

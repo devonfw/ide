@@ -5,7 +5,7 @@
 	<key>CFBundleIdentifier</key>
 	<string>org.sil.ukelele.keyboardlayout.pckeyboardlayouts</string>
 	<key>CFBundleName</key>
-	<string>PC-Keyboard</string>
+	<string>pc-keyboard</string>
 	<key>CFBundleVersion</key>
 	<string></string>
 </dict>

@@ -14,7 +14,6 @@ import java.util.Properties;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import com.devonfw.tools.ide.configurator.Configurator;
 import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
 
 /**
@@ -22,7 +21,7 @@ import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
  */
 public class ConfiguratorTest extends Assertions {
 
-  private static final String DEVON_IDE_HOME = new File("").getAbsolutePath();
+  private static final String DEVON_IDE_HOME = new File("").getAbsolutePath().replace("\\", "/");
 
   private static final Prop JAVA_VERSION = new Prop("java.version", "1.11");
 

@@ -4,10 +4,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -n "${1}" ]
-  then
-    doDevonCommand java setup
-  fi
+  doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
   then
     software_version="${GRADLE_VERSION:-5.5.1}"

@@ -4,10 +4,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -n "${1}" ]
-  then
-    doDevonCommand java -q setup
-  fi
+  doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
     local software_version=${MAVEN_VERSION:-3.6.2}

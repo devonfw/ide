@@ -21,10 +21,7 @@ function doInstallEclipsePlugin() {
 }
 
 function doSetup() {
-  if [ -n "${1}" ]
-  then
-    doDevonCommand java -q setup
-  fi
+  doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
     #mirror="https://mirror.math.princeton.edu"
@@ -66,7 +63,7 @@ function doSetup() {
       else
         for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
         do
-          doAddPlugin "${ECLIPSE_PLUGINS[((${i}+1))]}" "${ECLIPSE_PLUGINS[${i}]}"
+          doAddPlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
         done
       fi
     fi
@@ -114,7 +111,7 @@ function doAddPlugin() {
       doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
     elif [ "${1}" = "cobigen" ]
     then
-      doInstallEclipsePlugin https://dl.bintray.com/devonfw/cobigen.p2/ "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      doInstallEclipsePlugin "https://dl.bintray.com/devonfw/cobigen.p2/" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
     elif [ "${1}" = "terminal" ]
     then
       doInstallEclipsePlugin "http://download.eclipse.org/tm/terminal/marketplace" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
@@ -136,9 +133,6 @@ function doAddPlugin() {
     elif [ "${1}" = "github" ]
     then
       doInstallEclipsePlugin "http://download.eclipse.org/egit/github/updates/" "org.eclipse.mylyn.github.feature.feature.group"
-    elif [ "${1}" = "devstyle" ]
-    then
-      doInstallEclipsePlugin "https://www.genuitec.com/updates/devstyle/ci/" "com.genuitec.eclipse.theming.feature.feature.group"
     elif [ "${1}" = "soapui" ]
     then
       doInstallEclipsePlugin "http://www.soapui.org/eclipse/update/site.xml" "com.eviware.soapui.soapui_feature.feature.group"
@@ -147,7 +141,7 @@ function doAddPlugin() {
       echo "Provide full groupId together with URL of update-site."
     fi
   else
-    doInstallEclipsePlugin "${2}" "${1}"
+    doInstallEclipsePlugin "${1}" "${2}"
   fi
 }
 

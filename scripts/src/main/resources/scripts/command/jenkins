@@ -4,6 +4,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
+  doDevonCommand java -q setup
   if [ -d "${JENKINS_HOME}" ]
   then
     if [ -n "${1}" ]
@@ -73,7 +74,7 @@ function doRemove() {
 JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
-  echo "Setup or run Jenkins CI build server on local machnine."
+  echo "Setup or run Jenkins CI build server on local machine."
   echo
   echo "Arguments:"
   echo " start                    start local Jenkins server"

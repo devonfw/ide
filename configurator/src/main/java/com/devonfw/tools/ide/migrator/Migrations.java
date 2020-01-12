@@ -169,6 +169,9 @@ public class Migrations {
         .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadataType",
             "com.devonfw.module.basic.common.api.RevisionMetadataType")
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.2.1")) //
+        .pom().replaceProperty("devon4j.version", "3.2.1") //
+        .and() //
         .next().build();
   }
 

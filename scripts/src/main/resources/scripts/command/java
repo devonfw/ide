@@ -11,7 +11,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local software_version="${JAVA_VERSION:-11.0.4_11}"
+    local software_version="${JAVA_VERSION:-11.0.5_10}"
     local major_version="${software_version/\.*/}"
     major_version="${major_version/u*/}"
     local jdk_folder="jdk-${software_version/_/%2B}"
@@ -69,7 +69,7 @@ then
   echo "                                    the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
   echo "                                    it manually after the 'from' argument. Also the 'single' option allows to migrate only to"
   echo "                                    the next available version."
-  echo " cicd «args»                        generate cicd files for the currect project: $PWD"
+  echo " cicd «args»                        generate cicd files for the current project: $PWD"
   echo
   echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]

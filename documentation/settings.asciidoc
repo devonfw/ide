@@ -5,11 +5,11 @@ toc::[]
 
 The `devonfw-ide` requires `settings` with configuration templates for the arbitrary tools.
 
-To get an initial set of these settings we provide the https://github.com/devonfw/ide-settings[devonfw-ide-settings] as an initial package. These are also released so you can download a the lastes stable version from http://search.maven.org/#search|ga|1|a%3A%22devonfw-ide-settings%22[maven central].
+To get an initial set of these settings we provide the https://github.com/devonfw/ide-settings[devonfw-ide-settings] as an initial package. These are also released so you can download the latest stable version at http://search.maven.org/#search|ga|1|a%3A%22devonfw-ide-settings%22[maven central].
 
 To test `devonfw-ide` or for small projects you can also use these the latest default settings.
 However, for collaborative projects we strongly encourage you to distribute and maintain the settings via a dedicated and project specific `git` repository (or any other version-control-system). This gives you the freedom to control and manage the tools with their versions and configurations during the project lifecycle.
-Therefore as technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/ide-settings[devonfw-ide-settings] by adding it as "upstream" origin and pulls from there finally pusing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/ide-settings[devonfw-ide-settings] back into the project specific `settings` "fork".
+Therefore a technical lead creates a `settings` git repository for the project. He creates a "fork" https://github.com/devonfw/ide-settings[devonfw-ide-settings] by adding it as "upstream" origin and pulls from there finally pushing it to the project `settings` git. This also allows to later merge changes from the official https://github.com/devonfw/ide-settings[devonfw-ide-settings] back into the project specific `settings` "fork".
 
 == Structure
 The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to following file structure:
@@ -57,6 +57,6 @@ Different tools and configuration files require a different handling:
 * For tools with complex configuration structures like link:eclipse.asciidoc[eclipse], link:intellij..asciidoc[intellij], or link:vscode.asciidoc[vscode] we provide a smart mechanism via our link:configurator.asciidoc[configurator].
 
 == Customize Settings
-You can easily customize these settings for the requirements of your project. We suggest that one team member is repsonsible to ensure that everything stays consistent and works.
+You can easily customize these settings for the requirements of your project. We suggest that one team member is responsible to ensure that everything stays consistent and works.
 
 You may also create new sub-folders in `settings` and put individual things according to your needs. E.g. you could add scripts for https://addons.mozilla.org/de/firefox/addon/greasemonkey[greasemonkey] or https://chrome.google.com/webstore/detail/tampermonkey[tampermonkey], as well as scripts for your database or whatever may be useful and worth to share in your team. However, to share and maintain knowledge we recommend to use a wiki.

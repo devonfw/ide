@@ -16,13 +16,14 @@ env:
 stages:
   - name: Build
   - name: Documentation
-    if: (branch = master) AND (type = push)
 jobs:
   include:
     - stage: Build
+      install: skip
       script:
         - mvn install
     - stage: Documentation
+      if: (type = push) AND (branch = master)
       script:
         # Clone repositories
         - git clone -b master --single-branch https://${GH_REPO_SOURCE}

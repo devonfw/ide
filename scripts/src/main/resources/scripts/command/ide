@@ -29,21 +29,26 @@ function doUpdateSettings() {
     if [ -n "${1}" ]
     then
       SETTINGS_URL="${1}"
-    fi    
+    fi
     if [ -z "${SETTINGS_URL}" ]
     then
-      echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
-      echo "Further details can be found here:"
-      echo "https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc"
-      echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
-      echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
-      echo
-      read -r -p "Settings URL: " answer
-      if [ -z "${answer}" ]
+      if doIsBatch
       then
         SETTINGS_URL="-"
       else
-        SETTINGS_URL="${answer}"
+        echo "Missing your settings at ${SETTINGS_PATH} and no SETTINGS_URL is defined."
+        echo "Further details can be found here:"
+        echo "https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc"
+        echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
+        echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
+        echo
+        read -r -p "Settings URL: " answer
+        if [ -z "${answer}" ]
+        then
+          SETTINGS_URL="-"
+        else
+          SETTINGS_URL="${answer}"
+        fi
       fi
     fi
     if [ "${SETTINGS_URL}" == "-" ]
@@ -144,7 +149,7 @@ function doSetup() {
   then
     doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to properly merge and update your settings."
     doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/devon.properties" "devon.properties" "${SETTINGS_PATH}/devon/conf"
-    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/.m2/settings.xml" "devon.properties" "${SETTINGS_PATH}/devon/conf/.m2"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/.m2/settings.xml" "settings.xml" "${SETTINGS_PATH}/devon/conf/.m2"
     doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/npm/.npmrc" ".npmrc" "${SETTINGS_PATH}/devon/conf/npm"
   fi
   if [ -d "${SETTINGS_PATH}/devon" ]
@@ -203,9 +208,45 @@ function doSetup() {
 function doUpdateSoftware() {
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
-    echo
-    echo "*** Setting up ${tool} ***"
+    doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
+  done
+  default_repo=
+  for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
+  do
+    software="${tool%%:*}"
+    if [ -n "${software}" ]
+    then
+      tool="${tool#*:}"
+      software_version="${tool%%:*}"
+      if [ -n "${software_version}" ]
+      then
+        doEcho "\n*** Setting up ${software} ***"
+        tool="${tool#*:}"
+        arch=""
+        if [ "${tool:0:4}" = "all:" ]
+        then
+          arch="-"
+          tool="${tool:4}"
+        fi
+        repo="${tool}"
+        if [ -n "${repo}" ]
+        then
+          if [ -z "${default_repo}" ]
+          then
+            default_repo="${repo}"
+          fi
+        else
+          if [ -z "${default_repo}" ]
+          then
+            doFail "Illegal value DEVON_IDE_CUSTOM_TOOLS=${DEVON_IDE_CUSTOM_TOOLS}\nFirst entry has to contain software repository."
+          else
+            repo="${default_repo}"
+          fi
+        fi
+        doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+      fi
+    fi
   done
 }
 
@@ -229,7 +270,7 @@ function doUninstallFromHome() {
 }
 
 function doUninstall() {
-  echo "Uninstalling devonfw-ide..."
+  doEcho "Uninstalling devonfw-ide..."
   mkdir -p "${DEVON_IDE_HOME}/updates"
   doUninstallFromHome ~
   if doIsWindows
@@ -271,7 +312,7 @@ then
   echo "Setup and update devonfw-ide."
   echo
   echo "Arguments:"
-  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the settings from the given URL)"
+  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the scripts from the given URL)"
   echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
@@ -282,6 +323,10 @@ then
 elif [ "${1}" = "setup" ]
 then
   shift
+  while doParseOption "${1}"
+  do
+    shift
+  done
   doSetup "${@}"
 elif [ "${1}" = "uninstall" ]
 then

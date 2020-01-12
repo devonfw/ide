@@ -2,7 +2,7 @@
 * link:features.asciidoc[features]
 * link:setup.asciidoc[download & setup]
 * link:usage.asciidoc[usage]
-* link:license.asciidoc[license]
+* link:LICENSE.asciidoc[license]
 * link:structure.asciidoc[structure]
 * link:cli.asciidoc[command line interface]
 * link:variables.asciidoc[variables]
