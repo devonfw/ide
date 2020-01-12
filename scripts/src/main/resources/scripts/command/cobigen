@@ -10,7 +10,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
   then
     local software_version="LATEST"
-    local download_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=templates-devon4j&v=${software_version}"
+    local download_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=cli&v=${software_version}"
 
     doDownload "${download_url}" "${software_name}.jar" "${COBIGEN_CLI_HOME}"
 
