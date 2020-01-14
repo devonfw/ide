@@ -394,9 +394,9 @@ function doExtract() {
   if [ "${filename_base/*\./.}" = ".tar" ] || [ "${ext}" = ".tar" ] || [ "${ext}" = ".tgz" ] || [ "${ext}" = ".tbz2" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
-  elif [ "${ext}" = ".zip" ]
+  elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
-    doRunCommand "unzip -q '${1}' -d '${target_dir}'"
+    doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
