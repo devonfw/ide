@@ -3,23 +3,23 @@
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  # We need a JDK
-  doDevonCommand java -q setup
-  # We need Maven for installing plug-ins
+  # We need Java to run and Maven for installing plug-ins
   doDevonCommand mvn -q setup
   if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
   then
-    local software_version="LATEST"
-    local download_url="https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=cli&v=${software_version}"
-
-    doDownload "${download_url}" "${software_name}.jar" "${COBIGEN_CLI_HOME}"
+    #doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cli" "${COBIGEN_VERSION:-LATEST}" ".jar"
+    
+    doDownload "https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=cli&v=${COBIGEN_VERSION:-LATEST}" "cobigen.jar" "${COBIGEN_CLI_HOME}"
 
     # We need to extract all needed files
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cobigen' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/${software_name}.jar' 'cg' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cobigen' -d '${COBIGEN_CLI_HOME}'"
+    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cg' -d '${COBIGEN_CLI_HOME}'"
+    
+    chmod a+x "${COBIGEN_CLI_HOME}/cg"
+    chmod a+x "${COBIGEN_CLI_HOME}/cobigen"
 
     doExtendPath "${COBIGEN_CLI_HOME}"
     doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
@@ -44,8 +44,7 @@ function doRunCLI() {
 }
 
 # CLI
-software_name="cobigen"
-COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/${software_name}-cli"
+COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/cobigen-cli"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup CobiGen CLI."
