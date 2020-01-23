@@ -1,0 +1,8 @@
+= Support
+
+include::migration-from-devonfw-3.0.0-or-lower.asciidoc[leveloffset=2]
+
+<<<<
+
+include::LICENSE.asciidoc[leveloffset=2]
+
