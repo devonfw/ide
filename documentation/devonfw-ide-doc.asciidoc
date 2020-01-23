@@ -1,15 +1,23 @@
-= devonfw-ide ${project.version}
+= devonfw-ide
 The devonfw community
-${project.version}, ${buildtime}: Subtitle {doctitle}
+${project.version}, ${buildtime}
 :description: comprehensive documentation of the devonfw-ide tool to manage your development tools.
-:sectnums:
+:doctype: book
 :toc:
 :toc-title: Table of Contents
-ifdef::backend-pdf[]
-:title-logo-image: image:./images/devonfw.png[pdfwidth=5in,align=center]
-endif::[]
+:idprefix:
+:idseparator: -
+:sectnums:
+:reproducible:
+:source-highlighter: rouge
+:listing-caption: Listing
+:chapter-label:
+:partnums:
 :imagesdir: ./
 
+:toc:
+
+[preface]
 include::devonfw-ide-introduction.asciidoc[leveloffset=1]
 
 <<<<
