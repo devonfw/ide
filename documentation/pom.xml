@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.devonfw.tools</groupId>
-    <artifactId>devon-docgen</artifactId>
-    <version>3.1.0</version>
+    <artifactId>devonfw-docgen-pdf</artifactId>
+    <version>5.0.0</version>
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devonfw-ide-doc</artifactId>
@@ -15,7 +15,7 @@
   <description>Documentation for devonfw-ide (Integrated Development Environment)</description>
 
   <properties>
-    <docgen.wiki.page>devonfw-ide-doc</docgen.wiki.page>
+    <docgen.asciidoc.page>devonfw-ide-doc</docgen.asciidoc.page>
     <revision>dev</revision>
     <changelist>-SNAPSHOT</changelist>
   </properties>
