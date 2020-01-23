@@ -14,7 +14,7 @@ We try to make it as simple as possible for you. However, there are some minimal
 
 == Download
 Releases of `devonfw-ide` are published to https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central].
-The latest release can be downloaded from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/3.2.3/devonfw-ide-scripts-3.2.3.tar.gz[here].
+The latest release can be downloaded from https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/3.2.4/devonfw-ide-scripts-3.2.4.tar.gz[here].
 
 == Install
 Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
