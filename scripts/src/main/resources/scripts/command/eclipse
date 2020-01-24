@@ -3,13 +3,13 @@
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
 
-# $1: plugin URL (update site)
-# $2: plugin feature group ID
+# $1: plugin feature group ID
+# $2: plugin URL (update site)
 function doInstallEclipsePlugin() {
-  local plugin="${2/\.feature\.group*/}"
-  echo "Installing eclipse plugin ${plugin} from ${1}"
+  local plugin="${1/\.feature\.group*/}"
+  echo "Installing eclipse plugin ${plugin} from ${2}"
   # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${1}" -installIU "${2}" -vmargs ${ECLIPSE_VMARGS}
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
   result=${?}
   if [ "${result}" != 0 ]
   then
@@ -108,34 +108,34 @@ function doAddPlugin() {
   then
     if [ "${1}" = "startexplorer" ]
     then
-      doInstallEclipsePlugin "http://basti1302.github.com/startexplorer/update/" "de.bastiankrol.startexplorer.feature.feature.group"
+      doInstallEclipsePlugin "de.bastiankrol.startexplorer.feature.feature.group" "http://basti1302.github.com/startexplorer/update/"
     elif [ "${1}" = "cobigen" ]
     then
-      doInstallEclipsePlugin "https://dl.bintray.com/devonfw/cobigen.p2/" "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin"
+      doInstallEclipsePlugin "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin" "https://dl.bintray.com/devonfw/cobigen.p2/"
     elif [ "${1}" = "terminal" ]
     then
-      doInstallEclipsePlugin "http://download.eclipse.org/tm/terminal/marketplace" "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group"
+      doInstallEclipsePlugin "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group" "http://download.eclipse.org/tm/terminal/marketplace"
     elif [ "${1}" = "anyedit" ]
     then
-      doInstallEclipsePlugin "http://andrei.gmxhome.de/eclipse/" "AnyEditTools.feature.group"
+      doInstallEclipsePlugin "AnyEditTools.feature.group" "http://andrei.gmxhome.de/eclipse/"
     elif [ "${1}" = "regexutil" ]
     then
-      doInstallEclipsePlugin "http://regex-util.sourceforge.net/update/" "com.ess.regexutil.feature.group"
+      doInstallEclipsePlugin "com.ess.regexutil.feature.group" "http://regex-util.sourceforge.net/update/"
     elif [ "${1}" = "templatevariables" ]
     then
-      doInstallEclipsePlugin "https://m-m-m.github.io/eclipse-templatevariables/latest" "net.sf.mmm.eclipse.templatevariables.feature.feature.group"
+      doInstallEclipsePlugin "net.sf.mmm.eclipse.templatevariables.feature.feature.group" "https://m-m-m.github.io/eclipse-templatevariables/latest"
     elif [ "${1}" = "spotbugs" ]
     then
-      doInstallEclipsePlugin "https://spotbugs.github.io/eclipse/" "com.github.spotbugs.plugin.eclipse.feature.group"
+      doInstallEclipsePlugin "com.github.spotbugs.plugin.eclipse.feature.group" "https://spotbugs.github.io/eclipse/"
     elif [ "${1}" = "checkstyle" ]
     then
-      doInstallEclipsePlugin "http://eclipse-cs.sf.net/update/" "net.sf.eclipsecs.feature.group"
+      doInstallEclipsePlugin "net.sf.eclipsecs.feature.group" "http://eclipse-cs.sf.net/update/"
     elif [ "${1}" = "github" ]
     then
-      doInstallEclipsePlugin "http://download.eclipse.org/egit/github/updates/" "org.eclipse.mylyn.github.feature.feature.group"
+      doInstallEclipsePlugin "org.eclipse.mylyn.github.feature.feature.group" "http://download.eclipse.org/egit/github/updates/"
     elif [ "${1}" = "soapui" ]
     then
-      doInstallEclipsePlugin "http://www.soapui.org/eclipse/update/site.xml" "com.eviware.soapui.soapui_feature.feature.group"
+      doInstallEclipsePlugin "com.eviware.soapui.soapui_feature.feature.group" "http://www.soapui.org/eclipse/update/site.xml"
     else
       echo "Undefined plugin ID ${1} - not known or supported."
       echo "Provide full groupId together with URL of update-site."
