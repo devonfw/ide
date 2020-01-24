@@ -1,4 +1,6 @@
-include::usage.asciidoc[leveloffset=1]
+= Usage
+
+include::usage.asciidoc[leveloffset=2]
 
 <<<<
 
