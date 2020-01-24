@@ -1,11 +1,13 @@
 :toc:
 toc::[]
 
-= Usage
+= Roles
 
-This section explains you how to use the `devonfw-ide`. We assume you have successfully link:setup.asciidoc[installed] it first.
+This section explains you how to use the `devonfw-ide` per role.
+Everybody should read and follow the usage for xref:developer[developer].
+In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[admin].
 
-== Developer Usage
+== Developer
 As a developer you are supported to link:setup.asciidoc[setup] your IDE within minutes. You only need the settings URL from your xref:architect[Architect].
 
 === Update
@@ -23,7 +25,7 @@ If you are working on different branches in parallel you typically want to use m
 
 You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
 
-== Admin Usage
+== Admin
 As IDE admin for the project you can link:configuration.asciidoc[configure] the `devonfw-ide` to your needs.
 
 === Project specific settings
