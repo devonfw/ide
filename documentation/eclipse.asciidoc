@@ -29,7 +29,7 @@ During the link:setup.asciidoc[setup] `devon eclipse setup` will be called what 
 However, for specific needs you may even install additional plugins. In general you should try to stick with the configuration pre-defined by your project. But some plugins may be considered as personal flavor and are typically not predefined by the project config. This e.g. applies for devstyle that allows a real dark mode for eclipse and tunes the theming and layout of Eclipse in general. To avoid that projects ship with
 too many plugins that may waste resources but are not used by every developer you have the freedom to install some additional plugins. Be aware that this comes at your own risk and sometimes plugins can conflict and break your IDE. The following list of plugins is guaranteed to be supported by this commandlet:
 
-* https://github.com/devonfw/tools-cobigen/releases[cobigen] (incremental code-generator)
+* https://github.com/devonfw/cobigen/releases[cobigen] (incremental code-generator)
 * http://andrei.gmxhome.de/eclipse/[anyedit] (for easy compare with clipboard, etc.)
 * http://eclipse-cs.sf.net/update/[checkstyle] (for checkstyle support)
 * https://spotbugs.github.io/eclipse/[spotbugs] (successor of findbugs)
