@@ -13,11 +13,4 @@ For further details visit the following links:
 * link:setup.asciidoc[download & setup]
 * link:usage.asciidoc[usage]
 
-TL;DR?
-
-1. https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/3.2.3/devonfw-ide-scripts-3.2.3.tar.gz[download] 
-2. extract to `C:\projects\my-project-name` or `/projects/my-project-name`
-3. run `setup` script
-4. run `eclipse-main` to launch Eclipse or `vscode-main` for Visual Studio code
-5. happy hacking!
 
