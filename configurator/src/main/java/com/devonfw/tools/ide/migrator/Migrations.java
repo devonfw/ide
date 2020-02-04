@@ -172,6 +172,11 @@ public class Migrations {
         .next().to(VersionIdentifier.ofDevon4j("3.2.1")) //
         .pom().replaceProperty("devon4j.version", "3.2.1") //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("3.3.0")) //
+        .pom().replaceProperty("devon4j.version", "3.3.0") //
+        .replaceDependency(new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping", null),
+                new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping-dozer", null))
+        .and()
         .next().build();
   }
 
