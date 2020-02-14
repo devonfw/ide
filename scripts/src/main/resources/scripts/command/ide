@@ -304,14 +304,14 @@ function doUninstall() {
 }
 
 function doUpdateProjects() {
-  for projectconfig in ${DEVON_IDE_HOME}/settings/projects/*.properties; do
+  for projectconfig in "${DEVON_IDE_HOME}"/settings/projects/*.properties; do
     echo "Importing from ${projectconfig}..."
-    local project_path=`cat $projectconfig | grep "^project.path" | cut -d'=' -f2`
-    local project_workingsets=`cat $projectconfig | grep "^project.workingsets" | cut -d'=' -f2`
-    local project_workspace=`cat $projectconfig | grep "^project.workspace" | cut -d'=' -f2`
-    local project_git_url=`cat $projectconfig | grep "^project.git.url" | cut -d'=' -f2`
-    local project_git_branch=`cat $projectconfig | grep "^project.git.branch" | cut -d'=' -f2`
-    local project_eclipse=`cat $projectconfig | grep "^project.eclipse" | cut -d'=' -f2`
+    project_path=$(grep "^project.path" "$projectconfig" | cut -d'=' -f2)
+    project_workingsets=$(grep "^project.workingsets" "$projectconfig" | cut -d'=' -f2)
+    project_workspace=$(grep "^project.workspace" "$projectconfig" | cut -d'=' -f2)
+    project_git_url=$(grep "^project.git.url" "$projectconfig" | cut -d'=' -f2)
+    project_git_branch=$(grep "^project.git.branch" "$projectconfig" | cut -d'=' -f2)
+    project_eclipse=$(grep "^project.eclipse" "$projectconfig" | cut -d'=' -f2)
     
     [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
     [ -z "${project_workspace}" ] && local project_workspace=main

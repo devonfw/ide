@@ -737,9 +737,9 @@ function doGitPullOrClone() {
       doRunCommand "git clone '${2}' '${1}' --config core.autocrlf=false"
       if [ -z "${3}" ]
       then 
-        pushd "${1}" 
+        pushd "${1}" || exit 255
         echo "git checkout ${3}"
-        popd
+        popd || exit 255
       fi 
     fi
   fi
@@ -1118,14 +1118,6 @@ function doIsWindows() {
     return
   fi
   return 255
-}
-
-# $1: Name of the properties file
-# $2: Namr of the property (original form a.b.c)
-# Property "a.b.c" will be sources as variable a_b_c for use in shell scripts
-# see https://stackoverflow.com/questions/1682442/reading-java-properties-file-from-bash
-function doSourceProperty() {
-  eval "${2}=\"$(sed -n '/^'"${2}"'=/,/^[A-Z]\+_*[A-Z]*=/p' ${1}|sed -e 's/^'"${2}"'=//g' -e 's/"/\\"/g'|head -n -1)\""
 }
 
 # $1: single CLI arg

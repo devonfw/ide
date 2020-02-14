@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-L_PWD=`pwd`
+L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
 
 # $1: plugin feature group ID
@@ -160,7 +160,7 @@ function doStartEclipse() {
 }
 
 function doCheckAndInstallGroovy {
-  if [ ! -f "${M2_REPO}//org/codehaus/groovy/groovy-ant/3.0.0/groovy-ant-3.0.0.jar" -o ! -f "${M2_REPO}//org/codehaus/groovy/groovy/3.0.0/groovy-3.0.0.jar" ]; then
+  if [ ! -f "${M2_REPO}//org/codehaus/groovy/groovy-ant/3.0.0/groovy-ant-3.0.0.jar" ] || [ ! -f "${M2_REPO}//org/codehaus/groovy/groovy/3.0.0/groovy-3.0.0.jar" ]; then
     echo "Groovy not found. Installing..."
     doRunCommand "mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -Dartifact=org.codehaus.groovy:groovy-ant:3.0.0:pom -DremoteRepositories=https://mvnrepository.com"
     doRunCommand "mvn org.apache.maven.plugins:maven-dependency-plugin:2.10:get -Dartifact=org.codehaus.groovy:groovy:3.0.0:pom -DremoteRepositories=https://mvnrepository.com"
@@ -249,7 +249,7 @@ do
     exit ${?}
   elif [ "${1}" = "import" ] 
   then
-    doImportEclipse ${2} ${3}
+    doImportEclipse "${2}" "${3}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"
