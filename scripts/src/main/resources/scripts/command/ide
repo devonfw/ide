@@ -304,24 +304,26 @@ function doUninstall() {
 }
 
 function doUpdateProjects() {
-  for projectconfig in "${DEVON_IDE_HOME}/settings/projects/*.properties"; do
+  for projectconfig in ${DEVON_IDE_HOME}/settings/projects/*.properties; do
     echo "Importing from ${projectconfig}..."
-    local project_path=`cat $projectconfig | grep "project.path" | cut -d'=' -f2`
-    local project_workingsets=`cat $projectconfig | grep "project.workingsets" | cut -d'=' -f2`
-    local project_workspace=`cat $projectconfig | grep "project.workspace" | cut -d'=' -f2`
-    local project_git_url=`cat $projectconfig | grep "project.git.url" | cut -d'=' -f2`
-    local project_git_branch=`cat $projectconfig | grep "project.git.branch" | cut -d'=' -f2`
-    local project_eclipse=`cat $projectconfig | grep "project.eclipse" | cut -d'=' -f2`
+    local project_path=`cat $projectconfig | grep "^project.path" | cut -d'=' -f2`
+    local project_workingsets=`cat $projectconfig | grep "^project.workingsets" | cut -d'=' -f2`
+    local project_workspace=`cat $projectconfig | grep "^project.workspace" | cut -d'=' -f2`
+    local project_git_url=`cat $projectconfig | grep "^project.git.url" | cut -d'=' -f2`
+    local project_git_branch=`cat $projectconfig | grep "^project.git.branch" | cut -d'=' -f2`
+    local project_eclipse=`cat $projectconfig | grep "^project.eclipse" | cut -d'=' -f2`
     
     [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
     [ -z "${project_workspace}" ] && local project_workspace=main
     [ -z "${project_git_url}" ] && doFail "Config is missing required parameter 'project.git.url'"
     [ -z "${project_eclipse}" ] && local project_eclipse=import
     
-    echo "Update project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+    echo "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
     if [ "${project_workspace}" == "${WORKSPACE}" ]
     then
+      echo "Pull/Clone and checkout..."
       doGitPullOrClone "${WORKSPACE_PATH}/${project_path}" "${project_git_url}" "${project_git_branch}"
+      [ "${project_eclipse}" == "import" ] && doDevonCommandAndReturn eclipse import "${WORKSPACE_PATH}/${project_path}" "${project_workingsets}"
     fi
   done 
 }
