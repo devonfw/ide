@@ -30,7 +30,12 @@ class SysoutListener implements RecursiveImportListener {
   }        
 }
 
-class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {  
+class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor { 
+  private Map antProperties;
+  
+  public MyWorkbenchAdvisor(Map properties) {
+    this.antProperties = properties;
+  } 
   public String getInitialWindowPerspectiveId() {
     return null;
   }
@@ -54,7 +59,7 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
     System.out.println("Importing " + projectDirectoryName + " for working sets " + workingSetNames);
     File projectDirectory = new File(projectDirectoryName);
     if (!projectDirectory.canRead()) {
-      throw new IllegalStateException("Cannot open " + projectDirectoryName);
+      throw new IllegalStateException("Cannot open project directory " + projectDirectoryName);
     }
     SmartImportJob job = new SmartImportJob(projectDirectory, getOrCreateWorkingSets(workingSetNames), true, true);
     Map proposals = job.getImportProposals(null);
@@ -66,15 +71,20 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
   
   public void preStartup() {
     try {
-      String path = System.getenv("DEVON_IMPORT_PATH");
+      // Get path from ant properties   
+      String path = antProperties.get("devonImportPath");
       if (path == null || path.equals("")) {
-        throw new IllegalStateException("System property DEVON_IMPORT_PATH must be set.");
-      }      
+        throw new IllegalStateException("Parameter devonImportPath must be set.");
+      }  
+      
+      // Get workingsets from ant properties   
       Collection workingSetNames = Collections.EMPTY_LIST;
-      String workingSetParam = System.getenv("DEVON_IMPORT_WORKINGSET");
-      if (workingSetParam != null || !workingSetParam.equals("")) {
+      String workingSetParam = antProperties.get("devonImportWorkingSet");
+      if (workingSetParam != null && !workingSetParam.equals("")) {
         workingSetNames = Arrays.asList(workingSetParam.split(","));
       }
+      
+      // Actually start import
       doImport(path, workingSetNames);   
     } catch (Exception e) {
       e.printStackTrace();
@@ -86,7 +96,6 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
     PlatformUI.getWorkbench().close();
   }
 }
-
 // Groovy Script startes here...
 System.out.println("Preparing eclipse instance for import...");
 
@@ -95,14 +104,16 @@ if (Platform.getInstanceLocation().isLocked()) {
 }
 
 // We are running in the context of antrunner. Import, Workingset etc. need some
-// parts of the normale IDE infratructure running. So we init it here.
+// parts of the normal IDE infratructure running. So we init it here.
 
 // Register Adapters, e.g. to allow persistence of workingsets work (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=513188)
 org.eclipse.ui.ide.IDE.registerAdapters();
 
 // Create Workbench, this make the eclispe windows appear, but it is necessary for the importer job.
 display = PlatformUI.createDisplay();
-int rc = PlatformUI.createAndRunWorkbench(display, new MyWorkbenchAdvisor());
+
+// 'properties' will be automatically populated by groovy-ant-task, pass it to the importer
+int rc = PlatformUI.createAndRunWorkbench(display, new MyWorkbenchAdvisor(properties));
 if (rc != PlatformUI.RETURN_OK) {
   throw new ExitStatusException("Import failed", rc);
 }

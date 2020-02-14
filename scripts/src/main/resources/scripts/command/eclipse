@@ -175,20 +175,20 @@ function doImportEclipse() {
   doCheckAndInstallGroovy
   if [[ "${1}" = /* ]]
   then
-    export DEVON_IMPORT_PATH="${1}"
+    importPath="${1}"
   else
     # Path is relative make it absolute
-    export DEVON_IMPORT_PATH="${L_PWD}/${1}"
+    importPath="${L_PWD}/${1}"
   fi  
-  export DEVON_IMPORT_WORKINGSET="${2}"
-  echo "Starting eclipse import for ${DEVON_IMPORT_PATH} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+  workingSets="${2}"
+  echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   if doIsWindows
   then
     # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -vmargs ${ECLIPSE_VMARGS}
+    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSets="${importWorkingSets}" ${ECLIPSE_VMARGS}
   else
     # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs ${ECLIPSE_VMARGS}
+    "${ECLIPSE_HOME}/eclipse" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSets="${importWorkingSets}" ${ECLIPSE_VMARGS} 
   fi
 }
 
