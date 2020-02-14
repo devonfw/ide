@@ -10,7 +10,7 @@ import org.eclipse.jdt.internal.ui.workingsets.IWorkingSetIDs;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.wizards.datatransfer.RecursiveImportListener;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 class SysoutListener implements RecursiveImportListener {
   public void projectCreated(IProject project) {
@@ -63,7 +63,7 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
   private Map parseImportConfig(String configFileLocation) {
     System.out.println("Parsing config " + configFileLocation);
     Properties configProperties = new Properties();
-    configProperties.load(Files.newInputStream(Paths.get(configFileLocation).toAbsolutePath()));
+    configProperties.load(Files.newInputStream(Path.of(configFileLocation).toAbsolutePath()));
     Map configMap = new HashMap();
     for(String key : configProperties.keySet()) {
       if (!key.startsWith("path.")) {
@@ -74,7 +74,11 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
         continue;
       }
       int number = Integer.parseInt(key.split("\\.")[1]);
-      String path = configProperties.get("path." + number);
+      Path path = Path.of(configProperties.get("path." + number));
+      if (!path.isAbsolute()) {
+        // If path is relative, create path relative to configFileLocation
+        path = Path.of(Path.of(configFileLocation).getParent().toString(), path.toString()).toAbsolutePath();
+      }
       Collection workingSetNames = Collections.EMPTY_LIST;
       String workingSetConfig = configProperties.get("workingsets." + number);
       if (workingSetConfig != null) {
@@ -88,9 +92,9 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
   
   public void preStartup() {
     try {
-      String configFileLocation = System.getenv("E_CONFIG_FILE");
+      String configFileLocation = System.getenv("DEVON_IMPORT_CONFIG");
       if (configFileLocation == null) {
-        throw new IllegalStateException("Systemproperty E_CONFIG_FILE must be set.");
+        throw new IllegalStateException("Systemproperty DEVON_IMPORT_CONFIG must be set.");
       }
       Map importConfigMap = parseImportConfig(configFileLocation);
       for (Map.Entry e : importConfigMap.entrySet()) {

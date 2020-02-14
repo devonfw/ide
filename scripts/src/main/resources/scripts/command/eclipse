@@ -158,6 +158,21 @@ function doStartEclipse() {
   fi
 }
 
+
+function doImportEclipse() {
+  echo "Starting eclipse project import for workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+  export DEVON_IMPORT_CONFIG=${WORKSPACE_PATH}/import.properties
+  if doIsWindows
+  then
+    # shellcheck disable=SC2086
+    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -vmargs ${ECLIPSE_VMARGS}
+  else
+    # shellcheck disable=SC2086
+    "${ECLIPSE_HOME}/eclipse" -clean -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs ${ECLIPSE_VMARGS}
+  fi
+  export DEVON_IMPORT_CONFIG=
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -212,6 +227,9 @@ do
     shift
     doAddPlugin "${@}"
     exit ${?}
+  elif [ "${1}" = "import" ] 
+  then
+    doImportEclipse
   else
     doFail "Unknown argument: ${1}"
   fi
