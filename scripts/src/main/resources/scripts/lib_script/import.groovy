@@ -11,6 +11,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.wizards.datatransfer.RecursiveImportListener;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.apache.tools.ant.ExitStatusException;
 
 class SysoutListener implements RecursiveImportListener {
   public void projectCreated(IProject project) {
@@ -27,7 +30,7 @@ class SysoutListener implements RecursiveImportListener {
   }        
 }
 
-class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
+class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {  
   public String getInitialWindowPerspectiveId() {
     return null;
   }
@@ -48,8 +51,9 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
   }
   
   private void doImport(String projectDirectoryName, Collection workingSetNames) {
+    System.out.println("Importing " + projectDirectoryName + " for working sets " + workingSetNames);
     File projectDirectory = new File(projectDirectoryName);
-    if (projectDirectory == null) {
+    if (!projectDirectory.canRead()) {
       throw new IllegalStateException("Cannot open " + projectDirectoryName);
     }
     SmartImportJob job = new SmartImportJob(projectDirectory, getOrCreateWorkingSets(workingSetNames), true, true);
@@ -60,49 +64,18 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
     job.join();
   }
   
-  private Map parseImportConfig(String configFileLocation) {
-    System.out.println("Parsing config " + configFileLocation);
-    Properties configProperties = new Properties();
-    configProperties.load(Files.newInputStream(Path.of(configFileLocation).toAbsolutePath()));
-    Map configMap = new HashMap();
-    for(String key : configProperties.keySet()) {
-      if (!key.startsWith("path.")) {
-        continue;
-      }
-      if (!key.split("\\.").length == 2) {
-        System.out.println("Config key " + key + " is not of expected format path.N - skipping");
-        continue;
-      }
-      int number = Integer.parseInt(key.split("\\.")[1]);
-      Path path = Path.of(configProperties.get("path." + number));
-      if (!path.isAbsolute()) {
-        // If path is relative, create path relative to configFileLocation
-        path = Path.of(Path.of(configFileLocation).getParent().toString(), path.toString()).toAbsolutePath();
-      }
-      Collection workingSetNames = Collections.EMPTY_LIST;
-      String workingSetConfig = configProperties.get("workingsets." + number);
-      if (workingSetConfig != null) {
-        workingSetNames = Arrays.asList(workingSetConfig.split(","));
-      }
-      configMap.put(path, workingSetNames);
-    }
-    System.out.println("Found " + configMap.keySet().size() + " configs.");
-    return configMap;
-  }       
-  
   public void preStartup() {
     try {
-      String configFileLocation = System.getenv("DEVON_IMPORT_CONFIG");
-      if (configFileLocation == null) {
-        throw new IllegalStateException("Systemproperty DEVON_IMPORT_CONFIG must be set.");
+      String path = System.getenv("DEVON_IMPORT_PATH");
+      if (path == null || path.equals("")) {
+        throw new IllegalStateException("System property DEVON_IMPORT_PATH must be set.");
+      }      
+      Collection workingSetNames = Collections.EMPTY_LIST;
+      String workingSetParam = System.getenv("DEVON_IMPORT_WORKINGSET");
+      if (workingSetParam != null || !workingSetParam.equals("")) {
+        workingSetNames = Arrays.asList(workingSetParam.split(","));
       }
-      Map importConfigMap = parseImportConfig(configFileLocation);
-      for (Map.Entry e : importConfigMap.entrySet()) {
-        String path = e.getKey();
-        Collection workingSetNames = e.getValue();   
-        System.out.println("Importing " + path + " for working sets " + workingSetNames);       
-        doImport(path, workingSetNames);              
-      }
+      doImport(path, workingSetNames);   
     } catch (Exception e) {
       e.printStackTrace();
       throw e;
@@ -110,12 +83,16 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
   }
   
   public void postStartup() {
-    PlatformUI.getWorkbench().close();           
+    PlatformUI.getWorkbench().close();
   }
 }
 
 // Groovy Script startes here...
-System.out.println("Starting eclipse instance for import...");
+System.out.println("Preparing eclipse instance for import...");
+
+if (Platform.getInstanceLocation().isLocked()) {
+  throw new ExitStatusException("Workspace is locked", PlatformUI.RETURN_UNSTARTABLE);
+}
 
 // We are running in the context of antrunner. Import, Workingset etc. need some
 // parts of the normale IDE infratructure running. So we init it here.
@@ -125,5 +102,8 @@ org.eclipse.ui.ide.IDE.registerAdapters();
 
 // Create Workbench, this make the eclispe windows appear, but it is necessary for the importer job.
 display = PlatformUI.createDisplay();
-PlatformUI.createAndRunWorkbench(display, new MyWorkbenchAdvisor());
+int rc = PlatformUI.createAndRunWorkbench(display, new MyWorkbenchAdvisor());
+if (rc != PlatformUI.RETURN_OK) {
+  throw new ExitStatusException("Import failed", rc);
+}
 System.out.println("End.");

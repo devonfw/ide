@@ -303,6 +303,30 @@ function doUninstall() {
   echo "Goodbye and have a nice day!"
 }
 
+function doUpdateProjects() {
+  for projectconfig in "${DEVON_IDE_HOME}/settings/projects/*.properties"; do
+    echo "Importing from ${projectconfig}..."
+    local project_path=`cat $projectconfig | grep "project.path" | cut -d'=' -f2`
+    local project_workingsets=`cat $projectconfig | grep "project.workingsets" | cut -d'=' -f2`
+    local project_workspace=`cat $projectconfig | grep "project.workspace" | cut -d'=' -f2`
+    local project_git_url=`cat $projectconfig | grep "project.git.url" | cut -d'=' -f2`
+    local project_git_branch=`cat $projectconfig | grep "project.git.branch" | cut -d'=' -f2`
+    local project_eclipse=`cat $projectconfig | grep "project.eclipse" | cut -d'=' -f2`
+    
+    [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
+    [ -z "${project_workspace}" ] && local project_workspace=main
+    [ -z "${project_git_url}" ] && doFail "Config is missing required parameter 'project.git.url'"
+    [ -z "${project_eclipse}" ] && local project_eclipse=import
+    
+    echo "Update project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+    if [ "${project_workspace}" == "${WORKSPACE}" ]
+    then
+      doGitPullOrClone "${WORKSPACE_PATH}/${project_path}" "${project_git_url}" "${project_git_branch}"
+    fi
+  done 
+}
+
+
 target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
@@ -321,6 +345,7 @@ then
   echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
+  echo "update projects                  checkout and import projects"
   echo "update all                       update scripts, settings and software"
   echo "update                           update settings and software"
   echo "uninstall                        uninstall devonfw-ide and remove all OS hooks (revert devon ide setup)"
@@ -363,11 +388,15 @@ then
     elif [ "${2}" = "software" ]
     then
       doUpdateSoftware
+    elif [ "${2}" = "projects" ]
+    then
+      doUpdateProjects
     elif [ "${2}" = "all" ]
     then
       doUpdateScripts
       doUpdateSettings
       doUpdateSoftware
+      doUpdateProjects
     else
       doFail "Undefined package ${2}"
     fi
