@@ -306,12 +306,12 @@ function doUninstall() {
 function doUpdateProjects() {
   for projectconfig in "${DEVON_IDE_HOME}"/settings/projects/*.properties; do
     echo "Importing from ${projectconfig}..."
-    project_path=$(grep "^project.path" "$projectconfig" | cut -d'=' -f2)
-    project_workingsets=$(grep "^project.workingsets" "$projectconfig" | cut -d'=' -f2)
-    project_workspace=$(grep "^project.workspace" "$projectconfig" | cut -d'=' -f2)
-    project_git_url=$(grep "^project.git.url" "$projectconfig" | cut -d'=' -f2)
-    project_git_branch=$(grep "^project.git.branch" "$projectconfig" | cut -d'=' -f2)
-    project_eclipse=$(grep "^project.eclipse" "$projectconfig" | cut -d'=' -f2)
+    project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2)
+    project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2)
+    project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
+    project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2)
+    project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2)
+    project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2)
     
     [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
     [ -z "${project_workspace}" ] && local project_workspace=main
