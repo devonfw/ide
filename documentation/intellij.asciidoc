@@ -1,7 +1,7 @@
 :toc:
 toc::[]
 
-= vscode
+= intellij
 
 The `intellij` commandlet allows to install, configure, and launch https://www.jetbrains.com/idea/[IntelliJ].
 To launch IntelliJ for your current workspace and `devonfw-ide` installation simply run:

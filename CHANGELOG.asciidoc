@@ -1,0 +1,23 @@
+= Changelog of devonfw-ide
+
+This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
+
+== 3.2.4
+
+Bugfix release with new features such as CobiGen CLI:
+
+* https://github.com/devonfw/ide/issues/335[#335]: Update to recent LTS versions of node.js and VSCode
+* https://github.com/devonfw/ide/issues/339[#339]: Properties not updated after settings cloned or changed
+* https://github.com/devonfw/ide/issues/59[#59]: Integrate CobiGen CLI as commandlet
+* https://github.com/devonfw/ide/issues/21[#21]: Improve OS Support
+* https://github.com/devonfw/ide/pull/313[#313]: Improve keyboard layout for MacOS
+* https://github.com/devonfw/ide/issues/259[#259]: mvn package runs into test failures on Windows
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/2?closed=1[milestone 3.2.4].
+
+== 3.2.3
+
+This version marks the first fully official release.
+Changes for this release can be found in https://github.com/devonfw/ide/milestone/8?closed=1[milestone 3.2.3].
+Prior versions can be found in according milestones and release tags on github.
+However, the history before this release is considered legacy and is therefore not reflected here.

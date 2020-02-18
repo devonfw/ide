@@ -27,7 +27,7 @@ Have as many instances of the `devonfw-ide` "link:setup.asciidoc[installed]" on 
 * *Multiple Workspaces* +
 Support working with different link:workspaces.asciidoc[workspaces] on different branches. Create and update new workspaces with few clicks. See the workspace name in the title-bar of your IDE so you do not get confused and work on the right branch.
 * *Free* +
-The `devonfw-ide` is free just like everything from http://devonfw.com[devonfw]. See https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE] for details.
+The `devonfw-ide` is free just like everything from https://devonfw.com[devonfw]. See link:license.asciidoc[LICENSE] for details.
 
 == IDEs
 We support the following IDEs:

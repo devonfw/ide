@@ -13,17 +13,4 @@ For further details visit the following links:
 * link:setup.asciidoc[download & setup]
 * link:usage.asciidoc[usage]
 
-== ATTENTION
 
-The official public release of `devonfw-ide` is still pending due to some final clarification. The download links are not broken, but pointing to the place where the release will appear after the clarification is complete. If you want to use `devonfw-ide` today you can clone it from https://github.com/devonfw/ide.git[ide.git] and run `mvn install` to build it, or contact us (check internal community annoucements).
-
-TL;DR?
-
-1. download (see ATTENTION above)
-2. extract to `C:\projects\my-project-name` or `/projects/my-project-name`
-3. run `setup` script
-4. run `eclipse-main` to launch Eclipse or `vscode-main` for Visual Studio code
-5. happy hacking!
-
-== License
-The `devonfw-ide` is free and open-source. For details read our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[TERMS_OF_USE].

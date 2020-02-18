@@ -12,12 +12,9 @@ We try to make it as simple as possible for you. However, there are some minimal
 ** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `yum install git-core curl`)
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
 
-== ATTENTION
-
-The official public release of `devonfw-ide` is still pending due to some final clarification. The download links are not broken, but pointing to the place where the release will appear after the clarification is complete. If you want to use `devonfw-ide` today you can clone it from https://github.com/devonfw/ide.git[ide.git] and run `mvn install` to build it, or contact us (check internal community annoucements).
-
 == Download
-Releases of `devonfw-ide` will be published to maven central.
+Releases of `devonfw-ide` are published to https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central].
+The latest release can be downloaded from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here].
 
 == Install
 Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).

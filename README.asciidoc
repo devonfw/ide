@@ -6,6 +6,16 @@ image:https://img.shields.io/github/license/devonfw/ide.svg?label=License["Apach
 image:https://img.shields.io/maven-central/v/com.devonfw.tools.ide/devonfw-ide-scripts.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:com.devonfw.tools.ide]
 image:https://travis-ci.com/devonfw/ide.svg?branch=master["Build Status",link="https://travis-ci.com/devonfw/ide"]
 
+== Introduction
+
+Watch our introduction video to get started:
+
+image:https://img.youtube.com/vi/NG6TAmksBGI/0.jpg["",link="https://www.youtube.com/watch?v=NG6TAmksBGI"]
+
+// tag::you[]
+video::NG6TAmksBGI[youtube]
+// end::you[]
+
 == Documentation
 
 * link:documentation/Home.asciidoc[Home]

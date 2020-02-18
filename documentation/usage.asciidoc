@@ -1,9 +1,11 @@
 :toc:
 toc::[]
 
-= Usage
+= Roles
 
-This section explains you how to use the `devonfw-ide`. We assume you have successfully link:setup.asciidoc[installed] it first.
+This section explains you how to use the `devonfw-ide` per role.
+Everybody should read and follow the usage for xref:developer[developer].
+In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[admin].
 
 == Developer
 As a developer you are supported to link:setup.asciidoc[setup] your IDE within minutes. You only need the settings URL from your xref:architect[Architect].
@@ -23,8 +25,8 @@ If you are working on different branches in parallel you typically want to use m
 
 You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
 
-== Architect
-As architect or technical lead of the project you can link:configuration.asciidoc[configure] the `devonfw-ide` to your needs.
+== Admin
+As IDE admin for the project you can link:configuration.asciidoc[configure] the `devonfw-ide` to your needs.
 
 === Project specific settings
 For your project you should create a git-repository for the link:settings.asciidoc[settings]. You can customize many aspects this way.
@@ -33,5 +35,5 @@ For your project you should create a git-repository for the link:settings.asciid
 To redistribute the IDE you can decide to use the official vanilla releases of the `devonfw-ide` link:scripts.asciidoc[scripts].
 However, you may also add the cloned settings, a custom link:configuration.asciidoc[devon.properties] file, or predefine link:software.asciidoc[software] (be aware of multi-platform-support).
 
-=== Update
+=== Distribute Changes
 When you have done changes in a larger project (big team), please first test the changes yourself, then pick a pilot user of the team, and only after that works well for a couple of days inform the entire team to update.

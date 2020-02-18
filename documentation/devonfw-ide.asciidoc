@@ -13,3 +13,4 @@ include::devonfw-ide-advanced.asciidoc[leveloffset=1]
 <<<<
 
 include::devonfw-ide-support.asciidoc[leveloffset=1]
+

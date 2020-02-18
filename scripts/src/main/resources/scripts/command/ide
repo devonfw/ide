@@ -56,6 +56,11 @@ function doUpdateSettings() {
       SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
     fi
     doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devonfw-ide-settings"
+    if [ ${?} = 0 ]
+    then
+      # shellcheck source=scripts/environment-project
+      source "${DEVON_IDE_HOME}/scripts/environment-project"
+    fi
     if [ ! -f "${SETTINGS_PATH}/devon/conf/devon.properties" ]
     then
       doFail "Installation of settings failed!\nFile not found: ${SETTINGS_PATH}/devon/conf/devon.properties"

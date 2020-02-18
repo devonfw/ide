@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.devonfw.tools</groupId>
-    <artifactId>devon-docgen</artifactId>
-    <version>3.1.0</version>
+    <artifactId>devonfw-docgen-pdf</artifactId>
+    <version>5.0.0</version>
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devonfw-ide-doc</artifactId>
@@ -15,41 +15,10 @@
   <description>Documentation for devonfw-ide (Integrated Development Environment)</description>
 
   <properties>
-    <docgen.wiki.page>devonfw-ide-doc</docgen.wiki.page>
+    <docgen.asciidoc.page>devonfw-ide-doc</docgen.asciidoc.page>
     <revision>dev</revision>
     <changelist>-SNAPSHOT</changelist>
   </properties>
 
   <!-- run "mvn package" and get the PDF result in target/generated-docs/*.pdf -->
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-terms</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/asciidoc</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>..</directory>
-                  <includes>
-                    <include>TERMS_OF_USE.asciidoc</include>
-                  </includes>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>

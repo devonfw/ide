@@ -31,6 +31,7 @@ Technically a commandlet is a bash script located in `$DEVON_IDE_HOME/scripts/co
 The following commandlets are currently available:
 
 * link:build.asciidoc[build]
+* link:cobigen.asciidoc[cobigen]
 * link:eclipse.asciidoc[eclipse]
 * link:gradle.asciidoc[gradle]
 * link:help.asciidoc[help]

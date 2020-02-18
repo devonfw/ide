@@ -1,5 +1,0 @@
-= License
-
-This software is licensed as Open-Source product for free usage including commercial use.
-You need to apply to our https://github.com/devonfw/ide/blob/master/TERMS_OF_USE.asciidoc[terms of use] before using it.
-
