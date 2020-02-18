@@ -738,7 +738,7 @@ function doGitPullOrClone() {
       if [ -z "${3}" ]
       then 
         pushd "${1}" || exit 255
-        echo "git checkout ${3}"
+        doRunCommand "git checkout ${3}"
         popd || exit 255
       fi 
     fi

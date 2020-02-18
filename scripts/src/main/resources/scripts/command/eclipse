@@ -159,7 +159,7 @@ function doStartEclipse() {
   fi
 }
 
-function doCheckAndInstallGroovy {
+function doCheckAndInstallGroovy() {
   local groovy_version=3.0.1
   if [ ! -f "${M2_REPO}/org/codehaus/groovy/groovy-ant/${groovy_version}/groovy-ant-${groovy_version}.jar" ] || [ ! -f "${M2_REPO}/org/codehaus/groovy/groovy/${groovy_version}/groovy-${groovy_version}.jar" ]; then
     echo "Groovy not found. Installing version ${groovy_version} in Maven repository ${M2_REPO}..."
@@ -180,7 +180,7 @@ function doImportEclipse() {
     # Path is relative make it absolute
     importPath="${L_PWD}/${1}"
   fi  
-  workingSets="${2}"
+  importWorkingSets="${2}"
   echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   if doIsWindows
   then
