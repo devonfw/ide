@@ -1,0 +1,26 @@
+== Project import
+
+The devonfw IDE supports to automatically checkout and import of required projects into your IDE during setup via link:ide.asciidoc[ide command]  . To configure this you put properties file in to the `projects/` sub-folder in your `ide-settings`. Each file descripes one "project" which you like to checkout and import:
+
+----
+path=myproject
+workingsets=Set1,Set2
+workspace=example
+git.url=http://github.com/someorg/someproject
+git.branch=develop
+eclipse=import
+----
+
+.Variables of project import
+[options="header"]
+|===
+|*Variable*|*Value*|*Meaning*
+|`path`|e.g. `myproject`, will clone into `${WORKSPACE_PATH}/myproject`|(required) Path into which the projects is cloned. This path is relative to the workspace.
+|`workingsets`|e.g. `ws1,ws2`|(optional) This will create workingssets (in eclipse). Each module (eclipse project) of this project will be part of all these workingsets. Workingsets will be automatically created if necessary.
+|`workspace`|`main`|Workspace to use for checkout and import. Default is `main`.
+|`git.url`|e.g. `http://github.com/someorg/someproject`|(required) Git URL to use for cloning the project.
+|`git.url`|e.g. `develop`|(optional) Git branch to checkout. Git default branch is default.
+|`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
+|===
+
+Please not that the "property"-file is parsed via shell and not via java. So be careful with "advanced" features property-files normally support.
