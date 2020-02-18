@@ -6,7 +6,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${NODE_HOME}" ]
   then
-    local software_version="${NODE_VERSION:-v12.14.1}"
+    local software_version="${NODE_VERSION:-v12.15.0}"
     local download_url="https://nodejs.org/dist/${software_version}/node-${software_version}"
     local software_dir="${NODE_HOME}"
     if doIsMacOs
