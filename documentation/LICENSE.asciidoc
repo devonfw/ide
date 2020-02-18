@@ -44,7 +44,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://www.npmjs.com/[NPM] |Default Setup|https://github.com/npm/cli/blob/latest/LICENSE[Artistic License 2.0] (https://www.npmjs.com/policies/terms[Terms])
 |https://cli.angular.io/[Angular CLI] (ng) |Default Setup|https://cli.angular.io/license.html[MIT]
 |http://groovy-lang.org/[Groovy]|Default Setup|https://github.com/apache/groovy/blob/master/LICENSE[ASL 2.0]
-|https://ant.apache.org/[Apache Ant]|Default Setup|http://www.apache.org/licenses/LICENSE-2.0.html[ASL 2.0]
+|https://ant.apache.org/[Apache Ant]|Default Setup|https://github.com/apache/ant/blob/master/LICENSE[ASL 2.0]
 |https://gradle.org/[Gradle] |Optional |https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
 |https://jenkins.io/[Jenkins] |Optional|https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
 |https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
