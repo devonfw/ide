@@ -325,14 +325,14 @@ function doUpdateProjects() {
     doDebug "Pull or clone git project ${project_path}..."
     project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
     mkdir -p "${project_workspace_path}"
-    cd "${project_workspace_path}"
+    cd "${project_workspace_path}" || exit 255
     doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-    if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_dir}/.project" ]
+    if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
     then
       doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
     fi
   done
-  cd "${last_cwd}"
+  cd "${last_cwd}" || exit 255
 }
 
 target_version="LATEST"
