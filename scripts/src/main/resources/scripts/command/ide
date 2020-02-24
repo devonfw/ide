@@ -208,7 +208,10 @@ function doSetup() {
       echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
     fi
   fi
-  doUpdateProjects
+  if [ -z "${DEVON_SKIP_PROJECT_SETUP}" ]
+  then
+    doUpdateProjects
+  fi
 }
 
 function doUpdateSoftware() {
