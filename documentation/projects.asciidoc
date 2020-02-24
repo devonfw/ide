@@ -1,6 +1,6 @@
 == Project import
 
-The devonfw IDE supports to automatically checkout and import of required projects into your IDE during setup via link:ide.asciidoc[ide command]  . To configure this you put properties file in to the `projects/` sub-folder in your `ide-settings`. Each file descripes one "project" which you like to checkout and import:
+The `devonfw-ide` supports to automatically checkout and import required projects into your IDE during link:setup.asciidoc[setup]. To configure this you put a `.properties` file for each desired project into the `projects` sub-folder in your link:settings.asciidoc[settings]. Each `.properties` file describes one "project" which you like to checkout and (potentially) import:
 
 ----
 path=myproject
@@ -23,4 +23,4 @@ eclipse=import
 |`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
 |===
 
-Please not that the "property"-file is parsed via shell and not via java. So be careful with "advanced" features property-files normally support.
+Please not that the `.properties` file is parsed via shell and not via java. So be careful with "advanced" features `.properties` files normally support.
