@@ -211,6 +211,8 @@ function doSetup() {
   if [ -z "${DEVON_SKIP_PROJECT_SETUP}" ]
   then
     doUpdateProjects
+  else
+    doWarning "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
   fi
 }
 
