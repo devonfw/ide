@@ -305,9 +305,10 @@ function doUninstall() {
 }
 
 function doUpdateProjects() {
+  local last_cwd project_path project_workingsets project_workspace project_git_url project_git_branch project_eclipse project_workspace_path
+  last_cwd="${PWD}"
   for projectconfig in "${DEVON_IDE_HOME}"/settings/projects/*.properties; do
     doEcho "Importing from ${projectconfig}..."
-    local project_path project_workingsets project_workspace project_git_url project_git_branch project_eclipse project_dir
     project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2)
     project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2)
     project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
@@ -322,15 +323,17 @@ function doUpdateProjects() {
     
     doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
     doDebug "Pull or clone git project ${project_path}..."
-    project_dir="${DEVON_IDE_HOME}/workspaces/${project_workspace}/${project_path}"
-    doGitPullOrClone "${project_dir}" "${project_git_url}" "${project_git_branch}"
+    project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
+    mkdir -p "${project_workspace_path}"
+    cd "${project_workspace_path}"
+    doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
     if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_dir}/.project" ]
     then
-      doDevonCommandAndReturn eclipse import "${project_dir}" "${project_workingsets}"
+      doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
     fi
   done
+  cd "${last_cwd}"
 }
-
 
 target_version="LATEST"
 
