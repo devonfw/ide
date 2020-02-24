@@ -8,6 +8,7 @@ workingsets=Set1,Set2
 workspace=example
 git.url=http://github.com/someorg/someproject
 git.branch=develop
+build.path=.
 eclipse=import
 ----
 
@@ -20,6 +21,7 @@ eclipse=import
 |`workspace`|`main`|Workspace to use for checkout and import. Default is `main`.
 |`git.url`|e.g. `http://github.com/someorg/someproject`|(required) Git URL to use for cloning the project.
 |`git.url`|e.g. `develop`|(optional) Git branch to checkout. Git default branch is default.
+|`build.path`|e.g. `.`|(optional) The directory inside `path` where to trigger an initial build after clone or pull. For a regular project use `.` to build top-level project.
 |`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
 |===
 

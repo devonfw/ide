@@ -7,6 +7,7 @@ touch ~/.devon/.license.agreement
 rm -rf integration-test
 mkdir -p integration-test
 cd integration-test
+export DEVON_SKIP_PROJECT_SETUP=true
 for testpath in "$(dirname $0)"/test-*
 do
   testcase="${testpath/*\//}"
