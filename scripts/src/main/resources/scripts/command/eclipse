@@ -172,6 +172,7 @@ function doImportEclipse() {
   then
     doFail "Parameter \"path\" is missing."
   fi
+  doConfigureEclipse
   doCheckAndInstallGroovy
   if [[ "${1}" = /* ]]
   then
