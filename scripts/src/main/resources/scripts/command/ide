@@ -330,7 +330,9 @@ function doUpdateProjects() {
     doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
     if [ -n "${project_build}" ]
     then
+      cd "${project_path}" || exit 255
       doDevonCommand build
+      cd "${project_workspace_path}" || exit 255
     fi
     if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
     then
