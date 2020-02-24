@@ -305,7 +305,7 @@ function doUninstall() {
 }
 
 function doUpdateProjects() {
-  local last_cwd project_path project_workingsets project_workspace project_git_url project_git_branch project_build project_eclipse project_workspace_path
+  local last_cwd project_path project_workingsets project_workspace project_git_url project_git_branch project_build_path project_eclipse project_workspace_path
   last_cwd="${PWD}"
   for projectconfig in "${DEVON_IDE_HOME}"/settings/projects/*.properties; do
     doEcho "Importing from ${projectconfig}..."
@@ -314,7 +314,7 @@ function doUpdateProjects() {
     project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
     project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2)
     project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2)
-    project_build=$(grep "^build" "$projectconfig" | cut -d'=' -f2)
+    project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2)
     project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2)
     
     [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
@@ -328,9 +328,9 @@ function doUpdateProjects() {
     mkdir -p "${project_workspace_path}"
     cd "${project_workspace_path}" || exit 255
     doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-    if [ -n "${project_build}" ]
+    if [ -n "${project_build_path}" ]
     then
-      cd "${project_path}" || exit 255
+      cd "${project_path}/${project_build_path}" || exit 255
       doDevonCommand build
       cd "${project_workspace_path}" || exit 255
     fi
