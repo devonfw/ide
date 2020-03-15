@@ -73,6 +73,8 @@ function doUpdateSettings() {
       git commit -m "Initial settings downloaded from ${SETTINGS_URL}"
       cd - || exit 255
     fi
+  else
+    doGitPullOrClone "${SETTINGS_PATH}"
   fi
 }
 
