@@ -310,41 +310,44 @@ function doUninstall() {
 }
 
 function doUpdateProjects() {
-  local last_cwd project_path project_workingsets project_workspace project_git_url project_git_branch project_build_path project_eclipse project_workspace_path
-  last_cwd="${PWD}"
-  for projectconfig in "${DEVON_IDE_HOME}"/settings/projects/*.properties; do
-    doEcho "Importing from ${projectconfig}..."
-    project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2)
-    project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2)
-    project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
-    project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2)
-    project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2)
-    project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2)
-    project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2)
+  if [ -d "${SETTINGS_PATH}/projects" ]
+  then
+    local last_cwd project_path project_workingsets project_workspace project_git_url project_git_branch project_build_path project_eclipse project_workspace_path
+    last_cwd="${PWD}"
+    for projectconfig in "${SETTINGS_PATH}"/projects/*.properties; do
+      doEcho "Importing from ${projectconfig}..."
+      project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2)
+      project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2)
+      project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
+      project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2)
+      project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2)
+      project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2)
+      project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2)
     
-    [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
-    [ -z "${project_workspace}" ] && project_workspace=main
-    [ -z "${project_git_url}" ] && doFail "Config is missing required parameter 'project.git.url'"
-    [ -z "${project_eclipse}" ] && project_eclipse=import
+      [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
+      [ -z "${project_workspace}" ] && project_workspace=main
+      [ -z "${project_git_url}" ] && doFail "Config is missing required parameter 'project.git.url'"
+      [ -z "${project_eclipse}" ] && project_eclipse=import
     
-    doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
-    doDebug "Pull or clone git project ${project_path}..."
-    project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
-    mkdir -p "${project_workspace_path}"
-    cd "${project_workspace_path}" || exit 255
-    doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-    if [ -n "${project_build_path}" ]
-    then
-      cd "${project_path}/${project_build_path}" || exit 255
-      doDevonCommand build
+      doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+      doDebug "Pull or clone git project ${project_path}..."
+      project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
+      mkdir -p "${project_workspace_path}"
       cd "${project_workspace_path}" || exit 255
-    fi
-    if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
-    then
-      doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
-    fi
-  done
-  cd "${last_cwd}" || exit 255
+      doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
+      if [ -n "${project_build_path}" ]
+      then
+        cd "${project_path}/${project_build_path}" || exit 255
+        doDevonCommand build
+        cd "${project_workspace_path}" || exit 255
+      fi
+      if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
+      then
+        doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
+      fi
+    done
+    cd "${last_cwd}" || exit 255
+  fi
 }
 
 target_version="LATEST"
