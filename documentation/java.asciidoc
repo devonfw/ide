@@ -48,3 +48,10 @@ Will create an app with package `com.example.domain.myapp`, groupId `com.example
 devon java create com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
+
+== migrate
+Example for migrating a devon4j application:
+```
+devon java migrate
+```
+Will migrate current devon4j application to the latest version available.
