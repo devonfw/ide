@@ -73,6 +73,10 @@ function doUpdateSettings() {
       git commit -m "Initial settings downloaded from ${SETTINGS_URL}"
       cd - || exit 255
     fi
+  else
+    doGitPullOrClone "${SETTINGS_PATH}"
+    # shellcheck source=scripts/environment-project
+    source "${DEVON_IDE_HOME}/scripts/environment-project"
   fi
 }
 
