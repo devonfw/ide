@@ -2,6 +2,18 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 3.3.0
+
+New release with bugfixes and new project import feature:
+
+* https://github.com/devonfw/ide/pull/343[#343]: Detect non-admin GitForWindows and Cygwin
+* https://github.com/devonfw/ide/issues/175[#175]: Ability to clone projects and import into Eclipse automatically
+* https://github.com/devonfw/ide/issues/346[#346]: devon eclipse add-plugin parameters swapped
+* https://github.com/devonfw/ide/issues/363[#363]: devon ide update does not pull latest project settings
+* https://github.com/devonfw/ide/pull/366[#366]: update java versions to latest fix releases
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/5?closed=1[milestone 3.3.0].
+
 == 3.2.4
 
 Bugfix release with new features such as CobiGen CLI:
