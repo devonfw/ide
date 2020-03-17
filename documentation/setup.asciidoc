@@ -6,10 +6,10 @@ toc::[]
 == Prerequisites
 We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
-* You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows use https://www.7-zip.org/[7zip]. On all other platforms this comes out of the box.
+* You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows lower Windows 10 (1803) use https://www.7-zip.org/[7-zip]. On all other platforms this comes out of the box.
 * You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed. 
 ** On Windows all you need is download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
-** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `yum install git-core curl`)
+** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `sudo yum install git-core curl`)
 ** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
