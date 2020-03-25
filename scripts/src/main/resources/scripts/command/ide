@@ -327,7 +327,7 @@ function doUpdateProjects() {
       project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2-)
       project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2-)
       project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2-)
-      project_build_params=$(grep "^build.params" "$projectconfig" | cut -d'=' -f2-)
+      project_build_cmd=$(grep "^build.command" "$projectconfig" | cut -d'=' -f2-)
     
       [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
       [ -z "${project_workspace}" ] && project_workspace=main
@@ -342,13 +342,14 @@ function doUpdateProjects() {
       cd "${project_workspace_path}" || exit 255
       doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
       doDebug "Building project with params: ${project_build_params}"
-      if [ -n "${project_build_params}" ]
+      if [ -n "${project_build_cmd}" ]
       then
         cd "${project_path}/${project_build_path}" || exit 255
-        doDevonCommand build ${project_build_params}
+        # shellcheck disable=SC2086
+        doDevonCommand ${project_build_cmd}
         cd "${project_workspace_path}" || exit 255
       else
-        doInfo "Build params not set. Skipping build for project."
+        echo "Build params not set. Skipping build for project."
       fi
       if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
       then
