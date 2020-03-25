@@ -5,7 +5,7 @@ DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateScripts() {
   # shellcheck disable=SC2007,SC2154
-  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "3.3.0"
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
   then
     if [ "${target_version}" = "LATEST" ]
@@ -110,7 +110,7 @@ function doSetupConf() {
 # $1: devon or devon.bat
 function doUpdateCliScript() {
   # shellcheck disable=SC2007
-  local my_ide_version="3.3.0"
+  local my_ide_version="$[devon_ide_version]"
   if [ "${my_ide_version}" = "0" ]
   then
     return
