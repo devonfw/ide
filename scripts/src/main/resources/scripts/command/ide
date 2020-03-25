@@ -349,7 +349,7 @@ function doUpdateProjects() {
         doDevonCommand ${project_build_cmd}
         cd "${project_workspace_path}" || exit 255
       else
-        echo "Build params not set. Skipping build for project."
+        echo "Build command not set. Skipping build for project."
       fi
       if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
       then
