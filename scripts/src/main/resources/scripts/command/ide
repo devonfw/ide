@@ -341,7 +341,7 @@ function doUpdateProjects() {
       mkdir -p "${project_workspace_path}"
       cd "${project_workspace_path}" || exit 255
       doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-      doDebug "Building project with params: ${project_build_params}"
+      doDebug "Building project with devon command: ${project_build_cmd}"
       if [ -n "${project_build_cmd}" ]
       then
         cd "${project_path}/${project_build_path}" || exit 255
