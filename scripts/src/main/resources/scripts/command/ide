@@ -320,14 +320,14 @@ function doUpdateProjects() {
     last_cwd="${PWD}"
     for projectconfig in "${SETTINGS_PATH}"/projects/*.properties; do
       doEcho "Importing from ${projectconfig}..."
-      project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2)
-      project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2)
-      project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2)
-      project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2)
-      project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2)
-      project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2)
-      project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2)
-      project_build_params=$(grep "^build.params" "$projectconfig" | cut -d'=' -f2)
+      project_path=$(grep "^path" "$projectconfig" | cut -d'=' -f2-)
+      project_workingsets=$(grep "^workingsets" "$projectconfig" | cut -d'=' -f2-)
+      project_workspace=$(grep "^workspace" "$projectconfig" | cut -d'=' -f2-)
+      project_git_url=$(grep "^git.url" "$projectconfig" | cut -d'=' -f2-)
+      project_git_branch=$(grep "^git.branch" "$projectconfig" | cut -d'=' -f2-)
+      project_build_path=$(grep "^build.path" "$projectconfig" | cut -d'=' -f2-)
+      project_eclipse=$(grep "^eclipse" "$projectconfig" | cut -d'=' -f2-)
+      project_build_params=$(grep "^build.params" "$projectconfig" | cut -d'=' -f2-)
     
       [ -z "${project_path}" ] && doFail "Config is missing required parameter 'project.path'"
       [ -z "${project_workspace}" ] && project_workspace=main
@@ -345,7 +345,7 @@ function doUpdateProjects() {
       if [ -n "${project_build_params}" ]
       then
         cd "${project_path}/${project_build_path}" || exit 255
-        doDevonCommand build "${project_build_params}"
+        doDevonCommand build ${project_build_params}
         cd "${project_workspace_path}" || exit 255
       else
         doInfo "Build params not set. Skipping build for project."
