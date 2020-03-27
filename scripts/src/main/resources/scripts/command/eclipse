@@ -52,21 +52,7 @@ function doSetup() {
     fi
     if [ "${result}" = 0 ]
     then
-      if [ -z "${ECLIPSE_PLUGINS}" ]
-      then
-        doAddPlugin startexplorer
-        doAddPlugin regexutil
-        doAddPlugin templatevariables
-        doAddPlugin spotbugs
-        doAddPlugin checkstyle
-        doAddPlugin cobigen
-        doAddPlugin terminal
-      else
-        for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
-        do
-          doAddPlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
-        done
-      fi
+      doAddPlugins
     fi
   fi
   if [ -n "${1}" ]
@@ -81,6 +67,55 @@ function doSetup() {
       eclipseproduct="${ECLIPSE_HOME}/.eclipseproduct"
     fi
     doRunCommand "cat '${eclipseproduct}'"
+  fi
+}
+
+# $1: plugin config properties file
+function doAddPluginFromConfig() {
+  if [ -f "${1}" ]
+  then
+    plugin_id=""
+    plugin_active="true"
+    plugin_url=""
+    doLoadProperties "${1}"
+    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+    then
+      doWarning "Invalid eclipse plugin config: ${file}"
+    elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
+    then
+      doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+    fi
+  elif [ -n "${2}" ]
+  then
+    doFail "Undefined plugin ID ${1} - not known or supported.\nProvide full groupId together with URL of update-site."
+  fi
+}
+
+function doAddPlugins() {
+  if [ -d "${SETTINGS_PATH}"/eclipse/plugins ]
+  then
+    local file
+    for file in "${SETTINGS_PATH}"/eclipse/plugins/*.properties
+    do
+      doAddPluginFromConfig "${file}"
+    done
+  else
+    doWarning "Legacy eclipse plugin mechanism detected. Please migrate to ${SETTINGS_PATH}/eclipse/plugins:\nhttps://github.com/devonfw/ide/blob/master/documentation/eclipse.asciidoc"
+    if [ -z "${ECLIPSE_PLUGINS}" ]
+    then
+      doAddPlugin startexplorer
+      doAddPlugin regexutil
+      doAddPlugin templatevariables
+      doAddPlugin spotbugs
+      doAddPlugin checkstyle
+      doAddPlugin cobigen
+      doAddPlugin terminal
+    else
+      for ((i=0; i<${#ECLIPSE_PLUGINS[*]}; i=i+2))
+      do
+        doAddPlugin "${ECLIPSE_PLUGINS[${i}]}" "${ECLIPSE_PLUGINS[((${i}+1))]}"
+      done
+    fi
   fi
 }
 
@@ -138,8 +173,7 @@ function doAddPlugin() {
     then
       doInstallEclipsePlugin "com.eviware.soapui.soapui_feature.feature.group" "http://www.soapui.org/eclipse/update/site.xml"
     else
-      echo "Undefined plugin ID ${1} - not known or supported."
-      echo "Provide full groupId together with URL of update-site."
+      doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${1}.properties" "force-manual"
     fi
   else
     doInstallEclipsePlugin "${1}" "${2}"
