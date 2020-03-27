@@ -28,8 +28,8 @@ function doSetup() {
         echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
         chmod a+x "${VSCODE_HOME}/bin/code"
       fi
-      doAddPlugins
     fi
+    doAddPlugins
   fi
 }
 
@@ -55,7 +55,7 @@ function doAddPlugins() {
 
 function doAddPlugin() {
   doEchoAttention "Installing plugin (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
-  doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension '${1}' &"
+  doRunVsCode --force --install-extension "${1}" &
 }
 
 function doConfigureVsCode() {
@@ -74,10 +74,18 @@ function doConfigureVsCode() {
   fi
 }
 
+function doRunVsCode() {
+  local VSCODE_CONF="${DEVON_IDE_HOME}/conf/vscode"
+  mkdir -p "${VSCODE_CONF}"
+  local VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
+  mkdir -p "${VSCODE_EXT}"
+  doRunCommand "'${VSCODE_HOME}/bin/code' --new-window --user-data-dir '${VSCODE_CONF}' --extensions-dir '${VSCODE_EXT}' ${*}"
+}
+
 function doStartVsCode() {
   doConfigureVsCode
-  echo "launching VSCode..."
-  "${VSCODE_HOME}/bin/code" "${WORKSPACE_PATH}"
+  doEcho "launching VSCode..."
+  doRunVsCode "${WORKSPACE_PATH}"
 }
 
 # CLI
