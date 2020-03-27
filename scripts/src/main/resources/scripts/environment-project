@@ -135,6 +135,4 @@ fi
 # load user settings late so variables like M2_REPO can be overridden
 doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
 
-unset -f doLoadProperties
-
 export PATH
