@@ -37,6 +37,7 @@ do
     if [ -z "${1}" ]
     then
       source scripts/environment-project
+      unset -f doLoadProperties
     fi
     if [ -z "${1}" ]
     then

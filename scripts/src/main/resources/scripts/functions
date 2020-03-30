@@ -716,6 +716,7 @@ function doMoveGlobSafe() {
 
 # $1: absolute target path
 # $2: URL
+# $3: Branch to checkout (optional)
 function doGitPullOrClone() {
   if [ -d "${1}/.git" ]
   then
@@ -734,6 +735,12 @@ function doGitPullOrClone() {
       doFail "Not a git repository: ${1}"
     else
       doRunCommand "git clone '${2}' '${1}' --config core.autocrlf=false"
+      if [ -z "${3}" ]
+      then 
+        pushd "${1}" || exit 255
+        doRunCommand "git checkout ${3}"
+        popd || exit 255
+      fi 
     fi
   fi
 }

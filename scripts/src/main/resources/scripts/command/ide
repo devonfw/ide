@@ -73,6 +73,10 @@ function doUpdateSettings() {
       git commit -m "Initial settings downloaded from ${SETTINGS_URL}"
       cd - || exit 255
     fi
+  else
+    doGitPullOrClone "${SETTINGS_PATH}"
+    # shellcheck source=scripts/environment-project
+    source "${DEVON_IDE_HOME}/scripts/environment-project"
   fi
 }
 
@@ -208,6 +212,12 @@ function doSetup() {
       echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
     fi
   fi
+  if [ -z "${DEVON_SKIP_PROJECT_SETUP}" ]
+  then
+    doUpdateProjects
+  else
+    doWarning "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
+  fi
 }
 
 function doUpdateSoftware() {
@@ -303,6 +313,61 @@ function doUninstall() {
   echo "Goodbye and have a nice day!"
 }
 
+# $1: path to properties file
+function doImportProject() {
+  if [ ! -f "${1}" ]
+  then
+    return
+  fi
+  project_path=""
+  project_workingsets=""
+  project_workspace="main"
+  project_git_url=""
+  project_git_branch=""
+  project_build_path="."
+  project_eclipse="import"
+  project_build_cmd=""
+  doEcho "Importing from ${file}..."
+  doLoadProperties "${1}" "project_"
+  if [ -z "${project_path}" ] && [ -z "${project_git_url}" ]
+  then
+    doFail "Invalid project configuration ${1} - both 'path' and 'git_url' have to be defined."
+  fi
+  doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+  doDebug "Pull or clone git project ${project_path}..."
+  project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
+  mkdir -p "${project_workspace_path}"
+  cd "${project_workspace_path}" || exit 255
+  doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
+  doDebug "Building project with devon command: ${project_build_cmd}"
+  if [ -n "${project_build_cmd}" ]
+  then
+    cd "${project_path}/${project_build_path}" || exit 255
+    # shellcheck disable=SC2086
+    doDevonCommand ${project_build_cmd}
+    cd "${project_workspace_path}" || exit 255
+  else
+    doEcho "Build command not set. Skipping build for project."
+  fi
+  if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
+  then
+    doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
+  fi
+}
+
+function doUpdateProjects() {
+  if [ -d "${SETTINGS_PATH}/projects" ]
+  then
+    local last_cwd file
+    last_cwd="${PWD}"
+    for file in "${SETTINGS_PATH}"/projects/*.properties
+    do
+      doImportProject "${file}"
+    done
+    cd "${last_cwd}" || exit 255
+  fi
+}
+
 target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
@@ -321,6 +386,7 @@ then
   echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
+  echo "update projects                  checkout and import projects"
   echo "update all                       update scripts, settings and software"
   echo "update                           update settings and software"
   echo "uninstall                        uninstall devonfw-ide and remove all OS hooks (revert devon ide setup)"
@@ -363,11 +429,15 @@ then
     elif [ "${2}" = "software" ]
     then
       doUpdateSoftware
+    elif [ "${2}" = "projects" ]
+    then
+      doUpdateProjects
     elif [ "${2}" = "all" ]
     then
       doUpdateScripts
       doUpdateSettings
       doUpdateSoftware
+      doUpdateProjects
     else
       doFail "Undefined package ${2}"
     fi

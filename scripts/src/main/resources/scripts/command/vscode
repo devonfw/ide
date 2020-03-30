@@ -28,13 +28,34 @@ function doSetup() {
         echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
         chmod a+x "${VSCODE_HOME}/bin/code"
       fi
-      echo "******* Notice *******"
-      echo "Installing plugins (extension-pack) into VS code..."
-      echo "Please wait until VSCode has successfully installed all plugins."
-      echo "You may then use or close VSCode as you like."
-      doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension devonfw.devonfw-extension-pack &"
+      doAddPlugins
     fi
   fi
+}
+
+function doAddPlugins() {
+  local file
+  for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
+  do
+    if [ -f "${file}" ]
+    then
+      plugin_id=""
+      plugin_active="true"
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ]
+      then
+        doWarning "Invalid vscode plugin config: ${file}"
+      elif [ "${plugin_active}" = "true" ]
+      then
+        doAddPlugin "${plugin_id}"
+      fi
+    fi
+  done
+}
+
+function doAddPlugin() {
+  doEchoAttention "Installing plugin (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
+  doRunCommand "'${VSCODE_HOME}/bin/code' --install-extension '${1}' &"
 }
 
 function doConfigureVsCode() {
@@ -67,6 +88,7 @@ then
   echo "Arguments:"
   echo " --all                if provided as first arg then to command will be invoked for each workspace"
   echo " setup                setup VSCode (install or update)"
+  echo " add-plugin «id»      install an additional plugin (extension)"
   echo " run | start          launch VSCode IDE (default if no argument is given)"
   echo " ws-up[date]          update VSCode workspace"
   echo " ws-re[verse]         reverse merge changes from workspace into settings"
@@ -109,6 +131,11 @@ do
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript vscode
+  elif [ "${1}" = "add-plugin" ]
+  then
+    shift
+    doAddPlugin "${@}"
+    exit ${?}
   else
     doFail "Undefined argument: ${1}"
   fi
