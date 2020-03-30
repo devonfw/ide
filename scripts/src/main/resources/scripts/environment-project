@@ -44,7 +44,7 @@ function doLoadProperties() {
           value=\"${value}\"
         fi
         eval "${key}=${value}"
-        if [ "${export_key}" = "true" ]
+        if [ "${export_key}" = "true" ] && [ -z "${2}" ]
         then
           # shellcheck disable=SC2086
           export ${key?}
