@@ -2,6 +2,8 @@
 # Script to setup devonfw-ide environment. Will actually be sourced,
 # hash bang only for filetype detection and editor syntax support
 
+# $1: path of properties file to load
+# $2: optional prefix to add to variables
 function doLoadProperties() {
   if ! [ -f "${1}" ]
   then
@@ -25,6 +27,7 @@ function doLoadProperties() {
         export_key="true"
         key="${key:7}"
       fi
+      key="${2}${key/./_}"
       if [ -z "${value}" ]
       then
         unset "${key}"
@@ -41,7 +44,7 @@ function doLoadProperties() {
           value=\"${value}\"
         fi
         eval "${key}=${value}"
-        if [ "${export_key}" = "true" ]
+        if [ "${export_key}" = "true" ] && [ -z "${2}" ]
         then
           # shellcheck disable=SC2086
           export ${key?}
