@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.devonfw</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>4</version>
+    <version>5</version>
   </parent>
   <groupId>com.devonfw.tools.ide.dev</groupId>
   <artifactId>devonfw-ide</artifactId>
@@ -16,8 +16,6 @@
   <description>This project provides automatic setup and update of the local development environment.</description>
 
   <properties>
-    <revision>dev</revision>
-    <changelist>-SNAPSHOT</changelist>
     <github.repository>ide</github.repository>
     <devon_ide_version>${revision}${changelist}</devon_ide_version>
   </properties>
@@ -44,6 +42,18 @@
     <module>settings</module>
     <module>eclipse-m2e</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <configuration>
+          <updatePomFile>true</updatePomFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <developers>
     <developer>
