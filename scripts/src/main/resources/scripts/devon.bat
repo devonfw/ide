@@ -52,6 +52,14 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
   set "HOME=%CYGWIN_HOME%\home\%USERNAME%"
   goto :bash_detected
 )
+
+rem If bash can not be autodetected allow the user to configure bash via BASH_HOME environment variable as fallback
+
+if exists "%BASH_HOME%\bin\bash.exe" (
+  set "BASH=%BASH_HOME%\bin\bash.exe"
+  set "HOME=%USERPROFILE%"
+  goto :bash_detected
+)
 echo:
 echo *** ATTENTION ***
 echo Bash has not been found on your system!
