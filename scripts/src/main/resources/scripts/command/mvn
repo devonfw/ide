@@ -46,7 +46,6 @@ function doGetProjectVersion() {
   if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     local cwd="${PWD}"
-    local poms
     local module_list
     module_list="$("${MVN}" -q org.codehaus.mojo:exec-maven-plugin:1.6.0:exec -Dexec.executable=pwd)"
     for module in ${module_list}
