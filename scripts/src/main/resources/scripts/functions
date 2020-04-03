@@ -735,7 +735,7 @@ function doGitPullOrClone() {
       doFail "Not a git repository: ${1}"
     else
       doRunCommand "git clone '${2}' '${1}' --config core.autocrlf=false"
-      if [ -z "${3}" ]
+      if [ -n "${3}" ]
       then 
         pushd "${1}" || exit 255
         doRunCommand "git checkout ${3}"
