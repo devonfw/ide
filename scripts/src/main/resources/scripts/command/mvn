@@ -48,16 +48,21 @@ function doGetProjectVersion() {
     local cwd="${PWD}"
     local module_list
     module_list="$("${MVN}" -q org.codehaus.mojo:exec-maven-plugin:1.6.0:exec -Dexec.executable=pwd)"
-    for module in ${module_list}
-    do
-      cd "${module}" || exit 255
-      maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
-      if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
-      then
-        break;
-      fi
-    done
-    cd "${cwd}" || exit 255
+    if [ "${?}" = 0 ]
+    then
+      for module in ${module_list}
+      do
+        cd "${module}" || exit 255
+        maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
+        if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+        then
+          break;
+        fi
+      done
+      cd "${cwd}" || exit 255
+    else
+      doFail "${module_list}"
+    fi
   fi
   if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
   then
