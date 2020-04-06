@@ -66,7 +66,7 @@ function doStartIntellij() {
   then
     open "${IDEA_HOME}/idea" --args "${@}"
   else
-    "${IDEA_HOME}/idea" "${@}" &
+    "${IDEA_HOME}/bin/idea" "${@}" &
   fi
 }
 
