@@ -35,7 +35,8 @@ if "%1%" == "" (
   goto :setup_env
 )
 
-for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\GitForWindows" /v "InstallPath" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set GIT_HOME=%%P
+rem Search GitForWindows Installation - prefer user over machine result
+for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\GitForWindows" /v "InstallPath" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set GIT_HOME=%%P
 
 if exist "%GIT_HOME%\bin\bash.exe" (
   set "BASH=%GIT_HOME%\bin\bash.exe"
@@ -43,11 +44,20 @@ if exist "%GIT_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 
-for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
+rem If bash in GitForWindows could not be found search Cygwin Installation - prefer user over machine result
+for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
 
 if exist "%CYGWIN_HOME%\bin\bash.exe" (
   set "BASH=%CYGWIN_HOME%\bin\bash.exe"
   set "HOME=%CYGWIN_HOME%\home\%USERNAME%"
+  goto :bash_detected
+)
+
+rem If bash can not be autodetected allow the user to configure bash via BASH_HOME environment variable as fallback
+
+if exists "%BASH_HOME%\bin\bash.exe" (
+  set "BASH=%BASH_HOME%\bin\bash.exe"
+  set "HOME=%USERPROFILE%"
   goto :bash_detected
 )
 echo:

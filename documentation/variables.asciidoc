@@ -28,7 +28,7 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |`DEVON_SOFTWARE_REPOSITORY`|`-`|Project specific or custom link:software.asciidoc#repository[software-repository].
 |`DEVON_SOFTWARE_PATH`|`-`|Globally shared user-specific link:software.asciidoc#shared[local software installation location].
 |`ECLIPSE_VMARGS`|`-Xms128M -Xmx768M -XX:MaxPermSize=256M`|JVM options for Eclipse
-|`ECLIPSE_PLUGINS`|`-`|Array with "feature groups" and "update site URLs" to customize required link:eclipse.asciidoc#plugins[eclipse plugins].
+|deprecated: `ECLIPSE_PLUGINS`|`-`|Array with "feature groups" and "update site URLs" to customize required link:eclipse.asciidoc#plugins[eclipse plugins]. Deprecated - see link:eclipse.asciidoc#plugins[Eclipse plugins].
 |`«TOOL»_VERSION`|`-`|The version of the tool `«TOOL»` to install and use (e.g. `ECLIPSE_VERSION` or `MAVEN_VERSION`).
 |`«TOOL»_BUILD_OPTS`|e.g.`clean install`|The arguments provided to the build-tool `«TOOL»` in order to run a build.
 |`«TOOL»_RELEASE_OPTS`|e.g.`clean deploy -Dchangelist= -Pdeploy`|The arguments provided to the build-tool `«TOOL»` in order to perform a release build.
