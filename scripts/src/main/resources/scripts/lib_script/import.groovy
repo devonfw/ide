@@ -82,20 +82,11 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
     importJob.setListener(new SysoutListener());
     importJob.run(null);
     
-    MavenUpdateRequest request = new MavenUpdateRequest(project, isOffline, isForceUpdate);
-    configurationManager.updateProjectConfiguration(request, monitor);
-
     waitForJobs();
   }
   
   private void waitForJobs() {
-    //Bundle bundle = Platform.getBundle("org.eclipse.m2e.importer");
-    //Class c = bundle.loadClass("org.eclipse.m2e.importer.internal.MavenProjectConfigurator\$UpdateMavenConfigurationJob"); 
-    //Method m = c.getMethod("getInstance");
-    //Object o = m.invoke(null, null);
-    //o.join();
-    
-    // Wait for other jobs
+    // Class names of jobs to wait for
     List importantJobClassNames = Arrays.asList(
           "org.eclipse.m2e.importer.internal.MavenProjectConfigurator\$UpdateMavenConfigurationJob",
           "org.eclipse.m2e.core.internal.project.registry.ProjectRegistryRefreshJob",
