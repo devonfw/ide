@@ -15,3 +15,5 @@ Create a release in a standardized way including the following steps:
 * set next version as `(«version»+1)-SNAPSHOT` in build configuration (e.g. `pom.xml` files)
 * commit the change
 * push your changes
+
+MVN_RELEASE_OPTS=clean deploy -Dchangelist= -Pdeploy
