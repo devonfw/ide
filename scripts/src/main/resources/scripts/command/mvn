@@ -266,8 +266,9 @@ elif [ "${1}" = "release" ]
 then
   GPG_TTY=$(tty)
   export GPG_TTY
+  shift
   # shellcheck disable=SC2086
-  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}
+  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy} "${@}"
 else
   doRunBuild "${@}"
 fi
