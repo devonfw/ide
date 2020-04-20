@@ -63,10 +63,10 @@ function doConfigureIntellij() {
 function doStartIntellij() {
   doConfigureIntellij "-u"
   echo "launching IntelliJ..."
-  local IDEA="${IDE_HOME}/bin/idea"
+  local IDEA="${IDEA_HOME}/bin/idea"
   if [ -f "${IDEA}" ]
   then
-    IDEA="${IDE_HOME}/idea"
+    IDEA="${IDEA_HOME}/idea"
   fi
   if doIsMacOs
   then
