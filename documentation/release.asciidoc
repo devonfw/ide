@@ -16,4 +16,21 @@ Create a release in a standardized way including the following steps:
 * commit the change
 * push your changes
 
-MVN_RELEASE_OPTS=clean deploy -Dchangelist= -Pdeploy
+.Usage of `devon java`
+[options="header"]
+|=======================
+|*Argument(s)*                       |*Meaning*
+|`...`                               |any optional argument will directly be passed to the actual command to build the deployment
+|=======================
+
+== Build-Tools
+
+This `release` commandlet utilizes the link:build.asciidoc[build] commandlet to support mutliple build-tools such as link:mvn.asciidoc[maven], link:gradle.asciidoc[gradle], or link:npm.asciidoc[npm]. Each of those commandlets should respect the link:variables.asciidoc[variable] `«TOOL»_RELEASE_OPTS` to customize the parameters for the release build.
+
+So e.g. if a `pom.xml` is detected, maven will be used. In this example the variable `MVN_RELEASE_OPTS` is used that defaults to `clean deploy -Dchangelist= -Pdeploy`. If you provide as specific argument this will be passed additionally.
+So for the above step `invoke deployment on build-system` the command `devon release -P myProfile` it would technically call `mvn clean deploy -Dchangelist= -Pdeploy -P myProfile`.
+
+Please also note that it is very tricky to determine and modify the version of a project in a fully generic way.
+Even though we try our best to support different scenarios, we can not ensure this is working for edge-cases.
+Therefore, we strongly encourage to follow best practices such as https://maven.apache.org/maven-ci-friendly.html[ci-friendly maven].
+Furhter, sticking to the defaults and follow the devonfw standard to name the profile for custom goals in deployment simply `deploy` is recommended.
