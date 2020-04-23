@@ -42,22 +42,27 @@ function doSetup() {
 function doGetProjectVersion() {
   doSetup
   local maven_project_version
-  maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
+  maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
   if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     local cwd="${PWD}"
-    local poms
-    poms="$(find . -name "pom.xml")"
-    for pom in ${poms}
-    do
-      cd "$(dirname "${pom}")" || exit 255
-      maven_project_version="$("${MVN}" org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -q -DforceStdout)"
-      if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
-      then
-        break;
-      fi
-    done
-    cd "${cwd}" || exit 255
+    local module_list
+    module_list="$("${MVN}" -q org.codehaus.mojo:exec-maven-plugin:1.6.0:exec -Dexec.executable=pwd)"
+    if [ "${?}" = 0 ]
+    then
+      for module in ${module_list}
+      do
+        cd "${module}" || exit 255
+        maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
+        if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+        then
+          break;
+        fi
+      done
+      cd "${cwd}" || exit 255
+    else
+      doFail "${module_list}"
+    fi
   fi
   if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
   then
@@ -106,14 +111,14 @@ function doSetProjectVersion() {
     fi
   fi
   local module_list
-  module_list="$("${MVN}" -q exec:exec -Dexec.executable=pwd)"
+  module_list="$("${MVN}" -q org.codehaus.mojo:exec-maven-plugin:1.6.0:exec -Dexec.executable=pwd)"
   if [ "${?}" = 0 ]
   then
     local cwd="${PWD}"
     for folder in ${module_list}
     do
       cd "${folder}" || exit 255
-      doSetPomVersion "${@}"
+      doSetPomVersion "${1}" "${current_version}" "${3}"
     done
     cd "${cwd}" || exit 255
   else
@@ -136,8 +141,8 @@ function doSetPomVersion() {
   doSetup
   local maven_project_version
   # shellcheck disable=SC2016
-  maven_project_version="$("${MVN}" -q exec:exec -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive)"
-  if [ "${maven_project_version}" = "${1}" ] 
+  maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
+  if [ "${maven_project_version}" = "${1}" ]
   then
     echo "No changes needed for ${PWD}/pom.xml"
     return
@@ -149,9 +154,9 @@ function doSetPomVersion() {
   fi
   local pom_elements
   pom_elements="$(grep "${2}" pom.xml.bak)"
-  if [ "${?}" != 0 ]
+  if [ "${?}" != 0 ] && [ "${maven_project_version}" != "dev-SNAPSHOT" ]
   then
-    doFail "Version ${2} not found in POM ${PWD}/pom.xml"
+    doFail "Version ${2} not found in POM ${PWD}/pom.xml\nCurrent version detected as ${maven_project_version} and target version is ${1}"
     exit 255
   fi
   if [[ "${pom_elements}" == *$'\n'* ]]
@@ -261,8 +266,9 @@ elif [ "${1}" = "release" ]
 then
   GPG_TTY=$(tty)
   export GPG_TTY
+  shift
   # shellcheck disable=SC2086
-  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}
+  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy} "${@}"
 else
   doRunBuild "${@}"
 fi
