@@ -15,7 +15,7 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |`DEVON_IDE_HOME`|e.g. `/projects/my-project`|The top level directory of your `devonfw-ide` link:structure.asciidoc[structure].
 |`PATH`|`$PATH:$DEVON_IDE_HOME/software/java:...`|You system path is adjusted by `devon` link:cli.asciidoc[command].
 |`DEVON_HOME_DIR`|`~`|The platform independent home directory of the current user. In some edge-cases (e.g. in cygwin) this differs from `~` to ensure a central home directory for the user on a single machine in any context or environment.
-|`DEVON_IDE_TOOLS`|`java mvn eclipse vscode node npm ng`|List of tools that should be installed and upgraded by default for your current IDE.
+|`DEVON_IDE_TOOLS`|`java mvn eclipse vscode node npm ng ionic`|List of tools that should be installed and upgraded by default for your current IDE.
 |`DEVON_IDE_CUSTOM_TOOLS`|`-`|List of custom tools that should be installed additionally. See link:software.asciidoc#custom[software] for further details.
 |*`DEVON_OLD_PATH`*|`...`|A "backup" of `PATH` before it was extended by `devon` to allow recovering it. Internal variable that should never be set or tweaked.
 |*`WORKSPACE`*|`main`|The link:workspaces.asciidoc[workspace] you are currently in. Defaults to `main` if you are not inside a link:workspaces.asciidoc[workspace]. Never touch this variable in any `varibales` file.
