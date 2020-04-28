@@ -37,6 +37,7 @@ The following commandlets are currently available:
 * link:help.asciidoc[help]
 * link:ide.asciidoc[ide]
 * link:intellij.asciidoc[intellij]
+* link:ionic.asciidoc[ionic]
 * link:java.asciidoc[java]
 * link:jenkins.asciidoc[jenkins]
 * link:mvn.asciidoc[mvn]

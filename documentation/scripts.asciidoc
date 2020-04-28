@@ -15,6 +15,7 @@ This directory is the heart of the `devonfw-ide` and contains the required link:
 │  ├── link:help.asciidoc[help]
 │  ├── link:ide.asciidoc[ide]
 │  ├── link:intellij.asciidoc[intellij]
+│  ├── link:ionic.asciidoc[ionic]
 │  ├── link:java.asciidoc[java]
 │  ├── link:jenkins.asciidoc[jenkins]
 │  ├── link:mvn.asciidoc[mvn]
