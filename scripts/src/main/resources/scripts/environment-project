@@ -9,6 +9,11 @@ function doLoadProperties() {
   then
     return
   fi
+  if [ test "$(tail -c 1 "${1}" | wc -l)" ]
+  then
+    doEcho "Appending missing newline to ${1}"
+    echo -e "\n" >> "${1}"
+  fi
   local key
   local value
   local export_key
