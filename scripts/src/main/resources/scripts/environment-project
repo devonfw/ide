@@ -9,9 +9,9 @@ function doLoadProperties() {
   then
     return
   fi
-  if [ test "$(tail -c 1 "${1}" | wc -l)" ]
+  if test "$(tail -c 1 "${1}" | wc -l)" -eq 0
   then
-    doEcho "Appending missing newline to ${1}"
+    echo "Appending missing newline to ${1}"
     echo -e "\n" >> "${1}"
   fi
   local key
