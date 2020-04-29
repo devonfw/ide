@@ -214,7 +214,7 @@ function doImportEclipse() {
   else
     # Path is relative make it absolute
     importPath="${L_PWD}/${1}"
-  fi  
+  fi
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
