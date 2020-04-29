@@ -67,3 +67,5 @@ include::system.asciidoc[leveloffset=3]
 include::updates.asciidoc[leveloffset=3]
 
 include::workspaces.asciidoc[leveloffset=3]
+
+include::projects.asciidoc[leveloffset=3]
