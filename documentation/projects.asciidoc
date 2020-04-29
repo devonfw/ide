@@ -1,4 +1,7 @@
-== Project import
+:toc:
+toc::[]
+
+= Project import
 
 The `devonfw-ide` supports to automatically checkout and import required projects into your IDE during link:setup.asciidoc[setup]. To configure this you put a `.properties` file for each desired project into the `projects` sub-folder in your link:settings.asciidoc[settings]. Each `.properties` file describes one "project" which you like to checkout and (potentially) import:
 
