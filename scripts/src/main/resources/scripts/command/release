@@ -8,14 +8,10 @@ then
   echo "Build and deploy a release from the current project."
   echo
   echo "Arguments:"
-  echo "-"
+  echo "...        optional arguments are directly passed to the build command (e.g. mvn) as additional arguments."
   echo
   echo "Options:"
   exit
-elif [ -n "${1}" ]
-then
-  echo "Unknown argument '${1}'"
-  exit 255
 fi
 
 if ! git diff-index --quiet HEAD || [ -n "$(git status -s)" ]
@@ -77,7 +73,7 @@ while true
 do
   echo
   echo "Building and deploying the release..."
-  doDevonCommandAndReturn build release
+  doDevonCommandAndReturn build release "${@}"
   result=${?}
   if [ "${result}" == 0 ]
   then
