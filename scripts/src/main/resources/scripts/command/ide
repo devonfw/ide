@@ -344,14 +344,14 @@ function doImportProject() {
   then
     cd "${project_path}/${project_build_path}" || exit 255
     # shellcheck disable=SC2086
-    doDevonCommand ${project_build_cmd}
+    "${DEVON_IDE_HOME}/scripts/devon" ${project_build_cmd}
     cd "${project_workspace_path}" || exit 255
   else
     doEcho "Build command not set. Skipping build for project."
   fi
   if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
   then
-    doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
+    "${DEVON_IDE_HOME}/scripts/devon" eclipse import "${project_path}" "${project_workingsets}"
   fi
 }
 
