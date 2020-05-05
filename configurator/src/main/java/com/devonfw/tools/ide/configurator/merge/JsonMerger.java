@@ -15,7 +15,6 @@ import java.util.Set;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
@@ -119,23 +118,29 @@ public class JsonMerger extends FileTypeMerger {
 
   private JsonValue mergeAndResolve(JsonValue json, JsonValue mergeJson, VariableResolver resolver, Status status) {
 
-    if (json instanceof JsonObject) {
-      return mergeAndResolveObject((JsonObject) json, (JsonObject) mergeJson, resolver, status);
-    } else if (json instanceof JsonArray) {
-      return mergeAndResolveArray((JsonArray) json, (JsonArray) mergeJson, resolver, status);
-    } else if (json instanceof JsonString) {
-      return mergeAndResolveString((JsonString) json, (JsonString) mergeJson, resolver, status);
-    } else if (json instanceof JsonNumber) {
-      return mergeAndResolveNumber((JsonNumber) json, (JsonNumber) mergeJson, resolver, status);
-    } else if (json == null) {
+    if (json == null) {
       if (mergeJson == null) {
         return null;
       } else {
         return mergeAndResolve(mergeJson, null, resolver, status);
       }
     } else {
-      Log.err("Undefined JSON type: " + json);
-      return null;
+      switch (json.getValueType()) {
+        case OBJECT:
+          return mergeAndResolveObject((JsonObject) json, (JsonObject) mergeJson, resolver, status);
+        case ARRAY:
+          return mergeAndResolveArray((JsonArray) json, (JsonArray) mergeJson, resolver, status);
+        case STRING:
+          return mergeAndResolveString((JsonString) json, (JsonString) mergeJson, resolver, status);
+        case NUMBER:
+        case FALSE:
+        case TRUE:
+        case NULL:
+          return mergeAndResolveNativeType(json, mergeJson, resolver, status);
+        default:
+          Log.err("Undefined JSON type: " + json.getClass());
+          return null;
+      }
     }
   }
 
@@ -207,7 +212,7 @@ public class JsonMerger extends FileTypeMerger {
     return Json.createValue(resolvedString);
   }
 
-  private JsonNumber mergeAndResolveNumber(JsonNumber json, JsonNumber mergeJson, VariableResolver resolver,
+  private JsonValue mergeAndResolveNativeType(JsonValue json, JsonValue mergeJson, VariableResolver resolver,
       Status status) {
 
     if (mergeJson == null) {
