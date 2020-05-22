@@ -55,9 +55,9 @@ function doCheckTopLevelProject() {
 function doRunBuild() {
   doSetup
   local extra_arg=""
-  if [ ! -d node_modules ] && [[ "${*}" != *install* ]]
+  if [ ! -d node_modules ] && [[ "${*}" != *add* ]]
   then
-    extra_arg="install"
+    extra_arg="add"
   fi
   doEcho "Running: yarn ${extra_arg} ${*}"
   if doIsQuiet
