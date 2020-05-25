@@ -1,0 +1,28 @@
+:toc:
+toc::[]
+
+= project
+
+The `project` commandlet manages projects of your `devonfw-ide`.
+You need to supply additional arguments as `devon project «args»`. These are explained by the following table:
+
+.Usage of `devon project`
+[options="header"]
+|=======================
+|*Argument(s)*                   |*Meaning*
+|`setup [«project»]`             |setup or update all or the specified project(s)
+|=======================
+
+== setup
+Run `devon project setup «project»` to setup the link:projects.asciidoc[preconfigured project] `«project»`.
+During the initial link:setup.asciidoc[setup] this will happen for all active projects.
+Call this command explicitly to setup a project that is not active by default.
+Furhter, if the project has already been setup it will be updated (`git pull`).
+In case you omit the project name all (active) projects will be setup/updated.
+Use force option (-f) to setup all projects even if not active.
+
+The setup of a project will include:
+
+* clone or pull the project from git into the configured workspace and location
+* trigger a build on the project (optional as link:projects.asciidoc[configured])
+* import the project into link:eclipse.asciidoc[eclipse] (optional as link:projects.asciidoc[configured])
