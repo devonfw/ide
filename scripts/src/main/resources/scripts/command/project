@@ -45,7 +45,7 @@ function doImportProject() {
   project_git_url=""
   project_git_branch=""
   project_build_path="."
-  project_eclipse="import"
+  project_eclipse=""
   project_build_cmd=""
   project_active="true"
   doEcho "Importing from ${file}..."
