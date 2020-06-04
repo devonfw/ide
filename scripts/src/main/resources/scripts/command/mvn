@@ -42,7 +42,31 @@ function doSetup() {
 function doGetProjectVersion() {
   doSetup
   local maven_project_version
-  maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
+  if [ -e ".mvn/maven.config" ]
+  then
+    # https://maven.apache.org/maven-ci-friendly.html
+    local maven_config
+    maven_config="$(cat .mvn/maven.config)"
+    local maven_revision
+    maven_revision=${maven_config/#*-Drevision=}
+    if [ "${maven_revision}" != "${maven_config}" ]
+    then
+      maven_revision=${maven_revision/ */}
+      local maven_changelist
+      maven_changelist=${maven_config/#*-Dchangelist=}
+      if [ "${maven_changelist}" != "${maven_config}" ]
+      then
+        maven_changelist=${maven_changelist/ */}
+        maven_project_version="${maven_revision}${maven_changelist}"
+      else
+        maven_project_version="${maven_revision}"
+      fi
+    fi  
+  fi
+  if [ -z "${maven_project_version}" ]
+  then
+    maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
+  fi
   if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
   then
     local cwd="${PWD}"
@@ -266,8 +290,9 @@ elif [ "${1}" = "release" ]
 then
   GPG_TTY=$(tty)
   export GPG_TTY
+  shift
   # shellcheck disable=SC2086
-  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}
+  doRunBuild ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy} "${@}"
 else
   doRunBuild "${@}"
 fi

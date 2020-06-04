@@ -4,11 +4,11 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if command -v ng &> /dev/null
+  if command -v ionic &> /dev/null
   then
     if [ -n "${1}" ]
     then
-      echo "angular-cli (ng) is already installed at $(command -v ng)"
+      echo "ionic-cli (ionic) is already installed at $(command -v ionic)"
     fi
   else
     doDevonCommand npm -q setup
@@ -17,20 +17,20 @@ function doSetup() {
     then
       npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
     fi
-    doRunCommand "'${npm_command}' install -g @angular/cli@latest --unsafe" "install angular-cli"
+    doRunCommand "'${npm_command}' install -g @ionic/cli@latest --unsafe" "install ionic-cli"
   fi
 }
 
 #CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
-  echo "Setup or run angular-cli (ng)."
+  echo "Setup or run ionic-cli (ionic)."
   echo
   echo "Arguments:"
-  echo "setup                 setup angular-cli (install and verify)"
-  echo "create                create a new devon4ng project"
-  echo "cicd «args»           generate cicd files for the current devon4ng project: $PWD"
-  echo "«args»                call ng with the specified arguments"
+  echo "setup                 setup ionic-cli (install and verify)"
+  echo "create                create a new devon4ng ionic project"
+  echo "cicd «args»           generate cicd files for the current devon4ng ionic project: $PWD"
+  echo "«args»                call ionic with the specified arguments"
   echo
   echo "Options:"
   exit
@@ -43,12 +43,12 @@ elif [ "${1}" = "create" ]
 then
   shift
   doSetup
-  ng new "${@}"
+  ionic start "${@}"
 elif [ "${1}" = "cicd" ]
 then
   shift
   doDevonCommand cicdgen ng "${*}"
 else
   doSetup
-  ng "${@}"
+  ionic "${@}"
 fi

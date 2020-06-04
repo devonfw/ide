@@ -149,21 +149,7 @@ public class Migrations {
         .and() //
         .next().to(VersionIdentifier.ofDevon4j("3.2.0")) //
         .pom().replaceProperty("devon4j.version", "3.2.0") //
-        .replaceString("com.devonfw.module.test.common.api.category.CategorySystemTest", "system")
-        .replaceString(
-            "com.devonfw.module.test.common.api.category.CategoryComponentTest,com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
-            "component,subsystem,system")
-        .replaceString(
-            "com.devonfw.module.test.common.api.category.CategorySubsystemTest,com.devonfw.module.test.common.api.category.CategorySystemTest",
-            "subsystem,system")
-        .replaceDependency(new VersionIdentifier("junit", "junit", null),
-            new VersionIdentifier("org.junit.jupiter", "junit-jupiter-engine", null, VersionIdentifier.SCOPE_TEST))
-        .addDependency(new VersionIdentifier("*-core", null),
-            new VersionIdentifier("org.junit.platform", "junit-platform-runner", null, VersionIdentifier.SCOPE_TEST))
         .and().java()
-        .replace("import org.junit.Test;",
-            "import org.junit.jupiter.api.extension.ExtendWith;\n import org.junit.jupiter.api.Test;\n import org.springframework.test.context.junit.jupiter.SpringExtension;")
-        .replace("@RunWith(SpringRunner.class)", "@ExtendWith(SpringExtension.class)")
         .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadata",
             "com.devonfw.module.basic.common.api.RevisionMetadata")
         .replace("com.devonfw.module.jpa.dataaccess.api.RevisionMetadataType",
@@ -172,7 +158,17 @@ public class Migrations {
         .next().to(VersionIdentifier.ofDevon4j("3.2.1")) //
         .pom().replaceProperty("devon4j.version", "3.2.1") //
         .and() //
-        .next().build();
+        .next().to(VersionIdentifier.ofDevon4j("2020.04.001")) //
+        .pom().replaceProperty("devon4j.version", "2020.04.001") //
+        .replaceDependency(new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping", null),
+            new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping-dozer", null))
+        .and().java().replace("new PageRequest", "PageRequest.of").replace("new Sort", "Sort.by").and().next()
+        .to(VersionIdentifier.ofDevon4j("2020.04.002")).pom().replaceProperty("devon4j.version", "2020.04.002") //
+        .replaceDependency(
+            new VersionIdentifier("com.devonfw.java.modules", "devon4j-test", null, VersionIdentifier.SCOPE_TEST),
+            new VersionIdentifier("com.devonfw.java.modules", "devon4j-test-junit4", null,
+                VersionIdentifier.SCOPE_TEST))
+        .and().next().build();
   }
 
 }

@@ -2,6 +2,19 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.04.001
+
+Starting with this release we have changed the versioning schema in `devonfw` to `yyyy.mm.NNN` where `yyyy.mm` is the date of the planned milestone release and `NNN` is a running number increased with every bug- or security-fix update.
+
+* https://github.com/devonfw/ide/issues/394[#394] variable from devon.properties not set if not terminated with newline
+* https://github.com/devonfw/ide/issues/399[#399] launching of Intellij fails with No such file or directory error.
+* https://github.com/devonfw/ide/issues/371[#371] Eclipse plugin installation broke
+* https://github.com/devonfw/ide/issues/390[#390] maven get/set-version buggy
+* https://github.com/devonfw/ide/issues/397[#397] migration support for devon4j 2020.04.001
+* https://github.com/devonfw/ide/pull/400[#400] allow custom args for release
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/9?closed=1[milestone 2020.04.001].
+
 == 3.3.1
 
 New release with bugfixes and new ide plugin feature:

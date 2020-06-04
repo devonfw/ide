@@ -25,8 +25,9 @@ function doSetup() {
     then
       echo "Doing workarounds for MacOS quirks..."
       mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA CE.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
-      echo -e "#!/usr/bin/env bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/idea"
-      chmod a+x "${IDEA_HOME}/idea"
+      mkdir -p "${IDEA_HOME}/bin"
+      echo -e "#!/usr/bin/env bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/bin/idea"
+      chmod a+x "${IDEA_HOME}/bin/idea"
     fi
   fi
   if [ -n "${1}" ]
@@ -62,11 +63,16 @@ function doConfigureIntellij() {
 function doStartIntellij() {
   doConfigureIntellij "-u"
   echo "launching IntelliJ..."
+  local IDEA="${IDEA_HOME}/bin/idea"
+  if [ -f "${IDEA}" ]
+  then
+    IDEA="${IDEA_HOME}/idea"
+  fi
   if doIsMacOs
   then
-    open "${IDEA_HOME}/idea" --args "${@}"
+    open "${IDEA}" --args "${@}"
   else
-    "${IDEA_HOME}/idea" "${@}" &
+    "${IDEA}" "${@}" &
   fi
 }
 

@@ -1,4 +1,7 @@
-== Project import
+:toc:
+toc::[]
+
+= Project import
 
 The `devonfw-ide` supports to automatically checkout and import required projects into your IDE during link:setup.asciidoc[setup]. To configure this you put a `.properties` file for each desired project into the `projects` sub-folder in your link:settings.asciidoc[settings]. Each `.properties` file describes one "project" which you like to checkout and (potentially) import:
 
@@ -9,7 +12,9 @@ workspace=example
 git.url=http://github.com/someorg/someproject
 git.branch=develop
 build.path=.
+build.cmd=mvn -DskipTests=true -Darchetype.test.skip=true clean install
 eclipse=import
+active=true
 ----
 
 .Variables of project import
@@ -21,9 +26,10 @@ eclipse=import
 |`workspace`|`main`|Workspace to use for checkout and import. Default is `main`.
 |`git.url`|e.g. `http://github.com/someorg/someproject`|(required) Git URL to use for cloning the project.
 |`git.branch`|e.g. `develop`|(optional) Git branch to checkout. Git default branch is default.
-|`build.path`|e.g. `.` (default)|(optional) The directory inside `path` where to trigger an initial build after clone or pull (if `build.command` is set). For a regular project use `.` to build top-level project.
-|`build.command`|e.g. `build` or `mvn -DskipTests=true -Darchetype.test.skip=true clean install`|(optional) The _devonfw_ command to invoke to build the project after clone or pull. If omitted no build is triggered. 
+|`build.path`|e.g. `.` (default)|(optional) The directory inside `path` where to trigger an initial build after clone or pull (if `build.cmd` is set). For a regular project use `.` to build top-level project.
+|`build.cmd`|e.g. `build` or `mvn -DskipTests=true -Darchetype.test.skip=true clean install`|(optional) The _devonfw_ command to invoke to build the project after clone or pull. If omitted no build is triggered. 
 |`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
+|`active`|`true`|(optional) If set to `false` the project is skipped during the link:setup.asciidoc[setup].
 |===
 
 Please not that the `.properties` file is parsed via shell and not via java. So be careful with "advanced" features `.properties` files normally support.
