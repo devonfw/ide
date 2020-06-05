@@ -14,6 +14,21 @@ import java.nio.file.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.apache.tools.ant.ExitStatusException;
+import org.osgi.framework.Bundle;
+import java.lang.reflect.Method;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
+
+class SysoutProgressMonitor extends org.eclipse.core.runtime.NullProgressMonitor {
+  private String myName;
+  
+  public void setTaskName(String name) {
+    this.myName = name;
+  }
+  public void beginTask(String name, int totalWork) {
+    System.out.println(myName + " :Begin Task: " + name + "(" + totalWork + ")");
+  }
+}
 
 class SysoutListener implements RecursiveImportListener {
   public void projectCreated(IProject project) {
@@ -61,12 +76,35 @@ class MyWorkbenchAdvisor extends org.eclipse.ui.application.WorkbenchAdvisor {
     if (!projectDirectory.canRead()) {
       throw new IllegalStateException("Cannot open project directory " + projectDirectoryName);
     }
-    SmartImportJob job = new SmartImportJob(projectDirectory, getOrCreateWorkingSets(workingSetNames), true, true);
-    Map proposals = job.getImportProposals(null);
-    job.setDirectoriesToImport(proposals.keySet());
-    job.setListener(new SysoutListener());
-    job.schedule();
-    job.join();
+    SmartImportJob importJob = new SmartImportJob(projectDirectory, getOrCreateWorkingSets(workingSetNames), true, true);
+    Map proposals = importJob.getImportProposals(null);
+    importJob.setDirectoriesToImport(proposals.keySet());
+    importJob.setListener(new SysoutListener());
+    importJob.run(null);
+    
+    waitForJobs();
+  }
+  
+  private void waitForJobs() {
+    // Class names of jobs to wait for
+    List importantJobClassNames = Arrays.asList(
+          "org.eclipse.m2e.importer.internal.MavenProjectConfigurator\$UpdateMavenConfigurationJob",
+          "org.eclipse.m2e.core.internal.project.registry.ProjectRegistryRefreshJob",
+          "org.eclipse.core.internal.events.AutoBuildJob",
+      );
+      System.out.println("Wating for jobs to finish...");
+      IJobManager jobMan = Job.getJobManager();
+      boolean importantJobsRunning;
+      do {
+        importantJobsRunning = false;
+        System.out.println("Still running:");
+        Job[] jobs = jobMan.find(null);
+        for (Job job : jobs) {
+          importantJobsRunning |= (importantJobClassNames.contains(job.getClass().getName()));
+          System.out.println(job.toString() + ": " + job.getClass().getName());
+        }  
+        Thread.sleep(3000);      
+      } while (importantJobsRunning);
   }
   
   public void preStartup() {
