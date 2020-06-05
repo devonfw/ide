@@ -12,7 +12,7 @@ function doLoadProperties() {
   if test "$(tail -c 1 "${1}" | wc -l)" -eq 0
   then
     echo "Appending missing newline to ${1}"
-    echo -e "\n" >> "${1}"
+    echo >> "${1}"
   fi
   local key
   local value
@@ -21,7 +21,8 @@ function doLoadProperties() {
   do
     if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
     then
-      value="$(echo -n "$value" | tr -d '\r')"
+      key="${key//$'\r'}"
+      value="${value//$'\r'}"
       export_key=""
       if [ "${value:0:1}" = "~" ]
       then
@@ -35,7 +36,10 @@ function doLoadProperties() {
       key="${2}${key/./_}"
       if [ -z "${value}" ]
       then
-        unset "${key}"
+	    if [ -n "${key}" ]
+		then
+          unset "${key}"
+		fi
       else
         if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
         then
