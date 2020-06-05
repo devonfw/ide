@@ -5,6 +5,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 == 2020.04.002
 
 Minor update with the following bugfixes and improvements:
+
 * https://github.com/devonfw/ide/issues/418[#418]: Make projects optional
 * https://github.com/devonfw/ide/pull/421[#421]: update devon4j to 2020.04.002
 * https://github.com/devonfw/ide/issues/413[#413]: Update Eclipse to 2020-03
