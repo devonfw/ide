@@ -64,7 +64,11 @@ function doStartIntellij() {
   doConfigureIntellij "-u"
   echo "launching IntelliJ..."
   local IDEA="${IDEA_HOME}/bin/idea"
-  if [ -f "${IDEA}" ]
+  if [ ! -f "${IDEA}" ]
+  then
+    IDEA="${IDEA_HOME}/bin/idea64.exe"
+  fi
+  if [ ! -f "${IDEA}" ]
   then
     IDEA="${IDEA_HOME}/idea"
   fi
