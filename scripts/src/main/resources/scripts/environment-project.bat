@@ -79,10 +79,11 @@ rem %~1: variable name
 rem %~2: variable value (may contain ~ or ${var})
 :set_variable
 setlocal EnableDelayedExpansion
-set "value=%~2"
+set "value=%~2 %~3"
 rem replace ${var} variable syntax with windows %var% syntax
-set "value=!value:${=%%!
-set "value=!value:}=%%!
+set value=!value:${=%%!
+set value=!value:}=%%!
+set value=!value:"=%!
 rem resolve ~ to user home (USERPROFILE)
 if "!value:~0,1!" == "~" (
   set "value=%USERPROFILE%!value:~1!"
