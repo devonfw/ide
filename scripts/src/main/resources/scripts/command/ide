@@ -3,6 +3,18 @@
 source "$(dirname "${0}")"/../functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
+function doUpdateMetaFile() {
+  if [ -f "${USERPROFILE}/devon.txt" ]
+  then
+    if ! grep -q "${DEVON_IDE_HOME}" "${USERPROFILE}/devon.txt"
+	then
+      echo "${DEVON_IDE_HOME};" >> "${USERPROFILE}/devon.txt"
+	fi
+  else
+    echo "${DEVON_IDE_HOME};" > "${USERPROFILE}/devon.txt"
+  fi
+}
+
 function doUpdateScripts() {
   # shellcheck disable=SC2007,SC2154
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
@@ -149,6 +161,7 @@ function doUpdateCli() {
 
 function doSetup() {
   doUpdateCli
+  doUpdateMetaFile
   doUpdateSettings "${@}"
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
