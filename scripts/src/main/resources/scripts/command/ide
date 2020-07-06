@@ -4,7 +4,7 @@ source "$(dirname "${0}")"/../functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateMetaFile() {
-  local ide_paths="${USERPROFILE}/.devon/ide-paths"
+  local ide_paths="${DEVON_HOME_DIR}/.devon/ide-paths"
   if [ -f "${ide_paths}" ]
   then
     if ! grep -q "${DEVON_IDE_HOME}" "${ide_paths}"
