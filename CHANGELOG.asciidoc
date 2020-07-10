@@ -2,6 +2,15 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.04.003
+
+Minor update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/395[#395]: variable from devon.properites unset if value is in double quotes
+* https://github.com/devonfw/ide/pull/429[#429]: Added script to create a meta file in the users directory after setup
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/13?closed=1[milestone 2020.04.003].
+
 == 2020.04.002
 
 Minor update with the following bugfixes and improvements:
