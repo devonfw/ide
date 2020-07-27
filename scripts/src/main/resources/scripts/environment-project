@@ -23,7 +23,6 @@ function doLoadProperties() {
     then
       key="${key//$'\r'}"
       value="${value//$'\r'}"
-      echo "$key=$value"
       export_key=""
       if [ "${value:0:1}" = "~" ]
       then
@@ -53,7 +52,6 @@ function doLoadProperties() {
         then
           value=\"${value}\"
         fi
-        echo "$key=$value"
         eval "${key}=${value}"
         if [ "${export_key}" = "true" ] && [ -z "${2}" ]
         then
