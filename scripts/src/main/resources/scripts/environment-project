@@ -23,6 +23,7 @@ function doLoadProperties() {
     then
       key="${key//$'\r'}"
       value="${value//$'\r'}"
+      echo "$key=$value"
       export_key=""
       if [ "${value:0:1}" = "~" ]
       then
@@ -36,10 +37,10 @@ function doLoadProperties() {
       key="${2}${key/./_}"
       if [ -z "${value}" ]
       then
-	    if [ -n "${key}" ]
-		then
+        if [ -n "${key}" ]
+        then
           unset "${key}"
-		fi
+        fi
       else
         if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
         then
@@ -48,10 +49,11 @@ function doLoadProperties() {
             value="$(cygpath "${value}")"
           fi
         fi
-        if [ "${value:0:1}" != "(" ]
+        if [ "${value:0:1}" != "(" ] && [ "${value:0:1}" != '"' ]
         then
           value=\"${value}\"
         fi
+        echo "$key=$value"
         eval "${key}=${value}"
         if [ "${export_key}" = "true" ] && [ -z "${2}" ]
         then
