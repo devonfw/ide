@@ -88,7 +88,7 @@ if "%~1%" == "export" (
   ) else (
     set "search=%~2% "
   )
-  set "replacement=%2~%="
+  set "replacement=%~2%="
 ) else (
   if "%~2%" == "" (
     set "search=%~1%"
