@@ -2,6 +2,15 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.04.004
+
+Minor update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/433[#433]: Windows: devon command line sets wrong environment variables (with tilde symbol)
+* https://github.com/devonfw/ide/pull/435[#435]: fix variable resolution on bash
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/14?closed=1[milestone 2020.04.004].
+
 == 2020.04.003
 
 Minor update with the following bugfixes and improvements:
