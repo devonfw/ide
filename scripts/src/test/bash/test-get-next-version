@@ -1,0 +1,22 @@
+#!/bin/bash
+
+cd ../../../../scripts/src/main/resources || exit 1
+exitcode=0
+source scripts/functions
+echo "Testing getNextVersion"
+function doTestGetNextVersion() {
+  result=$(doGetNextVersion "${1}")
+  status="OK"
+  if [ "${result}" != "${2}" ]
+  then
+    status="NOK - was ${result}"
+  fi
+  echo "doGetNextVersion ${1} == ${2} ? ${status}"
+}
+doTestGetNextVersion 3.0.0-beta8 3.0.0-beta9
+doTestGetNextVersion 3.0.0-beta01 3.0.0-beta02
+doTestGetNextVersion 3.0.0-beta9 3.0.0-beta10
+doTestGetNextVersion 2020.04.01 2020.04.02
+doTestGetNextVersion 2020.04.001 2020.04.002
+
+exit "${exitcode}"
