@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # Source this script from a linux shell to setup the environment variables for the corresponding project.
 # hash bang only for filetype detection and editor syntax support
 

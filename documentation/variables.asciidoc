@@ -32,4 +32,5 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |`«TOOL»_VERSION`|`-`|The version of the tool `«TOOL»` to install and use (e.g. `ECLIPSE_VERSION` or `MAVEN_VERSION`).
 |`«TOOL»_BUILD_OPTS`|e.g.`clean install`|The arguments provided to the build-tool `«TOOL»` in order to run a build.
 |`«TOOL»_RELEASE_OPTS`|e.g.`clean deploy -Dchangelist= -Pdeploy`|The arguments provided to the build-tool `«TOOL»` in order to perform a release build.
+|`DEVON_IDE_TRACE`||If value is not an empty string, the `devonfw-ide` scripts will trace each script line executed. For bash two lines output: before and again after expansion.
 |=======================
