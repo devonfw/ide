@@ -51,14 +51,12 @@ function cleanupPlugins() {
 function doAddPlugins() {
   local file
   local pluginsToInstall
-  local pluginsToUninstall
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
     then
       plugin_id=""
       plugin_active="true"
-	  force_uninstall="false"
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ]
       then
@@ -74,7 +72,7 @@ function doAddPlugins() {
 }
 
 function doInstallPlugins() {
-  if [ ! -z "${1}" ]
+  if [ -n "${1}" ]
   then
 	doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
     doRunVsCode --force "${1}"
