@@ -27,7 +27,7 @@ function doSetup() {
   then
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
-    local software_version="${ECLIPSE_VERSION:-2019-09}"
+    local software_version="${ECLIPSE_VERSION:-2020-03}"
     local eclipse_edition=java #jee
     local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition}-${software_version}-R"
     if doIsMacOs
@@ -214,11 +214,11 @@ function doImportEclipse() {
   else
     # Path is relative make it absolute
     importPath="${L_PWD}/${1}"
-  fi  
+  fi
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSets="${importWorkingSets}" ${ECLIPSE_VMARGS} 
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
 # CLI

@@ -3,6 +3,19 @@
 source "$(dirname "${0}")"/../functions
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
+function doUpdateMetaFile() {
+  local ide_paths="${DEVON_HOME_DIR}/.devon/ide-paths"
+  if [ -f "${ide_paths}" ]
+  then
+    if ! grep -q "${DEVON_IDE_HOME}" "${ide_paths}"
+	then
+      echo "${DEVON_IDE_HOME}" >> "${ide_paths}"
+	fi
+  else
+    echo "${DEVON_IDE_HOME}" > "${ide_paths}"
+  fi
+}
+
 function doUpdateScripts() {
   # shellcheck disable=SC2007,SC2154
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
@@ -149,6 +162,7 @@ function doUpdateCli() {
 
 function doSetup() {
   doUpdateCli
+  doUpdateMetaFile
   doUpdateSettings "${@}"
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
@@ -218,6 +232,10 @@ function doSetup() {
   else
     doWarning "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
   fi
+}
+
+function doUpdateProjects() {
+  doDevonCommand project setup
 }
 
 function doUpdateSoftware() {
@@ -311,61 +329,6 @@ function doUninstall() {
   echo "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
   echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
   echo "Goodbye and have a nice day!"
-}
-
-# $1: path to properties file
-function doImportProject() {
-  if [ ! -f "${1}" ]
-  then
-    return
-  fi
-  project_path=""
-  project_workingsets=""
-  project_workspace="main"
-  project_git_url=""
-  project_git_branch=""
-  project_build_path="."
-  project_eclipse="import"
-  project_build_cmd=""
-  doEcho "Importing from ${file}..."
-  doLoadProperties "${1}" "project_"
-  if [ -z "${project_path}" ] && [ -z "${project_git_url}" ]
-  then
-    doFail "Invalid project configuration ${1} - both 'path' and 'git_url' have to be defined."
-  fi
-  doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
-  doDebug "Pull or clone git project ${project_path}..."
-  project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
-  mkdir -p "${project_workspace_path}"
-  cd "${project_workspace_path}" || exit 255
-  doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-  doDebug "Building project with devon command: ${project_build_cmd}"
-  if [ -n "${project_build_cmd}" ]
-  then
-    cd "${project_path}/${project_build_path}" || exit 255
-    # shellcheck disable=SC2086
-    doDevonCommand ${project_build_cmd}
-    cd "${project_workspace_path}" || exit 255
-  else
-    doEcho "Build command not set. Skipping build for project."
-  fi
-  if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
-  then
-    doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
-  fi
-}
-
-function doUpdateProjects() {
-  if [ -d "${SETTINGS_PATH}/projects" ]
-  then
-    local last_cwd file
-    last_cwd="${PWD}"
-    for file in "${SETTINGS_PATH}"/projects/*.properties
-    do
-      doImportProject "${file}"
-    done
-    cd "${last_cwd}" || exit 255
-  fi
 }
 
 target_version="LATEST"

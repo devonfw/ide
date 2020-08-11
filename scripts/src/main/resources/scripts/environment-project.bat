@@ -69,7 +69,7 @@ if not exist "%~1" (
 )
 for /F "eol=# delims== tokens=1,*" %%a in (%~1) do (
   if not "%%a" == "" (
-    call :set_variable "%%a" "%%b"
+    call :set_variable %%a %%b
   )
 )
 goto :eof
@@ -79,21 +79,37 @@ rem %~1: variable name
 rem %~2: variable value (may contain ~ or ${var})
 :set_variable
 setlocal EnableDelayedExpansion
-set "value=%~2"
+set "line=%*"
+if "%~1%" == "export" (
+  rem remove export as this only makes sense on linux/mac
+  set line=!line:~7!
+  if "%~3%" == "" (
+    set "search=%~2%"
+  ) else (
+    set "search=%~2% "
+  )
+  set "replacement=%~2%="
+) else (
+  if "%~2%" == "" (
+    set "search=%~1%"
+  ) else (
+    set "search=%~1% "
+  )
+  set "replacement=%~1%="
+)
+set line=!line:%search%=%replacement%!
 rem replace ${var} variable syntax with windows %var% syntax
-set "value=!value:${=%%!
-set "value=!value:}=%%!
+set line=!line:${=%%!
+set line=!line:}=%%!
+set line=!line:"=%!
 rem resolve ~ to user home (USERPROFILE)
 if "!value:~0,1!" == "~" (
   set "value=%USERPROFILE%!value:~1!"
 )
-set "var=%~1"
-rem remove potential export as this only makes sense on linux/mac
-set "var=!var:export =!
 (
   rem endlocal in () block to access local variable and "export" it
   endlocal
   rem use call in order to evaluate %var% inside value
-  call set "%var%=%value%"
+  call set "%line%"
 )
 goto :eof

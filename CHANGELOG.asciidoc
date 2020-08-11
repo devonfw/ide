@@ -2,6 +2,37 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.04.004
+
+Minor update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/433[#433]: Windows: devon command line sets wrong environment variables (with tilde symbol)
+* https://github.com/devonfw/ide/pull/435[#435]: fix variable resolution on bash
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/14?closed=1[milestone 2020.04.004].
+
+== 2020.04.003
+
+Minor update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/395[#395]: variable from devon.properites unset if value is in double quotes
+* https://github.com/devonfw/ide/pull/429[#429]: Added script to create a meta file in the users directory after setup
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/13?closed=1[milestone 2020.04.003].
+
+== 2020.04.002
+
+Minor update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/418[#418]: Make projects optional
+* https://github.com/devonfw/ide/pull/421[#421]: update devon4j to 2020.04.002
+* https://github.com/devonfw/ide/issues/413[#413]: Update Eclipse to 2020-03
+* https://github.com/devonfw/ide/issues/424[#424]: Strange errors on windows if devon.properties contains mixed line endings
+* https://github.com/devonfw/ide/issues/399[#399]: launching of Intellij fails with No such file or directory error.
+* https://github.com/devonfw/ide/pull/410[#410]: fix jsonmerge for boolean and null values
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/11?closed=1[milestone 2020.04.002].
+
 == 2020.04.001
 
 Starting with this release we have changed the versioning schema in `devonfw` to `yyyy.mm.NNN` where `yyyy.mm` is the date of the planned milestone release and `NNN` is a running number increased with every bug- or security-fix update.

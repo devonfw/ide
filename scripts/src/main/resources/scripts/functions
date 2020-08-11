@@ -1084,6 +1084,7 @@ function doGetNextVersion() {
   local version="${1}"
   local suffix="${version##*[0-9]}"
   local prefix=""
+  local last=""
   local next=""
   local begin="${version:0:(${#version}-${#suffix})}"
   if [ -n "${begin}" ]
@@ -1098,8 +1099,13 @@ function doGetNextVersion() {
       fi
     done
     prefix="${begin:0:(${i})}"
-    next="${begin:(${i}):(${#begin}-${i})}"
-    next=$((next+1))
+    last="${begin:(${i}):(${#begin}-${i})}"
+    next=$((last+1))
+    # https://github.com/devonfw/ide/issues/427
+    if [ "${#last}" -gt "${#next}" ]
+    then
+      next="${last:0:(${#last}-${#next})}${next}"
+    fi
   fi
   echo "${prefix}${next}${suffix}"
 }
