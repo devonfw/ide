@@ -74,7 +74,7 @@ function doAddPlugins() {
 function doInstallPlugins() {
   if [ -n "${1}" ]
   then
-	doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
+    doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
     doRunVsCode --force "${1}"
   else
     doEcho "No plugins to be installed / uninstalled"
