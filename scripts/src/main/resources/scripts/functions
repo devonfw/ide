@@ -1094,7 +1094,7 @@ function doGetNextVersion() {
     do
       if [[ ! "${begin:(${i}):1}" =~ [0-9] ]]
       then
-        i=${i}+1
+        i=$((i+1))
         break
       fi
     done
