@@ -29,12 +29,28 @@ function doSetup() {
         chmod a+x "${VSCODE_HOME}/bin/code"
       fi
     fi
+	
+    cleanupPlugins
     doAddPlugins
+  fi
+}
+
+function cleanupPlugins() {
+  clean_plugins_on_update="false"
+  doLoadProperties "${SETTINGS_PATH}"/vscode/vscode.properties
+
+  if [ "${clean_plugins_on_update}" = "true" ]
+  then
+    doEcho "Cleaning up all extensions"
+    doRunCommand "rm -Rf ${DEVON_IDE_HOME}/software/vscode-extensions/*"
+  else
+    doEcho "vsCode extensions not configured to be removed on update. If you would like to do so, please create ${SETTINGS_PATH}/vscode/vscode.properties with clean_plugins_on_update=true."
   fi
 }
 
 function doAddPlugins() {
   local file
+  local pluginsToInstall
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -47,15 +63,22 @@ function doAddPlugins() {
         doWarning "Invalid vscode plugin config: ${file}"
       elif [ "${plugin_active}" = "true" ]
       then
-        doAddPlugin "${plugin_id}"
+        pluginsToInstall="${pluginsToInstall} --install-extension ${plugin_id}"
       fi
     fi
   done
+
+  doInstallPlugins "${pluginsToInstall}"
 }
 
-function doAddPlugin() {
-  doEchoAttention "Installing plugin (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
-  doRunVsCode --force --install-extension "${1}" &
+function doInstallPlugins() {
+  if [ -n "${1}" ]
+  then
+    doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
+    doRunVsCode --force "${1}"
+  else
+    doEcho "No plugins to be installed / uninstalled"
+  fi
 }
 
 function doConfigureVsCode() {
