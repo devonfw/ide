@@ -1,5 +1,6 @@
 rem This batch is not supposed to be called manually
 @echo off
+if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
 call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
 call :load_properties "%USERPROFILE%\devon.properties"
