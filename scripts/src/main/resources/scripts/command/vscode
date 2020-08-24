@@ -107,7 +107,7 @@ function doRunVsCode() {
 }
 
 function doStartVsCode() {
-  doConfigureVsCode
+  doConfigureVsCode -u
   doEcho "launching VSCode..."
   doRunVsCode "${WORKSPACE_PATH}"
 }
