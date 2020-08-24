@@ -68,6 +68,14 @@ function doRunBuild() {
   fi
 }
 
+function doBuild() {
+  doRunBuild install
+  if cat package.json | tr '\n' '§' | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']build[\"']\s*:"
+  then
+    doRunBuild run build
+  fi
+}
+
 #CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -92,23 +100,29 @@ then
 elif [ "${1}" = "setup" ]
 then
   doSetup setup
-else
-  if [ "${1}" = "get-version" ]
+elif [ "${1}" = "get-version" ]
+then
+  doGetProjectVersion
+elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+then
+  shift
+  doSetProjectVersion "${@}"
+elif [ "${1}" = "build" ]
+then
+  shift
+  doBuild
+  if [ -n "${1}" ]
   then
-    doGetProjectVersion
-  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
-  then
-    shift
-    doSetProjectVersion "${@}"
-  elif [ "${1}" = "check-top-level-project" ]
-  then
-    shift
-    doCheckTopLevelProject "${@}"
-  elif [ "${1}" = "release" ]
-  then
-    # shellcheck disable=SC2086
-    doRunBuild ${YARN_RELEASE_OPTS:-release}
-  else
     doRunBuild "${@}"
   fi
+elif [ "${1}" = "check-top-level-project" ]
+then
+  shift
+  doCheckTopLevelProject "${@}"
+elif [ "${1}" = "release" ]
+then
+  # shellcheck disable=SC2086
+  doRunBuild ${YARN_RELEASE_OPTS:-release}
+else
+  doRunBuild "${@}"
 fi
