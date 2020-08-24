@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 echo
