@@ -71,7 +71,7 @@ function doRunBuild() {
 
 function doBuild() {
   doRunBuild install
-  if cat package.json | tr '\n' '§' | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']build[\"']\s*:"
+  if tr '\n' '§' < package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']build[\"']\s*:"
   then
     doRunBuild run build
   fi
