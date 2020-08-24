@@ -114,13 +114,13 @@ do
     doStartIntellij "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
-    doConfigureEclipse "-u"
+    doConfigureIntellij "-u"
   elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
   then
-    doConfigureEclipse "-i"
+    doConfigureIntellij "-i"
   elif [ "${1}" = "ws-reverse-add" ]
   then
-    doConfigureEclipse "-x"
+    doConfigureIntellij "-x"
   elif [ "${1}" = "setup" ]
   then
     doSetup setup

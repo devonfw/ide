@@ -66,6 +66,7 @@ public class ConfiguratorTest extends Assertions {
     assertThat(new File(jsonFolder, "settings.json")).hasContent("\n" // this newline is rather a bug of JSON-P impl
         + "{\n" //
         + "    \"java.home\": \"" + DEVON_IDE_HOME + "/software/java\",\n" //
+        + "    \"tslint.autoFixOnSave\": true,\n" //
         + "    \"object\": {\n" //
         + "        \"bar\": \"" + DEVON_IDE_HOME + "/bar\",\n" //
         + "        \"array\": [\n" //
