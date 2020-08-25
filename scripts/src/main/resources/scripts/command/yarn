@@ -55,17 +55,12 @@ function doCheckTopLevelProject() {
 
 function doRunBuild() {
   doSetup
-  local extra_arg=""
-  if [ ! -d node_modules ] && [[ "${*}" != *install* ]]
-  then
-    extra_arg="install"
-  fi
-  doEcho "Running: yarn ${extra_arg} ${*}"
+  doEcho "Running: yarn ${*}"
   if doIsQuiet
   then
-    yarn --silent ${extra_arg} "${@}"
+    yarn --silent "${@}"
   else
-    yarn ${extra_arg} "${@}"
+    yarn "${@}"
   fi
 }
 
@@ -74,6 +69,8 @@ function doBuild() {
   if tr '\n' '§' < package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']build[\"']\s*:"
   then
     doRunBuild run build
+  else
+    doEcho "no build script is present in package.json - skipping 'yarn run build'"
   fi
 }
 
@@ -94,10 +91,20 @@ then
   echo "Options:"
   exit
 fi
-if [ -z "${1}" ]
+if [ -z "${1}" ] || [ "${1}" = "build" ]
 then
-  # shellcheck disable=SC2086
-  doRunBuild ${YARN_BUILD_OPTS:-build}
+  if [ -n "${YARN_BUILD_OPTS}" ]
+  then
+    # shellcheck disable=SC2086
+    doRunBuild ${YARN_BUILD_OPTS}
+  else
+    doBuild
+  fi
+  shift
+  if [ -n "${1}" ]
+  then
+    doRunBuild "${@}"
+  fi
 elif [ "${1}" = "setup" ]
 then
   doSetup setup
@@ -108,14 +115,6 @@ elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
 then
   shift
   doSetProjectVersion "${@}"
-elif [ "${1}" = "build" ]
-then
-  shift
-  doBuild
-  if [ -n "${1}" ]
-  then
-    doRunBuild "${@}"
-  fi
 elif [ "${1}" = "check-top-level-project" ]
 then
   shift
