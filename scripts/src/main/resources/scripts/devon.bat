@@ -1,4 +1,5 @@
 @echo off
+if NOT "%DEVON_IDE_TRACE%"=="" echo on
 if "%1%" == "-v" (
   goto :print_version
 )

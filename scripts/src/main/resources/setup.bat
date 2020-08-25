@@ -1,4 +1,5 @@
 @echo off
+if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
 pushd %~dp0
 echo Setting up your devonfw-ide in %CD%
