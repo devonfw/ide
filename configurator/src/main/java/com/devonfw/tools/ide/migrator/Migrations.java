@@ -168,6 +168,9 @@ public class Migrations {
             new VersionIdentifier("com.devonfw.java.modules", "devon4j-test", null, VersionIdentifier.SCOPE_TEST),
             new VersionIdentifier("com.devonfw.java.modules", "devon4j-test-junit4", null,
                 VersionIdentifier.SCOPE_TEST))
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2020.08.001")) //
+        .pom().replaceProperty("devon4j.version", "2020.08.001") //
         .and().next().build();
   }
 
