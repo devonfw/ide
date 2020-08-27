@@ -49,17 +49,20 @@ function doCheckTopLevelProject() {
 
 function doRunBuild() {
   doSetup
-  local extra_arg=""
-  if [ ! -d node_modules ] && [[ "${*}" != *install* ]]
-  then
-    extra_arg="install"
-  fi
-  doEcho "Running: npm ${extra_arg} ${*}"
+  doEcho "Running: npm ${*}"
   if doIsQuiet
   then
-    npm --quiet ${extra_arg} "${@}"
+    npm --quiet "${@}"
   else
-    npm ${extra_arg} "${@}"
+    npm "${@}"
+  fi
+}
+
+function doBuild() {
+  doRunBuild install
+  if doIsPackageJsonContainingScript build
+  then
+    doRunBuild run build
   fi
 }
 
@@ -76,30 +79,38 @@ then
   echo "Options:"
   exit
 fi
-if [ -z "${1}" ]
+if [ -z "${1}" ] || [ "${1}" = "build" ]
 then
-  # shellcheck disable=SC2086
-  doRunBuild ${NPM_BUILD_OPTS:-build}
+  if [ -n "${NPM_BUILD_OPTS}" ]
+  then
+    # shellcheck disable=SC2086
+    doRunBuild ${NPM_BUILD_OPTS}
+  else
+    doBuild
+  fi
+  shift
+  if [ -n "${1}" ]
+  then
+    doRunBuild "${@}"
+  fi
 elif [ "${1}" = "setup" ]
 then
   doSetup setup
+elif [ "${1}" = "get-version" ]
+then
+  doGetProjectVersion
+elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+then
+  shift
+  doSetProjectVersion "${@}"
+elif [ "${1}" = "check-top-level-project" ]
+then
+  shift
+  doCheckTopLevelProject "${@}"
+elif [ "${1}" = "release" ]
+then
+  # shellcheck disable=SC2086
+  doRunBuild ${NPM_RELEASE_OPTS:-release}
 else
-  if [ "${1}" = "get-version" ]
-  then
-    doGetProjectVersion
-  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
-  then
-    shift
-    doSetProjectVersion "${@}"
-  elif [ "${1}" = "check-top-level-project" ]
-  then
-    shift
-    doCheckTopLevelProject "${@}"
-  elif [ "${1}" = "release" ]
-  then
-    # shellcheck disable=SC2086
-    doRunBuild ${NPM_RELEASE_OPTS:-release}
-  else
-    doRunBuild "${@}"
-  fi
+  doRunBuild "${@}"
 fi

@@ -328,7 +328,7 @@ function doDevonCommandAndReturn() {
     fi
     shift
     # shellcheck disable=SC2086
-    "${command}" ${force} ${quiet} ${batch} "${@}"
+    "${command}" ${force} ${quiet} ${debug} ${batch} "${@}"
     result=${?}
     if [ ${result} != 0 ]
     then
@@ -1125,6 +1125,17 @@ function doIsWindows() {
     return
   fi
   return 255
+}
+
+function doIsPackageJsonContainingScript() {
+  doDebug "checking if package.json contains script section named $1"
+  if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
+  then
+    return 0
+  else
+    doEcho "no build script is present in package.json - skipping to run build script."
+    return 255
+  fi
 }
 
 # $1: single CLI arg
