@@ -328,7 +328,7 @@ function doDevonCommandAndReturn() {
     fi
     shift
     # shellcheck disable=SC2086
-    "${command}" ${force} ${quiet} ${batch} "${@}"
+    "${command}" ${force} ${quiet} ${debug} ${batch} "${@}"
     result=${?}
     if [ ${result} != 0 ]
     then
