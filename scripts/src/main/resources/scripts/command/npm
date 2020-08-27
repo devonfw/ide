@@ -60,11 +60,9 @@ function doRunBuild() {
 
 function doBuild() {
   doRunBuild install
-  if tr '\n' '§' < package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']build[\"']\s*:"
+  if doIsPackageJsonContainingScript build
   then
     doRunBuild run build
-  else
-    doEcho "no build script is present in package.json - skipping 'npm run build'"
   fi
 }
 
