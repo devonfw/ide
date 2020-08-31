@@ -45,9 +45,9 @@ function doRun() {
   doEcho "Running: node ${*}"
   if doIsQuiet
   then
-    node "${*}" > /dev/null
+    node "${@}" > /dev/null
   else
-    node "${*}"
+    node "${@}"
   fi
 }
 
@@ -93,6 +93,6 @@ case ${1} in
   doDevonCommand cicdgen node "${*}"
 ;;
 *)
-  doRun "${*}"
+  doRun "${@}"
 ;;
 esac
