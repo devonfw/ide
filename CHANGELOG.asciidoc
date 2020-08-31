@@ -7,6 +7,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 Update with the following bugfixes and improvements:
 
 * https://github.com/devonfw/ide/pull/454[#454]: update to eclipse 2020.06
+* https://github.com/devonfw/ide/pull/442[#442]: update nodejs and vscode
 * https://github.com/devonfw/ide/issues/432[#432]: vsCode settings are not updated
 * https://github.com/devonfw/ide/issues/446[#446]: intellij: doConfigureEclipse: command not found
 * https://github.com/devonfw/ide/issues/440[#440]: Software update may lead to inconsistent state due to windows file locks
