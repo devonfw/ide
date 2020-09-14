@@ -126,7 +126,7 @@ public class JsonMerger extends FileTypeMerger {
       }
     } else {
       if (mergeJson == null) {
-        status.updated = true; // target file does not exist and needs to be created
+        status.updated = true; // JSON to merge does not exist and needs to be created
       }
       switch (json.getValueType()) {
         case OBJECT:
