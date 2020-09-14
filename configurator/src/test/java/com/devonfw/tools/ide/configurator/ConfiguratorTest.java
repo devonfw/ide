@@ -77,6 +77,10 @@ public class ConfiguratorTest extends Assertions {
         + "        \"foo\": \"" + DEVON_IDE_HOME + "/foo\"\n" //
         + "    }\n" //
         + "}");
+    assertThat(new File(jsonFolder, "update.json")).hasContent("\n" // this newline is rather a bug of JSON-P impl
+        + "{\n" //
+        + "    \"key\": \"value\"\n" //
+        + "}");
 
     File configFolder = new File(workspaceDir, "config");
     assertThat(configFolder).isDirectory();
