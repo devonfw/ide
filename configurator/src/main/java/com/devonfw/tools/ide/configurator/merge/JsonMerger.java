@@ -29,7 +29,7 @@ import com.devonfw.tools.ide.configurator.resolve.VariableResolver;
 import com.devonfw.tools.ide.logging.Log;
 
 /**
- * TODO hohwille This type ...
+ * Implementation of {@link FileTypeMerger} for JSON.
  *
  * @since 3.0.0
  */
@@ -125,6 +125,9 @@ public class JsonMerger extends FileTypeMerger {
         return mergeAndResolve(mergeJson, null, resolver, status);
       }
     } else {
+      if (mergeJson == null) {
+        status.updated = true; // JSON to merge does not exist and needs to be created
+      }
       switch (json.getValueType()) {
         case OBJECT:
           return mergeAndResolveObject((JsonObject) json, (JsonObject) mergeJson, resolver, status);
