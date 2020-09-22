@@ -84,6 +84,7 @@ set "line=%*"
 if "%~1%" == "export" (
   rem remove export as this only makes sense on linux/mac
   set line=!line:~7!
+  set value=%~3
   if "%~3%" == "" (
     set "search=%~2%"
   ) else (
@@ -91,6 +92,7 @@ if "%~1%" == "export" (
   )
   set "replacement=%~2%="
 ) else (
+  set value=%~2
   if "%~2%" == "" (
     set "search=%~1%"
   ) else (
@@ -98,15 +100,16 @@ if "%~1%" == "export" (
   )
   set "replacement=%~1%="
 )
-set line=!line:%search%=%replacement%!
+if "!value:~0,1!" == "~" (
+  rem variable value starts with tilde that needs to be replaced with users home dir (USERPROFILE)
+  set line=%replacement%%USERPROFILE%!value:~1!
+) else (
+  set line=!line:%search%=%replacement%!
+)
 rem replace ${var} variable syntax with windows %var% syntax
 set line=!line:${=%%!
 set line=!line:}=%%!
-set line=!line:"=%!
-rem resolve ~ to user home (USERPROFILE)
-if "!value:~0,1!" == "~" (
-  set "value=%USERPROFILE%!value:~1!"
-)
+set line=!line:"=!
 (
   rem endlocal in () block to access local variable and "export" it
   endlocal
