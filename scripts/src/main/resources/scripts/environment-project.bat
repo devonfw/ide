@@ -84,22 +84,15 @@ set "line=%*"
 if "%~1%" == "export" (
   rem remove export as this only makes sense on linux/mac
   set line=!line:~7!
-  set value=%~3
-  if "%~3%" == "" (
-    set "search=%~2%"
-  ) else (
-    set "search=%~2% "
-  )
-  set "replacement=%~2%="
-) else (
-  set value=%~2
-  if "%~2%" == "" (
-    set "search=%~1%"
-  ) else (
-    set "search=%~1% "
-  )
-  set "replacement=%~1%="
+  shift
 )
+if "%~2%" == "" (
+  set "search=%~1%"
+) else (
+  set "search=%~1% "
+)
+set "replacement=%~1%="
+set value=%~2
 if "!value:~0,1!" == "~" (
   rem variable value starts with tilde that needs to be replaced with users home dir (USERPROFILE)
   set line=%replacement%%USERPROFILE%!value:~1!
