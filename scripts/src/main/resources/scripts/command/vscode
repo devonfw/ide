@@ -7,7 +7,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    local software_version="${VSCODE_VERSION:-1.49.1}"
+    local software_version="${VSCODE_VERSION:-1.49.2}"
     local download_url="https://update.code.visualstudio.com/${software_version}"
     local software_extension=".zip"
     if doIsMacOs
