@@ -9,7 +9,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
     software_version="${INTELLIJ_VERSION:-2019.2}"
-	software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
+    software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
     if doIsMacOs
     then
       software_type="dmg"

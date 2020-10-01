@@ -29,7 +29,7 @@ There are variables that can be used for IntelliJ. These are explained by the fo
 [options="header"]
 |=======================
 |*Variable*|*Default-Value*|*Meaning*
-|*`INTELLIJ_VERSION`*|`2019.2`|The version of the tool IntelliJ to install and use.
-|*`INTELLIJ_EDITION_TYPE`*|`C`|The edition of the tool IntelliJ to install and use. The value `C` mean Community edition and the value `U` mean Ultimate edition. The Ultimate edition requires a license. The user has to buy the license separately and it is not part of devon-ide. The devon-ide only supports download and installation.
+|*`INTELLIJ_VERSION`*|`latest_tested_version`|The version of the tool IntelliJ to install and use.
+|*`INTELLIJ_EDITION_TYPE`*|`C`|The edition of the tool IntelliJ to install and use. The value `C` mean Community edition and the value `U` mean Ultimate edition. The Ultimate edition requires a license. The user has to buy the license separately and it is not part of devonfw-ide. The devonfw-ide only supports download and installation.
 |=======================
   
