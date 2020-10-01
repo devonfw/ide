@@ -8,7 +8,7 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    software_version="${INTELLIJ_VERSION:-2019.2}"
+    software_version="${INTELLIJ_VERSION:-2020.2.1}"
     software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
     if doIsMacOs
     then
