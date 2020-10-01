@@ -40,6 +40,7 @@ function doSetup() {
     then
        ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
     fi
+    export PATH="${IDEA_HOME}/bin:${PATH}"
   fi
   if [ -n "${1}" ]
   then
