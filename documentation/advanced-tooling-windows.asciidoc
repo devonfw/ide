@@ -30,14 +30,14 @@ image::images/tools-tabs-explorer.png["tabs in windows explorer"]
 
 === Tabs for SSH
 If you want to have tabs for your SSH client http://www.putty.org/[Putty] (or even better http://www.9bis.net/kitty/[Kitty] that comes with https://winscp.net/[WinSCP] integration) you simply install https://github.com/jimradford/superputty#superputty-application[SuperPutty]
-Btw, Windows 10 has already an SSH client included.
+BTW: Windows 10 has already an SSH client included.
 
 .Tabs for SSH
 image::images/tools-tabs-ssh.png["tabs for SSH sessions"]
 
 === Tabs for CMD
-If you want to have tabs for your windows command-line you simply install https://conemu.github.io/[ConEmu]. Here you can also add other CLIs like Putty.
-Also you should have a look at the new Windows Terminal, which also has tabbed CLIs: https://github.com/Microsoft/Terminal
+If you want to have tabs for your windows command-line you simply install https://conemu.github.io/[ConEmu]. Here you can also add other shells like Putty.
+Also you should have a look at the new https://github.com/Microsoft/Terminal[Windows Terminal] which also supports tabs.
 
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
@@ -72,7 +72,7 @@ You are used to symbolic and hard links in Linux? You have to work with Windows?
 If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
-Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux KErnel running on Windows (an a light weight VM).
+Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (an a light weight VM).
 
 === X11
 Want to connect via SSH and need to open an X11 app from the server? Want to see the GUI on your windows desktop?
@@ -87,7 +87,7 @@ For the example (« and ») you can simply use this script to get started:
 ^+<::Send {U+00BB}
 ```
 Now just press `[ctrl][<]` and `[ctrl][>]` (`[ctrl][shift][<]`). Next create shortcuts to launch your IDE, to open your favorite tool, etc.
-If you like a GUI to easily configure the scrips, that comes with a lot of extensions preinstalled, you should have a look at Ac'tive Aid: https://activaid.telgkamp.de/ .
+If you like a GUI to easily configure the scrips, that comes with a lot of extensions preinstalled, you should have a look at https://activaid.telgkamp.de/[Ac'tive Aid].
 
 === Paint anywhere on your desktop
 Do you collaborate sharing your screen, and want to mark a spot on top of what you see? Use http://epic-pen.com/[Epic Pen] to do just that.
@@ -96,7 +96,7 @@ Do you collaborate sharing your screen, and want to mark a spot on top of what y
 Need to visualise complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf) an run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
 
 === up your screen capture game
-Capture any part of your screen with a single click, directly upload to dropbox, or run an svn commit (oops sorry git ;-) ) all in one go with http://getgreenshot.org/[Greenshot]. Another screen capture tool where you can easily manage and edit your screenshots and also do screen recordings with is Screenpresso: https://www.screenpresso.com/download/
+Capture any part of your screen with a single click, directly upload to dropbox, or run an svn commit (oops sorry git ;-) ) all in one go with http://getgreenshot.org/[Greenshot]. Another screen capture tool where you can easily manage and edit your screenshots and also do screen recordings with is https://www.screenpresso.com/download/[Screenpresso].
 
 === Fast Search in Windows
 https://voidtools.com/[Everything] is a desktop search utility for Windows that can rapidly find files and folders by name. 
