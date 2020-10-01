@@ -36,6 +36,10 @@ function doSetup() {
       echo -e "#!/usr/bin/env bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/bin/idea"
       chmod a+x "${IDEA_HOME}/bin/idea"
     fi
+    if  [ -f "${IDEA_HOME}/bin/idea.sh" ]
+    then
+       ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
+    fi
   fi
   if [ -n "${1}" ]
   then
@@ -70,19 +74,21 @@ function doConfigureIntellij() {
 function doStartIntellij() {
   doConfigureIntellij "-u"
   echo "launching IntelliJ..."
-  local IDEA="${IDEA_HOME}/bin/idea"
-  if [ ! -f "${IDEA}" ]
+  local IDEA="${IDEA_HOME}/bin/idea64.exe"
+  if [ ! -f "${IDEA}" ];
   then
-    IDEA="${IDEA_HOME}/bin/idea64.exe"
+	IDEA="${IDEA_HOME}/bin/idea"
   fi
-  if [ ! -f "${IDEA}" ]
+  if [ ! -f "${IDEA}" ];
   then
     IDEA="${IDEA_HOME}/idea"
   fi
   if doIsMacOs
   then
+	echo "MacOs command ${IDEA}"
     open "${IDEA}" --args "${@}"
   else
+    echo "command ${IDEA}"
     "${IDEA}" "${@}" &
   fi
 }
