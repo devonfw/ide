@@ -22,7 +22,7 @@ function doSetup() {
     #mirror="https://mirror.math.princeton.edu"
     #mirror="https://ftp.osuosl.org"
     download_url="https://download-cf.jetbrains.com/idea/ideaI${software_edition_type}-${software_version}.${software_type}"
-    doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}"
+    doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}-${software_edition_type}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
