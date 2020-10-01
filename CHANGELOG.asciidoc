@@ -10,6 +10,7 @@ Update with the following bugfixes and improvements:
 * https://github.com/devonfw/ide/pull/474[#474]: make intellij work on linux (idea.sh vs. idea)
 * https://github.com/devonfw/ide/pull/475[#475]: IntelliJ edition support not working properly
 * https://github.com/devonfw/ide/pull/477[#477]: update IntelliJ to 2020.2.1
+* https://github.com/devonfw/ide/pull/478[#478]: add IDEA_HOME to PATH after installation
 * https://github.com/devonfw/ide/pull/465[#465]: Security update for node.js and VS code
 * https://github.com/devonfw/ide/issues/467[#467]: Expansion of ~ stopped working on windows CMD (M2_HOME not properly set)
 * https://github.com/devonfw/ide/issues/461[#461]: settings still not updated: JsonMerger not writing even if target file not exists
