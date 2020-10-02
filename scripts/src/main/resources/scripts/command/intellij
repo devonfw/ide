@@ -8,7 +8,8 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    software_version="${INTELLIJ_VERSION:-2019.2}"
+    software_version="${INTELLIJ_VERSION:-2020.2.1}"
+    software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
     if doIsMacOs
     then
       software_type="dmg"
@@ -20,16 +21,26 @@ function doSetup() {
     fi
     #mirror="https://mirror.math.princeton.edu"
     #mirror="https://ftp.osuosl.org"
-    download_url="https://download-cf.jetbrains.com/idea/ideaIC-${software_version}.${software_type}"
-    doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}"
+    download_url="https://download-cf.jetbrains.com/idea/ideaI${software_edition_type}-${software_version}.${software_type}"
+    doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}-${software_edition_type}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
-      mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA CE.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
+      if [ "${software_edition_type}" = "U"  ]
+      then
+        mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
+      else
+        mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA CE.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
+      fi
       mkdir -p "${IDEA_HOME}/bin"
       echo -e "#!/usr/bin/env bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/bin/idea"
       chmod a+x "${IDEA_HOME}/bin/idea"
     fi
+    if  [ -f "${IDEA_HOME}/bin/idea.sh" ]
+    then
+       ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
+    fi
+    export PATH="${IDEA_HOME}/bin:${PATH}"
   fi
   if [ -n "${1}" ]
   then
@@ -64,19 +75,21 @@ function doConfigureIntellij() {
 function doStartIntellij() {
   doConfigureIntellij "-u"
   echo "launching IntelliJ..."
-  local IDEA="${IDEA_HOME}/bin/idea"
-  if [ ! -f "${IDEA}" ]
+  local IDEA="${IDEA_HOME}/bin/idea64.exe"
+  if [ ! -f "${IDEA}" ];
   then
-    IDEA="${IDEA_HOME}/bin/idea64.exe"
+    IDEA="${IDEA_HOME}/bin/idea"
   fi
-  if [ ! -f "${IDEA}" ]
+  if [ ! -f "${IDEA}" ];
   then
     IDEA="${IDEA_HOME}/idea"
   fi
   if doIsMacOs
   then
+    echo "MacOs command ${IDEA}"
     open "${IDEA}" --args "${@}"
   else
+    echo "command ${IDEA}"
     "${IDEA}" "${@}" &
   fi
 }
