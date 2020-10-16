@@ -51,10 +51,7 @@ function doRun() {
   fi
 }
 
-if [ -z "${NODE_HOME}" ]
-then
-  NODE_HOME="${DEVON_IDE_HOME}/software/node"
-fi
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
 
 #CLI
 case ${1} in 
