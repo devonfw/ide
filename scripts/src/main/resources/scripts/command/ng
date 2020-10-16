@@ -8,7 +8,7 @@ function doSetup() {
   if [ ! -x "${NG_CMD}" ]
   then
     doDevonCommand node -q setup
-    doDevonCommand npm install -g @angular/cli@latest --unsafe install angular-cli
+    doDevonCommand npm install -g @angular/cli@latest
   else
     doEcho "ng is already installed at ${NG_CMD}"
   fi
