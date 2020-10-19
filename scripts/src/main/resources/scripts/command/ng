@@ -5,20 +5,12 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if command -v ng &> /dev/null
+  if [ ! -x "${NG_CMD}" ]
   then
-    if [ -n "${1}" ]
-    then
-      echo "angular-cli (ng) is already installed at $(command -v ng)"
-    fi
+    doDevonCommand node -q setup
+    doDevonCommand npm install -g @angular/cli@latest
   else
-    doDevonCommand npm -q setup
-    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
-    if [ ! -x "${npm_command}" ]
-    then
-      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
-    fi
-    doRunCommand "'${npm_command}' install -g @angular/cli@latest --unsafe" "install angular-cli"
+    doEcho "ng is already installed at ${NG_CMD}"
   fi
 }
 
@@ -36,6 +28,11 @@ then
   echo "Options:"
   exit
 fi
+NG_CMD="${DEVON_IDE_HOME}/software/node/ng"
+if [ ! -x "${NG_CMD}" ]
+then
+  NG_CMD="${DEVON_IDE_HOME}/software/node/bin/ng"
+fi
 
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
@@ -51,5 +48,5 @@ then
   doDevonCommand cicdgen ng "${*}"
 else
   doSetup
-  ng "${@}"
+  "${NG_CMD}" "${@}"
 fi
