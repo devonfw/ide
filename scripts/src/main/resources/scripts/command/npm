@@ -5,14 +5,11 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if command -v npm &> /dev/null
+  if [ ! -x "${NPM_CMD}" ]
   then
-    if [ -n "${1}" ]
-    then
-      doEcho "npm is already installed at $(command -v npm)"
-    fi
-  else
     doDevonCommand node -q setup
+  else
+    doEcho "npm is already installed at ${NPM_CMD}"
   fi
 }
 
@@ -52,9 +49,9 @@ function doRunBuild() {
   doEcho "Running: npm ${*}"
   if doIsQuiet
   then
-    npm --quiet "${@}"
+    "${NPM_CMD}" --quiet "${@}"
   else
-    npm "${@}"
+    "${NPM_CMD}" "${@}"
   fi
 }
 
@@ -79,6 +76,12 @@ then
   echo "Options:"
   exit
 fi
+NPM_CMD="${DEVON_IDE_HOME}/software/node/npm"
+if [ ! -x "${NPM_CMD}" ]
+then
+  NPM_CMD="${DEVON_IDE_HOME}/software/node/bin/npm"
+fi
+
 if [ -z "${1}" ] || [ "${1}" = "build" ]
 then
   if [ -n "${NPM_BUILD_OPTS}" ]
