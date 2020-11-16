@@ -11,7 +11,7 @@ In case you want to administrate `devonfw-ide` settings for your project, you sh
 As a developer you are supported to link:setup.asciidoc[setup] your IDE automated and fast while you can have a nice cup of coffee (after you provided `settings-URL` and accepted the license).
 You only need the settings URL from your `devonfw-ide` xref:admin[admin].
 Experienced developers can directly call `setup «settings-URL»`.
-Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter it when you are prompeted for `Settings URL` (using copy&paste to avoid typos).
+Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter it when you are prompted for `Settings URL` (using copy&paste to avoid typos).
 
 === Update
 To update your IDE (if instructed by your xref:admin[admin]), all you need to do is run the following command:
