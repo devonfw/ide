@@ -65,5 +65,15 @@ Eclipse already comes with a buid-in spellchecker. This is very helpful when wri
 When typing JavaDoc, inline comments or other texts the spellchecker will underline unknown words in red.
 If your cursor is located as such a word you can hit `[Ctrl][1]` to get a context menu with additional options.
 There you can either choose similar correct words to correct a typo or you may even add the word (maybe a new buisness term) to your local dictionary.
+
+image::images/eclipse-spellcheck.png["Eclipse spellchecker”]
+
 In the latter case, you should commit the changes to your link:settings.asciidoc[settings] so that it will be available to your entire team.
 For further details about comitting changes to the settings please consult the link:usage.asciidoc#admin[admin usage].
+
+== non-english dictionary
+
+In case your project has to write documentation or text in languages other than English, you might want to prefill your project dictionary for that language.
+Here we collect a list of such dictionaries that you can download and merge into your project dictionary:
+
+* German: https://sourceforge.net/projects/germandict/
