@@ -42,7 +42,7 @@ Also you should have a look at the new https://github.com/Microsoft/Terminal[Win
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
 
-See link:guide-integration.asciidoc[] for integration of ConEmu with `devonfw-ide`.
+See link:integration.asciidoc[integration] to make ConEmu work flawless with `devonfw-ide`.
 
 == Windows Helpers
 
