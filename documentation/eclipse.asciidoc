@@ -71,7 +71,7 @@ image::images/eclipse-spellcheck.png["Eclipse spellchecker”]
 In the latter case, you should commit the changes to your link:settings.asciidoc[settings] so that it will be available to your entire team.
 For further details about comitting changes to the settings please consult the link:usage.asciidoc#admin[admin usage].
 
-== non-english dictionary
+=== non-english dictionary
 
 In case your project has to write documentation or text in languages other than English, you might want to prefill your project dictionary for that language.
 Here we collect a list of such dictionaries that you can download and merge into your project dictionary:
