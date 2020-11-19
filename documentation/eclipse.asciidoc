@@ -63,7 +63,7 @@ Of course you may also mix plugin IDs with fully qualified plugins.
 
 Eclipse already comes with a buid-in spellchecker. This is very helpful when writing comments. The default settings of `devonfw-ide` ship with a project specific https://github.com/devonfw/ide-settings/blob/master/eclipse/project.dictionary[dictionary file] and according configurations to enable spellchecking and configuring this dictionary.
 When typing JavaDoc, inline comments or other texts the spellchecker will underline unknown words in red.
-If your cursor is located as such a word you can hit `[Ctrl][1]` to get a context menu with additional options.
+If your cursor is located at such a word you can hit `[Ctrl][1]` to get a context menu with additional options.
 There you can either choose similar correct words to correct a typo or you may even add the word (maybe a new buisness term) to your local dictionary.
 
 image::images/eclipse-spellcheck.png["Eclipse spellchecker”]
