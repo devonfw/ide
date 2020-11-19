@@ -76,4 +76,4 @@ For further details about comitting changes to the settings please consult the l
 In case your project has to write documentation or text in languages other than English, you might want to prefill your project dictionary for that language.
 Here we collect a list of such dictionaries that you can download and merge into your project dictionary:
 
-* German: https://sourceforge.net/projects/germandict/
+* German: https://sourceforge.net/projects/germandict/ (has to be converted to UTF-8 e.g. with link:advanced-tooling-windows.asciidoc#real-text-editor[Notepad++] via `Encoding > Convert to UTF-8`)
