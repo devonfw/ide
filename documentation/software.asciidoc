@@ -55,7 +55,7 @@ Each entry applies:
 * Further entries will inherit this default if omitted
 * This URL is used in the same way as described above for a software xref:repository[repository].
 * The `DEVON_SOFTWARE_REPOSITORY` variable is ignored by this feature.
-* The optional infix `:all` is used to indicate that the tool is platform independent. Otherwise an OS specific infix is appended the the file URL to download for your platform (`windows`, `linux`, or `mac`).
+* The optional infix `:all` is used to indicate that the tool is platform independent. Otherwise an OS specific infix is appended to the file URL to download for your platform (`windows`, `linux`, or `mac`).
 
 As an example we define the following in `${DEVON_IDE_HOME}/settings/devon.properties`:
 ```
