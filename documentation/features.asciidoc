@@ -3,29 +3,29 @@ toc::[]
 
 = Features
 
-Every developer needs great tools to work efficient. Setting all this up manually can be tedious and error-prone. Further, different projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
+Every developer needs great tools to work efficiently. Setting up these tools manually can be tedious and error-prone. Furthermore, some projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
 
-The `devonfw-ide` will solve all these problems. Here are the features we can offer for you with `devonfw-ide`:
+The `devonfw-ide` will solve these issues. Here are the features you will find through `devonfw-ide`:
 
 * *Efficient* +
-Setup your IDE within minutes tailored for the requirements of your project.
+Set up your IDE within minutes tailored for the requirements of your project.
 * *Automated* +
 Automate the setup and update, avoid manual steps and mistakes.
 * *Simple* +
-KISS (Keep It Small and Simple), no installers or tool-integrations that break with every release. Instead use archive-files (zip or tar.gz), templates and simple shell scripts.
+KISS (Keep It Small and Simple), no installers or tool-integrations that break with every release. Instead, use archive-files (zip or tar.gz), templates and simple shell scripts.
 * *Configurable* +
-You can tweak the link:configuration.asciidoc[configuration] to your needs. Further the link:settings.asciidoc[settings] contain configuration templates for the different tools (see link:configurator.asciidoc[configurator]).
+You can change the link:configuration.asciidoc[configuration] depending on your needs. Furthermore, the link:settings.asciidoc[settings] contain configuration templates for the different tools (see link:configurator.asciidoc[configurator]).
 * *Maintainable* +
-For your project you should copy these link:settings.asciidoc[settings] to an own `git` repository that can be maintained and updated to manage the tool configurations during the project lifecycle. If you use github or gitlab every developer can easily suggest changes and improvements to these link:settings.asciidoc[settings] via pull/merge requests without ending in chaos with big teams.
+For your project you should copy these link:settings.asciidoc[settings] to an own `git` repository that can be maintained and updated to manage the tool configurations during the project lifecycle. If you use github or gitlab every developer can easily suggest changes and improvements to these link:settings.asciidoc[settings] via pull/merge requests, which is easier to manage with big teams.
 * *Customizable* +
-You need an additional tool that we never heard of? Put it in the `software` folder of the link:structure.asciidoc[structure]. The `devon` link:cli.asciidoc[CLI] will then automatically add it to your `PATH` variable. +
-Further you can create your own link:cli.asciidoc#commandlets[commandlet] for your additional tool. For closed-source tools you can create your own archive and distribute to your team members as long as you care about the terms and licenses of these tools.
+Do you need an additional tool you had never heard of before? Put it in the `software` folder of the link:structure.asciidoc[structure]. The `devon` link:cli.asciidoc[CLI] will then automatically add it to your `PATH` variable. +
+Further you can create your own link:cli.asciidoc#commandlets[commandlet] for your additional tool. For closed-source tools you can create your own archive and distribute it to your team members as long as you care about the terms and licenses of these tools.
 * *Multi-platform* +
-Works on all major platforms, which are Windows, Mac, and Linux.
+It works on all major platforms: Windows, Mac and Linux.
 * *Multi-tenancy* +
-Have as many instances of the `devonfw-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. No physical installation and no tweaking of your operating system. "Installations" of `devonfw-ide` do not interfere with each other nor with other installed software.
+You can have several instances of the `devonfw-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. You won’t need to set up any physical installation nor changing your operating system. "Installations" of `devonfw-ide` do not interfere with each other nor with other installed software.
 * *Multiple Workspaces* +
-Support working with different link:workspaces.asciidoc[workspaces] on different branches. Create and update new workspaces with few clicks. See the workspace name in the title-bar of your IDE so you do not get confused and work on the right branch.
+It supports working with different link:workspaces.asciidoc[workspaces] on different branches. You can create and update new workspaces with a few clicks. You can see the workspace name in the title-bar of your IDE so you do not get confused and work on the right branch.
 * *Free* +
 The `devonfw-ide` is free just like everything from https://devonfw.com[devonfw]. See link:license.asciidoc[LICENSE] for details.
 
@@ -50,11 +50,11 @@ We support the following build-systems:
 * link:npm.asciidoc[npm]
 * link:gradle.asciidoc[gradle]
 
-However, also other IDEs, platforms, or tools can be easily integrated as link:cli.asciidoc#commandlet[commandlet]. 
+However, also other IDEs, platforms, or tools can be easily integrated as link:cli.asciidoc#commandlet[commandlet].
 
 == Motivation
 
-`TL;DR`? Lets talk to developers in the proper language. Here are examples with `devonfw-ide`:
+What is `TL;DR`? Lets talk to developers a correct language. Here are some examples with `devonfw-ide`:
 
 [source,bash]
 --------
@@ -92,12 +92,12 @@ This was just a very simple demo of what `devonfw-ide` can do. For further detai
 
 Now you might ask:
 
-* But I use Windows/Linux/MacOS/...? - works on all platforms!
-* But how about Windows CMD or Power-Shell? - works!
-* But what if I use cygwin or git-bash on windows? - works!
-* But I love to use ConEmu or Commander? - works with full integration!
-* How about MacOS Terminal or iTerm2? - works with full integration!
-* But I use zsh? - works!
-* ...? - works!
+* But I use Windows/Linux/MacOS//… - it works on all platforms!
+* But how about Windows CMD or Power-Shell? - it works!
+* But what if I use cygwin or git-bash on windows? - it works!
+* But I love to use ConEmu or Commander - it works with full integration!
+* How about MacOS Terminal or iTerm2? - it works with full integration!
+* But I use zsh  - it works!
+* ...? - it works!
 
-Wow! So lets get started with link:setup.asciidoc[download & setup].
+Wow! So let's get started with link:setup.asciidoc[download & setup].

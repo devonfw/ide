@@ -3,7 +3,7 @@ toc::[]
 
 = Roles
 
-This section explains you how to use the `devonfw-ide` per role.
+This section is designed to explain `devonfw-ide` depending on each role
 Everybody should read and follow the usage for xref:developer[developer].
 In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[admin].
 
@@ -11,13 +11,13 @@ In case you want to administrate `devonfw-ide` settings for your project, you sh
 As a developer you are supported to link:setup.asciidoc[setup] your IDE within minutes. You only need the settings URL from your xref:architect[Architect].
 
 === Update
-To update your IDE (if instructed by your xref:architect[Architect]), all you need to do is run the following command:
+To update your IDE (if instructed by your xref:architect[Architect]), you only need to run the following command:
 ```
 devon ide update
 ```
 
 === Working with multiple workspaces
-If you are working on different branches in parallel you typically want to use multiple workspaces. 
+If you are working on different branches in parallel you typically want to use multiple workspaces.
 
 . Go to the link:workspaces.asciidoc[workspaces] folder in your link:variables.asciidoc[${DEVON_IDE_HOME}] and create a new folder with the name of your choice (e.g. `release2.1`).
 . Check out (`git clone ...`) the according projects and branch into that workspace folder.
@@ -26,7 +26,7 @@ If you are working on different branches in parallel you typically want to use m
 You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
 
 == Admin
-As IDE admin for the project you can link:configuration.asciidoc[configure] the `devonfw-ide` to your needs.
+As an IDE admin for the project you can link:configuration.asciidoc[configure] the `devonfw-ide` ide to meet your needs.
 
 === Project specific settings
 For your project you should create a git-repository for the link:settings.asciidoc[settings]. You can customize many aspects this way.

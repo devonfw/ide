@@ -1,10 +1,10 @@
 = Introduction
 
-http://devonfw.com[devonfw] provides a solution to building applications which combine best-in-class frameworks and libraries 
+http://devonfw.com[devonfw] provides a solution to building applications which combine best-in-class frameworks and libraries
 as well as industry proven practices and code conventions.
-It massively speeds up development, reduces risks and helps you to deliver better results.
+It massively speeds up development, reduces risks and helps deliver better results.
 
-This document contains the instructions for the tool `devonfw-ide` to setup and maintain your development tools including your favorite IDE (integrated development environment).
+This document contains the instructions for the tool `devonfw-ide` to set up and maintain your development tools including your favorite IDE (integrated development environment).
 
 include::features.asciidoc[leveloffset=2]
 

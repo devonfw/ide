@@ -12,7 +12,7 @@ First of all you should roughly get familiar with the new `devonfw-ide`. The key
 
 * platform-agnostic (supports Windows, Mac, and Linux in a single distribution)
 * small core (reduced the download package from ~2 gigabyte to ~2 megabyte)
-* fast and easy updates (build in update support)
+* fast and easy updates (built in update support)
 * minimum number of scripts (removed tons of end-user scripts making things much simpler)
 * fully automated setup (run `setup` script and you are ready - even for advanced features that had to be configured manually before)
 * single command for everything (entire CLI available via new `devon` command)

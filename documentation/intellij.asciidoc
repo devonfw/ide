@@ -4,7 +4,7 @@ toc::[]
 = intellij
 
 The `intellij` commandlet allows to install, configure, and launch https://www.jetbrains.com/idea/[IntelliJ].
-To launch IntelliJ for your current workspace and `devonfw-ide` installation simply run:
+To launch IntelliJ for your current workspace and `devonfw-ide` installation, simply run:
 `devon intellij`
 
 You may also supply additional arguments as `devon intellij «args»`. These are explained by the following table:
@@ -32,4 +32,4 @@ There are variables that can be used for IntelliJ. These are explained by the fo
 |*`INTELLIJ_VERSION`*|`latest_tested_version`|The version of the tool IntelliJ to install and use.
 |*`INTELLIJ_EDITION_TYPE`*|`C`|The edition of the tool IntelliJ to install and use. The value `C` mean Community edition and the value `U` mean Ultimate edition. The Ultimate edition requires a license. The user has to buy the license separately and it is not part of devonfw-ide. The devonfw-ide only supports download and installation.
 |=======================
-  
+

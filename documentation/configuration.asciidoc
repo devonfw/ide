@@ -22,7 +22,7 @@ The `devon.properties` files allow to define environment variables in a simple a
 * `variable_name=variable_value with space etc.`
 * `variable_name=${predefined_variable}/folder_name`
 +
-variable values can refer to other variables that are already defined what will be resolved to their value. You have to used `${...}` syntax to make it work on all platforms (never use `%...%`, `$...`, or `$(...)` syntax in `devon.properties` files).
+variable values can refer to other variables that are already defined, which will be resolved to their value. You have to used `${...}` syntax to make it work on all platforms (never use `%...%`, `$...`, or `$(...)` syntax in `devon.properties` files).
 * `export exported_variable=this value will be exported in bash, in windows CMD the export prefix is ignored`
 * `variable_name=`
 +
@@ -36,9 +36,9 @@ This will only work properly in `bash` worlds but as no arrays are used in CMD w
 * Please never surround values with quotes (`var="value"`)
 * This format is similar to Java `*.properties` but does not support advanced features as unicode literals, multi-lined values, etc.
 
-In order to know what to configure have a look at the available link:variables.asciidoc[variables].
+In order to know what to configure, have a look at the available link:variables.asciidoc[variables].
 
-Please only tweak configurations that you need to change and take according responsibility. Flexibility comes with some price. Of course you can break everything if you do the wrong things.
+Please only tweak configurations that you need to change and take according responsibility. There is a price to pay for flexibility, which means you have to be careful what you do.
 
 Further, you can configure link:mvn.asciidoc[maven] via `conf/settings.xml`. To configure your IDE such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode] you can tweak the link:settings.asciidoc[settings].
 
