@@ -30,10 +30,10 @@ To get all automated you can just run the script `system/mac/keyboard/install-ma
 
 === Keyboard Layouts
 
-Keyboard Layouts allow a find-grained mapping of each key on your keyboard to its resulting input character or behaviour. They are MacOS native features and do not need to have software running as a background service to make the keyboard mapping work (see Karabiner section below as an alternative).
+Keyboard layouts allow a find-grained mapping of each key on your keyboard to its resulting input character or behaviour. They are MacOS native features and do not need to have software running as a background service to make the keyboard mapping work (see Karabiner section below as an alternative).
 They are provided as so called `bundle` (white lego brick icon). Like a MacOS app this is a folder containing a `Contents` folder with a specific sub-folder structure. In the `Resources` subfolder `*.keylayout` files are placed and define the exact mapping for the keyboard. As an example we provide a `Keyboard Layouts` folder containing a `bundle` for a German keyboard mapping.
 
-To install keyboard layouts simply doubleclick the `bundle` or copy it to `~/Library/Keyboard Layouts`. To actually use them go to `System Preferences` and select `Keyboard`. Then, select the tab `Input Sources`. With the `+` button you can add a keyboard layout for your daily usage with your mac. Please note that the keyboard layout shipped with `devonfw-ide` for example is called `German-ISO` and can be found in the `Others` section at the end of the list.
+To install keyboard layouts simply doubleclick the `bundle` or copy it to `~/Library/Keyboard Layouts`. To actually use them go to `System Preferences` and select `Keyboard`. Then, select the tab `Input Sources`. With the `+` button you can add a keyboard layout for your daily usage with your mac. Please note that the keyboard layout shipped with `devonfw-ide` is called `German-ISO` and can be found in the `Others` section at the end of the list. It can be used as an example or template, if you want to create your own layout.
 
 image::images/keyboard-layouts.png["Keyboard Preferences / Input Sources"]
 
