@@ -3,7 +3,7 @@ toc::[]
 
 = Project import
 
-The `devonfw-ide` supports to automatically checkout and import required projects into your IDE during link:setup.asciidoc[setup]. To configure this you put a `.properties` file for each desired project into the `projects` sub-folder in your link:settings.asciidoc[settings]. Each `.properties` file describes one "project" which you like to checkout and (potentially) import:
+The `devonfw-ide` supports to automatically check out and import required projects into your IDE during link:setup.asciidoc[setup]. To configure this you put a `.properties` file for each desired project into the `projects` sub-folder in your link:settings.asciidoc[settings]. Each `.properties` file describes one "project" which you would like to check out and (potentially) import:
 
 ----
 path=myproject
@@ -22,14 +22,14 @@ active=true
 |===
 |*Variable*|*Value*|*Meaning*
 |`path`|e.g. `myproject`, will clone into `${WORKSPACE_PATH}/myproject`|(required) Path into which the projects is cloned. This path is relative to the workspace.
-|`workingsets`|e.g. `ws1,ws2`|(optional) This will create workingssets (in eclipse). Each module (eclipse project) of this project will be part of all these workingsets. Workingsets will be automatically created if necessary.
+|`working sets`|e.g. `ws1,ws2`|(optional) This will create working sets (in eclipse). Each module (eclipse project) of this project will be part of all these working sets. Working sets will be automatically created if necessary.
 |`workspace`|`main`|Workspace to use for checkout and import. Default is `main`.
 |`git.url`|e.g. `http://github.com/someorg/someproject`|(required) Git URL to use for cloning the project.
 |`git.branch`|e.g. `develop`|(optional) Git branch to checkout. Git default branch is default.
 |`build.path`|e.g. `.` (default)|(optional) The directory inside `path` where to trigger an initial build after clone or pull (if `build.cmd` is set). For a regular project use `.` to build top-level project.
-|`build.cmd`|e.g. `build` or `mvn -DskipTests=true -Darchetype.test.skip=true clean install`|(optional) The _devonfw_ command to invoke to build the project after clone or pull. If omitted no build is triggered. 
+|`build.cmd`|e.g. `build` or `mvn -DskipTests=true -Darchetype.test.skip=true clean install`|(optional) The _devonfw_ command to invoke to build the project after clone or pull. If omitted no build is triggered.
 |`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
 |`active`|`true`|(optional) If set to `false` the project is skipped during the link:setup.asciidoc[setup].
 |===
 
-Please not that the `.properties` file is parsed via shell and not via java. So be careful with "advanced" features `.properties` files normally support.
+Please note that the `.properties` file is parsed via shell and not via java. So be careful with "advanced" features `.properties` files normally support.

@@ -3,7 +3,7 @@ toc::[]
 
 = Roles
 
-This section explains you how to use the `devonfw-ide` per role.
+This section is designed to explain `devonfw-ide` depending on each role
 Everybody should read and follow the usage for xref:developer[developer].
 In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[admin].
 
@@ -14,7 +14,7 @@ Experienced developers can directly call `setup «settings-URL»`.
 Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter it when you are prompted for `Settings URL` (using copy&paste to avoid typos).
 
 === Update
-To update your IDE (if instructed by your xref:admin[admin]), all you need to do is run the following command:
+To update your IDE (if instructed by your xref:admin[admin]), you only need to run the following command:
 ```
 devon ide update
 ```
@@ -25,7 +25,7 @@ If there are windows file locks in place this can fail and mess up things.
 You can still delete the according installation from your `software` folder and rerun `devon ide update` if you ran into this error.
 
 === Working with multiple workspaces
-If you are working on different branches in parallel you typically want to use multiple workspaces. 
+If you are working on different branches in parallel you typically want to use multiple workspaces.
 
 . Go to the link:workspaces.asciidoc[workspaces] folder in your link:variables.asciidoc[${DEVON_IDE_HOME}] and create a new folder with the name of your choice (e.g. `release2.1`).
 . Check out (`git clone ...`) the according projects and branch into that workspace folder.
@@ -34,6 +34,7 @@ If you are working on different branches in parallel you typically want to use m
 You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
 
 == Admin
+
 You can easily customize and link:configuration.asciidoc[configure] `devonfw-ide` for the requirements of your project.
 In order to do so, you need to create your own project-specific settings git repository and provide the URL to all developers for the link:setup.asciidoc[setup].
 With tools such as gitlab, bitbucket or github every developer can easily propose changes and improvements.

@@ -7,16 +7,16 @@ toc::[]
 We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
 * You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows lower Windows 10 (1803) use https://www.7-zip.org/[7-zip]. On all other platforms this comes out of the box.
-* You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed. 
-** On Windows all you need is download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
+* You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed.
+** On Windows you only need to  download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
 ** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `sudo yum install git-core curl`)
-** On MacOS all you need is download and install https://git-scm.com/download/mac[git for mac].
+** On MacOS you only need to download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
 The latest release of `devonfw-ide` can be downloaded from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] (You can find all releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central]).
 
 == Install
-Create a central folder like `C:\projects` or `/projects`. Inside this folder create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) into this new folder. Run the command `setup` in this folder (on windows just double click `setup.bat`).
+Create a central folder like `C:\projects` or `/projects`. Inside this folder, create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) and send them to this new folder. Run the command `setup` in this folder (on windows double clicking on `setup.bat`).
 That's all. To get started read the link:usage.asciidoc[usage].
 
 == Uninstall
@@ -26,10 +26,10 @@ devon ide uninstall
 ```
 Then you can delete the `devonfw-ide` top-level folder(s) (link:variables.asciidoc[${DEVON_IDE_HOME}]).
 
-The `devonfw-ide` is designed to be *not invasive* to your operating system and computer. Therefore it is not "installed" into your system in a classical way. Instead you just create a folder and extract the xref:download[downloaded] archive to it. Only specific prerequisites like `git` have to be installed regularly by you in advance. All other software resists just locally inside the folder of your `devonfw-ide`. However, there are the following excuses (what is reverted by `devon ide uninstall`):
+The `devonfw-ide` is designed to be *non-invasive* to your operating system and computer. Therefore it is not "installed" on your system in a classical way. Instead you just create a folder and extract the xref:download[downloaded] archive to it. You only have to install regularly in advance some specific prerequisites like git. All the other softwares remain locally in your devonfw-ide folder. However, there are the following excuses (what is reverted by `devon ide uninstall`):
 
 * The `devon` command is copied to your home directory (`~/.devon/devon`)
 * The `devon` alias is added to your shell config (`~/.bashrc` and `~/.zshrc`, search for `alias devon="source ~/.devon/devon"`).
 * On Windows the `devon.bat` command is copied to your home directory (`%USERPROFILE%\scripts\devon.bat`)
 * On Windows this `%USERPROFILE%\scripts` directory is added to the `PATH` of your user.
-* The `devonfw-ide` will download third party software to your `~/Downloads` folder to reduce redundant storage.
+* The `devonfw-ide` will download a third party software to your `~/Downloads` folder to reduce redundant storage.

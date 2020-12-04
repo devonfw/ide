@@ -26,7 +26,7 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 
 == plugins
 To be productive with Eclipse you need plugins. Of course `devonfw-ide` can automate this for your:
-In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/eclipse/plugins[eclipse/plugins] (click this link to see more examples and see which plugins come by default).
+In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/eclipse/plugins[eclipse/plugins] (click on this link to see more examples and see which plugins come by default).
 Here you can create a properties file for each plugin. This is an example https://github.com/devonfw/ide-settings/blob/master/eclipse/plugins/tmterminal.properties[tmterminal.properties]:
 ```
 plugin_url=http://download.eclipse.org/tm/terminal/marketplace
@@ -34,20 +34,20 @@ plugin_id=org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.
 plugin_active=true
 ```
 
-The variables are defined as following:
+The variables are defined as follows:
 
 * `plugin_url` defines the URL of the Eclipse update site of the plugin
 * `plugin_id` defines the feature group ID(s) to install. To install multiple features/plugins provide a coma-separated list of IDs. If you want to customize `devonfw-ide` with new plugins you can first install them manually and then go to `About Eclipse > Installation Details` then you can filter for your newly installed plugin and find the values in the `Id` column. Copy & paste them from here to make up your own custom config.
-* `plugin_active` is an optional parameter. If it is `true` (default) the plugin will be installed automatically during the project link:setup.asciidoc[setup] for all developers in your team. Otherwise developers can still install the plugin manually via `devon eclipse add-plugin «plugin-name»` from the config file `settings/eclipse/plugins/«plugin-name».properties`. See the `settings/eclipse/plugins` folder for possible values of «plugin-name».
+* `plugin_active` is an optional parameter. If it is `true` (default) the plugin will be installed automatically during the project link:setup.asciidoc[setup] for all developers in your team. Otherwise, developers can still install the plugin manually via `devon eclipse add-plugin «plugin-name»` from the config file `settings/eclipse/plugins/«plugin-name».properties`. See the `settings/eclipse/plugins` folder for possible values of «plugin-name».
 
 In general you should try to stick with the configuration pre-defined by your project. But some plugins may be considered as personal flavor and are typically not predefined by the project config. This e.g. applies for devstyle that allows a real dark mode for eclipse and tunes the theming and layout of Eclipse in general. Such plugins should be shipped with your link:settings.asciidoc[settings] as described above with `plugin_active=false` allowing you to easily install it manually.
 
-As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer. By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
+As the maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer. By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
 
 === legacy plugin config
 For downward compatibility we still support the deprecated legacy configuration if the folder `settings/eclipse/plugins` does not exist:
 The project link:configuration.asciidoc[configuration] typically defines the plugins that will be installed via `ECLIPSE_PLUGINS` link:variables.asciidoc[variable]. Otherwise defaults from this `eclipse` link:cli.asciidoc#commandlets[commandlet] will apply.
-Be aware that this comes at your own risk and sometimes plugins can conflict and break your IDE. 
+Be aware that this comes at your own risk and sometimes plugins can conflict and break your IDE.
 
 Here is an example how a project can configure the plugins in its `devon.properties` inside the link:settings.asciidoc[settings]:
 ```
