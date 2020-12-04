@@ -54,7 +54,7 @@ However, also other IDEs, platforms, or tools can be easily integrated as link:c
 
 == Motivation
 
-What is `TL;DR`? Lets talk to developers a correct language. Here are some examples with `devonfw-ide`:
+`TL;DR`? Lets talk to developers a correct language. Here are some examples with `devonfw-ide`:
 
 [source,bash]
 --------
