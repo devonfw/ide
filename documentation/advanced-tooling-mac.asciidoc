@@ -26,7 +26,7 @@ To get this feature for MacOS `Terminal.app` open `Finder` and run the workflow 
 
 Keyboard support is not an integration however, some users coming from other platforms may struggle with the way MacOS deals with (external non-apple) keyboards.
 So to make it short: if you are happy with your keyboard and shortcuts, you can skip all the following. Otherwise, if you think that pressing keys like `Home`, `End`, etc. should just work as expected or pressing `Alt Gr` should allow you to type the special characters as printed on your German keyboard then here you will find a solution to your problems!
-To get all automated you can just run the script `system/mac/keyboard/install-mac-keyboard-support.sh` (in `${DEVON_IDE_HOME}`). you would like to understand what is going on or customize the keyboard settings to your needs or you would not use German ISO keyboard layout, please read on.
+To get all automated you can just run the script `system/mac/keyboard/install-mac-keyboard-support.sh` (in `${DEVON_IDE_HOME}`). If you would like to understand what is going on, you want to customize the keyboard settings to your needs, or you want a keyboard layout other than German ISO, please read on.
 
 === Keyboard Layouts
 
