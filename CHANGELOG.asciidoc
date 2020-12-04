@@ -13,6 +13,7 @@ Update with the following bugfixes and improvements:
 * https://github.com/devonfw/ide/issues/483[#483]: Error during installation when npm is already installed
 * https://github.com/devonfw/ide/issues/415[#415]: documentation to customize settings
 * https://github.com/devonfw/ide/issues/479[#479]: Error for vscode plugin installation
+* https://github.com/devonfw/ide/issues/471[#471]: Preconfigure Project Explorer with Hierarchical Project Presentation
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/16?closed=1[milestone 2020.12.001].
 
