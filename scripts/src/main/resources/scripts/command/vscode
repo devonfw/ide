@@ -7,7 +7,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    local software_version="${VSCODE_VERSION:-1.49.2}"
+    local software_version="${VSCODE_VERSION:-1.50.1}"
     local download_url="https://update.code.visualstudio.com/${software_version}"
     local software_extension=".zip"
     if doIsMacOs
@@ -68,11 +68,10 @@ function doAddPlugins() {
       fi
     fi
   done
-
-  doInstallPlugins "${pluginsToInstall}"
+  doAddPlugin "${pluginsToInstall}"
 }
 
-function doInstallPlugins() {
+function doAddPlugin() {
   if [ -n "${1}" ]
   then
     doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."

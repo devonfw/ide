@@ -58,3 +58,22 @@ For the above listed plugins you can also use the short form:
 ECLIPSE_PLUGINS=("anyedit" "" "regexutil" "")
 ```
 Of course you may also mix plugin IDs with fully qualified plugins.
+
+== dictionary
+
+Eclipse already comes with a buid-in spellchecker. This is very helpful when writing comments. The default settings of `devonfw-ide` ship with a project specific https://github.com/devonfw/ide-settings/blob/master/eclipse/project.dictionary[dictionary file] and according configurations to enable spellchecking and configuring this dictionary.
+When typing JavaDoc, inline comments or other texts the spellchecker will underline unknown words in red.
+If your cursor is located at such a word you can hit `[Ctrl][1]` to get a context menu with additional options.
+There you can either choose similar correct words to correct a typo or you may even add the word (maybe a new buisness term) to your local dictionary.
+
+image::images/eclipse-spellcheck.png["Eclipse spellchecker”]
+
+In the latter case, you should commit the changes to your link:settings.asciidoc[settings] so that it will be available to your entire team.
+For further details about comitting changes to the settings please consult the link:usage.asciidoc#admin[admin usage].
+
+=== non-english dictionary
+
+In case your project has to write documentation or text in languages other than English, you might want to prefill your project dictionary for that language.
+Here we collect a list of such dictionaries that you can download and merge into your project dictionary:
+
+* German: https://sourceforge.net/projects/germandict/ (has to be converted to UTF-8 e.g. with link:advanced-tooling-windows.asciidoc#real-text-editor[Notepad++] via `Encoding > Convert to UTF-8`)
