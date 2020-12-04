@@ -24,7 +24,7 @@ public class SortedPropertiesTest extends Assertions {
     // when
     properties.store(out, null);
     // then
-    String result = buffer.toString().replaceAll("#.*\n", ""); // remove invariant date header
+    String result = buffer.toString().replaceAll("#.*(\r\n|\r|\n)", ""); // remove invariant date header
     String newline = System.lineSeparator();
     assertThat(result).isEqualTo("alpha=omega" + newline //
         + "middle=man" + newline //
