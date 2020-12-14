@@ -56,6 +56,20 @@ function doMigrate() {
   exit ${?}
 }
 
+#$@ args (see help)
+function doCreate() {
+  if [ "$(dirname "${PWD}")" != "${DEVON_IDE_HOME}/workspaces" ]
+  then
+    doWarning "You are currently not directly in a workspace folder. Current location is:\n${PWD}"
+    if doAskToContinue "Create project in main workspace instead?" "return"
+    then
+      cd "${DEVON_IDE_HOME}/workspaces/main"
+    fi
+  fi
+  doMavenArchetype "${@}"
+  exit ${?}
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -80,7 +94,7 @@ elif [ "${1}" = "create" ]
 then
   doSetup
   shift
-  doMavenArchetype "${@}"
+  doCreate "${@}"
 elif [ "${1}" = "migrate" ]
 then
   shift
