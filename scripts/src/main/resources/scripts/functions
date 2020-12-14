@@ -12,7 +12,7 @@ then
 fi
 
 # shellcheck source=scripts/environment-project
-source "${DEVON_IDE_HOME}/scripts/environment-project"
+source "${DEVON_IDE_HOME}/scripts/environment-project" export
 DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
 
 # $1: message (may contain newlines with \n)
