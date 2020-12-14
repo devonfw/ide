@@ -5,19 +5,26 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
+  local software_version=${YARN_VERSION:-latest}
+  local installed_version
   if command -v yarn &> /dev/null
+  then
+    installed_version=$(yarn -version)
+  fi
+
+  if [ "$installed_version" == "$software_version" ] 
   then
     if [ -n "${1}" ]
     then
-      doEcho "yarn is already installed at $(command -v yarn)"
+      doEcho "Version ${installed_version} of yarn is already installed at $(command -v yarn)"
     fi
   else
     doDevonCommand npm -q setup
     if command -v npm &> /dev/null
     then
-      doRunCommand "npm install -g yarn"
+      doRunCommand "npm install -g yarn@${software_version}"
     else
-      doRunCommand "brew install yarn"
+      doRunCommand "brew install yarn@${software_version}"
     fi
   fi
 }
