@@ -65,6 +65,9 @@ public class MigrationsTest extends Assertions {
       }
       if (step != null) {
         assertThat(step.getFrom()).isEqualTo(current);
+        if ((versionIndex + 1) >= versions.size()) {
+          fail("Version " + current + " can not be updated to " + step.getTo() + " as no such version is available.");
+        }
         assertThat(step.getTo()).isEqualTo(versions.get(versionIndex + 1));
         List<FileMigration> fileMigrations = ((MigrationStepImpl) step).getFileMigrations();
         assertThat(fileMigrations).isNotEmpty();
