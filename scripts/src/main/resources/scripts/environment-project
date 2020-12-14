@@ -5,6 +5,7 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 
 # $1: path of properties file to load
 # $2: optional prefix to add to variables
+# $3: optional arg to export all variables if not empty 
 function doLoadProperties() {
   if ! [ -f "${1}" ]
   then
@@ -33,6 +34,9 @@ function doLoadProperties() {
       then
         export_key="true"
         key="${key:7}"
+      elif [ -n "${3}" ]
+      then
+        export_key="true"
       fi
       key="${2}${key/./_}"
       if [ -z "${value}" ]
@@ -71,10 +75,10 @@ then
   DEVON_HOME_DIR="$(cygpath "${USERPROFILE}")"
 fi
 # load and setup configuration
-doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties"
-doLoadProperties "${DEVON_HOME_DIR}/devon.properties"
-doLoadProperties "${DEVON_IDE_HOME}/devon.properties"
-doLoadProperties "${SETTINGS_PATH}/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties" "" "${@}"
+doLoadProperties "${DEVON_HOME_DIR}/devon.properties" "" "${@}"
+doLoadProperties "${DEVON_IDE_HOME}/devon.properties" "" "${@}"
+doLoadProperties "${SETTINGS_PATH}/devon.properties" "" "${@}"
 if [ -z "${WORKSPACE}" ]
 then
   WORKSPACE=main
@@ -91,7 +95,7 @@ then
     echo "WARNING: Worksapce ${WORKSPACE} does not exist"
   fi
 fi
-doLoadProperties "${WORKSPACE_PATH}/devon.properties"
+doLoadProperties "${WORKSPACE_PATH}/devon.properties" "" "${@}"
 
 if [ -z "${DEVON_OLD_PATH}" ]
 then
@@ -146,6 +150,6 @@ then
 fi
 
 # load user settings late so variables like M2_REPO can be overridden
-doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties"
+doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties" "" "${@}"
 
 export PATH
