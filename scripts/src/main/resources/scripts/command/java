@@ -63,7 +63,7 @@ function doCreate() {
     doWarning "You are currently not directly in a workspace folder. Current location is:\n${PWD}"
     if doAskToContinue "Create project in main workspace instead?" "return"
     then
-      cd "${DEVON_IDE_HOME}/workspaces/main"
+      cd "${DEVON_IDE_HOME}/workspaces/main" || exit 255
     fi
   fi
   doMavenArchetype "${@}"
