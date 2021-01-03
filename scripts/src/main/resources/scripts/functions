@@ -545,7 +545,7 @@ function doArrayContainsItemWithPrefix() {
 function doMavenArchetype() {
   if [ -z "${1}" ]
   then
-    doFail "Missing arguments for doMavenArchetype ${*}"
+    doFail "Missing arguments for doMavenArchetype ${*}. Please find the documentation and examples of the parameters at https://devonfw.com/website/pages/docs/devonfw-ide-usage.asciidoc.html#java.asciidoc"
   fi
   local old_args
   old_args="${*}"
