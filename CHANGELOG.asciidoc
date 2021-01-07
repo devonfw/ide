@@ -2,6 +2,25 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.12.001
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/pull/495[#495]: Documentation corrections
+* https://github.com/devonfw/ide/issues/491[#491]: Consider lombok support
+* https://github.com/devonfw/ide/pull/489[#489]: Update node to v12.19.0 and VS Code to 1.50.1
+* https://github.com/devonfw/ide/issues/470[#470]: reverse merge of workspace settings not sorting properties anymore
+* https://github.com/devonfw/ide/issues/483[#483]: Error during installation when npm is already installed
+* https://github.com/devonfw/ide/issues/493[#493]: custom evironment variables from devon.properties not available in IDE
+* https://github.com/devonfw/ide/pull/499[#499]: Enable configuration of version for yarn and angular cli (ng)
+* https://github.com/devonfw/ide/issues/415[#415]: documentation to customize settings
+* https://github.com/devonfw/ide/issues/479[#479]: Error for vscode plugin installation
+* https://github.com/devonfw/ide/issues/502[#502]: Filecomment for new Java types is still @author ${user}
+* https://github.com/devonfw/ide/issues/471[#471]: Preconfigure Project Explorer with Hierarchical Project Presentation
+* https://github.com/devonfw/ide/issues/498[#498]: migration support for devon4j 2020.12.001
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/16?closed=1[milestone 2020.12.001].
+
 == 2020.08.002
 
 Update with the following bugfixes and improvements:

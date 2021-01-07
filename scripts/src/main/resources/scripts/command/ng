@@ -5,12 +5,18 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ ! -x "${NG_CMD}" ]
+  doDevonCommand npm -q setup
+
+  local software_version=${NG_VERSION:-latest}
+  local installed_version
+  installed_version=$(npm list -g --depth 0 | sed -n -e '/angular\/cli/ s/.*@//p')
+
+  if [ "$installed_version" == "$software_version" ] 
   then
-    doDevonCommand node -q setup
-    doDevonCommand npm install -g @angular/cli@latest
+    doEcho "Version ${installed_version} of angular-cli (ng) is already installed at ${NG_CMD}."
   else
-    doEcho "ng is already installed at ${NG_CMD}"
+    doEcho "Installing angular-cli ${software_version}..."
+    doDevonCommand npm install -g "@angular/cli@${software_version}"
   fi
 }
 

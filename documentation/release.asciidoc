@@ -37,4 +37,4 @@ mvn clean deploy -Dchangelist= -Pdeploy -P myProfile
 Please also note that it is very tricky to determine and modify the version of a project in a fully generic way.
 Even though we try our best to support different scenarios, we can not ensure this is working for edge-cases.
 Therefore, we strongly encourage to follow best practices such as https://maven.apache.org/maven-ci-friendly.html[ci-friendly maven].
-Furhter, sticking to the defaults and follow the devonfw standard to name the profile for custom goals in deployment simply `deploy` is recommended.
+Further, sticking to the defaults and follow the devonfw standard to name the profile for custom goals in deployment simply `deploy` is recommended.
