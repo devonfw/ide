@@ -24,6 +24,16 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |`create-script`          |create launch script for this IDE, your current workspace and your OS
 |=======================
 
+There are variables that can be used for Eclipse. These are explained by the following table:
+
+.Variables of devonfw-ide for Eclipse
+[options="header"]
+|=======================
+|*Variable*|*Default-Value*|*Meaning*
+|*`ECLIPSE_VERSION`*|`2020-12`|The version of the tool Eclipse to install and use.
+|*`ECLIPSE_EDITION_TYPE`*|`java`|The edition of the tool Eclipse to install and use. You can choose betwenn 'java' for standard edition or 'jee' for enterprise edition.
+|=======================
+
 == plugins
 To be productive with Eclipse you need plugins. Of course `devonfw-ide` can automate this for your:
 In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/eclipse/plugins[eclipse/plugins] (click on this link to see more examples and see which plugins come by default).
