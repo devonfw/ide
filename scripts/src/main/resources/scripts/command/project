@@ -84,6 +84,8 @@ function doImportProject() {
   fi
   if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
   then
+    export WORKSPACE=${project_workspace}
+    export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
     doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
   fi
 }
