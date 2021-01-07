@@ -58,6 +58,10 @@ function doMigrate() {
 
 #$@ args (see help)
 function doCreate() {
+  if [ -z "${1}" ]
+  then
+    doFail "Missing arguments for devon4j project creation. Please read the documentation:\nhttps://github.com/devonfw/ide/blob/master/documentation/java.asciidoc#create"
+  fi
   if [ "$(dirname "${PWD}")" != "${DEVON_IDE_HOME}/workspaces" ]
   then
     doWarning "You are currently not directly in a workspace folder. Current location is:\n${PWD}"
