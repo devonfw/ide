@@ -33,7 +33,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://www.eclipse.org/[Eclipse] |Default Setup|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0]
 |https://github.com/devonfw/cobigen[CobiGen] |Default Setup|https://github.com/devonfw/cobigen/blob/master/LICENSE.txt[ASL 2.0]
 |https://marketplace.eclipse.org/content/tm-terminal[TM Terminal] |Default Setup|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0] (see https://git.eclipse.org/c/tm/org.eclipse.tm.git/tree/terminal/plugins/org.eclipse.tm.terminal.view.ui/about.html[here])
-|http://andrei.gmxhome.de/anyedit/[AnyEdit] |Default Setup|https://github.com/iloveeclipse/anyedittools/blob/master/LICENSE.md[EPL 1.0]
+|https://github.com/iloveeclipse/anyedittools/[AnyEdit] |Default Setup|https://github.com/iloveeclipse/anyedittools/blob/master/LICENSE.md[EPL 1.0]
 |https://checkstyle.org/eclipse-cs/[EclipseCS] |Default Setup|https://github.com/checkstyle/eclipse-cs/blob/master/LICENSE[LGPL 2.1]
 |https://marketplace.eclipse.org/content/spotbugs-eclipse-plugin[SpotBugs Eclipse plugin] |Default Setup|https://github.com/spotbugs/spotbugs/blob/master/LICENSE[LGPL 2.1]
 |https://www.eclemma.org/[EclEmma] |Default Setup|https://www.eclemma.org/license.html[EPL 1.0]
