@@ -61,7 +61,7 @@ Be aware that this comes at your own risk and sometimes plugins can conflict and
 
 Here is an example how a project can configure the plugins in its `devon.properties` inside the link:settings.asciidoc[settings]:
 ```
-ECLIPSE_PLUGINS=("AnyEditTools.feature.group" "http://andrei.gmxhome.de/eclipse/" "com.ess.regexutil.feature.group" "http://regex-util.sourceforge.net/update/")
+ECLIPSE_PLUGINS=("AnyEditTools.feature.group" "https://raw.githubusercontent.com/iloveeclipse/plugins/latest/" "com.ess.regexutil.feature.group" "http://regex-util.sourceforge.net/update/")
 ```
 For the above listed plugins you can also use the short form:
 ```
