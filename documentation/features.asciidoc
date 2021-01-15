@@ -12,7 +12,7 @@ Set up your IDE within minutes tailored for the requirements of your project.
 * *Automated* +
 Automate the setup and update, avoid manual steps and mistakes.
 * *Simple* +
-KISS (Keep It Small and Simple), no installers or tool-integrations that break with every release. Instead, use archive-files (zip or tar.gz), templates and simple shell scripts.
+KISS (Keep It Small and Simple), no native installers that globally mess your OS or tool-integrations that break with every release. Instead, use templates and simple shell scripts.
 * *Configurable* +
 You can change the link:configuration.asciidoc[configuration] depending on your needs. Furthermore, the link:settings.asciidoc[settings] contain configuration templates for the different tools (see link:configurator.asciidoc[configurator]).
 * *Maintainable* +
