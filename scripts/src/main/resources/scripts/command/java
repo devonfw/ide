@@ -12,7 +12,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local software_version="${JAVA_VERSION:-11.0.5_10}"
+    local software_version="${JAVA_VERSION:-11.0.9.1_1}"
     local major_version="${software_version/\.*/}"
     major_version="${major_version/u*/}"
     local jdk_folder="jdk-${software_version/_/%2B}"
