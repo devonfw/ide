@@ -735,13 +735,13 @@ function doGitPullOrClone() {
     then
       doFail "Not a git repository: ${1}"
     else
-      doRunCommand "git clone --recursive '${2}' '${1}' --config core.autocrlf=false"
+      pushd "${1}" || exit 255
+      doRunCommand "git clone --recursive '${2}' --config core.autocrlf=false"
       if [ -n "${3}" ]
       then 
-        pushd "${1}" || exit 255
         doRunCommand "git checkout ${3}"
-        popd || exit 255
       fi 
+      popd || exit 255
     fi
   fi
 }
