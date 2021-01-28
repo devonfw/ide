@@ -176,6 +176,10 @@ public class Migrations {
         .replaceProperty("devon4j.version", "2020.12.001") //
         .replaceProperty("spring.boot.version", "2.3.3.RELEASE") //
         .replaceProperty("jackson.version", "2.11.2") //
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2020.12.002")).pom() //
+        .replaceProperty("devon4j.version", "2020.12.002") //
+        .replaceProperty("spring.boot.version", "2.4.0") //
         .and().next().build();
   }
 
