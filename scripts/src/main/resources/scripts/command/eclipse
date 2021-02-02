@@ -154,7 +154,7 @@ function doAddPlugin() {
       doInstallEclipsePlugin "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group" "http://download.eclipse.org/tm/terminal/marketplace"
     elif [ "${1}" = "anyedit" ]
     then
-      doInstallEclipsePlugin "AnyEditTools.feature.group" "http://andrei.gmxhome.de/eclipse/"
+      doInstallEclipsePlugin "AnyEditTools.feature.group" "https://raw.githubusercontent.com/iloveeclipse/plugins/latest/"
     elif [ "${1}" = "regexutil" ]
     then
       doInstallEclipsePlugin "com.ess.regexutil.feature.group" "http://regex-util.sourceforge.net/update/"

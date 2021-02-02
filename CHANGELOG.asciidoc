@@ -2,6 +2,18 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.12.002
+
+* https://github.com/devonfw/ide/issues/522[#522]: update devon4j to 2020.12.002 and create migration to this version
+* https://github.com/devonfw/ide/pull/524[#524]: workaround for bug in git for windows 
+* https://github.com/devonfw/ide/issues/520[#520]: update default version of java to 11.0.9.1_1
+* https://github.com/devonfw/ide/issues/514[#514]: Remove or adjust AnyEditTools plugin update site
+* https://github.com/devonfw/ide/issues/480[#480]: Eclipse import to wrong workspace
+* https://github.com/devonfw/ide/issues/505[#505]: devon java create - ERROR: Missing arguments for doMavenArchetype
+* https://github.com/devonfw/ide/issues/507[#507]: allow to switch eclipse edition via variable
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/17?closed=1[milestone 2020.12.002].
+
 == 2020.12.001
 
 Update with the following bugfixes and improvements:
