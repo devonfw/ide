@@ -34,6 +34,11 @@ then
   fi
 fi
 
+if [ -f pom.xml ]
+then
+  doDevonCommand mvn check-no-snapshots
+fi
+
 doEcho "Trying to determine current version of your project..."
 current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
 release_version="${current_version/-SNAPSHOT/}"
