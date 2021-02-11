@@ -283,7 +283,7 @@ then
   echo " setup                    setup maven (install, verify, configure)"
   echo " get-version              get the current project version"
   echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo " check-no-snapshots       check if no snapshot versions are used"
+  echo " check-no-snapshots       check if no «version»-SNAPSHOT dependencies are used"
   echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
   echo " release                  start a clean deploy release build"
   echo " «args»                   call maven with the specified arguments"
