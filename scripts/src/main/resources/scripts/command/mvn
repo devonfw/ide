@@ -241,8 +241,15 @@ function doCheckNoSnapshots() {
 
   if [ ! -z "${snapshot_list}" ]
   then
-    doConfirmWarning "\nIt is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to abort and use release versions."
+    if  [ ! -z "${batch}" ] && [ -z "${force}" ]
+    then
+      doEcho "WARNING: It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to use release versions. Or rerun this command not in batch mode."
+      exit 1
+    else
+      doConfirmWarning "It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to abort and use release versions."
+    fi
   fi
+  exit 0
 }
 
 function doRunBuild() {

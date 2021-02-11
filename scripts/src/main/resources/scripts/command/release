@@ -36,7 +36,9 @@ fi
 
 if [ -f pom.xml ]
 then
+  set -e
   doDevonCommand mvn check-no-snapshots
+  set +e
 fi
 
 doEcho "Trying to determine current version of your project..."
