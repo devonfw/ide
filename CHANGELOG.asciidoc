@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2020.12.003
+
+This release is currently in progress
+
+* https://github.com/devonfw/ide/pull/526[#526]: update node.js to 14.15.4 (LTS) and VS code to 1.52.1
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/19?closed=1[milestone 2020.12.003].
+
 == 2020.12.002
 
 * https://github.com/devonfw/ide/issues/522[#522]: update devon4j to 2020.12.002 and create migration to this version
