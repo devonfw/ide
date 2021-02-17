@@ -1,0 +1,19 @@
+on:
+    push:
+        branches:
+            - master
+name: Build
+jobs:
+  build:
+    name: Install asset
+    if: ${{github.repository == 'devonfw/ide'}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Build project with Maven
+        run: mvn install
