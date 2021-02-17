@@ -239,9 +239,9 @@ function doCheckNoSnapshots() {
   maven_dependency_list="$(${MVN} org.apache.maven.plugins:maven-dependency-plugin:list -DexcludeGroupIds="${maven_project_groupId}")"
   snapshot_list="$(echo "${maven_dependency_list}" | grep "${snapshot}")"
 
-  if [ ! -z "${snapshot_list}" ]
+  if [ -n "${snapshot_list}" ]
   then
-    if  [ ! -z "${batch}" ] && [ -z "${force}" ]
+    if  [ -n "${batch}" ] && [ -z "${force}" ]
     then
       doEcho "WARNING: It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to use release versions. Or rerun this command not in batch mode."
       exit 1
