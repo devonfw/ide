@@ -237,7 +237,7 @@ function doCheckNoSnapshots() {
   snapshot=":.*\-SNAPSHOT:"
   maven_project_groupId="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.groupId -DforceStdout)"
   maven_dependency_list="$(${MVN} org.apache.maven.plugins:maven-dependency-plugin:list -DexcludeGroupIds="${maven_project_groupId}")"
-  snapshot_list="$(echo "${maven_dependency_list}" | grep "${snapshot}")"
+  snapshot_list="$(echo "${maven_dependency_list}" | grep "${snapshot}" | sort -u)"
 
   if [ -n "${snapshot_list}" ]
   then
