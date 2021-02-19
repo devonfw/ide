@@ -1,30 +1,40 @@
 env:
-    REPO_CONSOLIDATE: "devonfw-guide"
-    BUILD_USER: ${{ secrets.BUILD_USER }}
-    BUILD_USER_PASSWD: ${{ secrets.BUILD_USER_PASSWD }}
-    BUILD_USER_EMAIL:  ${{ secrets.BUILD_USER_EMAIL }}
+  ORG: "devonfw"
+  REPO_SOURCE: "ide"
+  REPO_DEST: "ide.wiki"
+  REPO_CONSOLIDATE: "devonfw-guide"
+  BUILD_USER: ${{ secrets.BUILD_USER }}
+  BUILD_USER_PASSWD: ${{ secrets.BUILD_USER_PASSWD }}
+  BUILD_USER_EMAIL:  ${{ secrets.BUILD_USER_EMAIL }}
+
 on:
-    push:
-        branches:
-            - master
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
 name: Sync Docs
 jobs:
+    include:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Set up JDK
+          uses: actions/setup-java@v1
+          with:
+            java-version: '11'
+        - name: Build project with Maven
+          run: mvn install
     update-wiki:
         if: ${{github.repository == 'devonfw/ide'}}
         runs-on: ubuntu-latest
         steps:
-          - name: setup variables
+          - name: Documentation
             run: |
-                echo "ORG=$(echo '${{ github.repository }}' | awk -F '/' '{print $1}')" >> $GITHUB_ENV
-                echo "REPO_SOURCE=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-                echo "REPO_DEST=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}').wiki" >> $GITHUB_ENV
-            shell: bash
-          - name: Checkout ${REPO_SOURCE} Repository
-            run: git clone https://github.com/${ORG}/${REPO_SOURCE}.git ${REPO_SOURCE}
-          - name: Checkout ${REPO_DEST} Repository
-            run: git clone https://github.com/${ORG}/${REPO_DEST}.git ${REPO_DEST}
-          - name: Checkout ${REPO_CONSOLIDATE} Repository
-            run: git clone https://github.com/${ORG}/${REPO_CONSOLIDATE}.git ${REPO_CONSOLIDATE}
+                git clone https://github.com/${ORG}/${REPO_SOURCE}.git ${REPO_SOURCE}
+                git clone https://github.com/${ORG}/${REPO_DEST}.git ${REPO_DEST}
+                git clone https://github.com/${ORG}/${REPO_CONSOLIDATE}.git ${REPO_CONSOLIDATE}
           - name: Copy docs and consolidate links
             run: |
                 cp -rf ${REPO_SOURCE}/documentation/* ${REPO_DEST}/
