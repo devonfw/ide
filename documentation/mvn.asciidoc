@@ -15,6 +15,7 @@ The arguments (`devon mvn «args»`) are explained by the following table:
 |`setup`                   |setup Maven (install and verify), link:configuration.asciidoc[configurable] via `MAVEN_VERSION`
 |`get-version`             |Print the version of your current project. Will consolidate the version for multi-module projects ignoring `dev[-SNAPSHOT]` versions and fail on mixed versions.
 |`set-version` «nv» [«cv»] |Set the version of your current project to `«nv»` (assuming your current version is `«cv»`).
+|`check-no-snapshots`      |Check if no `«version»-SNAPSHOT` dependencies are used.
 |`check-top-level-project` |Check if you are running on a top-level project or fail if in a module or no maven project at all.
 |release                   |Start a clean deploy release build, link:configuration.asciidoc[configurable] via `MVN_RELEASE_OPTS`
 |`«args»`        |run maven with the given arguments (`«args»`)

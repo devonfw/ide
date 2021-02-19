@@ -6,6 +6,7 @@ toc::[]
 Create a release in a standardized way including the following steps:
 
 * verify the current project (no local changes, etc.)
+* warn if `«version»-SNAPSHOT` dependencies are used
 * determine `«version»` (if currently `«version»-SNAPSHOT`) and print out release information.
 * ask user for confirmation
 * bump release to `«version»` in build configuration (e.g. `pom.xml` files)
