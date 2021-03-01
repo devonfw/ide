@@ -1,12 +1,7 @@
-on:
-  push:
-    branches:
-      - master
-name: Build ide
+name: CI build
+on: [push, pull_request]
 jobs:
   build:
-    name: Install asset
-    if: ${{github.repository == 'devonfw/ide'}}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
