@@ -3,28 +3,27 @@ _devon_completions()
 {
   local cur commandlist options
   COMPREPLY=()
-
-  cd "$(dirname "${BASH_SOURCE:-$0}")" || exit 255
+  source ~/.devon/home
   cur="${COMP_WORDS[COMP_CWORD]}"
 
   options=""
   if [[ ${cur:0:1} == "-" ]]
   then
-    options="- -b --batch -f --force -d --debug -q --quiet --"
-    for i in "${COMP_WORDS[@]}"
+    options="-b --batch -f --force -d --debug -q --quiet"
+    for (( i=0; i<$COMP_CWORD; i++ ))
     do
-      options="${options/$i/}"
+      options="${options/${COMP_WORDS[$i]}/}"
     done
   fi
 
   if [ $COMP_CWORD -le 1 ]; then
-    commandlist=$(ls command/)
+    commandlist=$(ls ${DEVON_IDE_HOME}/scripts/command/)
     COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
   elif [ $COMP_CWORD -eq 2 ]; then
-    commandlist=$(./command/${COMP_WORDS[1]} shortlist)
+    commandlist=$(${DEVON_IDE_HOME}/scripts/command/${COMP_WORDS[1]} shortlist)
     COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
   elif [ $COMP_CWORD -eq 3 ]; then
-    commandlist=$(./command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
+    commandlist=$(${DEVON_IDE_HOME}/scripts/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
     COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
   else
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )

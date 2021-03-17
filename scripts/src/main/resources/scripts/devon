@@ -93,6 +93,7 @@ then
   then
     echo "Installing devon alias to your .zshrc"
     echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.zshrc
+    echo -e "autoload -Uz compinit\ncompinit\nautoload bashcompinit\nbashcompinit" >> ~/.zshrc
     echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
   fi
 
