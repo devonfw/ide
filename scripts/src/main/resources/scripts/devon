@@ -72,7 +72,7 @@ then
   mkdir -p ~/.devon  
   echo "Copying devon CLI script to your home directory..."
   cp "${BASH_SOURCE:-$0}" ~/.devon/devon
-  AUTOCOMPLETION="source ${DEVON_IDE_HOME}/scripts/auto-completion"
+  AUTOCOMPLETION="source ${DEVON_IDE_HOME}/scripts/devon-autocomplete"
   
   if [ ! -e ~/.bashrc ]
   then
