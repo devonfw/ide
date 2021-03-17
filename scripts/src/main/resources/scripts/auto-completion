@@ -1,0 +1,35 @@
+#/usr/bin/env bash
+_devon_completions()
+{
+  local cur commandlist options
+  COMPREPLY=()
+
+  cd "$(dirname "${BASH_SOURCE:-$0}")" || exit 255
+  cur="${COMP_WORDS[COMP_CWORD]}"
+
+  options=""
+  if [[ ${cur:0:1} == "-" ]]
+  then
+    options="- -b --batch -f --force -d --debug -q --quiet --"
+    for i in "${COMP_WORDS[@]}"
+    do
+      options="${options/$i/}"
+    done
+  fi
+
+  if [ $COMP_CWORD -le 1 ]; then
+    commandlist=$(ls command/)
+    COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
+  elif [ $COMP_CWORD -eq 2 ]; then
+    commandlist=$(./command/${COMP_WORDS[1]} shortlist)
+    COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
+  elif [ $COMP_CWORD -eq 3 ]; then
+    commandlist=$(./command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
+    COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
+  else
+    COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
+  fi
+  return 0
+}
+
+complete -F _devon_completions devon
