@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup update uninstall help"
+  elif [ "${2}" = "update" ]
+  then
+    echo "scripts settings software projects all"
+  fi
+  exit
+fi
+
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -227,6 +241,7 @@ function doSetup() {
       echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
     fi
   fi
+
   if [ -z "${DEVON_SKIP_PROJECT_SETUP}" ]
   then
     doUpdateProjects
