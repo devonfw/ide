@@ -244,6 +244,25 @@ function doCheckTopLevelProject() {
   doEcho "${1}" "You are inside a top-level maven project"
 }
 
+function doCheckNoSnapshots() {
+  snapshot=":.*\-SNAPSHOT:"
+  maven_project_groupId="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.groupId -DforceStdout)"
+  maven_dependency_list="$(${MVN} org.apache.maven.plugins:maven-dependency-plugin:list -DexcludeGroupIds="${maven_project_groupId}")"
+  snapshot_list="$(echo "${maven_dependency_list}" | grep "${snapshot}" | sort -u)"
+
+  if [ -n "${snapshot_list}" ]
+  then
+    if  [ -n "${batch}" ] && [ -z "${force}" ]
+    then
+      doEcho "WARNING: It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to use release versions. Or rerun this command not in batch mode."
+      exit 1
+    else
+      doConfirmWarning "It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to abort and use release versions."
+    fi
+  fi
+  exit 0
+}
+
 function doRunBuild() {
   local maven_cmd="${MVN}"
   if [ -x mvnw ]
@@ -275,6 +294,7 @@ then
   echo " setup                    setup maven (install, verify, configure)"
   echo " get-version              get the current project version"
   echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-no-snapshots       check if no «version»-SNAPSHOT dependencies are used"
   echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
   echo " release                  start a clean deploy release build"
   echo " «args»                   call maven with the specified arguments"
@@ -294,6 +314,9 @@ elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
 then
   shift
   doSetProjectVersion "${@}"
+elif [ "${1}" = "check-no-snapshots" ]
+then
+  doCheckNoSnapshots
 elif [ "${1}" = "check-top-level-project" ]
 then
   shift
