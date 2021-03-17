@@ -81,7 +81,7 @@ then
   if ! grep -q "alias devon=" ~/.bashrc
   then
     echo "Installing devon alias to your .bashrc"
-    echo -e '\nalias devon="source ~/.devon/devon"\ndevon\n${AUTOCOMPLETION}' >> ~/.bashrc
+    echo -e "\nalias devon='source ~/.devon/devon'\ndevon\n${AUTOCOMPLETION}" >> ~/.bashrc
   fi
 
   if [ ! -e ~/.zshrc ]
@@ -91,7 +91,7 @@ then
   if ! grep -q "alias devon=" ~/.zshrc
   then
     echo "Installing devon alias to your .zshrc"
-    echo -e '\nalias devon="source ~/.devon/devon"\ndevon\nautoload -Uz compinit\ncompinit\nautoload bashcompinit\nbashcompinit\n${AUTOCOMPLETION}' >> ~/.zshrc
+    echo -e "\nalias devon='source ~/.devon/devon'\ndevon\nautoload -Uz compinit\ncompinit\nautoload bashcompinit\nbashcompinit\n${AUTOCOMPLETION}" >> ~/.zshrc
   fi
 
   if [ "${OSTYPE:0:6}" = "darwin" ]
@@ -103,7 +103,7 @@ then
     if ! grep -q "alias devon=" ~/.bash_profile
     then
       echo "Installing devon alias to your .bash_profile"
-      echo -e '\nalias devon="source ~/.devon/devon"\ndevon\n${AUTOCOMPLETION}' >> ~/.bash_profile
+      echo -e "\nalias devon='source ~/.devon/devon'\ndevon\n${AUTOCOMPLETION}" >> ~/.bash_profile
     fi    
   fi
 

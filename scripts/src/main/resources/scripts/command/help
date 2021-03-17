@@ -7,7 +7,7 @@ then
   then
     # shellcheck disable=SC1090
     source ~/.devon/home
-    echo "$(ls "${DEVON_IDE_HOME}"/scripts/command/)"
+    ls ${DEVON_IDE_HOME}/scripts/command/
   fi
   exit
 fi
