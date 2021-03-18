@@ -21,7 +21,16 @@ if not exist "%USERPROFILE%\scripts\devon.bat" (
     if "%USER_PATH:~-1,1%" == ";" (
       set "USER_PATH=%USER_PATH:~0,-1%"
     )
-    setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+    if "%USER_PATH%" == "" (
+      setx PATH "%%USERPROFILE%%\scripts"
+      echo "ATTENTION:"
+      echo "Your user PATH environment variable has not been previously set."
+      echo "You may need to log-off and log-in again so your PATH changes are properly applied."
+      echo "Otherwise you may get errors that devon command has not been found."
+      pause
+    ) else (
+      setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+    )
     if "%PATH:~-1,1%" == ";" (
       set "PATH=%PATH%%USERPROFILE%\scripts"
     ) else (
