@@ -135,8 +135,10 @@ function doSetProjectVersion() {
       then
         changelist="-SNAPSHOT"
       fi
+      # shellcheck disable=SC2001
       updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
     else
+      # shellcheck disable=SC2001
       updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${1}/")"
     fi
     if [ "${updated_config}" != "${maven_config}" ]
