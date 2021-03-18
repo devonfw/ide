@@ -43,6 +43,8 @@ current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to de
 if doIsDevVersion "${current_version}" 
 then
   doEcho "Current version is ${current_version} so we are assuming the version is not tracked in your version control."
+  doEcho "Existing tags are:"
+  git --no-pager tag --list
   read -r -p "Please enter release version: " release_version
   echo
   next_version="${current_version}"
