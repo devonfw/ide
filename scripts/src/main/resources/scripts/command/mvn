@@ -68,7 +68,7 @@ function doGetProjectVersion() {
   then
     maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
   fi
-  if [ "${maven_project_version}" = "dev-SNAPSHOT" ]
+  if doIsDevVersion "${maven_project_version}"
   then
     local cwd="${PWD}"
     local module_list
@@ -79,7 +79,7 @@ function doGetProjectVersion() {
       do
         cd "${module}" || exit 255
         maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
-        if [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+        if doIsDevVersion "${maven_project_version}"
         then
           break;
         fi
@@ -109,9 +109,9 @@ function doSetProjectVersion() {
   then
     doEcho "Maven version is already set to ${1}. Nothing to change."
     return
-  elif [ "${current_version}" = "dev-SNAPSHOT" ]
+  elif doIsDevVersion "${current_version}"
   then
-    doEcho "You seem to use dev-SNAPSHOT as continuous development version. Nothing to do for version bumping."
+    doEcho "You seem to use ${current_version} as continuous development version. Nothing to do for version bumping."
     return 1
   elif [ -e ".mvn/maven.config" ]
   then
@@ -192,7 +192,7 @@ function doSetPomVersion() {
   fi
   local pom_elements
   pom_elements="$(grep "${2}" pom.xml.bak)"
-  if [ "${?}" != 0 ] && [ "${maven_project_version}" != "dev-SNAPSHOT" ]
+  if [ "${?}" != 0 ] && doIsDevVersion "${maven_project_version}"
   then
     doFail "Version ${2} not found in POM ${PWD}/pom.xml\nCurrent version detected as ${maven_project_version} and target version is ${1}"
     exit 255
