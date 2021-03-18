@@ -107,27 +107,38 @@ function doSetProjectVersion() {
   fi
   if [ "${current_version}" = "${1}" ]
   then
-    echo "Maven version is already set to ${1}. Nothing to change."
+    doEcho "Maven version is already set to ${1}. Nothing to change."
     return
-  fi
-  if [ -e ".mvn/maven.config" ]
+  elif [ "${current_version}" = "dev-SNAPSHOT" ]
+  then
+    doEcho "You seem to use dev-SNAPSHOT as continuous development version. Nothing to do for version bumping."
+    return 1
+  elif [ -e ".mvn/maven.config" ]
   then
     # https://maven.apache.org/maven-ci-friendly.html
     local maven_config
     maven_config="$(cat .mvn/maven.config)"
-    local current_revision="${2/-SNAPSHOT/}"
-    if [ "${maven_config/${current_revision}/}" = "${maven_config}" ]
+    if [ -n "${2}" ]
     then
-      doConfirmWarning "Your .mvn/maven.config does not contain the expected revision ${current_revision}:\n${maven_config}"
-    fi
-    local revision="${1/-SNAPSHOT/}"
-    local changelist=""
-    if [ "${revision}" != "${1}" ]
-    then
-      changelist="-SNAPSHOT"
+      local current_revision="${2/-SNAPSHOT/}"
+      if [ "${maven_config/${current_revision}/}" = "${maven_config}" ]
+      then
+        doConfirmWarning "Your .mvn/maven.config does not contain the expected revision ${current_revision}:\n${maven_config}"
+      fi
     fi
     local updated_config
-    updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
+    if [[ "${maven_config}" == *"-Dchangelist="* ]]
+    then
+      local revision="${1/-SNAPSHOT/}"
+      local changelist=""
+      if [ "${revision}" != "${1}" ]
+      then
+        changelist="-SNAPSHOT"
+      fi
+      updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${revision}/" | sed "s/-Dchangelist=[^ ]*/-Dchangelist=${changelist}/")"
+    else
+      updated_config="$(echo "${maven_config}" | sed "s/-Drevision=[^ ]*/-Drevision=${1}/")"
+    fi
     if [ "${updated_config}" != "${maven_config}" ]
     then
       echo "${updated_config}" > .mvn/maven.config
@@ -233,25 +244,6 @@ function doCheckTopLevelProject() {
   doEcho "${1}" "You are inside a top-level maven project"
 }
 
-function doCheckNoSnapshots() {
-  snapshot=":.*\-SNAPSHOT:"
-  maven_project_groupId="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.groupId -DforceStdout)"
-  maven_dependency_list="$(${MVN} org.apache.maven.plugins:maven-dependency-plugin:list -DexcludeGroupIds="${maven_project_groupId}")"
-  snapshot_list="$(echo "${maven_dependency_list}" | grep "${snapshot}" | sort -u)"
-
-  if [ -n "${snapshot_list}" ]
-  then
-    if  [ -n "${batch}" ] && [ -z "${force}" ]
-    then
-      doEcho "WARNING: It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to use release versions. Or rerun this command not in batch mode."
-      exit 1
-    else
-      doConfirmWarning "It is not recommended to create releases with SNAPSHOT dependencies!\nThe following dependencies are SNAPSHOT versions:\n${snapshot_list//\[INFO\]/}\nWe strongly recommend to abort and use release versions."
-    fi
-  fi
-  exit 0
-}
-
 function doRunBuild() {
   local maven_cmd="${MVN}"
   if [ -x mvnw ]
@@ -283,7 +275,6 @@ then
   echo " setup                    setup maven (install, verify, configure)"
   echo " get-version              get the current project version"
   echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo " check-no-snapshots       check if no «version»-SNAPSHOT dependencies are used"
   echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
   echo " release                  start a clean deploy release build"
   echo " «args»                   call maven with the specified arguments"
@@ -303,9 +294,6 @@ elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
 then
   shift
   doSetProjectVersion "${@}"
-elif [ "${1}" = "check-no-snapshots" ]
-then
-  doCheckNoSnapshots
 elif [ "${1}" = "check-top-level-project" ]
 then
   shift
