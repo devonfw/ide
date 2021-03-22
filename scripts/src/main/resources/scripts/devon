@@ -91,12 +91,22 @@ then
   then
     touch ~/.zshrc
   fi
+
+  echo -e '' >> ~/.zshrc
+  if ! grep -q "compinit" ~/.zshrc
+  then
+    echo -e 'autoload -Uz compinit\ncompinit' >> ~/.zshrc
+  fi
+  if ! grep -q "bashcompinit" ~/.zshrc
+  then
+    echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
+  fi
   if ! grep -q "alias devon=" ~/.zshrc
   then
     echo "Installing devon alias to your .zshrc"
     {
-      echo -e '\nalias devon="source ~/.devon/devon"\ndevon'
-      echo -e "autoload -Uz compinit\ncompinit\nautoload bashcompinit\nbashcompinit\n${AUTOCOMPLETION}"
+      echo -e 'alias devon="source ~/.devon/devon"\ndevon'
+      echo -e "${AUTOCOMPLETION}"
     } >> ~/.zshrc
   fi
 

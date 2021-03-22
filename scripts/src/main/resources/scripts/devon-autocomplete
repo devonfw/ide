@@ -1,9 +1,10 @@
 #/usr/bin/env bash
+DEVON_IDE_PATH=$(dirname "${BASH_SOURCE:-$0}")
+
 _devon_completions()
 {
   local cur commandlist options
   COMPREPLY=()
-  source ~/.devon/home
   cur="${COMP_WORDS[COMP_CWORD]}"
 
   options=""
@@ -17,13 +18,13 @@ _devon_completions()
   fi
 
   if [ $COMP_CWORD -le 1 ]; then
-    commandlist=$(ls ${DEVON_IDE_HOME}/scripts/command/)
+    commandlist=$(ls ${DEVON_IDE_PATH}/command/)
     COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
   elif [ $COMP_CWORD -eq 2 ]; then
-    commandlist=$(${DEVON_IDE_HOME}/scripts/command/${COMP_WORDS[1]} shortlist)
+    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist)
     COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
   elif [ $COMP_CWORD -eq 3 ]; then
-    commandlist=$(${DEVON_IDE_HOME}/scripts/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
+    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
     COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
   else
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )

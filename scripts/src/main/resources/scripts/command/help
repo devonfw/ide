@@ -5,9 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    # shellcheck disable=SC1090
-    source ~/.devon/home
-    ls "${DEVON_IDE_HOME}"/scripts/command/
+    ls $(dirname "${BASH_SOURCE:-$0}")/
   fi
   exit
 fi
