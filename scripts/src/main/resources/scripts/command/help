@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    ls "$(dirname ${BASH_SOURCE:-$0})"/
+    ls "$(dirname "${BASH_SOURCE:-$0}")"/
   fi
   exit
 fi
