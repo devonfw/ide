@@ -4,6 +4,9 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
 
+VSCODE_CONF="${DEVON_IDE_HOME}/conf/vscode"
+VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
+
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
@@ -30,7 +33,7 @@ function doSetup() {
         chmod a+x "${VSCODE_HOME}/bin/code"
       fi
     fi
-	
+
     cleanupPlugins
     doAddPlugins
   fi
@@ -94,13 +97,12 @@ function doConfigureVsCode() {
   if [ -n "${mode}" ]
   then
     doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" "${mode}"
+    doConfigureWorkspace "${SETTINGS_PATH}/vscode/conf/vscode" "${VSCODE_CONF}" "${mode}"
   fi
 }
 
 function doRunVsCode() {
-  local VSCODE_CONF="${DEVON_IDE_HOME}/conf/vscode"
   mkdir -p "${VSCODE_CONF}"
-  local VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
   mkdir -p "${VSCODE_EXT}"
   doRunCommand "'${VSCODE_HOME}/bin/code' --new-window --user-data-dir '${VSCODE_CONF}' --extensions-dir '${VSCODE_EXT}' ${*}"
 }
