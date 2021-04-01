@@ -4,13 +4,17 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2020.12.003
 
-This release is currently in progress
+Update with the following bugfixes and improvements:
 
-* https://github.com/devonfw/ide/pull/526[#526]: update node.js to 14.15.4 (LTS) and VS code to 1.52.1
+* https://github.com/devonfw/ide/pull/535[#535]: improve windows PATH adoption on initial setup
+* https://github.com/devonfw/ide/issues/539[#539]: Improve devon release to support other versioning strategies
+* https://github.com/devonfw/ide/pull/534[#534]: Update VS Code to 1.54.1 and node.js to v14.16.0
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/19?closed=1[milestone 2020.12.003].
 
 == 2020.12.002
+
+Update with the following bugfixes and improvements:
 
 * https://github.com/devonfw/ide/issues/522[#522]: update devon4j to 2020.12.002 and create migration to this version
 * https://github.com/devonfw/ide/pull/524[#524]: workaround for bug in git for windows 
