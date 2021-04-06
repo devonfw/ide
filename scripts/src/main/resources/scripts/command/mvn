@@ -35,9 +35,11 @@ function doSetup() {
         echo "Starting to create ${M2_DIR}/settings.xml"
         local secret
         local crypted
-        local settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
+        local settings
+        settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
         if ! doIsBatch
         then
+          # shellcheck disable=SC2013
           for var in $( grep -o '\$\[.*\]' "${SETTINGS_PATH}/devon/conf/.m2/settings.xml" | sort -u)
           do
             read -r -p "Please enter secret value for variable ${var}: " secret
