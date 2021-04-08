@@ -30,6 +30,28 @@ function doSetup() {
         echo "Successfully created ${M2_DIR}/settings-security.xml"
         MASTER_PASSWORD=
       fi
+      if [ ! -e "${M2_DIR}/settings.xml" ]
+      then
+        echo "Starting to create ${M2_DIR}/settings.xml"
+        local secret
+        local crypted
+        local settings
+        settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
+        if ! doIsBatch
+        then
+          # shellcheck disable=SC2013
+          for var in $( grep -o '\$\[.*\]' "${SETTINGS_PATH}/devon/conf/.m2/settings.xml" | sort -u)
+          do
+            read -r -p "Please enter secret value for variable ${var}: " secret
+            crypted=$("${MVN}" --encrypt-password "${secret}")
+            echo "Encrypted as ${crypted}"
+            echo
+            settings="${settings//"${var}"/${crypted}}"
+          done
+        fi
+        echo "${settings}" > "${M2_DIR}/settings.xml"
+        echo "Successfully created ${M2_DIR}/settings.xml"
+      fi
     else
       echo "WARNING: Settings are missing at ${SETTINGS_PATH}"
       echo "Please run the following command to fix:"
