@@ -1,35 +1,30 @@
-#/usr/bin/env bash
-DEVON_IDE_PATH=$(dirname "${BASH_SOURCE:-$0}")
+#!/usr/bin/env bash
 
-_devon_completions()
-{
-  local cur commandlist options
-  COMPREPLY=()
-  cur="${COMP_WORDS[COMP_CWORD]}"
+DEVON_IDE_PATH=${DEVON_IDE_HOME}/scripts
 
-  options=""
-  if [[ ${cur:0:1} == "-" ]]
-  then
-    options="-b --batch -f --force -d --debug -q --quiet"
-    for (( i=0; i<$COMP_CWORD; i++ ))
-    do
-      options="${options/${COMP_WORDS[$i]}/}"
-    done
-  fi
+local cur commandlist options
+COMPREPLY=()
+cur="${COMP_WORDS[COMP_CWORD]}"
 
-  if [ $COMP_CWORD -le 1 ]; then
-    commandlist=$(ls ${DEVON_IDE_PATH}/command/)
-    COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
-  elif [ $COMP_CWORD -eq 2 ]; then
-    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist)
-    COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
-  elif [ $COMP_CWORD -eq 3 ]; then
-    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
-    COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
-  else
-    COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
-  fi
-  return 0
-}
+options=""
+if [[ ${cur:0:1} == "-" ]]
+then
+  options="-b --batch -f --force -d --debug -q --quiet"
+  for (( i=0; i<$COMP_CWORD; i++ ))
+  do
+    options="${options/${COMP_WORDS[$i]}/}"
+  done
+fi
 
-complete -F _devon_completions devon
+if [ $COMP_CWORD -le 1 ]; then
+  commandlist=$(ls ${DEVON_IDE_PATH}/command/)
+  COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
+elif [ $COMP_CWORD -eq 2 ]; then
+  commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist)
+  COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
+elif [ $COMP_CWORD -eq 3 ]; then
+  commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
+  COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
+else
+  COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
+fi

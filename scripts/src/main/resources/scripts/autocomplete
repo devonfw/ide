@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+
+_devon_completions()
+{
+  # initialize environment...
+  L_PWD=${PWD}
+  L_BASEDIR=${PWD}
+  while true
+  do
+    if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
+    then
+      export DEVON_IDE_HOME="${PWD}"
+      cd "${L_PWD}" || exit 255
+      break
+    fi
+    L_LINKDIR="$(readlink "${PWD}")"
+    if [ "${?}" = 0 ]
+    then
+      cd "${L_LINKDIR}" || exit 255
+      L_BASEDIR="${PWD}"
+    else
+      cd ..
+    fi
+    if [ "${PWD}" = "/" ]
+    then
+      cd "${L_PWD}" || exit 255
+      break
+    fi
+  done
+  L_PWD=
+  L_BASEDIR=
+
+  COMPREPLY=()
+  if [ -n "${DEVON_IDE_HOME}" ]
+  then
+    if [ -f ${DEVON_IDE_HOME}/scripts/devon-autocomplete ]; then
+      source ${DEVON_IDE_HOME}/scripts/devon-autocomplete
+    fi
+  fi
+}
+
+complete -F _devon_completions devon
