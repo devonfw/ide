@@ -372,7 +372,7 @@ function doDownload() {
   then
     curl_opt="--silent"
   fi
-  tmp_file=$(mktemp -ut "${filename}")
+  tmp_file=$(mktemp -ut "${filename}.XXXXXX")
   curl ${curl_opt} -fL "${1}" -o "${tmp_file}"
   result=${?}
   if [ "${result}" != 0 ]
