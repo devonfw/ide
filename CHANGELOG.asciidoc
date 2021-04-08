@@ -8,6 +8,7 @@ ATTENTION: This release is currently work in progress.
 
 Update with the following bugfixes and improvements:
 
+* https://github.com/devonfw/ide/issues/537[#537]: Update eclipse to 2021-03
 * https://github.com/devonfw/ide/issues/287[#287]: Command autocompletion
 * https://github.com/devonfw/ide/issues/536[#536]: Improve handling of aborted downloads
 * https://github.com/devonfw/ide/issues/340[#340]: Improve CobiGen CLI with update support
