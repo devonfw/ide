@@ -38,9 +38,7 @@ function doSetup() {
         local settings
         local settingsUrl
         settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
-        cd "${SETTINGS_PATH}"
-        settingsUrl="$(git remote get-url origin)"
-        cd -
+        settingsUrl=$(cd "${SETTINGS_PATH}" || exit 255 && git remote get-url origin)
         if ! doIsBatch && [ "${settingsUrl}" != "https://github.com/devonfw/ide-settings.git" ]
         then
           # shellcheck disable=SC2013
