@@ -13,7 +13,7 @@ fi
 
 # shellcheck source=scripts/environment-project
 source "${DEVON_IDE_HOME}/scripts/environment-project" export
-DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads"
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
 
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
@@ -344,6 +344,7 @@ function doDevonCommandAndReturn() {
 function doDownload() {
   doLicenseAgreement
   local target_dir
+  local tmp_file
   if [ -z "${3}" ]
   then
     target_dir="${DEVON_DOWNLOAD_DIR}"
@@ -371,11 +372,14 @@ function doDownload() {
   then
     curl_opt="--silent"
   fi
-  curl ${curl_opt} -fL "${1}" -o "${target_dir}/${filename}"
+  tmp_file=$(mktemp -ut "${filename}.XXXXXX")
+  curl ${curl_opt} -fL "${1}" -o "${tmp_file}"
   result=${?}
   if [ "${result}" != 0 ]
   then
     doFail "Failed to download ${filename} from ${1}" ${result}
+  else
+    mv "${tmp_file}" "${target_dir}/${filename}"
   fi
 }
 
