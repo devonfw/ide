@@ -519,6 +519,11 @@ function doMavenGetLatestVersion() {
   fi
 }
 
+# $1: version
+function doIsDevVersion() {
+  [ "${1}" = "dev-SNAPSHOT" ] || [ "${1}" = "0-SNAPSHOT" ]
+}
+
 # defaults, may be overridden before calling doMavenArchetype
 ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
 ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
