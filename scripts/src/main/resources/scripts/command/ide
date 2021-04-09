@@ -127,8 +127,11 @@ function doSetupConf() {
         then
           doEcho "Configuration ${conf} already exists - skipping to copy from ${template}."
         else
-          doEcho "Copying template ${template} to ${conf}."
-          cp "${template}" "${conf}"
+          if [ "${basename}" != "settings.xml" ]
+          then
+            doEcho "Copying template ${template} to ${conf}."
+            cp "${template}" "${conf}"
+          fi
         fi
       fi
     fi
