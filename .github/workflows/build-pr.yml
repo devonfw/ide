@@ -1,7 +1,5 @@
-name: CI build
-on: 
-  push:
-    branches: [ master ]
+name: CI Build PR
+on: pull_request_target
 jobs:
   build:
     runs-on: ubuntu-latest
