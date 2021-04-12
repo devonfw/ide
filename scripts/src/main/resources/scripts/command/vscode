@@ -98,8 +98,17 @@ function doConfigureVsCode() {
 }
 
 function doRunVsCode() {
-  local VSCODE_CONF="${DEVON_IDE_HOME}/conf/vscode"
-  mkdir -p "${VSCODE_CONF}"
+  local VSCODE_CONF="${WORKSPACE_PATH}/.vscode/.userdata"
+  if [ ! -d "${VSCODE_CONF}" ]
+  then
+    if [ -d "${DEVON_IDE_HOME}/conf/vscode" ]
+    then
+      doEcho "Migrating ${DEVON_IDE_HOME}/conf/vscode to ${VSCODE_CONF}\nFor details see https://github.com/devonfw/ide/issues/553"
+      cp -a "${DEVON_IDE_HOME}/conf/vscode" "${VSCODE_CONF}"
+    else
+      mkdir -p "${VSCODE_CONF}"
+    fi
+  fi
   local VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
   mkdir -p "${VSCODE_EXT}"
   doRunCommand "'${VSCODE_HOME}/bin/code' --new-window --user-data-dir '${VSCODE_CONF}' --extensions-dir '${VSCODE_EXT}' ${*}"
