@@ -36,8 +36,10 @@ function doSetup() {
         local secret
         local crypted
         local settings
+        local settingsUrl
         settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
-        if ! doIsBatch
+        settingsUrl=$(cd "${SETTINGS_PATH}" || exit 255 && git remote get-url origin)
+        if ! doIsBatch && [ "${settingsUrl}" != "https://github.com/devonfw/ide-settings.git" ]
         then
           # shellcheck disable=SC2013
           for var in $( grep -o '\$\[.*\]' "${SETTINGS_PATH}/devon/conf/.m2/settings.xml" | sort -u)
