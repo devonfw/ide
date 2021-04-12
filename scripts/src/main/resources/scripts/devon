@@ -72,6 +72,9 @@ then
   mkdir -p ~/.devon  
   echo "Copying devon CLI script to your home directory..."
   cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  cp "${DEVON_IDE_HOME}"/scripts/autocomplete ~/.devon/
+  AUTOCOMPLETION="source ~/.devon/autocomplete"
+  
   if [ ! -e ~/.bashrc ]
   then
     touch ~/.bashrc
@@ -79,17 +82,51 @@ then
   if ! grep -q "alias devon=" ~/.bashrc
   then
     echo "Installing devon alias to your .bashrc"
-    echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.bashrc
+    {
+      echo -e '\nalias devon="source ~/.devon/devon"\ndevon'
+      echo -e "${AUTOCOMPLETION}"
+    } >> ~/.bashrc
   fi
+
   if [ ! -e ~/.zshrc ]
   then
     touch ~/.zshrc
   fi
+
+  echo -e '' >> ~/.zshrc
+  if ! grep -q "compinit" ~/.zshrc
+  then
+    echo -e 'autoload -Uz compinit\ncompinit' >> ~/.zshrc
+  fi
+  if ! grep -q "bashcompinit" ~/.zshrc
+  then
+    echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
+  fi
   if ! grep -q "alias devon=" ~/.zshrc
   then
     echo "Installing devon alias to your .zshrc"
-    echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.zshrc
+    {
+      echo -e 'alias devon="source ~/.devon/devon"\ndevon'
+      echo -e "${AUTOCOMPLETION}"
+    } >> ~/.zshrc
   fi
+
+  if [ "${OSTYPE:0:6}" = "darwin" ]
+  then
+    if [ ! -e ~/.bash_profile ]
+    then
+      touch ~/.bash_profile
+    fi
+    if ! grep -q "alias devon=" ~/.bash_profile
+    then
+      echo "Installing devon alias to your .bash_profile"
+      {
+        echo -e '\nalias devon="source ~/.devon/devon"\ndevon'
+        echo -e "${AUTOCOMPLETION}"
+      } >> ~/.bash_profile
+    fi
+  fi
+
   alias devon="source ~/.devon/devon"
   echo "The devon CLI script has been installed to your system."
   echo "Now in any new shell, you can call devon to setup your IDE environment variables."

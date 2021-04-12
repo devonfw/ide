@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup update uninstall help"
+  elif [ "${2}" = "update" ]
+  then
+    echo "scripts settings software projects all"
+  fi
+  exit
+fi
+
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -230,6 +244,7 @@ function doSetup() {
       echo -e "@echo off\r\npushd %~dp0\r\ncall devon.bat\r\npopd\r\ncmd\r\n" > "${DEVON_IDE_HOME}/console.bat"
     fi
   fi
+
   if [ -z "${DEVON_SKIP_PROJECT_SETUP}" ]
   then
     doUpdateProjects
@@ -292,12 +307,17 @@ function doUninstallFromHome() {
   if [ -f "${1}/.bashrc" ]
   then
     doEcho "Uninstalling from ${1}/.bashrc"
-    grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.bashrc" | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" "${1}/.bashrc"
+    grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.bashrc" | grep -v '^devon$' | grep -v "^source ~/.devon/autocomplete$" > "${DEVON_IDE_HOME}/updates/.bashrc" && mv "${DEVON_IDE_HOME}/updates/.bashrc" "${1}/.bashrc"
   fi
   if [ -f "${1}/.zshrc" ]
   then
     doEcho "Uninstalling from ${1}/.zshrc"
-    grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.zshrc" | grep -v '^devon$' > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
+    grep -v '^autoload -Uz compinit$' "${1}/.zshrc" | grep -v '^compinit$' | grep -v '^autoload bashcompinit$' | grep -v '^bashcompinit$' | grep -v '^alias devon="source ~/.devon/devon"$' | grep -v '^devon$' | grep -v "^source ~/.devon/autocomplete$" > "${DEVON_IDE_HOME}/updates/.zshrc" && mv "${DEVON_IDE_HOME}/updates/.zshrc" "${1}/.zshrc"
+  fi
+  if [ -f "${1}/.bash_profile" ]
+  then
+    doEcho "Uninstalling from ${1}/.bash_profile"
+    grep -v '^alias devon="source ~/.devon/devon"$' "${1}/.bash_profile" | grep -v '^devon$' | grep -v "^source ~/.devon/autocomplete$" > "${DEVON_IDE_HOME}/updates/.bash_profile" && mv "${DEVON_IDE_HOME}/updates/.bash_profile" "${1}/.bash_profile"
   fi
   if [ -f "${1}/scripts/devon" ]
   then
