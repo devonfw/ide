@@ -16,7 +16,7 @@ We try to make it as simple as possible for you. However, there are some minimal
 The latest release of `devonfw-ide` can be downloaded from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] (You can find all releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central]).
 
 == Install
-Create a central folder like `C:\projects` or `/projects`. Inside this folder, create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) and send them to this new folder. Run the command `setup` in this folder (on windows double clicking on `setup.bat`).
+Create a central folder like `C:\projects` or `/projects`. Inside this folder, create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) to this new folder. Run the command `setup` in this folder (on windows double clicking on `setup.bat`).
 That's all. To get started read the link:usage.asciidoc[usage].
 
 == Uninstall
