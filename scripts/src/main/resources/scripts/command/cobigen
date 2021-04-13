@@ -19,20 +19,7 @@ function doSetup() {
   doDevonCommand mvn -q setup
   if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
   then
-    #doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cli" "${COBIGEN_VERSION:-LATEST}" ".jar"
-    
-    doDownload "https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.cobigen&a=cli&v=${COBIGEN_VERSION:-LATEST}" "cobigen.jar" "${COBIGEN_CLI_HOME}"
-
-    # We need to extract all needed files
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cobigen.bat' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cg.bat' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'class-loader-agent.jar' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cobigen' -d '${COBIGEN_CLI_HOME}'"
-    doRunCommand "unzip -q '${COBIGEN_CLI_HOME}/cobigen.jar' 'cg' -d '${COBIGEN_CLI_HOME}'"
-    
-    chmod a+x "${COBIGEN_CLI_HOME}/cg"
-    chmod a+x "${COBIGEN_CLI_HOME}/cobigen"
-
+    doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cobigen-cli" "${COBIGEN_VERSION:-LATEST}" ".tar.gz"
     doExtendPath "${COBIGEN_CLI_HOME}"
     doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
   else
