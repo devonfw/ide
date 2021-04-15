@@ -173,9 +173,34 @@ function doUpdateCliScript() {
   fi
 }
 
+function doInstallAutocompletion() {
+  # Install autocompletion
+  devon_autocomplete="${DEVON_HOME_DIR}/.devon/autocomplete"
+  if [ ! -f "${devon_autocomplete}" ]
+  then
+    cp "${DEVON_IDE_HOME}/scripts/autocomplete" "${devon_autocomplete}"
+    AUTOCOMPLETION="source ~/.devon/autocomplete"
+    echo -e "${AUTOCOMPLETION}" >> ~/.bashrc
+    if ! grep -q "compinit" ~/.zshrc
+    then
+      echo -e 'autoload -Uz compinit\ncompinit' >> ~/.zshrc
+    fi
+    if ! grep -q "bashcompinit" ~/.zshrc
+    then
+      echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
+    fi
+    echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
+    if [ "${OSTYPE:0:6}" = "darwin" ]
+    then
+      echo -e "${AUTOCOMPLETION}" >> ~/.bash_profile
+    fi
+  fi
+}
+
 function doUpdateCli() {
   doUpdateCliScript devon
   doUpdateCliScript devon.bat
+  doInstallAutocompletion
 }
 
 function doSetup() {
