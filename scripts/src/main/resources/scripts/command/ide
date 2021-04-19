@@ -175,12 +175,19 @@ function doUpdateCliScript() {
 
 function doInstallAutocompletion() {
   # Install autocompletion
+  echo "Installing devon autocompletion"
   devon_autocomplete="${DEVON_HOME_DIR}/.devon/autocomplete"
   if [ ! -f "${devon_autocomplete}" ]
   then
     cp "${DEVON_IDE_HOME}/scripts/autocomplete" "${devon_autocomplete}"
     AUTOCOMPLETION="source ~/.devon/autocomplete"
-    echo -e "${AUTOCOMPLETION}" >> ~/.bashrc
+
+    if ! grep -q "${AUTOCOMPLETION}" ~/.bashrc
+    then
+      echo -e "${AUTOCOMPLETION}" >> ~/.bashrc
+    fi
+    
+    echo -e '' >> ~/.zshrc
     if ! grep -q "compinit" ~/.zshrc
     then
       echo -e 'autoload -Uz compinit\ncompinit' >> ~/.zshrc
@@ -189,10 +196,17 @@ function doInstallAutocompletion() {
     then
       echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
     fi
-    echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
+    if ! grep -q "${AUTOCOMPLETION}" ~/.zshrc
+    then
+      echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
+    fi
+    
     if doIsMacOs
     then
-      echo -e "${AUTOCOMPLETION}" >> ~/.bash_profile
+      if ! grep -q "${AUTOCOMPLETION}" ~/.bash_profile
+      then
+        echo -e "${AUTOCOMPLETION}" >> ~/.bash_profile
+      fi
     fi
   fi
 }
