@@ -23,9 +23,9 @@ function doUpdateMetaFile() {
   if [ -f "${ide_paths}" ]
   then
     if ! grep -q "${DEVON_IDE_HOME}" "${ide_paths}"
-	then
+    then
       echo "${DEVON_IDE_HOME}" >> "${ide_paths}"
-	fi
+    fi
   else
     echo "${DEVON_IDE_HOME}" > "${ide_paths}"
   fi
@@ -190,7 +190,7 @@ function doInstallAutocompletion() {
       echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
     fi
     echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
-    if [ "${OSTYPE:0:6}" = "darwin" ]
+    if doIsMacOs
     then
       echo -e "${AUTOCOMPLETION}" >> ~/.bash_profile
     fi
