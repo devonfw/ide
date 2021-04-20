@@ -47,7 +47,7 @@ The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to follow
 
 As you can see, the `settings` folder contains sub-folders for tools of the IDE.
 So the `devon` folder contains `devon.properties` files for the link:configuration.asciidoc[configuration] of your environment.
-Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode],, the according folders contain the templates to manage the workspace via our link:configurator.asciidoc[configurator].
+Further, for the IDEs such as link:eclipse.asciidoc[eclipse] or link:vscode.asciidoc[vscode], the according folders contain the templates to manage the workspace via our link:configurator.asciidoc[configurator].
 
 == Configuration Philosophy
 Different tools and configuration files require a different handling:

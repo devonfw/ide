@@ -1,5 +1,7 @@
 name: CI build
-on: [push, pull_request]
+on: 
+  push:
+    branches: [ master ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,3 +16,8 @@ jobs:
           java-version: '11'
       - name: Build project with Maven
         run: mvn install
+      - name: Deploy to OSSRH nexus
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: mvn --settings .mvn/settings.xml -DskipTests=true -Darchetype.test.skip=true -Dmaven.install.skip=true deploy

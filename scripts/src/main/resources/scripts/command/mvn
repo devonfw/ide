@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup get-version set-version check-no-snapshots check-top-level-project release help"
+  fi
+  exit
+fi
+
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -8,7 +19,7 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    local software_version=${MAVEN_VERSION:-3.6.2}
+    local software_version=${MAVEN_VERSION:-3.8.1}
     local mirror="https://archive.apache.org/dist/maven/maven-3/"
     local download_url="${mirror}/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz"
     doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" "" "-"
@@ -29,6 +40,30 @@ function doSetup() {
         echo -e "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<settingsSecurity>\n  <master>${MASTER_PASSWORD}</master>\n</settingsSecurity>" > "${M2_DIR}/settings-security.xml"
         echo "Successfully created ${M2_DIR}/settings-security.xml"
         MASTER_PASSWORD=
+      fi
+      if [ ! -e "${M2_DIR}/settings.xml" ]
+      then
+        echo "Starting to create ${M2_DIR}/settings.xml"
+        local secret
+        local crypted
+        local settings
+        local settingsUrl
+        settings=$(cat "${SETTINGS_PATH}/devon/conf/.m2/settings.xml")
+        settingsUrl=$(cd "${SETTINGS_PATH}" || exit 255 && git remote get-url origin)
+        if ! doIsBatch && [ "${settingsUrl}" != "https://github.com/devonfw/ide-settings.git" ]
+        then
+          # shellcheck disable=SC2013
+          for var in $( grep -o '\$\[.*\]' "${SETTINGS_PATH}/devon/conf/.m2/settings.xml" | sort -u)
+          do
+            read -r -p "Please enter secret value for variable ${var}: " secret
+            crypted=$("${MVN}" --encrypt-password "${secret}")
+            echo "Encrypted as ${crypted}"
+            echo
+            settings="${settings//"${var}"/${crypted}}"
+          done
+        fi
+        echo "${settings}" > "${M2_DIR}/settings.xml"
+        echo "Successfully created ${M2_DIR}/settings.xml"
       fi
     else
       echo "WARNING: Settings are missing at ${SETTINGS_PATH}"

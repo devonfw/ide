@@ -1,4 +1,15 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup get-version set-version check-top-level-project release help"
+  fi
+  exit
+fi
+
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -69,9 +80,13 @@ then
   echo "Setup or run npm."
   echo
   echo "Arguments:"
-  echo "                      run default build"
-  echo "setup                 setup angular-cli (install and verify)"
-  echo "«args»                call maven with the specified arguments"
+  echo "                          run default build"
+  echo " setup                    setup NPM (install and verify)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if you are running on a top-level project or fail if in a module or no NPM project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   run NPM with the given arguments"
   echo
   echo "Options:"
   exit
