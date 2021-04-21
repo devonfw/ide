@@ -13,6 +13,8 @@ You only need the settings URL from your `devonfw-ide` xref:admin[admin].
 Experienced developers can directly call `setup «settings-URL»`.
 Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter it when you are prompted for `Settings URL` (using copy&paste to avoid typos).
 
+Note: devonfw-ide now supports autocompletion. Open the terminal (for window use git bash).Type "devon" and hit [Tab].
+
 === Update
 To update your IDE (if instructed by your xref:admin[admin]), you only need to run the following command:
 ```
