@@ -106,8 +106,8 @@ function doAddPluginFromConfig() {
     elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
       # check if plugin successfully installed
-      local plugin_fileprefix=$(basename "${1/.properties/}")
-      local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
+      plugin_fileprefix=$(basename "${1/.properties/}")
+      install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
       if [ ! -e "${install_file}" ]
       then
         result_out=$(doInstallEclipsePlugin "${plugin_id}" "${plugin_url}")
