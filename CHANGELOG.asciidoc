@@ -4,14 +4,14 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2021.04.001
 
-ATTENTION: This release is currently work in progress.
-
 Update with the following bugfixes and improvements:
 
 * https://github.com/devonfw/ide/issues/287[#287]: Command autocompletion
 * https://github.com/devonfw/ide/issues/536[#536]: Improve handling of aborted downloads
 * https://github.com/devonfw/ide/issues/340[#340]: Improve CobiGen CLI with update support
 * https://github.com/devonfw/ide/issues/542[#542]: Support placeholders in settings.xml template
+* https://github.com/devonfw/ide/issues/557[#557]: minimize setup by reducing DEVON_IDE_TOOLS
+* https://github.com/devonfw/ide/issues/537[#537]: Update eclipse to 2021-03
 * https://github.com/devonfw/ide/issues/550[#550]: update maven to 3.8.1
 * https://github.com/devonfw/ide/issues/545[#545]: update devon4j to 2021.04.001 and add migration
 * https://github.com/devonfw/ide/issues/546[#546]: Problems with tm-terminal Eclipse plugin
