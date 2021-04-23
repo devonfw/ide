@@ -181,6 +181,12 @@ public class Migrations {
         .replaceProperty("devon4j.version", "2020.12.002") //
         .replaceProperty("spring.boot.version", "2.4.0") //
         .replaceProperty("guava.version", "30.0-jre") //
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2021.04.001")).pom() //
+        .replaceProperty("devon4j.version", "2021.04.001") //
+        .replaceProperty("spring.boot.version", "2.4.4") //
+        .replaceProperty("jackson.version", "2.12.2") //
+        .replaceProperty("guava.version", "30.1.1-jre") //
         .and().next().build();
   }
 
