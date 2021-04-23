@@ -11,7 +11,7 @@
   <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devonfw-ide-scripts</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}${changelist}</version>
+  <version>${revision}</version>
   <name>${project.artifactId}</name>
   <description>Scripts to setup and update the development environment.</description>
 

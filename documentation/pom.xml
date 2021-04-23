@@ -9,15 +9,14 @@
   </parent>
   <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devonfw-ide-doc</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Documentation for devonfw-ide (Integrated Development Environment)</description>
 
   <properties>
     <docgen.asciidoc.page>devonfw-ide-doc</docgen.asciidoc.page>
-    <revision>dev</revision>
-    <changelist>-SNAPSHOT</changelist>
+    <revision>dev-SNAPSHOT</revision>
   </properties>
 
   <!-- run "mvn package" and get the PDF result in target/generated-docs/*.pdf -->
