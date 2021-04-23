@@ -11,7 +11,7 @@
   <groupId>com.devonfw.tools.ide</groupId>
   <artifactId>devonfw-ide-settings</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}${changelist}</version>
+  <version>${revision}</version>
   <name>${project.artifactId}</name>
   <description>Settings with configuration templates for devonfw-ide. You are supposed to copy and commit them to your version control system.</description>
 
