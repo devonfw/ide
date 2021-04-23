@@ -24,13 +24,16 @@ function doInstallEclipsePlugin() {
   # shellcheck disable=SC2086
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
   result=${?}
+  ret=0
   if [ "${result}" != 0 ]
   then
     echo
     echo "******** ATTENTION ********"
     echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
     echo
+    ret=1
   fi
+  return "${ret}"
 }
 
 function doSetup() {
@@ -65,6 +68,13 @@ function doSetup() {
     if [ "${result}" = 0 ]
     then
       doAddPlugins
+    elif [ -d "${SETTINGS_PATH}"/eclipse/plugins ]
+    then
+      local file
+      for file in "${SETTINGS_PATH}"/eclipse/plugins/*.properties
+      do
+        doAddPluginFromConfig "${file}"
+      done
     fi
   fi
   if [ -n "${1}" ]
@@ -95,7 +105,19 @@ function doAddPluginFromConfig() {
       doWarning "Invalid eclipse plugin config: ${file}"
     elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
-      doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+      # check if plugin successfully installed
+      local plugin_fileprefix=$(basename "${1/.properties/}")
+      local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
+      if [ ! -e "${install_file}" ]
+      then
+        result_out=$(doInstallEclipsePlugin "${plugin_id}" "${plugin_url}")
+        result_rc=$?
+        echo "${result_out}"
+        if [ "${result_rc}" == 0 ]
+        then
+          touch "${install_file}"
+        fi
+      fi
     fi
   elif [ -n "${2}" ]
   then
