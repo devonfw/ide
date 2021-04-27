@@ -39,7 +39,7 @@ function doSetup() {
   then
     #mirror="https://mirror.math.princeton.edu"
     local mirror="https://ftp.osuosl.org"
-    local software_version="${ECLIPSE_VERSION:-2020-12}"
+    local software_version="${ECLIPSE_VERSION:-2021-03}"
     local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
     local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R"
     if doIsMacOs
