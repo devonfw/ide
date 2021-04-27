@@ -17,7 +17,7 @@
 
   <properties>
     <github.repository>ide</github.repository>
-    <devon_ide_version>${revision}${changelist}</devon_ide_version>
+    <devon_ide_version>${revision}</devon_ide_version>
   </properties>
   
   <dependencies>
