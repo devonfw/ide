@@ -302,6 +302,8 @@ function doUpdateSoftware() {
     doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
+  doDevonCommand eclipse create-script
+  doDevonCommand vscode create-script
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do
