@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+linux_version=$(wsl -l)
+if [[ $linux_version == *"no installed distributions"* ]];then
+  echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+  exit 0
+fi
+wsl bash ./scripts/setup-docker
