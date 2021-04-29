@@ -28,9 +28,10 @@ function doInstallEclipsePlugin() {
   then
     echo
     echo "******** ATTENTION ********"
-    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually."
+    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
     echo
   fi
+  return "${result}"
 }
 
 function doSetup() {
@@ -52,7 +53,6 @@ function doSetup() {
       download_url="${download_url}-linux-gtk-x86_64.tar.gz"
     fi
     doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
-    local result=${?}
     if doIsMacOs
     then
       if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
@@ -62,10 +62,7 @@ function doSetup() {
         chmod a+x "${ECLIPSE_HOME}/eclipse"
       fi
     fi
-    if [ "${result}" = 0 ]
-    then
-      doAddPlugins
-    fi
+    doAddPlugins
   fi
   if [ -n "${1}" ]
   then
@@ -95,7 +92,19 @@ function doAddPluginFromConfig() {
       doWarning "Invalid eclipse plugin config: ${file}"
     elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
-      doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+      # check if plugin successfully installed
+      local plugin_fileprefix="${1/*\//}"
+      plugin_fileprefix="${plugin_fileprefix/.properties/}"
+      local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
+      if [ ! -e "${install_file}" ]
+      then
+        doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+        result_rc=$?
+        if [ "${result_rc}" = 0 ]
+        then
+          touch "${install_file}"
+        fi
+      fi
     fi
   elif [ -n "${2}" ]
   then
