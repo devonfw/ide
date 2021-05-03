@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 kubernetes_check=$(kubectl version --client)
 if  [[ ! $kubernetes_check == *"Client Version"* ]]; then
-    echo Installing Kubectl...
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg ^| sudo apt-key add -
-    sudo touch /etc/apt/sources.list.d/kubernetes.list
-    echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" ^| sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-    sudo apt-get update
-    sudo apt-get install -y kubectl
-    echo Kubernetes installed successfully.
+	echo Installing Kubectl...
+    curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+    sudo mv ./kubectl /usr/local/bin/kubectl
+	wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+	sudo chmod 755 /usr/local/bin/kubectl /usr/local/bin/k3d	
+	
+	k3d cluster create devonfw-cluster
+	export KUBECONFIG=$(k3d kubeconfig get devonfw-cluster)
+	kubectl cluster-info
+	
+	echo Kubernetes installed successfully.
 else 
     echo Kubernetes already installed. 
 fi
-
+kubectl version

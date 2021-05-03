@@ -4,4 +4,16 @@ if [[ $linux_version == *"no installed distributions"* ]];then
   echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
   exit 0
 fi
+
+# Check if Kubernetes is already installed on Windows
+kubernetes_win_version=$(kubectl version)
+if [[ $kubernetes_win_version == *"Client Version"* ]];then
+  echo Kubernetes already installed on Windows.
+  kubectl version
+  exit 0
+else 
+  echo Kubernetes not installed on Windows.
+fi
+
+# Install Kubernetes on WSL
 wsl bash ./scripts/setup-kubernetes
