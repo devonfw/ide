@@ -5,14 +5,14 @@ if [[ $linux_version == *"no installed distributions"* ]];then
   exit 0
 fi
 
-# Check if Kubernetes is already installed on Windows
+# Check if Kubernetes is already installed
 kubernetes_win_version=$(kubectl version)
 if [[ $kubernetes_win_version == *"Client Version"* ]];then
-  echo Kubernetes already installed on Windows.
+  echo Kubernetes already installed.
   kubectl version
   exit 0
 else 
-  echo Kubernetes not installed on Windows.
+  echo Kubernetes not installed.
 fi
 
 # Install Kubernetes on WSL

@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
-linux_version=$(wsl -l)
-if [[ $linux_version == *"no installed distributions"* ]];then
-  echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+wsl_linux_version=$(wsl -l)
+if [[ $wsl_linux_version == *"no installed distributions"* ]];then
+  echo "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
   exit 0
 fi
 
 docker_win_version=$(docker version)
-if [[ $docker_win_version == *"Client: Docker Engine"* ]];then
+if [[ $docker_win_version == *"Client:"* ]];then
   echo Docker already installed.
   docker version
-  if [[ $docker_win_version != *"Server: Docker Engine"* ]];then
-    echo Please start Docker daemon.
-    exit 0
+  if [[ $docker_win_version != *"Server:"* ]];then
+  echo Please start Docker daemon.
+  exit 0
   fi
   exit 0
 else 
-  echo Docker not installed on Windows.
+  echo Docker not installed.
 fi
 
 # Install Docker on WSL
 wsl bash ./scripts/setup-docker
+

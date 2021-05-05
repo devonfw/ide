@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 docker_check=$(docker --version)
 if [[ $docker_check != *"Docker version"* ]];then
-	echo "Installing Docker on WSL..."
+	echo "Installing Docker..."
 	sudo apt-get update -y
 	sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg-agent
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -12,6 +12,6 @@ if [[ $docker_check != *"Docker version"* ]];then
 	sudo usermod -aG docker $USER
 	echo Docker installed successfully.
 else 
-    echo Docker already installed on WSL.
+    echo Docker already installed.
 fi 
 docker version
