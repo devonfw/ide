@@ -23,9 +23,9 @@ function doUpdateMetaFile() {
   if [ -f "${ide_paths}" ]
   then
     if ! grep -q "${DEVON_IDE_HOME}" "${ide_paths}"
-	then
+    then
       echo "${DEVON_IDE_HOME}" >> "${ide_paths}"
-	fi
+    fi
   else
     echo "${DEVON_IDE_HOME}" > "${ide_paths}"
   fi
@@ -173,9 +173,48 @@ function doUpdateCliScript() {
   fi
 }
 
+function doInstallAutocompletion() {
+  # Install autocompletion
+  echo "Installing devon autocompletion"
+  devon_autocomplete="${DEVON_HOME_DIR}/.devon/autocomplete"
+  if [ ! -f "${devon_autocomplete}" ]
+  then
+    cp "${DEVON_IDE_HOME}/scripts/autocomplete" "${devon_autocomplete}"
+    AUTOCOMPLETION="source ~/.devon/autocomplete"
+
+    if ! grep -q "${AUTOCOMPLETION}" ~/.bashrc
+    then
+      echo -e "${AUTOCOMPLETION}" >> ~/.bashrc
+    fi
+    
+    echo -e '' >> ~/.zshrc
+    if ! grep -q "compinit" ~/.zshrc
+    then
+      echo -e 'autoload -Uz compinit\ncompinit' >> ~/.zshrc
+    fi
+    if ! grep -q "bashcompinit" ~/.zshrc
+    then
+      echo -e 'autoload bashcompinit\nbashcompinit' >> ~/.zshrc
+    fi
+    if ! grep -q "${AUTOCOMPLETION}" ~/.zshrc
+    then
+      echo -e "${AUTOCOMPLETION}" >> ~/.zshrc
+    fi
+    
+    if doIsMacOs
+    then
+      if ! grep -q "${AUTOCOMPLETION}" ~/.bash_profile
+      then
+        echo -e "${AUTOCOMPLETION}" >> ~/.bash_profile
+      fi
+    fi
+  fi
+}
+
 function doUpdateCli() {
   doUpdateCliScript devon
   doUpdateCliScript devon.bat
+  doInstallAutocompletion
 }
 
 function doSetup() {
@@ -263,6 +302,9 @@ function doUpdateSoftware() {
     doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
+  doDevonCommand eclipse create-script
+  doDevonCommand vscode create-script
+  doDevonCommand intellij create-script
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do

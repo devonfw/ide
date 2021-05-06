@@ -35,7 +35,7 @@ function doSetup() {
     
     #http://localhost:9999/jnlpJars/jenkins-cli.jar
     mkdir -p "${JENKINS_HOME}"
-    doRunCommand "mv ~/Downloads/jenkins.war '${JENKINS_HOME}/jenkins.war'"
+    doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
     local cwd="${PWD}"
     cd "${JENKINS_HOME}" || exit 255
     doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
