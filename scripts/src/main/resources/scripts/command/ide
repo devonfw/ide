@@ -304,6 +304,7 @@ function doUpdateSoftware() {
   done
   doDevonCommand eclipse create-script
   doDevonCommand vscode create-script
+  doDevonCommand intellij create-script
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do
