@@ -1,0 +1,67 @@
+:toc:
+toc::[]
+
+= jasypt
+
+The `jasypt` commandlet allows to install http://www.jasypt.org/[jasypt] and encrypt or decrept secrets using strong encryption given a secure masterpassword. See also https://github.com/devonfw/devon4j/blob/master/documentation/guide-configuration.asciidoc#password-encryption[devon4j password encryption guide] for further details.
+
+The arguments (`devon jasypt «args»`) are explained by the following table:
+
+.Usage of `devon mvn`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|`setup`                   |setup jasypt (install and verify), link:configuration.asciidoc[configurable] via `JASYPT_VERSION`
+|`encrypt`                 |Encrypt a secret with a masterpassword
+|`decrypt`                 |Decrypt an encrypted secret with a masterpassword
+|=======================
+
+== example
+
+```
+devon jasypt encrypt
+Enter masterpassword: master
+Enter secret to encrypt/decrypt: secret
+
+----ENVIRONMENT-----------------
+
+Runtime: AdoptOpenJDK OpenJDK 64-Bit Server VM 11.0.9.1+1
+
+
+
+----ARGUMENTS-------------------
+
+input: secret
+password: master
+ivGeneratorClassName: org.jasypt.iv.RandomIvGenerator
+algorithm: PBEWITHHMACSHA512ANDAES_256
+
+
+
+----OUTPUT----------------------
+
+fQPbaDd8wq0h0qOZw/AEKp2TD4Y07Y//M5PzaLgF3qL7YnBQjiGLtW8s5XkP3Ly9
+
+devon jasypt decrypt
+Enter masterpassword: master
+Enter secret to encrypt/decrypt: fQPbaDd8wq0h0qOZw/AEKp2TD4Y07Y//M5PzaLgF3qL7YnBQjiGLtW8s5XkP3Ly9
+
+----ENVIRONMENT-----------------
+
+Runtime: AdoptOpenJDK OpenJDK 64-Bit Server VM 11.0.9.1+1
+
+
+
+----ARGUMENTS-------------------
+
+input: fQPbaDd8wq0h0qOZw/AEKp2TD4Y07Y//M5PzaLgF3qL7YnBQjiGLtW8s5XkP3Ly9
+password: master
+ivGeneratorClassName: org.jasypt.iv.RandomIvGenerator
+algorithm: PBEWITHHMACSHA512ANDAES_256
+
+
+
+----OUTPUT----------------------
+
+secret
+```
