@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
-wsl_linux_version=$(wsl -l)
-if [[ $wsl_linux_version == *"no installed distributions"* ]];then
-  echo "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
-  exit 0
-fi
 
-docker_win_version=$(docker version)
-if [[ $docker_win_version == *"Client:"* ]];then
-  echo Docker already installed.
-  docker version
-  if [[ $docker_win_version != *"Server:"* ]];then
-  echo Please start Docker daemon.
-  exit 0
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+if doIsWindows
+then
+  wsl_distro_list=$(wsl -l)
+  if [[ $wsl_distro_list == *"no installed distributions"* ]];then
+    echo "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
+    exit 0
   fi
+  docker_win_version=$(docker version)
+  if [[ $docker_win_version == *"Client:"* ]];then
+    echo Docker already installed.
+    docker version
+    if [[ $docker_win_version != *"Server:"* ]];then
+    echo Please start Docker daemon.
+    exit 0
+    fi
+    exit 0
+  else 
+    echo Docker not installed.
+  fi
+  echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
+  # Install Docker on WSL
+  wsl bash ./scripts/setup-docker
+else
+  echo "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   exit 0
-else 
-  echo Docker not installed.
 fi
-
-# Install Docker on WSL
-wsl bash ./scripts/setup-docker
-

@@ -1,19 +1,28 @@
 #!/usr/bin/env bash
-linux_version=$(wsl -l)
-if [[ $linux_version == *"no installed distributions"* ]];then
-  echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+if doIsWindows
+then
+  wsl_distro_list=$(wsl -l)
+  if [[ $wsl_distro_list == *"no installed distributions"* ]];then
+    echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+    exit 0
+  fi
+
+  # Check if Kubernetes is already installed
+  kubernetes_win_version=$(kubectl version)
+  if [[ $kubernetes_win_version == *"Client Version"* ]];then
+    echo Kubernetes already installed.
+    kubectl version
+    exit 0
+  else 
+    echo Kubernetes not installed.
+  fi
+  echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
+  # Install Kubernetes on WSL
+  wsl bash ./scripts/setup-kubernetes
+else
+  echo "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   exit 0
 fi
-
-# Check if Kubernetes is already installed
-kubernetes_win_version=$(kubectl version)
-if [[ $kubernetes_win_version == *"Client Version"* ]];then
-  echo Kubernetes already installed.
-  kubectl version
-  exit 0
-else 
-  echo Kubernetes not installed.
-fi
-
-# Install Kubernetes on WSL
-wsl bash ./scripts/setup-kubernetes
