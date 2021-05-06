@@ -17,6 +17,7 @@ Update with the following bugfixes and improvements:
 * https://github.com/devonfw/ide/issues/545[#545]: update devon4j to 2021.04.001 and add migration
 * https://github.com/devonfw/ide/issues/546[#546]: Problems with tm-terminal Eclipse plugin
 * https://github.com/devonfw/ide/issues/553[#553]: VSCode user-data-dir shall be part of workspace config
+* https://github.com/devonfw/ide/issues/513[#513]: Configurable generation of IDE start scripts
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/18?closed=1[milestone 2021.04.001].
 

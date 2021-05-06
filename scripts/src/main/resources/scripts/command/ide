@@ -290,6 +290,12 @@ function doSetup() {
   else
     doWarning "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
   fi
+  local ide
+  for ide in "${DEVON_CREATE_START_SCRIPTS[@]}"
+  do
+    doEcho "\n*** Creating start-scripts for IDE ${ide} ***"
+    doDevonCommand "${ide}" --all create-script
+  done
 }
 
 function doUpdateProjects() {
@@ -297,14 +303,12 @@ function doUpdateProjects() {
 }
 
 function doUpdateSoftware() {
+  local tool
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     doEcho "\n*** Setting up ${tool} ***"
     doDevonCommand "${tool}" setup
   done
-  doDevonCommand eclipse create-script
-  doDevonCommand vscode create-script
-  doDevonCommand intellij create-script
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do
