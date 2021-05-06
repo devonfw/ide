@@ -20,7 +20,7 @@ function doSetup() {
   if [ ! -e "${JASYPT_ARTIFACT}" ]
   then
     doEcho "Downloading jasypt version ${JASYPT_VERSION} to local maven repository..."
-    doDevonCommand mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get -Dartifact=org.jasypt:jasypt:${JASYPT_VERSION}
+    doDevonCommand mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get "-Dartifact=org.jasypt:jasypt:${JASYPT_VERSION}"
   elif [ -n "${1}" ]
   then
     doEcho "Jasypt version ${JASYPT_VERSION} is already installed."
