@@ -28,6 +28,8 @@ include::intellij.asciidoc[leveloffset=3]
 
 include::ionic.asciidoc[leveloffset=3]
 
+include::jasypt.asciidoc[leveloffset=3]
+
 include::java.asciidoc[leveloffset=3]
 
 include::jenkins.asciidoc[leveloffset=3]
