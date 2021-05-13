@@ -1,0 +1,20 @@
+:toc:
+toc::[]
+
+= kubernetes
+
+The `kubernetes` commandlet allows to install https://kubernetes.io/[kubernetes]. This command is implemented to currently work on Windows. Other OS are not supported yet. 
+
+.Usage of `devon kubernetes`
+
+On Windows
+
+* Checks whether https://docs.microsoft.com/en-us/windows/wsl/install-win10[Windows Subsystem for Linux(WSL)] has been enabled and any linux distribution has been installed.
+
+* If yes, checks whether Kubernetes has already been installed either on Windows or on WSL.
+
+* If yes, program quits since Kubernetes is already available.
+
+* If not, this will install Kubernetes on WSL along with https://k3d.io[K3D] 
+
+* As part of the setup, K3D will create a cluster with a single node with a default name as "devonfw-cluster"

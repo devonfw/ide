@@ -1,0 +1,18 @@
+:toc:
+toc::[]
+
+= docker
+
+The `docker` commandlet allows to install https://www.docker.com/[docker]. This command is implemented to currently work on Windows. Other OS are not supported yet. 
+
+.Usage of `devon docker`
+
+On Windows
+
+* Checks whether https://docs.microsoft.com/en-us/windows/wsl/install-win10[Windows Subsystem for Linux(WSL)] has been enabled and any linux distribution has been installed.
+
+* If yes, checks whether Docker has already been installed either on Windows or on WSL.
+
+* If yes, program quits since Docker is already available.
+
+* If not, this commandlet will install Docker on WSL
