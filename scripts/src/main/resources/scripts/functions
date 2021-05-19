@@ -531,6 +531,7 @@ function doIsDevVersion() {
 # defaults, may be overridden before calling doMavenArchetype
 ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
 ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
+ARCHETYPE_ARTIFACT_BATCH_ID="devon4j-template-batch"
 
 # ${1}-${n-1}: array
 # ${n}: prefix to check if array contains element starting with
@@ -650,6 +651,12 @@ function doMavenArchetype() {
     doFail "Project ${target_artifact_id} already exists at ${PWD}"
   fi
   doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
+  if doArrayContainsItemWithPrefix "${target_args[@]}" "-Dbatch="
+  then
+    cd "${target_artifact_id}"
+    doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_BATCH_ID}" -DinteractiveMode=false -DparentArtifactId="${target_artifact_id}" -DartifactId=batch "${target_args[@]/-DartifactId=*}"
+    cd ..
+  fi
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
