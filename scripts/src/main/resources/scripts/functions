@@ -653,9 +653,9 @@ function doMavenArchetype() {
   doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
   if doArrayContainsItemWithPrefix "${target_args[@]}" "-Dbatch="
   then
-    cd "${target_artifact_id}"
+    cd "${target_artifact_id}" || exit 1
     doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_BATCH_ID}" -DinteractiveMode=false -DparentArtifactId="${target_artifact_id}" -DartifactId=batch "${target_args[@]/-DartifactId=*}"
-    cd ..
+    cd .. || exit 1
   fi
 }
 
