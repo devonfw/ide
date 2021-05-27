@@ -13,7 +13,7 @@ then
   # Check if Kubernetes is already installed
   kubernetes_win_version=$(kubectl version)
   if [[ $kubernetes_win_version == *"Client Version"* ]];then
-    echo Kubernetes already installed.
+    echo Kubernetes is already installed and ready to use. devonfw-ide did not make any changes on your cluster.
     kubectl version
     exit 0
   else 
