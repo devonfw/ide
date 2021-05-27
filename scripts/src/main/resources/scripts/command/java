@@ -6,6 +6,9 @@ then
   if [ -z "${2}" ]
   then
     echo "setup create migrate cicd help"
+  elif [ "${2}" = "migrate" ]
+  then
+    echo "from"
   fi
   exit
 fi
