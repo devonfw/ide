@@ -13,13 +13,12 @@ then
   # Check if Kubernetes is already installed
   kubernetes_win_version=$(kubectl version)
   if [[ $kubernetes_win_version == *"Client Version"* ]];then
-    echo Kubernetes is already installed and ready to use. devonfw-ide did not make any changes on your cluster.
+    echo Kubernetes is already installed on Windows and ready to use. devonfw-ide did not make any changes.
     kubectl version
     exit 0
   else 
-    echo Kubernetes not installed.
+    echo Kubernetes not installed on your Windows.
   fi
-  echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
   # Install Kubernetes on WSL
   wsl bash ./scripts/setup-kubernetes
 else
