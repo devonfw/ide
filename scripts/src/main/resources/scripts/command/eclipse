@@ -165,10 +165,10 @@ function doAddPlugin() {
   then
     if [ "${1}" = "startexplorer" ]
     then
-      doInstallEclipsePlugin "de.bastiankrol.startexplorer.feature.feature.group" "http://basti1302.github.com/startexplorer/update/"
+      doInstallEclipsePlugin "de.bastiankrol.startexplorer.feature.feature.group" "http://basti1302.github.io/startexplorer/update/"
     elif [ "${1}" = "cobigen" ]
     then
-      doInstallEclipsePlugin "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin" "https://dl.bintray.com/devonfw/cobigen.p2/"
+      doInstallEclipsePlugin "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin" "https://devonfw.com/cobigen/updatesite/stable/"
     elif [ "${1}" = "terminal" ]
     then
       doInstallEclipsePlugin "org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group" "http://download.eclipse.org/tm/terminal/marketplace"
