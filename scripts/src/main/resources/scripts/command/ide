@@ -8,7 +8,20 @@ then
     echo "setup update uninstall help"
   elif [ "${2}" = "update" ]
   then
-    echo "scripts settings software projects all"
+    shortlist3="scripts settings software projects all"
+    shortlist3arr=("${shortlist3}")
+    if [ -z "${3}" ] || [[ ! " ${shortlist3arr[@]} " =~ " ${3} " ]]
+    then
+      echo "${shortlist3}"
+    elif [ "${3}" = "scripts" ]
+    then
+      shortlist4="to"
+      shortlist4arr=("${shortlist3}")
+      if [ -z "${4}" ] || [[ ! " ${shortlist4[@]} " =~ " ${4} " ]]
+      then
+        echo "${shortlist4}"
+      fi
+    fi
   fi
   exit
 fi

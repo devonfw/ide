@@ -22,9 +22,7 @@ if [ $COMP_CWORD -le 1 ]; then
 elif [ $COMP_CWORD -eq 2 ]; then
   commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist)
   COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
-elif [ $COMP_CWORD -eq 3 ]; then
-  commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[2]})
-  COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
 else
-  COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
+  commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${COMP_WORDS[@]:2})
+  COMPREPLY=( $(compgen -W "${commandlist} ${options}" -- ${cur}) )
 fi

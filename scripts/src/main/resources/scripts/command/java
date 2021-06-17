@@ -8,7 +8,12 @@ then
     echo "setup create migrate cicd help"
   elif [ "${2}" = "migrate" ]
   then
-    echo "from"
+    shortlist3="from"
+    shortlist3arr=("${shortlist3}")
+    if [ -z "${3}" ] || [[ ! " ${shortlist3arr[@]} " =~ " ${3} " ]]
+    then
+      echo "${shortlist3}"
+    fi
   fi
   exit
 fi
