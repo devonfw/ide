@@ -9,15 +9,13 @@ then
   elif [ "${2}" = "update" ]
   then
     shortlist3="scripts settings software projects all"
-    shortlist3arr=("${shortlist3}")
-    if [ -z "${3}" ] || [[ ! " ${shortlist3arr[@]} " =~ " ${3} " ]]
+    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
     then
       echo "${shortlist3}"
     elif [ "${3}" = "scripts" ]
     then
       shortlist4="to"
-      shortlist4arr=("${shortlist3}")
-      if [ -z "${4}" ] || [[ ! " ${shortlist4[@]} " =~ " ${4} " ]]
+      if [ -z "${4}" ] || [[ ! " ${shortlist4} " == *" ${4} "* ]]
       then
         echo "${shortlist4}"
       fi

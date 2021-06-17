@@ -9,8 +9,7 @@ then
   elif [ "${2}" = "migrate" ]
   then
     shortlist3="from"
-    shortlist3arr=("${shortlist3}")
-    if [ -z "${3}" ] || [[ ! " ${shortlist3arr[@]} " =~ " ${3} " ]]
+    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
     then
       echo "${shortlist3}"
     fi
