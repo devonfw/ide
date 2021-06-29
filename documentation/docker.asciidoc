@@ -16,3 +16,13 @@ On Windows
 * If yes, program quits since Docker is already available.
 
 * If not, this commandlet will install Docker on WSL
+
+The arguments (`devon docker «args»`) are explained by the following table:
+
+.Usage of `devon docker`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|`setup`                   |setup Docker (install and verify) as per above flow.
+|`«args»`                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
+|=======================

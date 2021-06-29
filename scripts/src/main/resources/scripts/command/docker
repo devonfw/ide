@@ -1,31 +1,73 @@
 #!/usr/bin/env bash
 
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-if doIsWindows
-then
-  wsl_distro_list=$(wsl -l)
-  if [[ $wsl_distro_list == *"no installed distributions"* ]];then
-    echo "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
-    exit 0
+# Initiates docker setup
+function doSetup() {
+  if doIsBatch
+  then
+    doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
   fi
-  docker_win_version=$(docker version)
-  if [[ $docker_win_version == *"Client:"* ]];then
-    echo Docker already installed.
-    docker version
-    if [[ $docker_win_version != *"Server:"* ]];then
-    echo Please start Docker daemon.
-    exit 0
+  if doIsWindows
+  then 
+    wsl_distro_list=$(wsl -l)
+    if [[ $wsl_distro_list == *"no installed distributions"* ]];then
+      doEcho "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
+      exit 0
     fi
+    docker_win_version=$(docker version)
+    if [[ $docker_win_version == *"Client:"* ]];then
+      doEcho Docker already installed on Windows.
+      docker version
+      if [[ $docker_win_version != *"Server:"* ]];then
+      doEcho Please start Docker engine.
+      exit 0
+      fi
+      exit 0
+    else 
+      doEcho Docker not installed on Windows.
+    fi
+    doEcho "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
+    # Install Docker on WSL
+    wsl bash ./scripts/setup-docker
+  else
+    doEcho "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     exit 0
-  else 
-    echo Docker not installed.
   fi
-  echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
-  # Install Docker on WSL
-  wsl bash ./scripts/setup-docker
-else
-  echo "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-  exit 0
-fi
+}
+
+# Call Docker with specified arguments
+function doRun() {
+  doEcho "Running: docker ${*}"
+  docker "${@}"  
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup docker."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup docker on Windows or WSL(if any)"
+  echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
+  echo  
+;;
+"setup" | "s")
+  doSetup setup
+;;
+*)
+   doRun "${@}"
+;;
+esac

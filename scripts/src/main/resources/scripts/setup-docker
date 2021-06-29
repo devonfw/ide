@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 docker_check=$(docker --version)
+
 if [[ $docker_check != *"Docker version"* ]];then
+    echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted."
 	echo "Installing Docker..."
 	sudo apt-get update -y
 	sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg-agent
@@ -12,6 +14,6 @@ if [[ $docker_check != *"Docker version"* ]];then
 	sudo usermod -aG docker $USER
 	echo Docker installed successfully.
 else 
-    echo Docker already installed.
+    echo Docker already installed on WSL.
 fi 
 docker version
