@@ -5,18 +5,18 @@ toc::[]
 
 This section is designed to explain `devonfw-ide` depending on each role
 Everybody should read and follow the usage for xref:developer[developer].
-In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[admin].
+In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[ide-admin].
 
 == Developer
 As a developer you are supported to link:setup.asciidoc[setup] your IDE automated and fast while you can have a nice cup of coffee (after you provided `settings-URL` and accepted the license).
-You only need the settings URL from your `devonfw-ide` xref:admin[admin].
+You only need the settings URL from your xref:admin[ide-admin].
 Experienced developers can directly call `setup «settings-URL»`.
 Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter it when you are prompted for `Settings URL` (using copy&paste to avoid typos).
 
 Note: devonfw-ide supports autocompletion (since `2021.04.001`). Currently this only works in bash (on windows use git bash). Simply type `devon` and hit `[Tab]` to get completion.
 
 === Update
-To update your IDE (if instructed by your xref:admin[admin]), you only need to run the following command:
+To update your IDE (if instructed by your xref:admin[ide-admin]), you only need to run the following command:
 ```
 devon ide update
 ```
@@ -41,9 +41,9 @@ You can easily customize and link:configuration.asciidoc[configure] `devonfw-ide
 In order to do so, you need to create your own project-specific settings git repository and provide the URL to all developers for the link:setup.asciidoc[setup].
 With tools such as gitlab, bitbucket or github every developer can easily propose changes and improvements.
 However, we suggest that one team member is responsible to ensure that everything stays consistent and works.
-We will call this person the `devonfw-ide` _admin_ of your project.
+We will call this person the _ide-admin_ of your project.
 
-The following are the suggested step-by-step instructions how an `ide-admin` should prepare `devonfw-ide` for his new project:
+The following are the suggested step-by-step instructions how an _ide-admin_ should prepare `devonfw-ide` for his new project:
 
 . Fork https://github.com/devonfw/ide-settings.git[ide-settings] to a git repository specific for your project (e.g. a new project in the `gitlab` of your `production-line` instance). In case you are using github, all you need to do is use the `Fork` button. In other cases simply create a new and empty git repository and clone this to your machine. Then add the default ide-settings as origin, fetch and pull from it:
 +
@@ -57,7 +57,7 @@ git push
 Now you should have a full fork as a copy of the `settings` git repo with all its history that is ready for upstream merges.
 . Study the link:settings.asciidoc#structure[structure] of this git repository to understand where to find which configuration.
 . Study the link:configuration.asciidoc[configuration] and understand that general settings can be tweaked in the toplevel `devon.properties` file of your settings git repository.
-. Configure the tools and their versions for your project:
+. Configure the tools and their versions for your project. Here is an example:
 +
 ```
 DEVON_IDE_TOOLS=(java mvn eclipse)
