@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-kubernetes_check=$(kubectl version --client)
+kubernetes_check=$(kubectl version --client 2>/dev/null)
+source "$(dirname "${0}")"/functions
 if  [[ ! $kubernetes_check == *"Client Version"* ]]; then
-	echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
-	echo Installing Kubectl and K3D...
+	doEcho "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
+	doEcho Installing Kubectl and K3D...
     curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
     sudo mv ./kubectl /usr/local/bin/kubectl
 	wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
@@ -12,8 +13,8 @@ if  [[ ! $kubernetes_check == *"Client Version"* ]]; then
 	export KUBECONFIG=$(k3d kubeconfig get devonfw-cluster)
 	kubectl cluster-info
 	
-	echo Kubernetes is installed successfully on your WSL.
+	doEcho Kubernetes is installed successfully on your WSL.
 else 
-    echo Kubernetes already installed on your WSL Distribution and available for use. devonfw-ide did not make any changes.
+    doEcho Kubernetes already installed on your WSL Distribution and available for use. devonfw-ide did not make any changes.
 fi
 kubectl version

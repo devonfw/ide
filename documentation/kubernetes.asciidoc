@@ -18,3 +18,13 @@ On Windows
 * If not, this will install Kubernetes on WSL along with https://k3d.io[K3D] 
 
 * As part of the setup, K3D will create a cluster with a single node with a default name as "devonfw-cluster"
+
+The arguments (`devon kubernetes «args»`) are explained by the following table:
+
+.Usage of `devon kubernetes`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|`setup`                   |setup Kubernetes (install and verify) as per above flow.
+|`«args»`                  |call kubernetes(kubectl) with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred." (`«args»`)
+|=======================

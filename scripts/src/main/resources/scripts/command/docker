@@ -22,12 +22,12 @@ function doSetup() {
   fi
   if doIsWindows
   then 
-    wsl_distro_list=$(wsl -l)
+    wsl_distro_list=$(wsl -l 2>/dev/null)
     if [[ $wsl_distro_list == *"no installed distributions"* ]];then
       doEcho "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
       exit 0
     fi
-    docker_win_version=$(docker version)
+    docker_win_version=$(docker version 2>/dev/null)
     if [[ $docker_win_version == *"Client:"* ]];then
       doEcho Docker already installed on Windows.
       docker version
@@ -38,8 +38,7 @@ function doSetup() {
       exit 0
     else 
       doEcho Docker not installed on Windows.
-    fi
-    doEcho "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
+    fi  
     # Install Docker on WSL
     wsl bash ./scripts/setup-docker
   else
@@ -64,7 +63,7 @@ case ${1} in
   echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
   echo  
 ;;
-"setup" | "s")
+"setup" | "s" | "")
   doSetup setup
 ;;
 *)

@@ -1,27 +1,72 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-if doIsWindows
-then
-  wsl_distro_list=$(wsl -l)
-  if [[ $wsl_distro_list == *"no installed distributions"* ]];then
-    echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
-    exit 0
+# $1: optional setup
+function doSetup() {
+  if doIsBatch
+  then
+    doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
   fi
 
-  # Check if Kubernetes is already installed
-  kubernetes_win_version=$(kubectl version)
-  if [[ $kubernetes_win_version == *"Client Version"* ]];then
-    echo Kubernetes is already installed on Windows and ready to use. devonfw-ide did not make any changes.
-    kubectl version
+  if doIsWindows
+  then
+    wsl_distro_list=$(wsl -l)
+    if [[ $wsl_distro_list == *"no installed distributions"* ]];then
+      echo "WSL is not enabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+      exit 0
+    fi
+
+    # Check if Kubernetes is already installed
+    kubernetes_win_version=$(kubectl version)
+    if [[ $kubernetes_win_version == *"Client Version"* ]];then
+      echo Kubernetes is already installed on Windows and ready to use. devonfw-ide did not make any changes.
+      kubectl version
+      exit 0
+    else 
+      echo Kubernetes not installed on your Windows.
+    fi
+    # Install Kubernetes on WSL
+    wsl bash ./scripts/setup-kubernetes
+  else
+    echo "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     exit 0
-  else 
-    echo Kubernetes not installed on your Windows.
   fi
-  # Install Kubernetes on WSL
-  wsl bash ./scripts/setup-kubernetes
-else
-  echo "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-  exit 0
-fi
+}
+
+
+# Call Kubernetes with specified arguments
+function doRun() {
+  doEcho "Running: kubectl ${*}"
+  kubectl "${@}"  
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup Kubernetes."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup Kubernetes on Windows or WSL(if any)"
+  echo " «args»                   call Kubernetes with the specified arguments. Call kubernetes help for details or use docker directly as preferred."
+  echo  
+;;
+"setup" | "s" | "")
+  doSetup setup
+;;
+*)
+   doRun "${@}"
+;;
+esac
