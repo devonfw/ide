@@ -6,6 +6,13 @@ then
   if [ -z "${2}" ]
   then
     echo "setup create migrate cicd help"
+  elif [ "${2}" = "migrate" ]
+  then
+    shortlist3="from"
+    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
+    then
+      echo "${shortlist3}"
+    fi
   fi
   exit
 fi

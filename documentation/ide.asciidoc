@@ -10,7 +10,7 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 [options="header"]
 |=======================
 |*Argument(s)*                   |*Meaning*
-|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL)
+|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
 |`update [«package»]`            |update devonfw-ide
 |`update scripts [to «version»]` |update devonfw-ide
 |`uninstall`                     |uninstall devonfw-ide (if you want remote it entirely from your system)
