@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-docker_check=$(docker --version)
+docker_check=$(docker --version 2>/dev/null)
+source "$(dirname "${0}")"/functions
 
 if [[ $docker_check != *"Docker version"* ]];then
-    echo "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted."
-	echo "Installing Docker..."
+    doEcho "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted."
+	doEcho "Installing Docker..."	
 	sudo apt-get update -y
 	sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common gnupg-agent
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -12,8 +13,8 @@ if [[ $docker_check != *"Docker version"* ]];then
 	sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 	sudo service docker start
 	sudo usermod -aG docker $USER
-	echo Docker installed successfully.
+	doEcho Docker installed successfully.
 else 
-    echo Docker already installed on WSL.
+    doEcho Docker already installed on WSL.
 fi 
 docker version
