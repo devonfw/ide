@@ -6,6 +6,13 @@ then
   if [ -z "${2}" ]
   then
     echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script import help"
+  elif [ "${2}" = "--all" ]
+  then
+    shortlist3="setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script import help"
+    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
+    then
+      echo "${shortlist3}"
+    fi
   fi
   exit
 fi
