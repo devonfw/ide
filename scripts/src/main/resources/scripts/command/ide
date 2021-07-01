@@ -415,7 +415,7 @@ then
   echo "Setup and update devonfw-ide."
   echo
   echo "Arguments:"
-  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (getting the scripts from the given URL)"
+  echo "setup [«SETTINGS_URL»]           setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)"
   echo "update scripts [to «version»]    update (or downgrade) devonfw-ide-scripts (to specified or latest version)"
   echo "update settings                  update settings (git pull)"
   echo "update software                  update all software tools to configured version"
