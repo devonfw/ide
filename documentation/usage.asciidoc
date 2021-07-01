@@ -88,6 +88,7 @@ However, when you have done changes especially in a larger project, please consi
 
 === Announce changes to your team
 In order to roll out the perfectly configured `devonfw-ide` to your project initially or when new members join, you only have to provide the `Settings URL` to the xref:developer[developers] of your team.
+You can also provide a specific branch with `Settings URL#branch` to use variations of common settings or to test new settings before making them public to the team.
 
 After you changed and tested your `settings` git repository (main branch), you only need to announce this to your xref:developer[developers] (e.g. via email or some communication tool) so that they will can `devon ide update` and automatically get up-to-date with the latest changes (see xref:update[update]).
 
