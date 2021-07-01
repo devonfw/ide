@@ -4,8 +4,8 @@ source "$(dirname "${0}")"/functions
 if  [[ ! $kubernetes_check == *"Client Version"* ]]; then
 	doEcho "Hint:You may be required to enter sudo user password of your Windows Subsystem for Linux(WSL) when prompted during the setup."
 	doEcho Installing Kubectl and K3D...
-    curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-    sudo mv ./kubectl /usr/local/bin/kubectl
+	curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+	sudo mv ./kubectl /usr/local/bin/kubectl
 	wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 	sudo chmod 755 /usr/local/bin/kubectl /usr/local/bin/k3d	
 	
