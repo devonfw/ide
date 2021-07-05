@@ -1188,3 +1188,31 @@ while [ -n "${1}" ] && doParseOption "${1}"
 do
   shift
 done
+
+# Checks if Windows Subsystem for Linux(WSL) is enabled or not.
+function doIsWSLEnabled() {
+  wsl_distro_list=$(wsl -l)
+  if [[ $wsl_distro_list != *"no installed distributions"* ]];
+  then
+    return
+  else
+    doEcho "WSL is disabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
+    doEcho "Refer here to setup WSL. https://docs.microsoft.com/en-us/windows/wsl/install-win10"
+    return 255
+  fi  
+}
+
+# Checks if docker is installed on Windows Subsystem for Linux(WSL)
+function doIsDockerInstalledOnWSL() {
+  if wsl command -v docker &> /dev/null
+  then
+    if [ -n "${1}" ]
+    then
+      echo "docker is already installed at $(command -v docker) on WSL."
+      return
+    fi
+  else   
+    return 255  
+  fi   
+}
+

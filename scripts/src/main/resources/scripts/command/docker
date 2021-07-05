@@ -14,43 +14,79 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-# Initiates docker setup
-function doSetup() {
-  if doIsBatch
-  then
-    doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
-  fi
-  if doIsWindows
-  then 
-    wsl_distro_list=$(wsl -l 2>/dev/null)
-    if [[ $wsl_distro_list == *"no installed distributions"* ]];then
-      doEcho "No Linux distributions found in WSL or WSL is disabled. Please enable WSL and install any linux distribution to proceed with docker setup."
+# $1: optional setup
+function doSetup() {  
+  if doIsDockerInstalled 
+  then     
+    doEcho "docker is already installed at $(command -v docker)" 
+    exit 0
+  else
+    if doIsBatch
+    then
+      doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
+    fi
+    if doIsWindows
+    then 
+      if doIsWSLEnabled
+      then
+        # Verify if docker is installed on Windows Subsystem for Linux(WSL)
+        docker_win_version=$(wsl docker version 2>/dev/null)
+        if [[ $docker_win_version == *"Client:"* ]];then
+          doEcho Docker already installed on WSL.
+          wsl docker version
+          if [[ $docker_win_version != *"Server:"* ]];then
+          doEcho Please start Docker engine on WSL.
+          exit 0
+          fi
+          exit 0
+        else 
+          doEcho Docker not installed on WSL.
+          # Install Docker on WSL
+          wsl bash ../scripts/setup-docker
+        fi        
+      fi
+    else
+      doEcho "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
       exit 0
     fi
-    docker_win_version=$(docker version 2>/dev/null)
-    if [[ $docker_win_version == *"Client:"* ]];then
-      doEcho Docker already installed on Windows.
-      docker version
-      if [[ $docker_win_version != *"Server:"* ]];then
-      doEcho Please start Docker engine.
-      exit 0
-      fi
-      exit 0
-    else 
-      doEcho Docker not installed on Windows.
-    fi  
-    # Install Docker on WSL
-    wsl bash ./scripts/setup-docker
-  else
-    doEcho "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-    exit 0
   fi
 }
 
 # Call Docker with specified arguments
 function doRun() {
-  doEcho "Running: docker ${*}"
-  docker "${@}"  
+  if doIsWindows
+  then 
+    # Run docker command if installed on Windows.
+    if doIsDockerInstalled
+    then
+      doEcho "Running: docker ${*}"
+      docker "${@}"
+    # Run docker command on WSL if installed on WSL.  
+    elif doIsWSLEnabled 
+    then 
+      if doIsDockerInstalledOnWSL
+        then
+          doEcho "Running: docker ${*} on WSL."
+          wsl docker "${@}"  
+        else  
+          echo "Docker is not installed neither on Windows nor on WSL. Please call devon docker setup to install on WSL."  
+        fi
+    fi 
+  fi  
+}
+
+# OS independent check if docker is installed.
+function doIsDockerInstalled() {
+  if command -v docker &> /dev/null
+  then
+    if [ -n "${1}" ]
+    then
+      echo "docker is already installed at $(command -v docker)"
+      return
+    fi
+  else
+    return 255
+  fi
 }
 
 # CLI
@@ -59,7 +95,7 @@ case ${1} in
   echo "Setup docker."
   echo
   echo "Arguments:"
-  echo " setup                    setup docker on Windows or WSL(if any)"
+  echo " setup                    setup docker on Windows WSL."
   echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
   echo  
 ;;

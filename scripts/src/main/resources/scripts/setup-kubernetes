@@ -9,12 +9,15 @@ if  [[ ! $kubernetes_check == *"Client Version"* ]]; then
 	wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 	sudo chmod 755 /usr/local/bin/kubectl /usr/local/bin/k3d	
 	
-	k3d cluster create devonfw-cluster
-	export KUBECONFIG=$(k3d kubeconfig get devonfw-cluster)
-	kubectl cluster-info
-	
+	if doIsDockerInstalledOnWSL
+	then
+		k3d cluster create devonfw-cluster
+		export KUBECONFIG=$(k3d kubeconfig get devonfw-cluster)
+	else
+		doEcho "Please install docker using devon docker setup to be able to create clusters using k3d."
+	fi
+
 	doEcho Kubernetes is installed successfully on your WSL.
 else 
-    doEcho Kubernetes already installed on your WSL Distribution and available for use. devonfw-ide did not make any changes.
+    doEcho Kubernetes already installed on your WSL Distribution and available for use. devonfw-ide did not make any changes. 
 fi
-kubectl version
