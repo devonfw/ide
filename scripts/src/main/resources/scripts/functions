@@ -781,9 +781,16 @@ function doInstall() {
     doFail "missing arguments for doInstall: ${*}"
   fi
   local result=0
-  if [ "${download_url/*\./.}" = ".git" ]
+  local git_url="${download_url%#*}"
+  if [ "${git_url/*\./.}" = ".git" ]
   then
-    doGitPullOrClone "${target_path}" "${download_url}"
+    local branch=${download_url/*.git#/}
+    if [ "${branch}" = "${git_url}" ]
+    then
+      doGitPullOrClone "${target_path}" "${download_url}"
+    else
+      doGitPullOrClone "${target_path}" "${git_url}" "${branch}"
+    fi
     return
   fi
   local version_file="${target_path}/.devon.software.version"
