@@ -33,14 +33,18 @@ function doSetup() {
         # Check if Kubernetes is already installed on WSL
         if doIsKubernetesInstalledOnWSL 
         then
-          echo Kubernetes is already installed on WSL and ready to use. devonfw-ide did not make any changes.
-          wsl kubectl version
-          exit 0
+          if [ "${1}" = "setup" ]
+          then
+            echo Kubernetes is already installed on WSL and ready to use. devonfw-ide did not make any changes.
+            wsl kubectl version
+          fi
         else 
           echo Kubernetes not installed on WSL.
           # Install Kubernetes on WSL
           wsl bash ../scripts/setup-kubernetes
-        fi        
+        fi 
+      else
+        return 255       
       fi
     else
       echo "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -52,8 +56,8 @@ function doSetup() {
 
 # Call Kubernetes with specified arguments
 function doRun() {
-  if doIsWindows
-  then 
+  if doSetup
+  then
     # Run Kubernetes command if installed on Windows.
     if doIsKubernetesInstalled
     then
@@ -69,19 +73,15 @@ function doRun() {
         else  
           echo "Kubernetes is not installed neither on Windows nor on WSL. Please call devon kubernetes setup to install on WSL."  
         fi
-    fi 
-  fi  
+    fi
+  fi
 }
 
 # OS independent check if Kubernetes is installed.
 function doIsKubernetesInstalled() {
   if command -v kubectl &> /dev/null
   then
-    if [ -n "${1}" ]
-    then
-      echo "Kubernetes is already installed at $(command -v kubectl)"
-      return
-    fi
+    return
   else
     return 255
   fi
@@ -90,12 +90,8 @@ function doIsKubernetesInstalled() {
 # Checks if Kubernetes is installed on Windows Subsystem for Linux(WSL)
 function doIsKubernetesInstalledOnWSL() {
   if wsl command -v kubectl &> /dev/null
-  then
-    if [ -n "${1}" ]
-    then
-      echo "Kubernetes is already installed at $(command -v kubectl) on WSL."
-      return
-    fi
+  then    
+    return
   else   
     return 255
   fi   

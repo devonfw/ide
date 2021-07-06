@@ -25,25 +25,29 @@ function doSetup() {
     then
       doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
     fi
+    #Start setup
     if doIsWindows
     then 
       if doIsWSLEnabled
       then
         # Verify if docker is installed on Windows Subsystem for Linux(WSL)
         docker_win_version=$(wsl docker version 2>/dev/null)
-        if [[ $docker_win_version == *"Client:"* ]];then
-          doEcho Docker already installed on WSL.
-          wsl docker version
-          if [[ $docker_win_version != *"Server:"* ]];then
-          doEcho Please start Docker engine on WSL.
-          exit 0
+        if [[ $docker_win_version == *"Client:"* ]];then          
+          if [ "${1}" = "setup" ]
+          then
+            doEcho Docker already installed on WSL.
+            wsl docker version
           fi
-          exit 0
+          if [[ $docker_win_version != *"Server:"* ]];then
+            doEcho Please start Docker engine on WSL.
+          fi
         else 
           doEcho Docker not installed on WSL.
           # Install Docker on WSL
           wsl bash ../scripts/setup-docker
         fi        
+      else
+        return 255
       fi
     else
       doEcho "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -52,38 +56,33 @@ function doSetup() {
   fi
 }
 
-# Call Docker with specified arguments
+# Call Docker with specified arguments.
 function doRun() {
-  if doIsWindows
-  then 
-    # Run docker command if installed on Windows.
+  if doSetup 
+  then
+    # Run docker command if installed.
     if doIsDockerInstalled
     then
       doEcho "Running: docker ${*}"
       docker "${@}"
-    # Run docker command on WSL if installed on WSL.  
+    # Run docker command on Windows WSL if installed.
     elif doIsWSLEnabled 
     then 
       if doIsDockerInstalledOnWSL
-        then
-          doEcho "Running: docker ${*} on WSL."
-          wsl docker "${@}"  
-        else  
-          echo "Docker is not installed neither on Windows nor on WSL. Please call devon docker setup to install on WSL."  
-        fi
-    fi 
-  fi  
+      then
+        doEcho "Running: docker ${*} on WSL."
+        wsl docker "${@}"  
+      fi
+    fi
+  fi
 }
 
 # OS independent check if docker is installed.
 function doIsDockerInstalled() {
   if command -v docker &> /dev/null
-  then
-    if [ -n "${1}" ]
-    then
-      echo "docker is already installed at $(command -v docker)"
-      return
-    fi
+  then 
+    echo "docker is already installed at $(command -v docker)"
+    return    
   else
     return 255
   fi
