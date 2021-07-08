@@ -1169,7 +1169,7 @@ function doRequireWsl() {
   else
     return
   fi
-  doFail "${error}\To fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
+  doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
 # $1: single CLI arg
