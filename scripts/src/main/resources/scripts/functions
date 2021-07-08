@@ -1155,32 +1155,21 @@ function doIsPackageJsonContainingScript() {
   fi
 }
 
-# Checks if Windows Subsystem for Linux(WSL) is enabled or not.
-function doIsWSLEnabled() {
-  if doIsWindows
+# Ensurese that Windows WSL is properly available.
+function doRequireWsl() {
+  local error
+  local wsl_distro_list
+  wsl_distro_list="$(wsl -l)"
+  if [ "$?" != 0 ]
   then
-    wsl_distro_list=$(wsl -l)
-    if [[ $wsl_distro_list != *"no installed distributions"* ]];
-    then
-      return
-    else
-      doEcho "WSL is disabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
-      doEcho "Refer here to setup WSL. https://docs.microsoft.com/en-us/windows/wsl/install-win10"
-      return 255
-    fi
+    error="WSL 2 is not installed.\nPlease install WSL 2."
+  elif [[ "${wsl_distro_list}" = *"no installed distributions"* ]]
+  then
+    error="WSL 2 is disabled or no linux distributions found in WSL.\nPlease ensure WSL is enabled and a proper linux distribution is installed in WSL."
   else
-    return 255  
-  fi 
-}
-
-# Checks if docker is installed on Windows Subsystem for Linux(WSL)
-function doIsDockerInstalledOnWSL() {
-  if wsl command -v docker &> /dev/null
-  then
     return
-  else   
-    return 255  
-  fi   
+  fi
+  doFail "${error}\To fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
 # $1: single CLI arg
