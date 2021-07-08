@@ -102,6 +102,13 @@ function doIsBatch() {
   return
 }
 
+function doRequireNotBatch() {
+  if doIsBatch
+  then
+    doFail "Cannot proceed in batch mode as interactive installation is required. Please rerun without batch option."
+  fi
+}
+
 function doIsQuiet() {
   [ -n "${quiet}" ]
   return
@@ -1158,16 +1165,14 @@ function doIsPackageJsonContainingScript() {
 # Ensurese that Windows WSL is properly available.
 function doRequireWsl() {
   local error
-  local wsl_distro_list
-  wsl_distro_list="$(wsl -l)"
-  if [ "$?" != 0 ]
-  then
+  if command -v wsl &> /dev/null
+  then 
     error="WSL 2 is not installed.\nPlease install WSL 2."
-  elif [[ "${wsl_distro_list}" = *"no installed distributions"* ]]
+  elif wsl -l > /dev/null
   then
-    error="WSL 2 is disabled or no linux distributions found in WSL.\nPlease ensure WSL is enabled and a proper linux distribution is installed in WSL."
-  else
     return
+  else
+    error="WSL 2 is disabled or no linux distributions found in WSL.\nPlease ensure WSL is enabled and a proper linux distribution is installed in WSL."
   fi
   doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
