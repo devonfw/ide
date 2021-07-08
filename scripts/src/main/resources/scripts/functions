@@ -1165,7 +1165,7 @@ function doIsPackageJsonContainingScript() {
 # Ensurese that Windows WSL is properly available.
 function doRequireWsl() {
   local error
-  if command -v wsl &> /dev/null
+  if ! command -v wsl &> /dev/null
   then 
     error="WSL 2 is not installed.\nPlease install WSL 2."
   elif wsl -l > /dev/null
@@ -1217,5 +1217,3 @@ while [ -n "${1}" ] && doParseOption "${1}"
 do
   shift
 done
-
-
