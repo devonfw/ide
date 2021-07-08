@@ -20,10 +20,6 @@ function doSetup() {
   then
     doEcho "docker is already installed at $(command -v docker)"
   else
-    if doIsBatch
-    then
-      doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
-    fi
     #Start setup
     if doIsWindows
     then
@@ -34,18 +30,43 @@ function doSetup() {
       then
         if [ "${1}" = "setup" ]
         then
-          doEcho Docker already installed on WSL.
+          doEcho "Docker already installed on WSL."
           wsl docker version
         fi
         if [[ $docker_win_version != *"Server:"* ]]
         then
-          doEcho Please start Docker engine on WSL.
+          doEcho "Please start Docker engine on WSL."
         fi
-      else 
-        doEcho Docker not installed on WSL.
+      else
+        doRequireNotBatch
+        doEcho "Installing Docker on WSL..."
         # Install Docker on WSL
-        wsl bash ../scripts/setup-docker
+        doRunCommand "wsl bash ../scripts/setup-docker"
       fi
+    elif doIsMacOs
+    then
+      doRequireNotBatch
+      local downloadUrl
+      local arch
+      arch="${uname -m}"
+      if [ "${arch}" = "x86_64" ]
+      then
+        downloadUrl="https://desktop.docker.com/mac/stable/amd64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-amd64"
+      elif [ "${arch}" = "arm64" ]
+      then
+        downloadUrl="https://desktop.docker.com/mac/stable/arm64/Docker.dmg?utm_source=docker&utm_medium=webreferral&utm_campaign=docs-driven-download-mac-arm64"
+      else
+        doFail "Unsupported MacOS architecture ${arch}. Please install docker manually:\nhttps://docs.docker.com/docker-for-mac/install/"
+      fi
+      doEcho "Downloading Docker Desktop for MacOS..."
+      doDownload "${downloadUrl}" "Docker.dmg"
+      doEcho "Installating Docker Desktop for MacOS..."
+      local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+      mkdir -p "${mount_dir}"
+      doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+      doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
+      doRunCommand "hdiutil detach -force '${mount_dir}'"
+      read -r -p "Docker Desktop has been installed on your Mac. In order to use it properly you need to go to Launchpad and start the Docker app.Press enter to confirm and continue" answer
     else
       doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
@@ -62,7 +83,7 @@ function doRun() {
     docker "${@}"
   # Run docker command on Windows WSL if installed.
   elif doIsWindows
-  then 
+  then
     doEcho "Running: docker ${*} on WSL."
     wsl docker "${@}"
   else
@@ -74,8 +95,7 @@ function doRun() {
 function doIsDockerInstalled() {
   if command -v docker &> /dev/null
   then 
-    echo "docker is already installed at $(command -v docker)"
-    return    
+    doEcho "docker is already installed at $(command -v docker)"
   else
     return 255
   fi

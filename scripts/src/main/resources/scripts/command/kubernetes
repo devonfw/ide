@@ -36,11 +36,16 @@ function doSetup() {
         echo Kubernetes is already installed on WSL and ready to use. devonfw-ide did not make any changes.
         wsl kubectl version
       fi
-    else 
-      echo Kubernetes not installed on WSL.
+    else
+      doRequireNotBatch
+      doEcho "Installing Kubernetes on WSL..."
       # Install Kubernetes on WSL
-      wsl bash ../scripts/setup-kubernetes
-    fi 
+      doRunCommand "wsl bash ../scripts/setup-kubernetes"
+    fi
+  elif doIsMacOs
+  then
+    doDevonCommand docker -q setup
+    read -r -p "In order to activate kubernetes, open Docker Desktop and enable kubernetes. For details see https://docs.docker.com/desktop/kubernetes/#enable-kubernetes - Press enter when you have enabled kubernetes." answer
   else
     doFail "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   fi
@@ -78,11 +83,11 @@ function doIsKubernetesInstalled() {
 # Checks if Kubernetes is installed on Windows Subsystem for Linux(WSL)
 function doIsKubernetesInstalledOnWsl() {
   if wsl command -v kubectl &> /dev/null
-  then    
+  then
     return
-  else   
+  else
     return 255
-  fi   
+  fi
 }
 
 # CLI
