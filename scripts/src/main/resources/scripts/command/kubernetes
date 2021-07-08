@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if doIsKubernetesInstalled
+  then
+    doEcho "Kubernetes is already installed at $(command -v kubectl)"
+    exit 0
+  else
+    if doIsBatch
+    then
+      doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
+    fi
+
+    if doIsWindows
+    then
+      if doIsWSLEnabled
+      then
+        # Check if Kubernetes is already installed on WSL
+        if doIsKubernetesInstalledOnWSL 
+        then
+          if [ "${1}" = "setup" ]
+          then
+            echo Kubernetes is already installed on WSL and ready to use. devonfw-ide did not make any changes.
+            wsl kubectl version
+          fi
+        else 
+          echo Kubernetes not installed on WSL.
+          # Install Kubernetes on WSL
+          wsl bash ../scripts/setup-kubernetes
+        fi 
+      else
+        return 255       
+      fi
+    else
+      echo "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+      exit 0
+    fi
+  fi  
+}
+
+
+# Call Kubernetes with specified arguments
+function doRun() {
+  if doSetup
+  then
+    # Run Kubernetes command if installed on Windows.
+    if doIsKubernetesInstalled
+    then
+      doEcho "Running: kubectl ${*}"
+      kubectl "${@}"
+    # Run Kubernetes command on WSL if installed on WSL.  
+    elif doIsWSLEnabled 
+    then 
+      if doIsKubernetesInstalledOnWSL
+        then
+          doEcho "Running: kubectl ${*} on WSL."
+          wsl kubectl "${@}"  
+        else  
+          echo "Kubernetes is not installed neither on Windows nor on WSL. Please call devon kubernetes setup to install on WSL."  
+        fi
+    fi
+  fi
+}
+
+# OS independent check if Kubernetes is installed.
+function doIsKubernetesInstalled() {
+  if command -v kubectl &> /dev/null
+  then
+    return
+  else
+    return 255
+  fi
+}
+
+# Checks if Kubernetes is installed on Windows Subsystem for Linux(WSL)
+function doIsKubernetesInstalledOnWSL() {
+  if wsl command -v kubectl &> /dev/null
+  then    
+    return
+  else   
+    return 255
+  fi   
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup Kubernetes."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup Kubernetes on Windows WSL."
+  echo " «args»                   call Kubernetes with the specified arguments. Call kubernetes help for details or use Kubernetes(kubectl) directly as preferred."
+  echo  
+;;
+"setup" | "s" | "")
+  doSetup setup
+;;
+*)
+   doRun "${@}"
+;;
+esac

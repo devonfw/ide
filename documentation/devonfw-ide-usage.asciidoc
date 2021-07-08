@@ -16,6 +16,8 @@ include::cli.asciidoc[leveloffset=2]
 
 include::build.asciidoc[leveloffset=3]
 
+include::docker.asciidoc[leveloffset=3]
+
 include::eclipse.asciidoc[leveloffset=3]
 
 include::gradle.asciidoc[leveloffset=3]
@@ -33,6 +35,8 @@ include::jasypt.asciidoc[leveloffset=3]
 include::java.asciidoc[leveloffset=3]
 
 include::jenkins.asciidoc[leveloffset=3]
+
+include::kubernetes.asciidoc[leveloffset=3]
 
 include::mvn.asciidoc[leveloffset=3]
 

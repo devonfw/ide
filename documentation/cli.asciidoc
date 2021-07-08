@@ -41,6 +41,7 @@ The following commandlets are currently available:
 
 * link:build.asciidoc[build]
 * link:cobigen.asciidoc[cobigen]
+* link:docker.asciidoc[docker]
 * link:eclipse.asciidoc[eclipse]
 * link:gradle.asciidoc[gradle]
 * link:help.asciidoc[help]
@@ -50,6 +51,7 @@ The following commandlets are currently available:
 * link:jasypt.asciidoc[jasypt]
 * link:java.asciidoc[java]
 * link:jenkins.asciidoc[jenkins]
+* link:kubernetes.asciidoc[kubernetes]
 * link:mvn.asciidoc[mvn]
 * link:ng.asciidoc[ng]
 * link:node.asciidoc[node]
