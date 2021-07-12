@@ -63,6 +63,7 @@ function doRun() {
 }
 
 NODE_HOME="${DEVON_IDE_HOME}/software/node"
+
 #CLI
 case ${1} in 
 "help" | "-h")
