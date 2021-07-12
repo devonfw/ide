@@ -3,16 +3,16 @@ toc::[]
 
 = kubernetes
 
-The `kubernetes` commandlet allows to install and use https://kubernetes.io/[kubernetes].
+The `kubectl` commandlet allows to install and use https://kubernetes.io/[kubernetes].
 On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite.
 The setup on windows will then install kubernetes with https://k3d.io[K3D]. K3D will create a cluster with a single node with a default name as "devonfw-cluster"
 
-The arguments (`devon kubernetes «args»`) are explained by the following table:
+The arguments (`devon kubectl «args»`) are explained by the following table:
 
-.Usage of `devon kubernetes`
+.Usage of `devon kubectl`
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
 |`setup`                   |setup Kubernetes (install and verify) as per above flow.
-|`«args»`                  |call kubernetes (kubectl) with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred.
+|`«args»`                  |call kubectl with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred.
 |=======================
