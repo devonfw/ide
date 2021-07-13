@@ -16,3 +16,16 @@ The arguments (`devon kubectl «args»`) are explained by the following table:
 |`setup`                   |setup Kubernetes (install and verify) as per above flow.
 |`«args»`                  |call kubectl with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred.
 |=======================
+
+== setup
+Please note that on Windows and MacOS `kubernetes` support comes together with `Docker Desktop` that is installed via link:docker.asciidoc[docker] commandlet.
+When you have installed and launched `Docker Desktop`, you can once https://docs.docker.com/desktop/kubernetes/#enable-kubernetes[enable kubernetes in the Preferences].
+
+On Linux however, kubernetes is installed separately by this commandlet.
+
+== usage
+Once installed via setup, you can run `kubectl` directly from any shell of your OS directly.
+Run `kubectl help` to get started and use the online documentations and resources on the web to get familiar with kubernetes.
+It is not our intention to repeat this here.
+
+Please note that the `kubectl` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].

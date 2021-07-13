@@ -15,3 +15,60 @@ The arguments (`devon docker «args»`) are explained by the following table:
 |`setup`                   |setup Docker (install and verify) as per above flow.
 |`«args»`                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
 |=======================
+
+== setup
+The `docker` commandlet will install `docker` automatically.
+Please note that besides the sandbox concept of devonfw-ide this is a global installation on your system.
+When uninstalling devonfw-ide, you may have to manually uninstall `docker` and `kubernetes` if you do not need it anymore.
+
+=== requirements
+Running docker and especially link:kubectl.asciidoc[kubernetes] on your machine in the background will require quite some resources.
+This will allocate at least 2GB of additional RAM.
+
+You will need at least 8GB of total RAM while we recommend to use 16GB+.
+
+You may also tune and scale it to your needs.
+When using Docker Desktop (Windows or MacOS) simply go to the https://docs.docker.com/docker-for-windows/#resources[resources tab in the settings].
+It will depend on your usage frequency if you want to have it running in the background all the time.
+This is a balance between resource utilization and convenience.
+If you use docker and kubernetes on your local machine on a daily basis this makes sense.
+
+In case you only use docker rarely, you can save resources by stopping it when not needed after it has been installed.
+
+=== Windows and Mac
+To enable or disable autostart, you can launch `Docker Desktop` on Windows or MacOS got to the `Preferences` (gear icon in the title bar). Then in the `General` tab you can check or uncheck the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]). When autostart is disabled and you launch `Docker Desktop` it will notice and ask your to start the service or do this automatically for you.
+On Windows you can also manually tweak this:
+
+* Hit `[windows][r]`
+* Enter `services.msc`
+* Confirm with `OK`
+* In the services app search for the `Docker Desktop Service` in the list and select it.
+* Now you can start or stop the service by clicking on the according link text.
+* Also when right clicking on `Docker Desktop Service` and selecting `Options` from the context-menu, you can change the start type to `automatic` or `manual`.
+
+==== Mac A1
+In case you have a new Mac with A1 CPU, we automatically download and install the according ARM version of `Docker Desktop for Mac`.
+However, if you use docker and search for images you may end up with errors like:
+```
+docker: no matching manifest for linux/arm64/v8 in the manifest list entries.
+```
+
+So with A1 CPU you may need to add `--platform linux/x86_64` as option to your docker command to find the expected container image.
+
+=== Linux
+There is no Docker Desktop for Linux.
+As docker initially comes from the Linux world, it is easy to set it up on a Linux machine and use it from the commandline.
+Therefore we do not install a GUI for you in case you are a Linux user.
+In case you need a GUI for docker and kubernetes on Linux you can choose from the following options:
+
+* https://dockstation.io/[DockStation]
+* https://portainer.io/[Portainer]
+* https://kitematic.com/[Kitematic]
+* https://shipyard-project.com/[Shipyard]
+
+== usage
+Once installed via setup, you can run docker directly from any shell of your OS directly.
+Run `docker help` to get started and use the online documentations and resources on the web to get familiar with docker.
+It is not our intention to repeat this here.
+
+Please note that the `docker` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
