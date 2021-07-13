@@ -45,8 +45,7 @@ On Windows you can also manually tweak this:
 * Also when right clicking on `Docker Desktop Service` and selecting `Options` from the context-menu, you can change the start type to `automatic` or `manual`.
 
 ==== Mac A1
-In case you have a new Mac with A1 CPU.
-We automatically download and install the according ARM version of `Docker Desktop for Mac`.
+In case you have a new Mac with A1 CPU, we automatically download and install the according ARM version of `Docker Desktop for Mac`.
 However, if you use docker and search for images you may end up with errors like:
 ```
 docker: no matching manifest for linux/arm64/v8 in the manifest list entries.

@@ -41,7 +41,7 @@ Every commandlet takes the following generic arguments:
 For many commandlets the `devon` command acts as a wrapper.
 Similar to `mvnw` or `gradlew` you can use it as a proxy command.
 Therefore `devon mvn clean install` will be the same as `mvn clean install`.
-The benefit when using `devon` as wrapper is that it will even work when the command (`mvn`, `node`, `npm`, `docker`, `kubectl`, etc.) is not on your `PATH` variable or even not yet installed.
+The benefit when using `devon` as wrapper is that it will even work when the command (`mvn`, `node`, `npm`, etc.) is not on your `PATH` variable or even not yet installed.
 We see the main benefit in this for writing portable scripts that you may commit to your git repository and that will then run everywhere and will lazily install the required tools on the fly.
 In your daily usage you can and surely should avoid to always type `devon` as prefix to every command.
 However, when you automate and want to avoid "command not found" errors, you can simply prefix the command with `devon`.
