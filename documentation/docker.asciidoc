@@ -27,6 +27,8 @@ This will allocate at least 2GB of additional RAM.
 
 You will need at least 8GB of total RAM while we recommend to use 16GB+.
 
+You may also tune and scale it to your needs.
+When using Docker Desktop (Windows or MacOS) simply go to the https://docs.docker.com/docker-for-windows/#resources[resources tab in the settings].
 It will depend on your usage frequency if you want to have it running in the background all the time.
 This is a balance between resource utilization and convenience.
 If you use docker and kubernetes on your local machine on a daily basis this makes sense.
