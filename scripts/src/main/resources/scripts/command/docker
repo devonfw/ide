@@ -17,63 +17,77 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {  
   if doIsDockerInstalled 
-  then     
-    doEcho "docker is already installed at $(command -v docker)" 
-    exit 0
+  then
+    doEcho "docker is already installed at $(command -v docker)"
   else
-    if doIsBatch
-    then
-      doFail "Interactive installation is required, cannot proceed in batch mode. Please rerun without batch option."
-    fi
     #Start setup
     if doIsWindows
-    then 
-      if doIsWSLEnabled
+    then
+      doRequireWsl
+      # Verify if docker is installed on Windows Subsystem for Linux(WSL)
+      docker_win_version=$(wsl docker version 2>/dev/null)
+      if [[ $docker_win_version == *"Client:"* ]]
       then
-        # Verify if docker is installed on Windows Subsystem for Linux(WSL)
-        docker_win_version=$(wsl docker version 2>/dev/null)
-        if [[ $docker_win_version == *"Client:"* ]];then          
-          if [ "${1}" = "setup" ]
-          then
-            doEcho Docker already installed on WSL.
-            wsl docker version
-          fi
-          if [[ $docker_win_version != *"Server:"* ]];then
-            doEcho Please start Docker engine on WSL.
-          fi
-        else 
-          doEcho Docker not installed on WSL.
-          # Install Docker on WSL
-          wsl bash ../scripts/setup-docker
-        fi        
+        if [ "${1}" = "setup" ]
+        then
+          doEcho "Docker already installed on WSL."
+          wsl docker version
+        fi
+        if [[ $docker_win_version != *"Server:"* ]]
+        then
+          doEcho "Please start Docker engine on WSL."
+        fi
       else
-        return 255
+        doRequireNotBatch
+        doEcho "Installing Docker on WSL..."
+        # Install Docker on WSL
+        doRunCommand "wsl bash ../scripts/setup-docker"
       fi
+    elif doIsMacOs
+    then
+      doRequireNotBatch
+      local downloadUrl
+      local arch
+      arch="$(uname -m)"
+      if [ "${arch}" = "x86_64" ]
+      then
+        downloadUrl="https://desktop.docker.com/mac/stable/amd64/Docker.dmg"
+      elif [ "${arch}" = "arm64" ]
+      then
+        downloadUrl="https://desktop.docker.com/mac/stable/arm64/Docker.dmg"
+      else
+        doFail "Unsupported MacOS architecture ${arch}. Please install docker manually:\nhttps://docs.docker.com/docker-for-mac/install/"
+      fi
+      doEcho "Downloading Docker Desktop for MacOS..."
+      doDownload "${downloadUrl}" "Docker.dmg"
+      doEcho "Installating Docker Desktop for MacOS..."
+      local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+      mkdir -p "${mount_dir}"
+      doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+      doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
+      doRunCommand "hdiutil detach -force '${mount_dir}'"
+      read -r -p "Docker Desktop has been installed on your Mac. In order to use it properly you need to go to Launchpad and start the Docker app.Press enter to confirm and continue" answer
     else
-      doEcho "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-      exit 0
+      doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
   fi
 }
 
 # Call Docker with specified arguments.
 function doRun() {
-  if doSetup 
+  doSetup
+  # Run docker command if installed.
+  if doIsDockerInstalled
   then
-    # Run docker command if installed.
-    if doIsDockerInstalled
-    then
-      doEcho "Running: docker ${*}"
-      docker "${@}"
-    # Run docker command on Windows WSL if installed.
-    elif doIsWSLEnabled 
-    then 
-      if doIsDockerInstalledOnWSL
-      then
-        doEcho "Running: docker ${*} on WSL."
-        wsl docker "${@}"  
-      fi
-    fi
+    doEcho "Running: docker ${*}"
+    docker "${@}"
+  # Run docker command on Windows WSL if installed.
+  elif doIsWindows
+  then
+    doEcho "Running: docker ${*} on WSL."
+    wsl docker "${@}"
+  else
+    doFail "Docker could not be found."
   fi
 }
 
@@ -81,11 +95,20 @@ function doRun() {
 function doIsDockerInstalled() {
   if command -v docker &> /dev/null
   then 
-    echo "docker is already installed at $(command -v docker)"
-    return    
+    doEcho "docker is already installed at $(command -v docker)"
   else
     return 255
   fi
+}
+
+# Checks if docker is installed on Windows Subsystem for Linux(WSL)
+function doIsDockerInstalledOnWsl() {
+  if wsl command -v docker &> /dev/null
+  then
+    return
+  else   
+    return 255  
+  fi   
 }
 
 # CLI
@@ -94,7 +117,7 @@ case ${1} in
   echo "Setup docker."
   echo
   echo "Arguments:"
-  echo " setup                    setup docker on Windows WSL."
+  echo " setup                    setup docker on your machine (global installation)."
   echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
   echo  
 ;;

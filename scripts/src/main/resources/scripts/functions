@@ -102,6 +102,13 @@ function doIsBatch() {
   return
 }
 
+function doRequireNotBatch() {
+  if doIsBatch
+  then
+    doFail "Cannot proceed in batch mode as interactive installation is required. Please rerun without batch option."
+  fi
+}
+
 function doIsQuiet() {
   [ -n "${quiet}" ]
   return
@@ -1155,32 +1162,19 @@ function doIsPackageJsonContainingScript() {
   fi
 }
 
-# Checks if Windows Subsystem for Linux(WSL) is enabled or not.
-function doIsWSLEnabled() {
-  if doIsWindows
-  then
-    wsl_distro_list=$(wsl -l)
-    if [[ $wsl_distro_list != *"no installed distributions"* ]];
-    then
-      return
-    else
-      doEcho "WSL is disabled or No Linux distributions found in WSL. Please enable WSL and install any linux distribution to proceed with docker setup."
-      doEcho "Refer here to setup WSL. https://docs.microsoft.com/en-us/windows/wsl/install-win10"
-      return 255
-    fi
-  else
-    return 255  
-  fi 
-}
-
-# Checks if docker is installed on Windows Subsystem for Linux(WSL)
-function doIsDockerInstalledOnWSL() {
-  if wsl command -v docker &> /dev/null
+# Ensurese that Windows WSL is properly available.
+function doRequireWsl() {
+  local error
+  if ! command -v wsl &> /dev/null
+  then 
+    error="WSL 2 is not installed.\nPlease install WSL 2."
+  elif wsl -l > /dev/null
   then
     return
-  else   
-    return 255  
-  fi   
+  else
+    error="WSL 2 is disabled or no linux distributions found in WSL.\nPlease ensure WSL is enabled and a proper linux distribution is installed in WSL."
+  fi
+  doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
 # $1: single CLI arg
@@ -1223,5 +1217,3 @@ while [ -n "${1}" ] && doParseOption "${1}"
 do
   shift
 done
-
-
