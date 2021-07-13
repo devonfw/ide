@@ -80,16 +80,6 @@ function doIsKubernetesInstalled() {
   fi
 }
 
-# Checks if Kubernetes is installed on Windows Subsystem for Linux(WSL)
-function doIsKubernetesInstalledOnWsl() {
-  if wsl command -v kubectl &> /dev/null
-  then
-    return
-  else
-    return 255
-  fi
-}
-
 # CLI
 case ${1} in 
 "help" | "-h")
