@@ -19,7 +19,7 @@ function doSetup() {
   doDevonCommand mvn -q setup
   if [ -n "${1}" ] || [ ! -d "${COBIGEN_CLI_HOME}" ]
   then
-    doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cobigen-cli" "${COBIGEN_VERSION:-LATEST}" ".tar.gz"
+    doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cli" "${COBIGEN_VERSION:-LATEST}" ".tar.gz"
     doExtendPath "${COBIGEN_CLI_HOME}"
     doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
   else
