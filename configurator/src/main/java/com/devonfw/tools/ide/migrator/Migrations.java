@@ -190,7 +190,11 @@ public class Migrations {
         .and() //
         .next().to(VersionIdentifier.ofDevon4j("2021.04.002")).pom() //
         .replaceProperty("devon4j.version", "2021.04.002") //
-        .and().next().build();
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2021.04.003")).pom() //
+        .replaceProperty("devon4j.version", "2021.04.003") //
+        .and() //
+        .next().build();
   }
 
 }
