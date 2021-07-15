@@ -70,7 +70,10 @@ function doSetup() {
       echo "Please run the following command to fix:"
       echo "devon setup"
     fi
-    doRunCommand "'${MVN}' -v" "verify installation of maven"
+    if ! doIsQuiet
+    then
+      doRunCommand "'${MVN}' -v" "verify installation of maven"
+    fi
   fi
 }
 
