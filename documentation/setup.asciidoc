@@ -6,7 +6,7 @@ toc::[]
 == Prerequisites
 We try to make it as simple as possible for you. However, there are some minimal prerequisites:
 
-* You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows lower Windows 10 (1803) use https://www.7-zip.org/[7-zip]. On all other platforms this comes out of the box.
+* You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows before Version 10 (1803) use https://www.7-zip.org/[7-zip]. On all other platforms this comes out of the box.
 * You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed.
 ** On Windows you only need to  download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
 ** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `sudo yum install git-core curl`)
@@ -42,5 +42,5 @@ You can therefore find the latest devonfw SNAPSHOT releases https://oss.sonatype
 Simply choose the latest SNAPSHOT version folder and then inside the `*.tar.gz` file for the latest version.
 Once downloaded, you can proceed as with official releases (see xref:install[install]).
 
-If your test succeeded with the latest SNAPSHOT please also give confirming feedback to bug or feature tickets to let us know.
+If you test the latest SNAPSHOT please also give feedback to bug or feature tickets to let us know if things are working or not.
 Thanks for your testing, support and help to make devonfw better!

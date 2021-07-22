@@ -7,6 +7,13 @@ The `kubectl` commandlet allows to install and use https://kubernetes.io/[kubern
 On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite.
 The setup on windows will then install kubernetes with https://k3d.io[K3D]. K3D will create a cluster with a single node with a default name as "devonfw-cluster"
 
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
+
 The arguments (`devon kubectl «args»`) are explained by the following table:
 
 .Usage of `devon kubectl`
