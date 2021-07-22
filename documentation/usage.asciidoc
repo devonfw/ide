@@ -1,13 +1,12 @@
 :toc:
 toc::[]
 
-= Roles
+This section explains the usage of `devonfw-ide` according to your role:
 
-This section is designed to explain `devonfw-ide` depending on each role
-Everybody should read and follow the usage for xref:developer[developer].
-In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[ide-admin].
+* Everybody should read and follow the usage for a xref:developer[developer].
+* In case you want to administrate `devonfw-ide` settings for your project, you should also read the usage for the xref:admin[ide-admin].
 
-== Developer
+= Developer
 As a developer you are supported to link:setup.asciidoc[setup] your IDE automated and fast while you can have a nice cup of coffee (after you provided `settings-URL` and accepted the license).
 You only need the settings URL from your xref:admin[ide-admin].
 Experienced developers can directly call `setup «settings-URL»`.
@@ -15,7 +14,7 @@ Otherwise if you just call `setup` (e.g. by double-clicking it), you can enter i
 
 Note: devonfw-ide supports autocompletion (since `2021.04.001`). Currently this only works in bash (on windows use git bash). Simply type `devon` and hit `[Tab]` to get completion.
 
-=== Update
+== Update
 To update your IDE (if instructed by your xref:admin[ide-admin]), you only need to run the following command:
 ```
 devon ide update
@@ -26,7 +25,7 @@ E.g. if a tool needs to be updated, the old installation folder will be moved to
 If there are windows file locks in place this can fail and mess up things.
 You can still delete the according installation from your `software` folder and rerun `devon ide update` if you ran into this error.
 
-=== Working with multiple workspaces
+== Working with multiple workspaces
 If you are working on different branches in parallel you typically want to use multiple workspaces.
 
 . Go to the link:workspaces.asciidoc[workspaces] folder in your link:variables.asciidoc[${DEVON_IDE_HOME}] and create a new folder with the name of your choice (e.g. `release2.1`).
@@ -35,7 +34,7 @@ If you are working on different branches in parallel you typically want to use m
 
 You can have multiple instances of eclipse running for each workspace in parallel. To distinguish these instances you will find the workspace name in the title of eclipse.
 
-== Admin
+= Admin
 
 You can easily customize and link:configuration.asciidoc[configure] `devonfw-ide` for the requirements of your project.
 In order to do so, you need to create your own project-specific settings git repository and provide the URL to all developers for the link:setup.asciidoc[setup].
@@ -86,7 +85,7 @@ However, when you have done changes especially in a larger project, please consi
 * If all works as expected, pick a pilot user of the team to test the changes from the feature branch (go to `settings` folder, `git fetch`, `git checkout -t origin/feature/«name»`, `devon ide update`).
 * Only after that works well for a couple of days, inform the entire team to update.
 
-=== Announce changes to your team
+== Announce changes to your team
 In order to roll out the perfectly configured `devonfw-ide` to your project initially or when new members join, you only have to provide the `Settings URL` to the xref:developer[developers] of your team.
 You can also provide a specific branch with `Settings URL#branch` to use variations of common settings or to test new settings before making them public to the team.
 

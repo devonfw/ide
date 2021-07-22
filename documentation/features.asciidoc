@@ -73,7 +73,7 @@ Default locale: en_DE, platform encoding: UTF-8
 OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
 [devonfw]$ cd /projects/ide-test/workspaces/test/my-project
 [my-project]$ devon
-devonfw-ide environment variables have been set for /projects/ide-test in workspace main
+devonfw-ide environment variables have been set for /projects/ide-test in workspace test
 [my-project]$ mvn -v
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
 Maven home: /projects/ide-test/software/maven
@@ -92,7 +92,7 @@ This was just a very simple demo of what `devonfw-ide` can do. For further detai
 
 Now you might ask:
 
-* But I use Windows/Linux/MacOS//… - it works on all platforms!
+* But I use Windows/Linux/MacOS/… - it works on all platforms!
 * But how about Windows CMD or Power-Shell? - it works!
 * But what if I use cygwin or git-bash on windows? - it works!
 * But I love to use ConEmu or Commander - it works with full integration!
