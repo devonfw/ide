@@ -33,3 +33,14 @@ The `devonfw-ide` is designed to be *non-invasive* to your operating system and 
 * On Windows the `devon.bat` command is copied to your home directory (`%USERPROFILE%\scripts\devon.bat`)
 * On Windows this `%USERPROFILE%\scripts` directory is added to the `PATH` of your user.
 * The `devonfw-ide` will download a third party software to your `~/Downloads` folder to reduce redundant storage.
+
+== Testing SNAPSHOT releases
+
+Whenever a story in devonfw-ide is completed by merging a https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests[PR],
+our https://github.com/features/actions[github actions] will build a new SNAPSHOT release and on success deploy it to nexus on OSSRH.
+You can therefore find the latest devonfw SNAPSHOT releases https://oss.sonatype.org/content/repositories/snapshots/com/devonfw/tools/ide/devonfw-ide-scripts/[here].
+Simply choose the latest SNAPSHOT version folder and then inside the `*.tar.gz` file for the latest version.
+Once downloaded, you can proceed as with official releases (see xref:install[install]).
+
+If your test succeeded with the latest SNAPSHOT please also give confirming feedback to bug or feature tickets to let us know.
+Thanks for your testing, support and help to make devonfw better!
