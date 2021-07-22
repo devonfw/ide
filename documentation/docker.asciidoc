@@ -6,6 +6,14 @@ toc::[]
 The `docker` commandlet allows to install and use https://www.docker.com/[docker].
 On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite.
 
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
+
+
 The arguments (`devon docker «args»`) are explained by the following table:
 
 .Usage of `devon docker`
