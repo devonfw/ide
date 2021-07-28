@@ -31,6 +31,10 @@ public class MigrationBuilder {
     this.steps = new ArrayList<>();
   }
 
+  public MigrationBuilder() {
+    this(null);
+  }
+
   /**
    * @param to the {@link VersionIdentifier} to migrate to.
    * @return the builder to configure the {@link MigrationStep} to migrate to that given {@link VersionIdentifier}.

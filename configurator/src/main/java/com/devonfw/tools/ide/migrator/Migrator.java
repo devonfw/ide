@@ -60,6 +60,16 @@ public class Migrator {
         }
       } else if ("single".equals(arg)) {
         singleStep = true;
+      } else if ("step".equals(arg)) {
+        if (!arguments.hasNext()) {
+          throw new IllegalArgumentException("Commandline option 'step' has to be followed by a identifier of a specific step");
+        }
+        arg = arguments.next();
+        switch(arg) {
+          case "junit":
+            migration = Migrations.junit();
+            break;
+        }
       } else {
         throw new IllegalArgumentException("Unknown argument '" + arg + "'");
       }
