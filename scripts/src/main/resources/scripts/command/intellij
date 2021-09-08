@@ -88,18 +88,22 @@ function doAddPlugins() {
 }
 
 function doAddPlugin() {
-  local build_file="${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt"
   local intellij_build
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local filename
   local install_path="${IDEA_HOME}/plugins"
 
-  if [ -f "${build_file}" ]
+  mkdir -p "${install_path}"
+
+  if [ -e "${IDEA_HOME}/build.txt" ]
   then
-    intellij_build="$(cat "${build_file}")"
+    intellij_build="$(cat "${IDEA_HOME}/build.txt")"
+  elif [ -e "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt" ]
+  then 
+    intellij_build="$(cat "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
   fi
 
-  if [ -n "${1}" ]
+  if [ -n "${1}" ] && [ ! -z "${intellij_build}" ]
   then
     local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${1}&build=${intellij_build}"
     filename=$(curl -sI $download_url | grep -o -E 'location:.*$' | sed -e 's/location://') filename=${filename##*/} filename=${filename%%\?*}
