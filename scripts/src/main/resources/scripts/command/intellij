@@ -68,7 +68,6 @@ function doSetup() {
 
 function doAddPlugins() {
   local file
-  local pluginsToInstall
   for file in "${SETTINGS_PATH}"/intellij/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -103,15 +102,17 @@ function doAddPlugin() {
     intellij_build="$(cat "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
   fi
 
-  if [ -n "${1}" ] && [ ! -z "${intellij_build}" ]
+  if [ -n "${1}" ] && [ -n "${intellij_build}" ]
   then
     local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${1}&build=${intellij_build}"
-    filename=$(curl -sI $download_url | grep -o -E 'location:.*$' | sed -e 's/location://') filename=${filename##*/} filename=${filename%%\?*}
+    filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
+    filename="${filename##*/}"
+    filename="${filename%%\?*}"
     (cd "${download_dir}" && curl -OJ --location-trusted "${download_url}")
     if [ "${filename##*.}" = "zip" ]
     then
       local extract_name=${filename%.*}
-      doExtract "${download_dir}/${filename}" ${extract_name}
+      doExtract "${download_dir}/${filename}" "${extract_name}"
       cp -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"* "${install_path}/"
       rm -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"
     else
