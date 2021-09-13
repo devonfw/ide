@@ -28,24 +28,24 @@ The following table shows the components that may be used. The column `inclusion
 |https://github.com/eclipse-ee4j/jsonp[JSON-P] Implementation | Directly included |https://github.com/eclipse-ee4j/jsonp/blob/master/LICENSE.md[EPL 2.0]
 |https://openjdk.java.net/[OpenJDK] / https://adoptopenjdk.net/[AdoptOpenJDK] (Java) |Default Setup| https://openjdk.java.net/legal/gplv2+ce.html[GPLv2]
 |https://maven.apache.org/[Maven] | Default Setup|https://www.apache.org/licenses/LICENSE-2.0[ASL 2.0]
-|https://code.visualstudio.com/[VS Code] |Default Setup| https://github.com/Microsoft/vscode/blob/master/LICENSE.txt[MIT] (https://code.visualstudio.com/License/[Terms])
-|https://github.com/devonfw/extension-pack-vscode[extension-pack-vscode] |Default Setup|https://github.com/devonfw/extension-pack-vscode/blob/master/LICENSE[ASL 2.0]
-|https://www.eclipse.org/[Eclipse] |Default Setup|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0]
-|https://github.com/devonfw/cobigen[CobiGen] |Default Setup|https://github.com/devonfw/cobigen/blob/master/LICENSE.txt[ASL 2.0]
-|https://marketplace.eclipse.org/content/tm-terminal[TM Terminal] |Default Setup|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0] (see https://git.eclipse.org/c/tm/org.eclipse.tm.git/tree/terminal/plugins/org.eclipse.tm.terminal.view.ui/about.html[here])
-|https://github.com/iloveeclipse/anyedittools/[AnyEdit] |Default Setup|https://github.com/iloveeclipse/anyedittools/blob/master/LICENSE.md[EPL 1.0]
-|https://checkstyle.org/eclipse-cs/[EclipseCS] |Default Setup|https://github.com/checkstyle/eclipse-cs/blob/master/LICENSE[LGPL 2.1]
-|https://marketplace.eclipse.org/content/spotbugs-eclipse-plugin[SpotBugs Eclipse plugin] |Default Setup|https://github.com/spotbugs/spotbugs/blob/master/LICENSE[LGPL 2.1]
-|https://www.eclemma.org/[EclEmma] |Default Setup|https://www.eclemma.org/license.html[EPL 1.0]
-|https://basti1302.github.io/startexplorer/[StartExplorer] |Default Setup|http://www.wtfpl.net/txt/copying/[WTFPL 2]
-|http://myregexp.com/eclipsePlugin.html[regex tester] |Default Setup|http://www.gnu.org/licenses/gpl-2.0.html[GPL 2.0] (see https://sourceforge.net/projects/regex-util/[here])
-|https://github.com/m-m-m/eclipse-templatevariables/[eclipse-templatevariables] |Default Setup|https://github.com/m-m-m/eclipse-templatevariables/blob/master/LICENSE.txt[ASL 2.0]
+|https://code.visualstudio.com/[VS Code] |Optional| https://github.com/Microsoft/vscode/blob/master/LICENSE.txt[MIT] (https://code.visualstudio.com/License/[Terms])
+|https://github.com/devonfw/extension-pack-vscode[extension-pack-vscode] |Optional|https://github.com/devonfw/extension-pack-vscode/blob/master/LICENSE[ASL 2.0]
+|https://www.eclipse.org/[Eclipse] |Optional|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0]
+|https://github.com/devonfw/cobigen[CobiGen] |Optional|https://github.com/devonfw/cobigen/blob/master/LICENSE.txt[ASL 2.0]
+|https://marketplace.eclipse.org/content/tm-terminal[TM Terminal] |Optional|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0] (see https://git.eclipse.org/c/tm/org.eclipse.tm.git/tree/terminal/plugins/org.eclipse.tm.terminal.view.ui/about.html[here])
+|https://github.com/iloveeclipse/anyedittools/[AnyEdit] |Optional|https://github.com/iloveeclipse/anyedittools/blob/master/LICENSE.md[EPL 1.0]
+|https://checkstyle.org/eclipse-cs/[EclipseCS] |Optional|https://github.com/checkstyle/eclipse-cs/blob/master/LICENSE[LGPL 2.1]
+|https://marketplace.eclipse.org/content/spotbugs-eclipse-plugin[SpotBugs Eclipse plugin] |Optional|https://github.com/spotbugs/spotbugs/blob/master/LICENSE[LGPL 2.1]
+|https://www.eclemma.org/[EclEmma] |Optional|https://www.eclemma.org/license.html[EPL 1.0]
+|https://basti1302.github.io/startexplorer/[StartExplorer] |Optional|http://www.wtfpl.net/txt/copying/[WTFPL 2]
+|http://myregexp.com/eclipsePlugin.html[regex tester] |Optional|http://www.gnu.org/licenses/gpl-2.0.html[GPL 2.0] (see https://sourceforge.net/projects/regex-util/[here])
+|https://github.com/m-m-m/eclipse-templatevariables/[eclipse-templatevariables] |Optional|https://github.com/m-m-m/eclipse-templatevariables/blob/master/LICENSE.txt[ASL 2.0]
 |https://nodejs.org/[Node.js] |Default Setup|https://raw.githubusercontent.com/nodejs/node/master/LICENSE[License]
 |https://www.npmjs.com/[NPM] |Default Setup|https://github.com/npm/cli/blob/latest/LICENSE[Artistic License 2.0] (https://www.npmjs.com/policies/terms[Terms])
-|https://cli.angular.io/[Angular CLI] (ng) |Default Setup|https://cli.angular.io/license.html[MIT]
-|http://groovy-lang.org/[Groovy]|Default Setup|https://github.com/apache/groovy/blob/master/LICENSE[ASL 2.0]
-|https://ant.apache.org/[Apache Ant]|Default Setup|https://github.com/apache/ant/blob/master/LICENSE[ASL 2.0]
-|https://gradle.org/[Gradle] |Optional |https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
+|https://cli.angular.io/[Angular CLI] (ng) |Optional|https://cli.angular.io/license.html[MIT]
+|http://groovy-lang.org/[Groovy]|Optional|https://github.com/apache/groovy/blob/master/LICENSE[ASL 2.0]
+|https://ant.apache.org/[Apache Ant]|Optional|https://github.com/apache/ant/blob/master/LICENSE[ASL 2.0]
+|https://gradle.org/[Gradle] |Optional|https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
 |https://jenkins.io/[Jenkins] |Optional|https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
 |https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
 |https://www.sonarlint.org/eclipse/[SonarLint] |Optional|https://github.com/SonarSource/sonarlint-eclipse/blob/master/LICENSE.txt[LGPL 3+]
@@ -55,8 +55,8 @@ The following table shows the components that may be used. The column `inclusion
 |https://github.com/devonfw/devon4node[devon4node] |Optional|https://github.com/devonfw/devon4node/blob/develop/LICENSE.txt[ASL 2.0]
 |https://www.jetbrains.com/idea/[IntelliJ IDEA] |Optional|https://www.jetbrains.com/opensource/idea/[ASL 2.0]
 |http://www.jasypt.org/[jasypt] |Optional|http://www.jasypt.org/license.html[ASL 2.0]
-|https://www.docker.com/[docker]| Optional|https://docs.docker.com/engine/#licensing[ASL 2.0] and https://www.docker.com/legal/docker-software-end-user-license-agreement[EULA]
-|https://kubernetes.io/[kubernetes]| Optional|https://github.com/kubernetes/kubernetes/blob/master/LICENSE[ASL 2.0]
+|https://www.docker.com/[docker]|Optional|https://docs.docker.com/engine/#licensing[ASL 2.0] and https://www.docker.com/legal/docker-software-end-user-license-agreement[EULA]
+|https://kubernetes.io/[kubernetes]|Optional|https://github.com/kubernetes/kubernetes/blob/master/LICENSE[ASL 2.0]
 |=======================
 
 == Apache Software License - Version 2.0
