@@ -172,7 +172,7 @@ then
   echo "Arguments:"
   echo " --all              if provided as first arg then to command will be invoked for each workspace"
   echo " setup              setup IntelliJ (install or update)"
-  echo " add-plugin «id»    install an additional plugin (extension)"
+  echo " add-plugin «id»    install an additional plugin"
   echo " run | start        launch IntelliJ IDE (default if no argument is given)"
   echo " ws-up[date]        update IntelliJ workspace"
   echo " ws-re[verse]       reverse merge changes from workspace into settings"
