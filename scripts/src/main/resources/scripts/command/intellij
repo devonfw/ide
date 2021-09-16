@@ -108,7 +108,7 @@ function doAddPlugin() {
     filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
     filename="${filename##*/}"
     filename="${filename%%\?*}"
-    (cd "${download_dir}" && curl -OJ --location-trusted "${download_url}")
+    doDownload "${download_url}" "${filename}" "${download_dir}"
     if [ "${filename##*.}" = "zip" ]
     then
       local extract_name=${filename%.*}
