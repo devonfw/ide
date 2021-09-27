@@ -31,7 +31,7 @@ There are variables that can be used for Eclipse. These are explained by the fol
 |=======================
 |*Variable*|*Default-Value*|*Meaning*
 |*`ECLIPSE_VERSION`*|`2020-12`|The version of the tool Eclipse to install and use.
-|*`ECLIPSE_EDITION_TYPE`*|`java`|The edition of the tool Eclipse to install and use. You can choose betwenn 'java' for standard edition or 'jee' for enterprise edition.
+|*`ECLIPSE_EDITION_TYPE`*|`java`|The edition of the tool Eclipse to install and use. You can choose between 'java' for standard edition or 'jee' for enterprise edition.
 |=======================
 
 == plugins
@@ -71,15 +71,15 @@ Of course you may also mix plugin IDs with fully qualified plugins.
 
 == dictionary
 
-Eclipse already comes with a buid-in spellchecker. This is very helpful when writing comments. The default settings of `devonfw-ide` ship with a project specific https://github.com/devonfw/ide-settings/blob/master/eclipse/project.dictionary[dictionary file] and according configurations to enable spellchecking and configuring this dictionary.
+Eclipse already comes with a build-in spellchecker. This is very helpful when writing comments. The default settings of `devonfw-ide` ship with a project specific https://github.com/devonfw/ide-settings/blob/master/eclipse/project.dictionary[dictionary file] and according configurations to enable spellchecking and configuring this dictionary.
 When typing JavaDoc, inline comments or other texts the spellchecker will underline unknown words in red.
 If your cursor is located at such a word you can hit `[Ctrl][1]` to get a context menu with additional options.
-There you can either choose similar correct words to correct a typo or you may even add the word (maybe a new buisness term) to your local dictionary.
+There you can either choose similar correct words to correct a typo or you may even add the word (maybe a new business term) to your local dictionary.
 
 image::images/eclipse-spellcheck.png["Eclipse spellchecker”]
 
 In the latter case, you should commit the changes to your link:settings.asciidoc[settings] so that it will be available to your entire team.
-For further details about comitting changes to the settings please consult the link:usage.asciidoc#admin[admin usage].
+For further details about committing changes to the settings please consult the link:usage.asciidoc#admin[admin usage].
 
 === non-english dictionary
 
