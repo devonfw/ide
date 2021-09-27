@@ -63,7 +63,7 @@ Open `System Preferences` and select `Keyboard`. Then, in the first tab, click o
 
 image::images/keyboard-modifier-keys.png["Keyboard Preferences / Modifier Keys"]
 
-Programmers now should also disable that `Control` + `Space` is opening `Spotlight Search` as otherwise this shortcut can not be redifined in other apps like common IDEs.
+Programmers now should also disable that `Control` + `Space` is opening `Spotlight Search` as otherwise this shortcut can not be redefined in other apps like common IDEs.
 
 image::images/keyboard-shortcuts.png["Keyboard Preferences / Shortcuts"]
 
