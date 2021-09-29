@@ -46,7 +46,7 @@ As maintainer of the link:settings.asciidoc[settings] for your project you shoul
 
 === cleaning plugins on update
 
-If you want to striclty manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:
+If you want to strictly manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:
 ```
 clean_plugins_on_update=true
 ```

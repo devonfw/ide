@@ -17,7 +17,7 @@ You need to supply additional arguments as `devon project «args»`. These are e
 Run `devon project setup «project»` to setup the link:projects.asciidoc[preconfigured project] `«project»`.
 During the initial link:setup.asciidoc[setup] this will happen for all active projects.
 Call this command explicitly to setup a project that is not active by default.
-Furhter, if the project has already been setup it will be updated (`git pull`).
+Further, if the project has already been setup it will be updated (`git pull`).
 In case you omit the project name all (active) projects will be setup/updated.
 Use force option (-f) to setup all projects even if not active.
 

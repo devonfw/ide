@@ -28,7 +28,7 @@ Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended t
 
 == update
 Run `devon ide update` to update your `devonfw-ide`. This will check for updates and link:setup.asciidoc#install[install] them automatically.
-The optinal extra argument (`«package»`) behaves as follows:
+The optional extra argument (`«package»`) behaves as follows:
 
 * `scripts`: check if a new version of `devonfw-ide-scripts` is available. If so it will be downloaded and installed. As Windows is using file-locks, it is tricky to update a script while it is executed. Therefore, we update the `scripts` folder as an async background task and have to abort further processing at this point on windows as a workaround.
 * `settings`: update the link:settings.asciidoc[settings] (`git pull`).
