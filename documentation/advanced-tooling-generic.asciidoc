@@ -7,7 +7,7 @@ toc::[]
 If you are looking for a git client that works cross-platform we recommend to use https://git-fork.com/[Fork].
 
 == Draw Diagrams
-To draw diagrams for your project or for blueprints in devonfw, we recommend the following cross-plattform tools:
+To draw diagrams for your project or for blueprints in devonfw, we recommend the following cross-platform tools:
 
 * https://draw.io/[draw.io] is a powerful generic vector painting program (similar to visio). You can get a free open-source edition for your desktop from https://github.com/jgraph/drawio-desktop/releases[here].
 * https://www.objectaid.com/[ObjectAid] is a nice and easy to use eclipse plugin that you can use to quickly create UML diagrams from existing code. While class-diagrams are supported for free, you need to buy a license if you want to use the other diagram types.
