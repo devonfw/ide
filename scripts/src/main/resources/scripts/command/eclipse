@@ -172,7 +172,7 @@ function doAddPlugin() {
   then
     if [ "${1}" = "startexplorer" ]
     then
-      doInstallEclipsePlugin "de.bastiankrol.startexplorer.feature.feature.group" "http://basti1302.github.io/startexplorer/update/"
+      doInstallEclipsePlugin "de.bastiankrol.startexplorer.feature.feature.group" "https://basti1302.github.io/startexplorer/update/"
     elif [ "${1}" = "cobigen" ]
     then
       doInstallEclipsePlugin "com.devonfw.cobigen.eclipse.feature.feature.group,com.devonfw.cobigen.tempeng-freemarker,com.devonfw.cobigen.htmlplugin,com.devonfw.cobigen.javaplugin,com.devonfw.cobigen.jsonplugin,com.devonfw.cobigen.openapiplugin,com.devonfw.cobigen.propertyplugin,com.devonfw.cobigen.textmerger,com.devonfw.cobigen.tsplugin,com.devonfw.cobigen.tempeng-velocity,com.devonfw.cobigen.xmlplugin" "https://devonfw.com/cobigen/updatesite/stable/"
@@ -193,13 +193,13 @@ function doAddPlugin() {
       doInstallEclipsePlugin "com.github.spotbugs.plugin.eclipse.feature.group" "https://spotbugs.github.io/eclipse/"
     elif [ "${1}" = "checkstyle" ]
     then
-      doInstallEclipsePlugin "net.sf.eclipsecs.feature.group" "http://eclipse-cs.sf.net/update/"
+      doInstallEclipsePlugin "net.sf.eclipsecs.feature.group" "https://checkstyle.org/eclipse-cs-update-site"
     elif [ "${1}" = "github" ]
     then
-      doInstallEclipsePlugin "org.eclipse.mylyn.github.feature.feature.group" "http://download.eclipse.org/egit/github/updates/"
+      doInstallEclipsePlugin "org.eclipse.mylyn.github.feature.feature.group" "https://download.eclipse.org/egit/github/updates/"
     elif [ "${1}" = "soapui" ]
     then
-      doInstallEclipsePlugin "com.eviware.soapui.soapui_feature.feature.group" "http://www.soapui.org/eclipse/update/site.xml"
+      doInstallEclipsePlugin "com.eviware.soapui.soapui_feature.feature.group" "http://www.soapui.org/eclipse/update/"
     else
       doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${1}.properties" "force-manual"
     fi
