@@ -21,10 +21,10 @@ The settings folder (see `link:variables.asciidoc[SETTINGS_PATH]`) has to follow
 /settings
 ├──/ https://github.com/devonfw/ide-settings/tree/master/devon[devon]
 │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/conf[conf]
-│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/.m2[.m2]
+│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/conf/.m2[.m2]
 │  │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/.m2/settings.xml[settings.xml]
-│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/npm[npm]
-│  │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/npm/.npmrc[.npmrc]
+│  │  ├──/ https://github.com/devonfw/ide-settings/tree/master/devon/conf/npm[npm]
+│  │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/conf/npm/.npmrc[.npmrc]
 │  │  └── https://github.com/devonfw/ide-settings/blob/master/devon/conf/devon.properties[devon.properties]
 ├──/ https://github.com/devonfw/ide-settings/tree/master/eclipse[eclipse]
 │  ├──/ https://github.com/devonfw/ide-settings/tree/master/eclipse/workspace[workspace]

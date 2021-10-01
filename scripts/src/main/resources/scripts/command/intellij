@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "--all setup run start ws-update ws-reverse ws-reverse-add create-script help"
+    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
   fi
   exit
 fi
@@ -52,6 +52,7 @@ function doSetup() {
        ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
     fi
     export PATH="${IDEA_HOME}/bin:${PATH}"
+    doAddPlugins
   fi
   if [ -n "${1}" ]
   then
@@ -62,6 +63,64 @@ function doSetup() {
     else
       doRunCommand "cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
     fi
+  fi
+}
+
+function doAddPlugins() {
+  local file
+  for file in "${SETTINGS_PATH}"/intellij/plugins/*.properties
+  do
+    if [ -f "${file}" ]
+    then
+      plugin_id=""
+      plugin_active="true"
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ]
+      then
+        doWarning "Invalid intellij plugin config: ${file}"
+      elif [ "${plugin_active}" = "true" ]
+      then
+        doAddPlugin "${plugin_id}"
+      fi
+    fi
+  done
+}
+
+function doAddPlugin() {
+  local intellij_build
+  local download_dir="${DEVON_DOWNLOAD_DIR}"
+  local filename
+  local install_path
+
+  if [ -e "${IDEA_HOME}/build.txt" ]
+  then
+    intellij_build="$(cat "${IDEA_HOME}/build.txt")"
+    install_path="${IDEA_HOME}/plugins"
+  elif [ -e "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt" ]
+  then 
+    intellij_build="$(cat "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
+    install_path="${IDEA_HOME}/IntelliJ.app/Contents/plugins"
+  fi
+
+  if [ -n "${1}" ] && [ -n "${intellij_build}" ]
+  then
+    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${1}&build=${intellij_build}"
+    filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
+    filename="${filename##*/}"
+    filename="${filename%%\?*}"
+    doDownload "${download_url}" "${filename}" "${download_dir}"
+    if [ "${filename##*.}" = "zip" ]
+    then
+      local extract_name=${filename%.*}
+      doExtract "${download_dir}/${filename}" "${extract_name}"
+      cp -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"* "${install_path}/"
+      rm -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"
+    else
+      cp "${download_dir}/${filename}" "${install_path}"
+      rm "${download_dir}/${filename}"
+    fi
+  else
+    doEcho "No plugins to be installed"
   fi
 }
 
@@ -113,6 +172,7 @@ then
   echo "Arguments:"
   echo " --all              if provided as first arg then to command will be invoked for each workspace"
   echo " setup              setup IntelliJ (install or update)"
+  echo " add-plugin «id»    install an additional plugin"
   echo " run | start        launch IntelliJ IDE (default if no argument is given)"
   echo " ws-up[date]        update IntelliJ workspace"
   echo " ws-re[verse]       reverse merge changes from workspace into settings"
@@ -152,6 +212,10 @@ do
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript intellij
+  elif [ "${1}" = "add-plugin" ]
+  then
+    shift
+    doAddPlugin "${@}"
   else
     doFail "Unknown argument: ${1}"
   fi

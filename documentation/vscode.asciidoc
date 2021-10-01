@@ -15,6 +15,7 @@ You may also supply additional arguments as `devon vscode «args»`. These are e
 |*Argument(s)*   |*Meaning*
 |`--all`         |if provided as first arg then to command will be invoked for each workspace
 |`setup`         |setup VSCode (install or update)
+|`add-plugin «id»`|install an additional plugin (extension)
 |`run`           |launch VSCode (default if no argument is given)
 |`start`         |same as `run`
 |`ws-up[date]`   |update workspace
@@ -45,7 +46,7 @@ As maintainer of the link:settings.asciidoc[settings] for your project you shoul
 
 === cleaning plugins on update
 
-If you want to striclty manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:
+If you want to strictly manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:
 ```
 clean_plugins_on_update=true
 ```

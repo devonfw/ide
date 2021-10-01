@@ -1,7 +1,7 @@
 :toc: macro
 toc::[]
 
-= Cross-Plattform Tooling
+= Cross-Platform Tooling
 
 == Git Client
 If you are looking for a git client that works cross-platform we recommend to use https://git-fork.com/[Fork].

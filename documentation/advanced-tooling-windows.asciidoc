@@ -69,7 +69,7 @@ Do you need to deal with ZIP files, TGZ, dpkg, etc.? Just install http://www.7-z
 Do you want to paste something from the clipboard but meanwhile you had to copy something else? Just, one of the many things you can easily do with http://ditto-cp.sourceforge.net/[ditto].
 
 === PowerToys
-Microsoft provides some extensions to improve the workflow in windoes called https://github.com/microsoft/PowerToys[PowerToys]. The include tools like a file renamer, a way to order your windows on the screen, a color picker and more.
+Microsoft provides some extensions to improve the workflow in windows called https://github.com/microsoft/PowerToys[PowerToys]. The include tools like a file renamer, a way to order your windows on the screen, a color picker and more.
 
 === Sysinternals Tools
 A real developer will quickly notice that windows build in tools to analyze processes, network connections, autostarts, etc. are quite poor. So, what you really would like is the https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite[Sysinternals-Suite]. You can make process-explorer your https://www.ricksdailytips.com/make-process-explorer-default-task-manager/[default task manager]. Use autoruns to prevent nasty background things to be started automatically. Use tcpview to figure out which process is blocking port 8080, etc.
