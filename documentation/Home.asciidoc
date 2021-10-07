@@ -3,7 +3,7 @@ toc::[]
 
 = devonfw-ide
 
-Welcome to the `devonfw-ide`! 
+Welcome to the `devonfw-ide`!! 
 
 The `devonfw-ide` is a fantastic tool to automatically download, install, setup and update the IDE (integrated development environment) of your software development projects.
 
