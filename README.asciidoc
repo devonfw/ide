@@ -8,7 +8,7 @@ image:https://github.com/devonfw/ide/actions/workflows/build.yml/badge.svg["Buil
 
 == Introduction
 
-Watch our introduction video to get started:
+Watch our introduction video to get started:-
 
 image:https://img.youtube.com/vi/NG6TAmksBGI/0.jpg["",link="https://www.youtube.com/watch?v=NG6TAmksBGI"]
 
