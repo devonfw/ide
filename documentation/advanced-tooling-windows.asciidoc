@@ -105,7 +105,7 @@ If you like a GUI to easily configure the scrips, that comes with a lot of exten
 Do you collaborate sharing your screen, and want to mark a spot on top of what you see? Use http://epic-pen.com/[Epic Pen] to do just that.
 
 === Analyze graphs
-Do you need to visualise complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf), a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
+Do you need to visualize complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf), a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
 
 === Up your screen capture game
 Capture any part of your screen with a single click, directly upload to dropbox, or run a svn commit all in one go with http://getgreenshot.org/[Greenshot]. Another screen capture tool where you can easily manage and edit your screenshots and also do screen recordings with is https://www.screenpresso.com/download/[Screenpresso].
