@@ -32,7 +32,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://github.com/devonfw/extension-pack-vscode[extension-pack-vscode] |Optional|https://github.com/devonfw/extension-pack-vscode/blob/master/LICENSE[ASL 2.0]
 |https://www.eclipse.org/[Eclipse] |Optional|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0]
 |https://github.com/devonfw/cobigen[CobiGen] |Optional|https://github.com/devonfw/cobigen/blob/master/LICENSE.txt[ASL 2.0]
-|https://marketplace.eclipse.org/content/tm-terminal[TM Terminal] |Optional|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0] (see https://git.eclipse.org/c/tm/org.eclipse.tm.git/tree/terminal/plugins/org.eclipse.tm.terminal.view.ui/about.html[here])
+|https://marketplace.eclipse.org/content/tm-terminal[TM Terminal] |Optional|https://www.eclipse.org/legal/epl-2.0/[EPL 2.0] (see https://marketplace.eclipse.org/content/tm-terminal[here])
 |https://github.com/iloveeclipse/anyedittools/[AnyEdit] |Optional|https://github.com/iloveeclipse/anyedittools/blob/master/LICENSE.md[EPL 1.0]
 |https://checkstyle.org/eclipse-cs/[EclipseCS] |Optional|https://github.com/checkstyle/eclipse-cs/blob/master/LICENSE[LGPL 2.1]
 |https://marketplace.eclipse.org/content/spotbugs-eclipse-plugin[SpotBugs Eclipse plugin] |Optional|https://github.com/spotbugs/spotbugs/blob/master/LICENSE[LGPL 2.1]
