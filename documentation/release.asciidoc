@@ -26,7 +26,7 @@ Create a release in a standardized way including the following steps:
 
 == Build-Tools
 
-This `release` commandlet utilizes the link:build.asciidoc[build] commandlet to support mutliple build-tools such as link:mvn.asciidoc[maven], link:gradle.asciidoc[gradle], or link:npm.asciidoc[npm]. Each of those commandlets should respect the link:variables.asciidoc[variable] `«TOOL»_RELEASE_OPTS` to customize the parameters for the release build.
+This `release` commandlet utilizes the link:build.asciidoc[build] commandlet to support multiple build-tools such as link:mvn.asciidoc[maven], link:gradle.asciidoc[gradle], or link:npm.asciidoc[npm]. Each of those commandlets should respect the link:variables.asciidoc[variable] `«TOOL»_RELEASE_OPTS` to customize the parameters for the release build.
 
 So e.g. if a `pom.xml` is detected, maven will be used. In this example the variable `MVN_RELEASE_OPTS` is used that defaults to `clean deploy -Dchangelist= -Pdeploy`.
 If you provide a specific argument this will be passed additionally.
