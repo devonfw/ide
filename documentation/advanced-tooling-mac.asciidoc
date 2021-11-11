@@ -40,7 +40,7 @@ image::images/keyboard-layouts.png["Keyboard Preferences / Input Sources"]
 When you have multiple mappings in place, on the top menu bar you will find a little icon next to the current time that allows you to switch between the keyboard layouts, which is very handy when you switch from your native MacBook keyboard to an external USB keyboard or vice versa.
 Even for a pure MacOS geek this can be helpful in case a friend coming from Windows/Linux is supposed to type something on the Mac in a pair-programming session.
 
-In our German keyboard mapping example you can use the keys like `Alt Gr`, etc. to type special characters as you would expect and as printed on your keyboard. To make `Pos1`, `End`, etc. work properly accross all apps please read on to the next section(s).
+In our German keyboard mapping example you can use the keys like `Alt Gr`, etc. to type special characters as you would expect and as printed on your keyboard. To make `Pos1`, `End`, etc. work properly across all apps please read on to the next section(s).
 
 In case you would like to create your own keyboard layout you can of course edit the `*.keylayout` files in a text editor. However, to make this much more comfortable, you can use the graphical editor tool https://scripts.sil.org/ukelele[Ukelele].
 Besides, the app itself, the Ukelele `dmg` file, also contains a `Documentation` and a `Resources` folder. The latter contains many keyboard layouts that you can use as a starting point.
