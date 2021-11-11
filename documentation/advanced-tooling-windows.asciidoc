@@ -7,10 +7,10 @@ toc::[]
 The devon IDE already contains a lot of software. But if you need more, here are some ways to get it easily:
 
 === Chocolatey
-https://chocolatey.org/[Chocolatey] is a repository for free and open source software similiar to the repositories know from the Linux like apt, apk, pacman, ...
+https://chocolatey.org/[Chocolatey] is a repository for free and open source software similar to the repositories know from the Linux like apt, apk, pacman, ...
 
 === Winget
-Microsoft is also working on a repository for Windows called https://github.com/microsoft/winget-cli[winget]. It is currently in alpha state, but is expected to be integreated in the upcoming Windows 11.
+Microsoft is also working on a repository for Windows called https://github.com/microsoft/winget-cli[winget]. It is currently in alpha state, but is expected to be integrated in the upcoming Windows 11.
 
 == Integration into Windows-Explorer
 
