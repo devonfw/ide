@@ -13,6 +13,6 @@ The arguments (`devon ionic «args»`) are explained by the following table:
 |*Argument(s)*             |*Meaning*
 |`setup`                   |setup yarn (install and verify), link:configuration.asciidoc[configurable] via `YARN_VERSION`
 |`create`                  |Create a new https://github.com/devonfw/devon4ng/#devon4ng[devon4ng] ionic project.
-|`cicd «args»`             |generate cicd files for the currect devon4ng project
+|`cicd «args»`             |generate cicd files for the current devon4ng project
 |`«args»`                  |run ionic with the given arguments (`«args»`)
 |=======================
