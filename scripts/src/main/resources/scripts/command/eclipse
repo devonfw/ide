@@ -45,11 +45,10 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    #mirror="https://mirror.math.princeton.edu"
-    local mirror="https://ftp.osuosl.org"
+    local mirror="https://www.eclipse.org/downloads/download.php?file="
     local software_version="${ECLIPSE_VERSION:-2021-03}"
     local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
-    local download_url="${mirror}/pub/eclipse/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R"
+    local download_url="${mirror}/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R"
     if doIsMacOs
     then
       download_url="${download_url}-macosx-cocoa-x86_64.dmg"
