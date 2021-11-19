@@ -30,7 +30,7 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local software_version="${JAVA_VERSION:-11.0.9.1_1}"
+    local software_version="${JAVA_VERSION:-17.0.1_12}"
     local major_version="${software_version/\.*/}"
     major_version="${major_version/u*/}"
     local jdk_folder="jdk-${software_version/_/%2B}"
@@ -53,7 +53,7 @@ function doSetup() {
     else
       os="linux"
     fi
-    local download_url="https://github.com/AdoptOpenJDK/openjdk${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
+    local download_url="https://github.com/adoptium/temurin${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
     doInstall "${software_dir}" "${download_url}" "java" "${software_version}"
     if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
