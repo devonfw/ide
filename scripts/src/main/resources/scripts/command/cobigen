@@ -32,14 +32,8 @@ function doSetup() {
 function doRunCLI() {
   local cobigen_cmd="cobigen"
   doEcho "Running: ${cobigen_cmd} ${*}"
-  if doIsQuiet
-  then
-    "${cobigen_cmd}" "${@}"
-    exit ${?}
-  else
-    "${cobigen_cmd}" "${@}" --verbose
-    exit ${?}
-  fi
+  "${cobigen_cmd}" "${@}"
+  exit ${?}
 }
 
 # CLI
