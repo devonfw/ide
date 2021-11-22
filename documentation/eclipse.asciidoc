@@ -31,7 +31,7 @@ There are variables that can be used for Eclipse. These are explained by the fol
 |=======================
 |*Variable*|*Default-Value*|*Meaning*
 |*`ECLIPSE_VERSION`*|`2020-12`|The version of the tool Eclipse to install and use.
-|*`ECLIPSE_EDITION_TYPE`*|`java`|The edition of the tool Eclipse to install and use. You can choose between 'java' for standard edition or 'jee' for enterprise edition.
+|*`ECLIPSE_EDITION_TYPE`*|`java`|The edition of the tool Eclipse to install and use. You can choose between 'java' for standard edition or `jee` for enterprise edition.
 |=======================
 
 == plugins
