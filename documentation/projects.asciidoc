@@ -13,7 +13,7 @@ workspace=example
 git.url=http://github.com/someorg/someproject
 git.branch=develop
 build.path=.
-build.cmd=mvn -DskipTests=true -Darchetype.test.skip=true clean install
+build.cmd=mvn -D skip Tests=true -Darchetype.test.skip=true clean install
 eclipse=import
 active=true
 ----
