@@ -51,7 +51,7 @@ Also you should have a look at the new https://github.com/Microsoft/Terminal[Win
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
 
-See link:integration.asciidoc[integration] to make ConEmu work flawless with `devonfw-ide`.
+See link:integration.asciidoc[integration] to make `ConEmu` work flawless with `devonfw-ide`.
 
 == Windows Helpers
 
@@ -63,7 +63,7 @@ A real developer needs a real text editor and not windows build in `notepad`.
 The most common choice is https://notepad-plus-plus.org/[Notepad++].
 
 === Real compression tool
-Do you need to deal with ZIP files, TGZ, dpkg, etc.? Just install http://www.7-zip.org/[7zip] and forget about windows build-in ZIP support (that is buggy with long file paths, etc.).
+Do you need to deal with ZIP files, TGZ, `dpkg`, etc.? Just install http://www.7-zip.org/[7zip] and forget about windows build-in ZIP support (that is buggy with long file paths, etc.).
 
 === Smarter clipboard
 Do you want to paste something from the clipboard but meanwhile you had to copy something else? Just, one of the many things you can easily do with http://ditto-cp.sourceforge.net/[ditto].
@@ -105,7 +105,7 @@ If you like a GUI to easily configure the scrips, that comes with a lot of exten
 Do you collaborate sharing your screen, and want to mark a spot on top of what you see? Use http://epic-pen.com/[Epic Pen] to do just that.
 
 === Analyze graphs
-Do you need to visualize complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf), a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
+Do you need to visualize complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] `(.tgf)`, a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
 
 === Up your screen capture game
 Capture any part of your screen with a single click, directly upload to dropbox, or run a svn commit all in one go with http://getgreenshot.org/[Greenshot]. Another screen capture tool where you can easily manage and edit your screenshots and also do screen recordings with is https://www.screenpresso.com/download/[Screenpresso].
