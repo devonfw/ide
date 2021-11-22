@@ -41,7 +41,7 @@ We support the following platforms:
 
 * link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
 * link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
-* link:node.asciidoc[node js], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
+* link:node.asciidoc[node], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
 
 == Build-Systems
 We support the following build-systems:
