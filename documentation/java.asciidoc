@@ -11,7 +11,7 @@ The arguments (`devon java «args»`) are explained by the following table:
 |=======================
 |*Argument(s)*                       |*Meaning*
 |`setup`                             |setup OpenJDK (install or update and verify), link:configuration.asciidoc[configurable] via `JAVA_VERSION` (e.g. `8u242b08` or `11.0.6_10`)
-|`create «args»`                     |create a new Java project based on https://github.com/devonfw/devon4j/blob/master/documentation/tutorial-newapp.asciidoc[devon4j application template]. If a single argument is provided, this is the package name and is automatically split into groupId and artifactId. Use `-DdbType=«db»` to choose the database (hana, oracle, mssql, postgresql, mariadb, mysql, h2, hsqldb). Any option starting with dash is passed as is."
+|`create «args»`                     |create a new Java project based on https://github.com/devonfw/devon4j/blob/master/documentation/tutorial-newapp.asciidoc[devon4j application template]. If a single argument is provided, this is the package name and is automatically split into `groupId` and `artifactId`. Use `-DdbType=«db»` to choose the database (hana, oracle, mssql, postgresql, mariadb, mysql, h2, hsqldb). Any option starting with dash is passed as is."
 |`migrate [from «version»] [single]` |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version. If for some reasons the current devonfw version can not be auto-detected you may provide it manually after the 'from' argument. Also the 'single' option allows to migrate only to the next available version."
 |`cicd «args»`                       |generate cicd files for the current devon4java project
 |=======================
@@ -22,22 +22,22 @@ Examples for create a new devon4j application:
 ```
 devon java create com.example.domain.myapp
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, `artifactId` `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create -Dversion=0.0.1-alpha1 com.example.domain.myapp
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `0.0.1-alpha1`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, `artifactId` `myapp`, version `0.0.1-alpha1`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp com.example.group
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp com.example.group demo-app
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp -DartifactId=demo-app -DdbType=hana
@@ -47,7 +47,7 @@ Will create an app with package `com.example.domain.myapp`, groupId `com.example
 ```
 devon java create com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `myapp`, version `0.0.1`, oracle database, and with a batch module.
 
 == migrate
 Example for migrating a devon4j application:
