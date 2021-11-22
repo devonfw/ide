@@ -17,7 +17,7 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 |=======================
 
 == setup
-Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended to run the `setup` script in the top-level directory (`$DEVON_IDE_HOME`). However, in case you want to skip some system specific integrations, you may also run this command directly instead. The setup only needs to be called once after a new `devonfw-ide` instance has been created. It will follow this process:
+Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended to run the `setup` script in the top-level directory (`$DEVON_IDE_HOME`). However, in case you want to skip some system specific integration, you may also run this command directly instead. The setup only needs to be called once after a new `devonfw-ide` instance has been created. It will follow this process:
 
 * link:setup.asciidoc#install[install] the `devon` command on your system (if not already installed).
 * clone the link:settings.asciidoc[settings] (you may provide a git URL directly as argument or you will be prompted for it).
