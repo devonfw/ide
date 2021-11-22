@@ -10,7 +10,7 @@ However, to be platform independent and allow lightweight updates, the `devonfw-
 == Repository
 
 By default, software is downloaded via the internet from public download URLs of the according tools. However, some projects may need specific tools or tool versions that are not publicly available.
-In such case, they can create their own software repository (e.g. in a VPN) and link:configuration.asciidoc[configure] the base URL of it via `DEVON_SOFTWARE_REPOSITORY` link:variables.asciidoc[variable].
+In such case, they can create their own software repository (e.g. in a `VPN`) and link:configuration.asciidoc[configure] the base URL of it via `DEVON_SOFTWARE_REPOSITORY` link:variables.asciidoc[variable].
 Then, `devonfw-ide` will download all software from this repository only instead of the default public download URLs.
 This repository (URL) should be accessible within your network via HTTPS (or HTTP) and without any authentication.
 The repository needs to have the following structure:
