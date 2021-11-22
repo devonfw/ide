@@ -9,7 +9,7 @@ As this requires some tweaks for IDEs we do support you with this guide in case 
 == Lombok in Eclipse
 
 For eclipse there is a plugin to activate https://projectlombok.org/setup/eclipse[lombok support in eclipse].
-We have this already pre-configured for you in our default link:settings.asciidoc[settings]. So for manual installation after link:setup.asciidoc[setup], you can get it via this command: 
+We have this already configured for you in our default link:settings.asciidoc[settings]. So for manual installation after link:setup.asciidoc[setup], you can get it via this command: 
 ```
 devon eclipse add-plugin lombok
 ```
