@@ -18,7 +18,6 @@ eclipse=import
 active=true
 ----
 
-`mvn -DskipTests=true -Darchetype.test.skip=true clean install`
  
 .Variables of project import
 [options="header"]
@@ -31,7 +30,7 @@ active=true
 |`git.branch`|e.g. `develop`|(optional) Git branch to checkout. Git default branch is default.
 |`build.path`|e.g. `.` (default)|(optional) The directory inside `path` where to trigger an initial build after clone or pull (if `build.cmd` is set). For a regular project use `.` to build top-level project.
 |`build.cmd` 
-|e.g. `build` or  
+|e.g. `build or  mvn -DskipTests=true -Darchetype.test.skip=true clean install`
 |(optional) The _devonfw_ command to invoke to build the project after clone or pull. If omitted no build is triggered.
 |`eclipse`|e.g. `import`|(optional) Desired action for eclipse IDE. If you put `import` here all modules (eclipse projects) in the current project will be imported into eclipse. If you leave this out or put any other value for this parameter, no change in eclipse is done.
 |`active`|`true`|(optional) If set to `false` the project is skipped during the link:setup.asciidoc[setup].
