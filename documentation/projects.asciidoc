@@ -18,8 +18,7 @@ eclipse=import
 active=true
 ----
 
- 
-.Variables of project import
+ .Variables of project import
 [options="header"]
 |===
 |*Variable*|*Value*|*Meaning*
