@@ -18,10 +18,10 @@ After you have link:setup.asciidoc[set up] your `devonfw-ide` on a windows machi
 you already have windows-explorer integration out-of-the-box.
 Just right-click on the folder you would like to open in a terminal and choose from the context menu:
 
-* `Git Bash`
-* `Open devonfw CMD shell here`
-* `Open devonfw PowerShell here`
-* `Open devonfw Cygwin Bash Here` (only if cygwin was installed during setup)
+* Git Bash
+* Open devonfw cmd shell here
+* Open devonfw PowerShell here
+* Open devonfw Cygwin Bash here (only if cygwin was installed during setup)
 
 == Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:
@@ -51,7 +51,7 @@ Also you should have a look at the new https://github.com/Microsoft/Terminal[Win
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
 
-See link:integration.asciidoc[integration] to make `ConEmu` work flawless with `devonfw-ide`.
+See link:integration.asciidoc[integration] to make ConEmu work flawless with `devonfw-ide`.
 
 == Windows Helpers
 
@@ -59,11 +59,11 @@ See link:integration.asciidoc[integration] to make `ConEmu` work flawless with `
 Do you want complex passwords that differ for each account for security? Do you only want to remember a single password for simplicity? Do you want to have both? Then, you need to install https://keepass.info/[KeePass] right now.
 
 === Real text editor
-A real developer needs a real text editor and not windows build in `notepad`.
+A real developer needs a real text editor and not windows built in `notepad`.
 The most common choice is https://notepad-plus-plus.org/[Notepad++].
 
 === Real compression tool
-Do you need to deal with ZIP files, TGZ, `dpkg`, etc.? Just install http://www.7-zip.org/[7zip] and forget about windows build-in ZIP support (that is buggy with long file paths, etc.).
+Do you need to deal with ZIP files, TGZ, dpkg, etc.? Just install http://www.7-zip.org/[7zip] and forget about windows build-in ZIP support (that is buggy with long file paths, etc.).
 
 === Smarter clipboard
 Do you want to paste something from the clipboard but meanwhile you had to copy something else? Just, one of the many things you can easily do with http://ditto-cp.sourceforge.net/[ditto].
@@ -81,7 +81,7 @@ See also https://www.howtogeek.com/128680/HOW-TO-DELETE-MOVE-OR-RENAME-LOCKED-FI
 
 === Create symbolic links
 Are you are used to symbolic and hard links in Linux? Do you have to work with Windows? Would you also like to have such links in Windows? Why not? Windows https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/[supports real links] (not shortcuts like in other cases).
-If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
+If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
 Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (an a light weight VM).
