@@ -15,5 +15,5 @@ The arguments (`devon node «args»`) are explained by the following table:
 |`generate «s» [«args»]`    | generate devon4node components using the schematic «s» `(same as devon4node generate)`
 |`db «c» [«args»]`          | execute a TypeORM command «c» `(same as devon4node db)`
 |`cicd «args»`              |generate cicd files for the current devon4node project
-|`«args»`                   | call `NodeJS` with the specified arguments
+|`«args»`                   | call NodeJS with the specified arguments
 |=======================
