@@ -76,10 +76,6 @@ function doMigrate() {
 
 #$@ args (see help)
 function doCreate() {
-  if [ -z "${1}" ]
-  then
-    doFail "Missing arguments for devon4j project creation. Please read the documentation:\nhttps://github.com/devonfw/ide/blob/master/documentation/java.asciidoc#create"
-  fi
   if [ "$(dirname "${PWD}")" != "${DEVON_IDE_HOME}/workspaces" ]
   then
     doWarning "You are currently not directly in a workspace folder. Current location is:\n${PWD}"
@@ -88,8 +84,162 @@ function doCreate() {
       cd "${DEVON_IDE_HOME}/workspaces/main" || exit 255
     fi
   fi
-  doMavenArchetype "${@}"
-  exit ${?}
+
+local framework
+local dbtype
+local mavenargs
+local package
+while [[ -n "${1}" ]]
+do
+  if [[ "${1:0:8}" == "-Ddbtype" ]]
+  then 
+    dbtype=${1:9}
+  elif [[ "${1:0:2}" == "-D" ]]
+  then
+      mavenargs+=("${1}")
+      framework="spring"
+  elif [[ "${1}" =~ [a-z]+[.][a-z]+([.][a-z]+)* ]]
+  then 
+      package="${1}"
+      framework="spring"
+  elif [[ "${1}" == "-f" ]] || [[ "${1}" == "-framework" ]]  
+  then 
+    if [[ "${2,,}" == "quarkus" ]]
+    then 
+      framework="quarkus"
+    elif [[ "${2,,}" == "spring" ]]
+    then 
+      framework="spring"
+    else
+      doFail "Wrong parameter for -f"
+    fi
+  fi
+  shift
+done
+
+local answer=""
+while [[ -z "$framework" ]]
+  do
+      echo "No Framework selected." 
+      read -r -p "(Select a Framework: Quarkus or Spring): " answer
+      if [[ "${answer,,}" = "quarkus" ]]
+      then
+        framework="quarkus"
+      elif [[ "${answer,,}" = "spring" ]]
+      then
+        framework="spring"
+      else
+        echo "Wrong input"
+      fi
+  done
+
+    if [[ "${framework}" = "quarkus" ]]
+    then
+      startQuarkusProject "${dbtype}"
+    elif [[ "${framework}" = "spring" ]]
+    then
+        if [[ -z "${package}" ]] && [[ -z "${mavenparams}"  ]]
+        then 
+          echo "No package or other parameter passed, we need atleast a package to create a spring application more information https://devonfw.com/website/pages/docs/cli.asciidoc.html#java.asciidoc_create" 
+          read -r -p "Pass a package and if you want also other parameter von the examples: " mavenparams
+        fi
+      package+="${mavenparams} ${dbtype}"
+      package="${package%%*( )}"
+      doMavenArchetype "${package}"
+    fi
+  ##TODO    
+    exit ${?}
+}
+
+function startQuarkusProject() {
+local message='Select you your prefered Extensions and the Project Group-, Artifact-,
+and Versionname on the opened site https://code.quarkus.io/ or just press return to use a configured Project from our Templates guides with Extensions that we recommend' 
+while [[ ! "$url" =~ ^https://code.quarkus.io/.* ]]
+do
+      echo -e "$message"
+      read -r -p "(Copy the Url with the configured Project and paste it here) The url has to start like this:https://code.quarkus.io/... or just press return to use our Templates Project" url
+      if [[  -z "${url}" ]]; then 
+        url="https://code.quarkus.io/?g=com.devonfw.quarkus&a=dasistmeintest&e=vertx-graphql&e=resteasy-reactive-jsonb&e=undertow&e=jdbc-postgresql"
+        ## correct url
+        break
+      fi
+done
+
+
+
+artifact=$(echo "${url}" | grep -o 'a=[^\&]*')
+if [[ -z "${artifact}" ]]
+then 
+  artifact="example"
+  url="${url}&a=${artifact}"
+else
+ 	artifact=${artifact:2}
+fi  
+group=$(echo "${url}" | grep -o 'g=[^\&]*')
+if [[ -z "${group}" ]]
+then 
+  group="com.devonfw.quarkus"
+  url="${url}&g=${group}"
+else
+  group=${group:2}
+fi
+echo "${url}"
+echo "Group: ${group}"
+echo "artifact: ${artifact}"
+echo "Project will be created in workspace/main folder"
+## füge d für den download link in die url ein
+subst=`expr substr $url 25 ${#url}`
+url="https://code.quarkus.io/d${subst}"
+doDownload "${url}" "quarkus.zip" "${DEVON_IDE_HOME}/updates" ## vll auch wo anders downloaden und anders benennen
+
+doExtract "${DEVON_IDE_HOME}/updates/quarkus.zip"
+rm "${DEVON_IDE_HOME}/updates/test.zip"
+local groupIdFolders="${group//[.]/"/"}"
+
+doCreateModernProjectStructure ${artifact} ${PWD} ${groupIdFolders}
+
+## mv dockerfolder can be moved 
+mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/docker" "${PWD}/${artifact}/src/main"
+## resoruces folder can be moved
+mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/resources" "${PWD}/${artifact}/src/main"
+## move the test files //TODO also how to use the right package
+mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/java/${groupIdFolders}"/* "${PWD}/${artifact}/test/java/${groupIdFolders}/component/service/v1" ## hier habe ich auch keien Ahnung muss erstellt werden
+## move resoruces
+if [ -d "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/resources" ]
+then 
+  mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/resources" "${PWD}/${artifact}/src/test/"
+fi
+
+
+## remove the starter code   //TODO maybe use this and also extract analysiere was 
+rm -r "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src"
+
+## move pom and other files 
+mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}"/* "${PWD}/${artifact}/"
+mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}"/.[!.]* "${PWD}/${artifact}/"
+##..*
+
+## cleanup
+rm -r "${DEVON_IDE_HOME}/updates/extracted/${artifact}"
+}
+
+#1 artifactID
+#2 path where the project will be created 
+#3 groupID
+function doCreateModernProjectStructure() {
+if [[ -d "${1}" ]]
+then 
+  doFail "The Project already exist, make sure... and run the comment again"
+else
+  mkdir -p "${2}/${1}/src/main"
+  mkdir -p "${2}/${1}/src/main/helm" "${2}/${1}/src/main/java"
+  mkdir -p "${2}/${1}/src/main/java/${3}/general/domain/model"
+  mkdir -p "${2}/${1}/src/main/java/${3}/component/domain/repo" "${PWD}/${1}/src/main/java/${3}/component/domain/dao" "${2}/${1}/src/main/java/${3}/component/domain/model"
+  mkdir -p "${2}/${1}/src/main/java/${3}/component/logic" 
+  mkdir -p "${2}/${1}/src/main/java/${3}/component/service/v1/mapper" "${2}/${1}/src/main/java/${3}/component/service/v1/model"
+  mkdir -p "${2}/${1}/test/java/${3}/component/service/v1"
+fi
+
 }
 
 # CLI
