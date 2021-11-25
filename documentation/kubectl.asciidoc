@@ -1,7 +1,7 @@
 :toc:
 toc::[]
 
-= kubernetes
+= Kubernetes
 
 The `kubectl` commandlet allows to install and use https://kubernetes.io/[kubernetes].
 On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite.
@@ -12,7 +12,7 @@ Currently this feature is new and therefore experimental.
 It may change in incompatible ways in the next releases until we reach a stable state.
 We hope that all is working fine for you.
 However, do not expect everything to work out of the box.
-In case you are facing issues (e.g. network problems with `Cisco AnyConnect`, etc.) please give us feedback so we can improve.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
 
 The arguments (`devon kubectl «args»`) are explained by the following table:
 
@@ -25,14 +25,14 @@ The arguments (`devon kubectl «args»`) are explained by the following table:
 |=======================
 
 == setup
-Please note that on Windows and MacOS `kubernetes` support comes together with `Docker Desktop` that is installed via link:docker.asciidoc[docker] commandlet.
-When you have installed and launched `Docker Desktop`, you can once https://docs.docker.com/desktop/kubernetes/#enable-kubernetes[enable kubernetes in the Preferences].
+Please note that on Windows and macOS, Kubernetes support comes together with `Docker Desktop` that is installed via link:docker.asciidoc[docker] commandlet.
+When you have installed and launched `Docker Desktop`, you can once https://docs.docker.com/desktop/kubernetes/#enable-kubernetes[enable Kubernetes in the Preferences].
 
-On Linux however, kubernetes is installed separately by this commandlet.
+On Linux however, Kubernetes is installed separately by this commandlet.
 
 == usage
 Once installed via setup, you can run `kubectl` directly from any shell of your OS directly.
-Run `kubectl help` to get started and use the online documentations and resources on the web to get familiar with kubernetes.
+Run `kubectl help` to get started and use the online documentations and resources on the web to get familiar with Kubernetes.
 It is not our intention to repeat this here.
 
 Please note that the `kubectl` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
