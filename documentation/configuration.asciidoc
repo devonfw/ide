@@ -32,7 +32,7 @@ this will unset the specified variable
 tilde is resolved to your personal home directory on any OS including windows.
 * `array_variable=(value1 value2 value3)`
 +
-This will only work properly in `bash` worlds but as no arrays are used in CMD world of `devonfw-ide` it does not hurt on windows.
+This will only work properly in bash worlds but as no arrays are used in CMD world of `devonfw-ide` it does not hurt on windows.
 * Please never surround values with quotes (`var="value"`)
 * This format is similar to Java `*.properties` but does not support advanced features as unicode literals, multi-lined values, etc.
 
