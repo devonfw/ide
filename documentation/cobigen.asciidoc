@@ -11,8 +11,8 @@ The arguments (`devon cobigen «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|setup         |setup CobiGen (install and verify), link:configuration.asciidoc[configurable] via `COBIGEN_VERSION`
-|«args»        |run CobiGen with the given arguments (`«args»`)
+|`setup`         |setup CobiGen (install and verify), link:configuration.asciidoc[configurable] via `COBIGEN_VERSION`
+|`«args»`        |run CobiGen with the given arguments (`«args»`)
 |=======================
 
 Please read the actual documentation of https://github.com/devonfw/cobigen/blob/master/documentation/howto_Cobigen-CLI-generation.asciidoc#cobigen-command-line-interface-generation[CobiGen CLI] for further details.
