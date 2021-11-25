@@ -81,7 +81,7 @@ See also https://www.howtogeek.com/128680/HOW-TO-DELETE-MOVE-OR-RENAME-LOCKED-FI
 
 === Create symbolic links
 Are you are used to symbolic and hard links in Linux? Do you have to work with Windows? Would you also like to have such links in Windows? Why not? Windows https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/[supports real links] (not shortcuts like in other cases).
-If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
+If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable SmartMove in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
 Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (an a light weight VM).
