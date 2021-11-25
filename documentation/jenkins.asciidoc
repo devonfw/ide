@@ -8,8 +8,8 @@ The `jenkins` commandlet allows to install, configure, and launch https://jenkin
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`setup`         |Setup Jenkins (install and verify)
-|`start`         |Start your local Jenkins server
-|`stop`          |Stop your local Jenkins server
-|`add`           |Add current project as CI job to your local Jenkins
+|setup         |Setup Jenkins (install and verify)
+|start         |Start your local Jenkins server
+|stop          |Stop your local Jenkins server
+|add           |Add current project as CI job to your local Jenkins
 |=======================
