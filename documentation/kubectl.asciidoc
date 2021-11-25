@@ -20,8 +20,8 @@ The arguments (`devon kubectl «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|setup                   |setup Kubernetes (install and verify) as per above flow.
-|«args»                  |call kubectl with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred.
+|`setup`                 |setup Kubernetes (install and verify) as per above flow.
+|`«args»`                  |call kubectl with the specified arguments. Call `kubectl help` for details or use kubectl directly as preferred.
 |=======================
 
 == setup
