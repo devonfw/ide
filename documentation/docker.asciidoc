@@ -20,8 +20,8 @@ The arguments (`devon docker «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|`setup`                   |setup Docker (install and verify) as per above flow.
-|`«args»`                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
+|setup                   |setup Docker (install and verify) as per above flow.
+|«args»                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
 |=======================
 
 == setup
@@ -43,7 +43,7 @@ If you use Docker and Kubernetes on your local machine on a daily basis this mak
 
 In case you only use Docker rarely, you can save resources by stopping it when not needed after it has been installed.
 
-=== Windows and Mac
+=== Windows and macOS
 To enable or disable autostart, you can launch Docker Desktop on Windows or MacOS got to the `Preferences` (gear icon in the title bar). Then in the `General` tab you can check or uncheck the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]). When autostart is disabled and you launch Docker Desktop it will notice and ask your to start the service or do this automatically for you.
 On Windows you can also manually tweak this:
 
