@@ -10,14 +10,14 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 [options="header"]
 |=======================
 |*Argument(s)*                   |*Meaning*
-|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
-|`update [«package»]`            |update devonfw-ide
-|`update scripts [to «version»]` |update devonfw-ide
-|`uninstall`                     |uninstall devonfw-ide (if you want remote it entirely from your system)
+|setup [«SETTINGS_URL»]        |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
+|update [«package»]            |update devonfw-ide
+|update scripts [to «version»] |update devonfw-ide
+|uninstall                     |uninstall devonfw-ide (if you want remote it entirely from your system)
 |=======================
 
 == setup
-Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended to run the `setup` script in the top-level directory (`$DEVON_IDE_HOME`). However, in case you want to skip some system specific integration, you may also run this command directly instead. The setup only needs to be called once after a new `devonfw-ide` instance has been created. It will follow this process:
+Run `devon ide setup` to initially setup your `devonfw-ide`. It is recommended to run the setup script in the top-level directory (`$DEVON_IDE_HOME`). However, in case you want to skip some system specific integration, you may also run this command directly instead. The setup only needs to be called once after a new `devonfw-ide` instance has been created. It will follow this process:
 
 * link:setup.asciidoc#install[install] the `devon` command on your system (if not already installed).
 * clone the link:settings.asciidoc[settings] (you may provide a git URL directly as argument or you will be prompted for it).
@@ -31,10 +31,10 @@ Run `devon ide update` to update your `devonfw-ide`. This will check for updates
 The optional extra argument (`«package»`) behaves as follows:
 
 * `scripts`: check if a new version of `devonfw-ide-scripts` is available. If so it will be downloaded and installed. As Windows is using file-locks, it is tricky to update a script while it is executed. Therefore, we update the `scripts` folder as an async background task and have to abort further processing at this point on windows as a workaround.
-* `settings`: update the link:settings.asciidoc[settings] (`git pull`).
-* `software`: update the link:software.asciidoc[software] (e.g. if versions have changed via `scripts` or `settings` update).
-* `projects`: update the link:projects.asciidoc[projects] (checkout and import repositories into workspace/IDEs).
-* `all`: do all the above sequentially.
+* settings: update the link:settings.asciidoc[settings] (`git pull`).
+* software: update the link:software.asciidoc[software] (e.g. if versions have changed via `scripts` or `settings` update).
+* projects: update the link:projects.asciidoc[projects] (checkout and import repositories into workspace/IDEs).
+* all: do all the above sequentially.
 * none: `settings` and `software` are updated by default if no extra argument is given. This is the regular usage for project developers. Only perform an update of `scripts` when you are requested to do so by your technical lead. Bigger projects especially need to test updates before rolling them out to the entire team. If developers always updated the latest release of the `scripts` which is released globally, some project functionality would break causing problems and extra efforts in the teams.
 
 In order to update to a specific version of `scripts` an explicit version can be specified after the additional `to` argument:
