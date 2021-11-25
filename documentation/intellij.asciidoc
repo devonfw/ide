@@ -13,15 +13,15 @@ You may also supply additional arguments as `devon intellij «args»`. These are
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`--all`         |if provided as first arg then to command will be invoked for each workspace
-|`setup`         |setup IntelliJ (install or update)
-|`add-plugin «id»`|install an additional plugin
-|`run`           |launch IntelliJ (default if no argument is given)
-|`start`         |same as `run`
-|`ws-up[date]`   |update workspace
-|`ws-re[verse]`  |reverse merge changes from workspace into settings
-|`ws-reverse-add`|reverse merge adding new properties
-|`create-script` |create launch script for this IDE, your current workspace and your OS
+|--all         |if provided as first arg then to command will be invoked for each workspace
+|setup         |setup IntelliJ (install or update)
+|add-plugin «id»|install an additional plugin
+|run           |launch IntelliJ (default if no argument is given)
+|start         |same as `run`
+|ws-up[date]   |update workspace
+|ws-re[verse]  |reverse merge changes from workspace into settings
+|ws-reverse-add|reverse merge adding new properties
+|create-script |create launch script for this IDE, your current workspace and your OS
 |=======================
 
 There are variables that can be used for IntelliJ. These are explained by the following table:
