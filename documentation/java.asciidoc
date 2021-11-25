@@ -22,22 +22,22 @@ Examples for create a new devon4j application:
 ```
 devon java create com.example.domain.myapp
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, `artifactId` `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create -Dversion=0.0.1-alpha1 com.example.domain.myapp
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, `artifactId` `myapp`, version `0.0.1-alpha1`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `0.0.1-alpha1`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp com.example.group
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp com.example.group demo-app
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
 devon java create com.example.domain.myapp -DartifactId=demo-app -DdbType=hana
@@ -47,7 +47,7 @@ Will create an app with package `com.example.domain.myapp`, groupId `com.example
 ```
 devon java create com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, `artifactId` `myapp`, version `0.0.1`, oracle database, and with a batch module.
+Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
 
 == migrate
 Example for migrating a devon4j application:
