@@ -10,10 +10,10 @@ The arguments (`devon cicdgen «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`setup`                 |setup cicdgen (install and verify)
-|`update`                |update cicdgen (reinstall with @latest version and verify)
-|`java «args»`           |generate cicd files for the current devon4java project
-|`ng «args»`             |generate cicd files for the current devon4ng project
-|`node «args»`           |generate cicd files for the current devon4node project
-|`«args»`                |call cicdgen with the specified arguments
+|setup                 |setup cicdgen (install and verify)
+|update                |update cicdgen (reinstall with @latest version and verify)
+|java «args»           |generate cicd files for the current devon4java project
+|ng «args»             |generate cicd files for the current devon4ng project
+|node «args»           |generate cicd files for the current devon4node project
+|«args»                |call cicdgen with the specified arguments
 |=======================
