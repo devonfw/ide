@@ -11,9 +11,9 @@ The arguments (`devon jasypt «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|setup                   |setup jasypt (install and verify), link:configuration.asciidoc[configurable] via `JASYPT_VERSION`
-|encrypt                 |Encrypt a secret with a masterpassword
-|decrypt                 |Decrypt an encrypted secret with a masterpassword
+|`setup`                   |setup jasypt (install and verify), link:configuration.asciidoc[configurable] via `JASYPT_VERSION`
+|`encrypt`                 |Encrypt a secret with a masterpassword
+|`decrypt`                 |Decrypt an encrypted secret with a masterpassword
 |=======================
 
 == example
