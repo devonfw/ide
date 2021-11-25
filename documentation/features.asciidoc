@@ -62,7 +62,7 @@ However, also other IDEs, platforms, or tools can be easily integrated as link:c
 You are not inside a devonfw-ide installation: /
 [/]$ cd /projects/devonfw
 [devonfw]$ mvn
-`zsh`: command not found: mvn
+Zsh: command not found: mvn
 [devonfw]$ devon
 devonfw-ide environment variables have been set for /projects/devonfw in workspace main
 [devonfw]$ mvn -v
