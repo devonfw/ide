@@ -60,8 +60,8 @@ function doPrepareDownloadUrl(){
   for mirror in "${eclipse_mirrors[@]}"
   do
     download_url="${mirror}/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R${file_suffix}"
-    status_code=`curl --head -sL -w "%{http_code}" "${download_url}" -o /dev/null`
-    if [ ${status_code} == "200" ] ; 
+    status_code=$(curl --head -sL -w "%{http_code}" "${download_url}" -o /dev/null)
+    if [ "${status_code}" == "200" ] ; 
     then    
       break;
     else
