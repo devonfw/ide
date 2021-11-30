@@ -12,14 +12,14 @@ If you want to open a `CMD` (MS Dos Shell) directly from `Windows-Explorer` simp
 Just like for `CMD` you can also click `Git Bash Here` from Windows-Explorer context-menu to open a git bash. If you have selected a folder in your `devonfw-ide` installation, it will automatically initialize your environment.
 
 === Cygwin
-In case you have `cygwin` installed on your machine, the `devonfw-ide` will autodetect this during `setup` and also install a `Windows-Explorer` integration. Just choose `Open Devon Cygwin Bash Here` to open cygwin bash and initialize your `devonfw-ide` environment.
+In case you have cygwin installed on your machine, the `devonfw-ide` will autodetect this during `setup` and also install a `Windows-Explorer` integration. Just choose `Open Devon Cygwin Bash Here` to open cygwin bash and initialize your `devonfw-ide` environment.
 
 === ConEMU
 https://conemu.github.io/[ConEmu] is a great extension that brings additional features such as tabs to your windows shells. If you like it, you will also want to have it integrated with `devonfw-ide`. All you need to do is follow these simple steps:
 
 * Copy the file `CmdInit.cmd` from your ConEmu installation (`C:\Program Files\ConEmu\ConEmu\CmdInit.cmd`) to a personal folder (e.g. `C:\Users\MYLOGIN\scripts`).
 * Modify this copy of `CmdInit.cmd` by adding the line `devon` (e.g. at line 6) and saving.
-* Go to `ConEmu` and open the `settings` (via context menu or `[Windows][Alt][p]`).
+* Go to ConEmu and open the `settings` (via context menu or `[Windows][Alt][p]`).
 * Select `Startup > Tasks` from the left tree.
 * Select the first option form `Predefined tasks (command groups)` (`{Shells::cmd}`)
 * In the text area at the right bottom modify the location of `CmdInit.cmd` to your customized copy (`%HOME%\scripts\CmdInit.cmd`).
@@ -27,7 +27,7 @@ https://conemu.github.io/[ConEmu] is a great extension that brings additional fe
 * Click on the upper `Register` button (for `ConEmu Here`).
 * Click on `Save settings`
 
-Now you have the option `ConEmu here` if you right click on a folder in `Windows Explorer` that will open a new tab in `ConEmu` and automatically setup your environment according to the `devonfw-ide` project containing the folder (if any, see above).
+Now you have the option ConEmu here if you right click on a folder in Windows Explorer that will open a new tab in ConEmu and automatically setup your environment according to the `devonfw-ide` project containing the folder (if any, see above).
 
 === ConEMU and StartExplorer
 
@@ -37,7 +37,7 @@ You can even integrate the Eclipse StartExplorer plug-in and ConEMU to open up c
 2. Open Window > Preferences
 3. Select StartExplorer > Custom Commands on the left
 4. Add on the right and setup the following command: `"C:\Program Files\ConEmu\ConEmu64.exe" -Dir ${resource_path} -runlist cmd.exe /k ""%ConEmuBaseDir%\CmdInit.cmd" & "IDEenv"" -cur_console:n`
-Be aware that you potentially have to adapt the `ConEmu*.exe` path to match your installation.
+Be aware that you potentially have to adapt the 'ConEmu*.exe' path to match your installation.
 +
 You can even add a shell login if you installed git bash on your machine. Please be aware to potentially adapt the `sh.exe` url to match your installation: `"C:\Program Files\ConEmu\ConEmu64.exe" -Dir ${resource_path} -runlist cmd.exe /k ""%ConEmuBaseDir%\CmdInit.cmd" & "IDEenv" & "%SYSTEMDRIVE%\Program Files\Git\bin\sh.exe" --login" -cur_console:n` 
 5. State two times the "Name for *" to your choice like "ConEMU"

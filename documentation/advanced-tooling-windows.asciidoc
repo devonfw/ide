@@ -18,10 +18,10 @@ After you have link:setup.asciidoc[set up] your `devonfw-ide` on a windows machi
 you already have windows-explorer integration out-of-the-box.
 Just right-click on the folder you would like to open in a terminal and choose from the context menu:
 
-* `Git Bash`
-* `Open devonfw CMD shell here`
-* `Open devonfw PowerShell here`
-* `Open devonfw Cygwin Bash Here` (only if cygwin was installed during setup)
+* Git Bash
+* Open devonfw cmd shell here
+* Open devonfw PowerShell here
+* Open devonfw Cygwin Bash here (only if cygwin was installed during setup)
 
 == Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:
@@ -59,7 +59,7 @@ See link:integration.asciidoc[integration] to make ConEmu work flawless with `de
 Do you want complex passwords that differ for each account for security? Do you only want to remember a single password for simplicity? Do you want to have both? Then, you need to install https://keepass.info/[KeePass] right now.
 
 === Real text editor
-A real developer needs a real text editor and not windows build in `notepad`.
+A real developer needs a real text editor and not windows built in `notepad`.
 The most common choice is https://notepad-plus-plus.org/[Notepad++].
 
 === Real compression tool
@@ -81,7 +81,7 @@ See also https://www.howtogeek.com/128680/HOW-TO-DELETE-MOVE-OR-RENAME-LOCKED-FI
 
 === Create symbolic links
 Are you are used to symbolic and hard links in Linux? Do you have to work with Windows? Would you also like to have such links in Windows? Why not? Windows https://www.howtogeek.com/howto/16226/complete-guide-to-symbolic-links-symlinks-on-windows-or-linux/[supports real links] (not shortcuts like in other cases).
-If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable `SmartMove` in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
+If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable SmartMove in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
 Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (an a light weight VM).
@@ -105,7 +105,7 @@ If you like a GUI to easily configure the scrips, that comes with a lot of exten
 Do you collaborate sharing your screen, and want to mark a spot on top of what you see? Use http://epic-pen.com/[Epic Pen] to do just that.
 
 === Analyze graphs
-Do you need to visualize complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] (.tgf), a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
+Do you need to visualize complex graph structures? Convert them to https://en.wikipedia.org/wiki/Trivial_Graph_Format[Trivial Graph Format] `(.tgf)`, a run https://www.yworks.com/products/yed[yEd] to get an interactive visualization of your graph.
 
 === Up your screen capture game
 Capture any part of your screen with a single click, directly upload to dropbox, or run a svn commit all in one go with http://getgreenshot.org/[Greenshot]. Another screen capture tool where you can easily manage and edit your screenshots and also do screen recordings with is https://www.screenpresso.com/download/[Screenpresso].
