@@ -41,23 +41,43 @@ function doInstallEclipsePlugin() {
   return "${result}"
 }
 
+
+function doPrepareDownloadUrl(){
+  local eclipse_mirrors=( 'https://ftp.osuosl.org/pub/eclipse'  'https://archive.eclipse.org'  )
+  local software_version="${ECLIPSE_VERSION:-2021-03}"
+  local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
+  download_url=""
+  local file_suffix=""
+  if doIsMacOs
+  then  
+    file_suffix="-macosx-cocoa-x86_64.dmg"
+  elif doIsWindows
+  then
+    file_suffix="-win32-x86_64.zip"
+  else
+    file_suffix="-linux-gtk-x86_64.tar.gz"
+  fi   
+  for mirror in "${eclipse_mirrors[@]}"
+  do
+    download_url="${mirror}/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R${file_suffix}"
+    status_code=`curl --head -sL -w "%{http_code}" "${download_url}" -o /dev/null`
+    if [ ${status_code} == "200" ] ; 
+    then    
+      break;
+    else
+      echo " $download_url status code: ${status_code}"
+      download_url=""
+    fi
+  done
+}
+
 function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    
-    local mirror="http://ftp.kaist.ac.kr/eclipse"    
-    local software_version="${ECLIPSE_VERSION:-2021-03}"
-    local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
-    local download_url="${mirror}/technology/epp/downloads/release/${software_version}/R/eclipse-${eclipse_edition_type}-${software_version}-R"
-    if doIsMacOs
-    then
-      download_url="${download_url}-macosx-cocoa-x86_64.dmg"
-    elif doIsWindows
-    then
-      download_url="${download_url}-win32-x86_64.zip"
-    else
-      download_url="${download_url}-linux-gtk-x86_64.tar.gz"
+    doPrepareDownloadUrl 
+    if [ -z "$download_url" ]; then 
+     doFail "Eclipse binary is not available "
     fi
     doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
     if doIsMacOs
