@@ -77,7 +77,7 @@ function doSetup() {
   then
     doPrepareDownloadUrl 
     if [ -z "$download_url" ]; then 
-     doFail "Eclipse binary is not available "
+     doFail "The eclipse version was not found on any of the mirrors. Please create an issue on https://github.com/devonfw/ide/issues."
     fi
     doInstall "${ECLIPSE_HOME}" "${download_url}" "eclipse" "${software_version}"
     if doIsMacOs
