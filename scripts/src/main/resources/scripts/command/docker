@@ -23,37 +23,47 @@ function doSetup() {
   else
     doRequireNotBatch
     #Start setup
+    local version="${DOCKER_VERSION:-stable}"
+    local os
+    local arch
+    local ext
+    local code
+    local filename
+    arch="$(uname -m)"
+    if [ "${arch}" = "x86_64" ]
+    then
+      arch="amd64"
+    fi
     if doIsWindows
     then
-      local downloadUrl="https://desktop.docker.com/win/stable/amd64/Docker%20Desktop%20Installer.exe"
-      doEcho "Downloading Docker Desktop for Windows..."
-      doDownload "${downloadUrl}" "Docker_Desktop_Installer.exe"
-      doEcho "Installating Docker Desktop for Windows..."
-      doRunCommand "${DEVON_DOWNLOAD_DIR}/Docker_Desktop_Installer.exe"
+      code="Docker%20Desktop%20Installer"
+      ext="exe"
     elif doIsMacOs
     then
-      local downloadUrl
-      local arch
-      arch="$(uname -m)"
-      if [ "${arch}" = "x86_64" ]
-      then
-        downloadUrl="https://desktop.docker.com/mac/stable/amd64/Docker.dmg"
-      elif [ "${arch}" = "arm64" ]
-      then
-        downloadUrl="https://desktop.docker.com/mac/stable/arm64/Docker.dmg"
-      else
-        doFail "Unsupported MacOS architecture ${arch}. Please install docker manually:\nhttps://docs.docker.com/docker-for-mac/install/"
-      fi
-      doEcho "Downloading Docker Desktop for MacOS..."
-      doDownload "${downloadUrl}" "Docker.dmg"
+      code="Docker"
+      ext="dmg"
+    else
+      doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+    fi
+    local ts="${version}"
+    if [ "${ts}" = "stable" ]
+    then
+      ts="$(date +%Y-%m)"
+    fi
+    filename="${code//\%20/_}-${ts}.${ext}"
+    doDownload "-" "" "docker" "${version}" "${os}" "${arch}" "${ext}" "${code}" "${filename}"
+    if doIsWindows
+    then
+      doEcho "Installating Docker Desktop for Windows..."
+      doRunCommand "${DEVON_DOWNLOAD_DIR}/${filename}"
+    elif doIsMacOs
+    then
       doEcho "Installating Docker Desktop for MacOS..."
       local mount_dir="${DEVON_IDE_HOME}/updates/volume"
       mkdir -p "${mount_dir}"
       doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
       doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
       doRunCommand "hdiutil detach -force '${mount_dir}'"
-    else
-      doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
     read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
   fi

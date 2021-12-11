@@ -19,10 +19,8 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    local software_version=${MAVEN_VERSION:-3.8.1}
-    local mirror="https://archive.apache.org/dist/maven/maven-3/"
-    local download_url="${mirror}/${software_version}/binaries/apache-maven-${software_version}-bin.tar.gz"
-    doInstall "${MAVEN_HOME}" "${download_url}" "maven" "${software_version}" "" "-"
+    local version=${MAVEN_VERSION:-3.8.1}
+    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "-"
   fi
   if [ -n "${1}" ]
   then
