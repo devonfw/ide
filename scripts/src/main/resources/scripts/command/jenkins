@@ -24,18 +24,11 @@ function doSetup() {
       echo "Jenkins is already installed at ${JENKINS_HOME}"
     fi
   else
-    local download_url
-    if [ -z "${JENKINS_VERSION}" ]
-    then
-      download_url="http://mirrors.jenkins.io/war-stable/latest/jenkins.war"
-    else
-      download_url="http://ftp-nyc.osuosl.org/pub/jenkins/war-stable/${JENKINS_VERSION}/jenkins.war"
-    fi
-    doDownload "${download_url}"
-    
-    #http://localhost:9999/jnlpJars/jenkins-cli.jar
+    local version=${JENKINS_VERSION:-latest}
+    doDownload "-" "" "jenkins" "${version}" "-"
     mkdir -p "${JENKINS_HOME}"
     doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
+    # http://localhost:9999/jnlpJars/jenkins-cli.jar
     local cwd="${PWD}"
     cd "${JENKINS_HOME}" || exit 255
     doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
