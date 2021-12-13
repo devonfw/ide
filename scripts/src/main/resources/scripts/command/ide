@@ -94,7 +94,7 @@ function doUpdateSettings() {
     then
       SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
     fi
-    doInstall "${SETTINGS_PATH}" "${SETTINGS_URL}" "devonfw-ide-settings"
+    doInstall "${SETTINGS_URL}" "${SETTINGS_PATH}" "devonfw-ide-settings"
     if [ ${?} = 0 ]
     then
       # shellcheck source=scripts/environment-project
@@ -136,7 +136,7 @@ function doSetupConf() {
       then
         if [ -f "${conf}" ]
         then
-          doEcho "Configuration ${conf} already exists - skipping to copy from ${template}."
+          doDebug "Configuration ${conf} already exists - skipping to copy from ${template}."
         else
           if [ "${basename}" != "settings.xml" ]
           then
@@ -234,14 +234,15 @@ function doSetup() {
   doUpdateSettings "${@}"
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
-    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon.properties" "devon.properties" "${SETTINGS_PATH}"
+    doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon.properties" "${SETTINGS_PATH}"
   fi
   if [ ! -d "${SETTINGS_PATH}/devon" ]
   then
     doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to properly merge and update your settings."
-    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/devon.properties" "devon.properties" "${SETTINGS_PATH}/devon/conf"
-    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/.m2/settings.xml" "settings.xml" "${SETTINGS_PATH}/devon/conf/.m2"
-    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/npm/.npmrc" ".npmrc" "${SETTINGS_PATH}/devon/conf/npm"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/devon.properties" "${SETTINGS_PATH}/devon/conf"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/.m2/settings.xml" "${SETTINGS_PATH}/devon/conf/.m2"
+    doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon/conf/npm/.npmrc" "${SETTINGS_PATH}/devon/conf/npm"
   fi
   if [ -d "${SETTINGS_PATH}/devon" ]
   then

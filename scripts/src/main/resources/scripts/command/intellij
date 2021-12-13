@@ -19,21 +19,19 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    software_version="${INTELLIJ_VERSION:-2020.2.1}"
-    software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
+    local version="${INTELLIJ_VERSION:-2020.2.1}"
+    local software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
+    local ext
     if doIsMacOs
     then
-      software_type="dmg"
+      ext="dmg"
     elif doIsWindows
     then
-      software_type="win.zip"
+      ext="win.zip"
     else
-      software_type="tar.gz"
+      ext="tar.gz"
     fi
-    #mirror="https://mirror.math.princeton.edu"
-    #mirror="https://ftp.osuosl.org"
-    download_url="https://download-cf.jetbrains.com/idea/ideaI${software_edition_type}-${software_version}.${software_type}"
-    doInstall "${IDEA_HOME}" "${download_url}" "intellij" "${software_version}-${software_edition_type}"
+    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "-" "${arch}" "${ext}" "${software_edition_type}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
