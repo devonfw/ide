@@ -53,7 +53,14 @@ function doSetup() {
     else
       os="linux"
     fi
+    
     local download_url="https://github.com/AdoptOpenJDK/openjdk${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
+    
+    if [ "${major_version}" -gt "16" ]
+    then
+      download_url="https://github.com/adoptium/temurin${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
+    fi  
+    
     doInstall "${software_dir}" "${download_url}" "java" "${software_version}"
     if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
