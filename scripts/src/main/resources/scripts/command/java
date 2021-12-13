@@ -108,25 +108,28 @@ do
   elif [[ "${1:0:2}" == "-D" ]]
   then
       mavenargs="${mavenargs} ${1}"
-      framework="spring"
   elif [[ "${1}" =~ [a-z]+[.][a-z]+([.][a-z]+)* ]]
   then 
       package="${package} ${1}"
-      framework="spring"
-  elif [[ "${1}" =~ [^.]* ]] 
+  elif [[ "${1}" =~ [^.]* ]]
   then
-    ## some better definition for a atrifactID
+    ## some better definition for a artifactID TODO
       artifactId+=${1}
   else
       doFail "Wrong parameter for -f"
   fi
-  shift
+shift
 done
 
 local getFramework=""
 while [[ -z "$framework" ]]
-  do
-      echo "No Framework selected." 
+do
+if [[ -n ${package} ]] ##checken welche parameter gesetzt sind und was ausgeführt wird.
+then
+  framework="spring"
+  break;
+fi 
+      doEcho "No Framework selected." 
       read -r -p "(Select a Framework: Quarkus or Spring): " getFramework
       if [[ "${getFramework,,}" = "quarkus" ]]
       then
@@ -135,7 +138,7 @@ while [[ -z "$framework" ]]
       then
         framework="spring"
       else
-        echo "Wrong input"
+        echo "Wrong input" ##doFail ?
       fi
   done
 
@@ -146,8 +149,8 @@ while [[ -z "$framework" ]]
     then
         if [[ -z "${package}" ]] && [[ -z "${mavenargs}"  ]]
         then 
-          echo "No package or other parameter passed, we need atleast a package to create a spring application more information https://devonfw.com/website/pages/docs/cli.asciidoc.html#java.asciidoc_create" 
-          read -r -p "Pass a package and if you want also other parameter von the examples: " mavenargs
+          doEcho "No package or other parameter passed, we need atleast a package to create a spring application more information https://devonfw.com/website/pages/docs/cli.asciidoc.html#java.asciidoc_create" 
+          read -r -p "Pass a package and if you want also more parameter as shown in the examples: " mavenargs
         fi
       doMavenArchetype ${package} ${mavenargs} ${dbtype} ${artifactId}
     fi
@@ -155,13 +158,14 @@ while [[ -z "$framework" ]]
     exit ${?}
 }
 
+# dbtype
 function startQuarkusProject() {
-local message='Please select your preferred extensions and set the project group-, artifactId-,
-and version on the opened site https://code.quarkus.io/ or just press return
-to use a configured Project from our Templates guides with some Extensions that we recommend' 
+local message='\nPlease select your preferred extensions and set the project group-, artifactId-, and version
+on the opened site https://code.quarkus.io/ or just press return to use a configured project from our 
+templates guides with some extensions that we recommend to start with \n' 
 while [[ ! "$url" =~ ^https://code.quarkus.io/.* ]]
 do
-      echo -e "$message"
+      doEchoAttention -e "$message"
       read -r -p "(Copy the url and paste it here) The url has to start like this:https://code.quarkus.io/... or just press return to use our simple REST API template project" url
       if [[  -z "${url}" ]]; then 
         url="https://code.quarkus.io/?g=com.devonfw.quarkus&e=resteasy&e=resteasy-jackson&e=hibernate-validator&e=hibernate-orm"
@@ -173,7 +177,7 @@ done
 local artifact=$(echo "${url}" | grep -o 'a=[^\&]*')
 if [[ -z "${artifact}" ]]
 then 
-  artifact="example"
+  artifact="myapp"
   url="${url}&a=${artifact}"
 else
  	artifact=${artifact:2}
@@ -187,7 +191,7 @@ else
   group=${group:2}
 fi
 
-echo "project will be created in workspace/main folder"
+doEcho "project will be created in workspace/main folder"
 local database_arr=(postgresql mariadb mysql h2 mssql db2 derby oracle dynamodb mongodb redis)
 local database_extensions_arr=(e=jdbc-postgresql e=jdbc-mariadb e=jdbc-mysql e=jdbc-h2 e=jdbc-mssql e=jdbc-db2 e=jdbc-derby e=jdbc-oracle e=amazon-dynamodb e=mongodb-client e=redis-client)
 local database_extension
@@ -202,9 +206,9 @@ do
   fi
 done
 fi
-if [[ -z "${database_extension}" ]]
+if [[ -z "${database_extension}" ]] && [[ -n ${1} ]]
 then 
-  doWarning "Dbtype ${1} is nnot supported, Project will still be created"
+  doWarning "Dbtype ${1} is not supported, Project will be created regardless"
 fi
 
 
@@ -212,6 +216,11 @@ fi
 subst=`expr substr $url 25 ${#url}`
 url="https://code.quarkus.io/d${subst}"
 
+extractedFolderBasePath="${DEVON_IDE_HOME}/updates/extracted/${artifact}"
+if [[ -d "${artifact}" ]]
+then 
+  doFail "The Project already exist, make sure to delete the existing project or rename your new project and run the comment again"
+fi
 
 if [[ -e "${DEVON_IDE_HOME}/updates/quarkus.zip" ]]
 then 
@@ -219,10 +228,6 @@ then
 fi 
 doDownload "${url}" "quarkus.zip" "${DEVON_IDE_HOME}/updates"
 
-if [[ -d "${DEVON_IDE_HOME}/updates/extracted/example" ]]
-then 
-  rm -r "${DEVON_IDE_HOME}/updates/extracted/example"
-fi 
 doExtract "${DEVON_IDE_HOME}/updates/quarkus.zip"
 rm "${DEVON_IDE_HOME}/updates/quarkus.zip"
 
@@ -230,48 +235,49 @@ local groupIdFolders="${group//[.]/"/"}"
 
 doCreateModernProjectStructure ${artifact} ${PWD} ${groupIdFolders}
 
-doMoveQuarkusFilesToModernStructure "${DEVON_IDE_HOME}/updates/extracted/${artifact}/" "${PWD}/${artifact}/"
+doMoveQuarkusFilesToModernStructure "${extractedFolderBasePath}/" "${PWD}/${artifact}/"
 
 ## cleanup
-rm -r "${DEVON_IDE_HOME}/updates/extracted/${artifact}"
+rm -r "${extractedFolderBasePath}"
 }
 
 function doMoveQuarkusFilesToModernStructure() {
-
 ## mv dockerfolder can be moved 
 mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/docker" "${PWD}/${artifact}/src/main"
 ## resoruces folder can be moved
 mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/resources" "${PWD}/${artifact}/src/main"
 
-if [ -d "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/resources" ]
+if [ -d "${extractedFolderBasePath}/src/test/resources" ]
 then 
-  mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/resources" "${PWD}/${artifact}/src/test/"
+  mv "${extractedFolderBasePath}/src/test/resources" "${PWD}/${artifact}/src/test/"
 fi
 
-mkdir -p "${PWD}/${artifact}/SomeFiles"
-files=`eval find "${DEVON_IDE_HOME}/updates/extracted/${artifact}/*" -type f`
-ServiceFiles=$(grep --with-filename '@Path' -r "${DEVON_IDE_HOME}/updates/extracted/${artifact}/")
+
+##files=`eval find "${extractedFolderBasePath}/*" -type f`
+ServiceFiles=$(grep --with-filename '@Path' -r "${extractedFolderBasePath}/")
 if [[ -n $ServiceFiles ]]
 then 
-  mv ${ServiceFiles/:@Path*} "${PWD}/${artifact}/src/main/java/${groupIdFolders}/component/service/v1"
+  mv ${ServiceFiles/:@Path*} "${PWD}/${artifact}/src/main/java/${groupIdFolders}/${artifact}/service/v1"
 fi
 
-TestFiles=`eval find '${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/test/*' -type f`
+TestFiles=`eval find '${extractedFolderBasePath}/src/test/*' -type f`
 if [[ -n $TestFiles ]]
-then 
-  mv ${TestFiles} "${PWD}/${artifact}/test/java/${groupIdFolders}/component/service/v1"
+then
+  mkdir -p "${PWD}/${artifact}/test/java/${groupIdFolders}/${artifact}/service/v1"
+  mv ${TestFiles} "${PWD}/${artifact}/test/java/${groupIdFolders}/${artifact}/service/v1" 
 fi
 
-projectFiles=`eval find "${DEVON_IDE_HOME}/updates/extracted/${artifact}/" -maxdepth 1 -type f `
+projectFiles=`eval find "${extractedFolderBasePath}/" -maxdepth 1 -type f `
 if [[ -n $projectFiles ]]
 then 
   mv ${projectFiles} "${DEVON_IDE_HOME}/updates/extracted/${artifact}/.mvn" "${PWD}/${artifact}/"
 fi
 
-otherFiles=`eval find "${DEVON_IDE_HOME}/updates/extracted/${artifact}/" -type f `
+otherFiles=`eval find "${extractedFolderBasePath}/" -type f`
 if [[ -n $otherFiles ]]
 then 
-  echo "We have found some Quarkus Files that couldn't assassinated to our project structure, we moved them into otherFiles Folder and you have to relocate them by yourself"
+  mkdir -p "${PWD}/${artifact}/otherFiles"
+  doEchoAttention "We have found some files provided by Quarkus that couldn't be assigned to our project structure, we moved them into otherFiles folder and you have to relocate them by yourself"
   mv ${otherFiles} "${PWD}/${artifact}/otherFiles"
 fi
 }
@@ -282,15 +288,10 @@ fi
 #3 groupId
 function doCreateModernProjectStructure() {
 local projectBasePath="${2}/${1}/src/main"
-if [[ -d "${1}" ]]
-then 
-  doFail "The Project already exist, make sure to delete the existing project or rename your new project and run the comment again"
-else
-  mkdir -p "${projectBasePath}" "${projectBasePath}/helm" "${projectBasePath}/java" "${projectBasePath}/java/${3}/general/domain/model" 
-  mkdir -p "${projectBasePath}java/${3}/component/domain/repo" "${projectBasePath}/java/${3}/component/domain/dao" "${projectBasePath}/java/${3}/component/domain/model"
-  mkdir -p "${projectBasePath}/java/${3}/component/logic" "${projectBasePath}/java/${3}/component/service/v1/mapper" "${projectBasePath}/java/${3}/component/service/v1/model"
-  mkdir -p "${projectBasePath}/java/${3}/component/service/v1"
-fi
+mkdir -p "${projectBasePath}" "${projectBasePath}/helm" "${projectBasePath}/java" "${projectBasePath}/java/${3}/general/domain/model" 
+mkdir -p "${projectBasePath}/java/${3}/${1}/domain/repo" "${projectBasePath}/java/${3}/${1}/domain/dao" "${projectBasePath}/java/${3}/${1}/domain/model"
+mkdir -p "${projectBasePath}/java/${3}/${1}/logic" "${projectBasePath}/java/${3}/${1}/service/v1/mapper" "${projectBasePath}/java/${3}/${1}/service/v1/model"
+mkdir -p "${projectBasePath}/java/${3}/${1}/service/v1"
 }
 
 # CLI
@@ -301,8 +302,10 @@ then
   echo "Arguments:"
   echo " setup                              setup Java (install and verify)"
   echo " create «args»                      create new Java project based on devon4j template. If a single argument is provided,"
-  echo "                                    this is the package name and is automatically split into groupId and artifactId. Use"
-  echo "                                    -DdbType=«db» to choose the database. Any option starting with dash is passed as is."
+  echo "                                    this is the package name and is automatically split into groupId and artifactId and creates a spring project. "
+  echo "                                    You can choose between the Spring or Quarkus framework with the -f and quarkus. Use "
+  echo "                                    -DdbType=«db» to choose the database. Any option starting with dash is passed as is for spring."
+  echo "                                    To create a Quarkus project you have to provide a link from https://code.quarkus.io/"
   echo " migrate [from «version»] [single]  update the current devon4j project to the latest supported version. If for some reasons"
   echo "                                    the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
   echo "                                    it manually after the 'from' argument. Also the 'single' option allows to migrate only to"
