@@ -11,18 +11,18 @@ The arguments (`devon java «args»`) are explained by the following table:
 |=======================
 |*Argument(s)*                       |*Meaning*
 |`setup`                             |setup OpenJDK (install or update and verify), link:configuration.asciidoc[configurable] via `JAVA_VERSION` (e.g. `8u242b08` or `11.0.6_10`)
-|`create «args»`                     |create a new Java project. You can choose between Quarkus and Spring. Spring creation is based on https://github.com/devonfw/devon4j/blob/master/documentation/tutorial-newapp.asciidoc[devon4j application template]. If a single argument is provided, this is the package name and is automatically split into groupId and artifactId for Spring. To select a framework use the -f parameter with the choosen framework. Use `-DdbType=«db»` to choose the database for both frameworks (hana, oracle, mssql, postgresql, mariadb, mysql, h2, hsqldb). Any option starting with dash is passed as is." 
+|`create «args»`                     |create a new Java project. You can choose between Quarkus and Spring. Spring creation is based on https://github.com/devonfw/devon4j/blob/master/documentation/tutorial-newapp.asciidoc[devon4j application template]. If a single argument is provided, this is the package name and is automatically split into groupId and artifactId for Spring. To select a framework use the -f or -framework parameter with the chosen framework. Use `-DdbType=«db»` to choose the database for both frameworks (hana, oracle, mssql, postgresql, mariadb, mysql, h2, hsqldb). Any option starting with dash is passed as is." 
 
 |`migrate [from «version»] [single]` |migrate a https://github.com/devonfw/devon4j[devon4j] project to the latest version. If for some reasons the current devonfw version can not be auto-detected you may provide it manually after the 'from' argument. Also the 'single' option allows to migrate only to the next available version."
 |`cicd «args»`                       |generate cicd files for the current devon4java project
 |=======================
 
 == create
-With the create command you can choose to create a spring or a Quarkus application. 
+With the create command you can choose to create a Spring or a Quarkus application. 
 ```
 devon java create
 ```
-With this command you will be guided throught the project creation and you will have to pass some additional information.
+With this command you will be guided through the project creation and you will have to pass some additional information.
 
 Choosing the framework can be done with 
 ```
@@ -34,7 +34,7 @@ Examples for create a new devon4j spring application:
 ```
 devon java create -f spring
 ```
-Will create a spring app, command line will ask for atleast a packagename.
+Will create a Spring app, the user have to pass at least a package name in the creation process.
 
 ```
 devon java create com.example.domain.myapp
@@ -75,11 +75,11 @@ Examples for create a new devon4j Quarkus application:
 ```
 devon java create -f quarkus
 ```
-You have to pass a https://code.quarkus.io/ link with the project information to the command line. The package, artifactId and version can be set in the quarkus code creation.
+You have to pass a https://code.quarkus.io/ link with the project information to the command line. The package, artifactId, and the project version should be set in Quarkus project configurator.
 ```
 devon java create -f quarkus -Ddbtype=postgresql
 ```
-Will create a app with also a postgresql database.
+Will create a app with also an postgresql database.
 
 
 == migrate

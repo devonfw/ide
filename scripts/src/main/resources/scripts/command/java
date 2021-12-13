@@ -156,8 +156,8 @@ fi
     then
         if [[ -z "${package}" ]] && [[ -z "${mavenargs}"  ]]
         then 
-          doEcho "No package or other parameter passed, we need atleast a package to create a spring application more information https://devonfw.com/website/pages/docs/cli.asciidoc.html#java.asciidoc_create" 
-          read -r -p "Pass a package and if you want also more parameter as shown in the examples: " mavenargs
+          doEcho "No package or other parameter passed, we need at least a package to create a spring application more information https://devonfw.com/website/pages/docs/cli.asciidoc.html#java.asciidoc_create" 
+          read -r -p "Pass a package and optional parameters as shown in the examples: " mavenargs
         fi
       doMavenArchetype ${package} ${mavenargs} ${dbtype} ${artifactId}
     fi
@@ -226,7 +226,7 @@ url="https://code.quarkus.io/d${subst}"
 extractedFolderBasePath="${DEVON_IDE_HOME}/updates/extracted/${artifact}"
 if [[ -d "${artifact}" ]]
 then 
-  doFail "The Project already exist, make sure to delete the existing project or rename your new project and run the comment again"
+  doFail "A project: ${artifact} already exists, make sure to delete the existing project or rename your new project and run the comment again"
 fi
 
 if [[ -e "${DEVON_IDE_HOME}/updates/quarkus.zip" ]]
