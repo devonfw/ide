@@ -18,19 +18,33 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${NODE_HOME}" ]
   then
-    local software_version="${NODE_VERSION:-v14.17.6}"
-    local download_url="https://nodejs.org/dist/${software_version}/node-${software_version}"
-    local software_dir="${NODE_HOME}"
+    local version="${NODE_VERSION:-v14.17.6}"
+    local os
+    local arch
+    arch="$(uname -m)"
+    if [ "$arch" == "x86_64" ]
+    then
+      arch="x64"
+    elif [ "$arch" == "i386" ] || [ "$arch" == "i686" ]
+    then
+      arch="x86"
+    elif [ "$arch" == "aarch64" ]
+    then
+      arch="arm64"
+    fi
+    local ext="tar.gz"
     if doIsMacOs
     then
-      download_url="${download_url}-darwin-x64.tar.gz"
+      os="darwin"
     elif doIsWindows
     then
-      download_url="${download_url}-win-x64.zip"
+      os="win"
+      ext="zip"
     else
-      download_url="${download_url}-linux-x64.tar.xz"
+      os="linux"
+      ext="tar.xz"
     fi
-    doInstall "${software_dir}" "${download_url}" "nodejs" "${software_version}"
+    doInstall "-" "${NODE_HOME}" "nodejs" "${version}" "${os}" "${arch}" "${ext}"
   fi
   if [ -n "${1}" ] && ! doIsQuiet
   then

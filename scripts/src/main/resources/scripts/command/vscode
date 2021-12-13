@@ -18,20 +18,20 @@ cd "${DEVON_IDE_HOME}" || exit 255
 function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    local software_version="${VSCODE_VERSION:-1.54.1}"
-    local download_url="https://update.code.visualstudio.com/${software_version}"
-    local software_extension=".zip"
+    local version="${VSCODE_VERSION:-1.54.1}"
+    local ext="zip"
+    local os
     if doIsMacOs
     then
-      download_url="${download_url}/darwin/stable"
+      os="darwin"
     elif doIsWindows
     then
-      download_url="${download_url}/win32-x64-archive/stable"
+      os="win32-x64-archive"
     else
-      download_url="${download_url}/linux-x64/stable"
-      software_extension=".tgz"
+      os="linux-x64"
+      ext="tgz"
     fi
-    doInstall "${VSCODE_HOME}" "${download_url}" "vscode" "${software_version}" "${software_extension}"
+    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}" "${os}" "" "${ext}"
     if [ "${?}" = 0 ]
     then
       if doIsMacOs

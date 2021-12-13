@@ -22,10 +22,8 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${SONARQUBE_HOME}" ]
   then
-    local software_version=${SONARQUBE_VERSION:-7.9.1}
-    local mirror="https://binaries.sonarsource.com/Distribution/sonarqube/"
-    local download_url="${mirror}/sonarqube-${software_version}.zip"
-    doInstall "${SONARQUBE_HOME}" "${download_url}" "sonarqube" "${software_version}" "" "-"
+    local version="${SONARQUBE_VERSION:-7.9.1}"
+    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "-"
   fi
   if [ -n "${1}" ]
   then

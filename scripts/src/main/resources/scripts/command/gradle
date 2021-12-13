@@ -19,9 +19,8 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
   then
-    software_version="${GRADLE_VERSION:-5.5.1}"
-    download_url="https://services.gradle.org/distributions/gradle-${software_version}-bin.zip"
-    doInstall "${GRADLE_HOME}" "${download_url}" "gradle" "${software_version}" "" "-"
+    local version="${GRADLE_VERSION:-5.5.1}"
+    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "-"
   fi
   if [ -n "${1}" ]
   then
