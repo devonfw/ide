@@ -30,31 +30,34 @@ function doSetup() {
   fi
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local software_version="${JAVA_VERSION:-11.0.9.1_1}"
-    local major_version="${software_version/\.*/}"
-    major_version="${major_version/u*/}"
-    local jdk_folder="jdk-${software_version/_/%2B}"
-    if [ "${major_version}" = "8" ]
+    local version="${JAVA_VERSION:-11.0.9.1_1}"
+    local code
+    if [ "${version:0:1}" = "8" ]
     then
-      software_version="${software_version/_/b}"
-      local jdk_folder="jdk${software_version/b/-b}"
+      code="jdk${version/b/-b}"
+    else
+      code="jdk-${version/_/%2B}"
     fi
-    local os
-    local extension=".tar.gz"
     local software_dir="${JAVA_HOME}"
     if doIsMacOs
     then
-      os="mac"
       software_dir="${DEVON_IDE_HOME}/software/jdk"
-    elif doIsWindows
-    then
-      os="windows"
-      extension=".zip"
-    else
-      os="linux"
     fi
-    local download_url="https://github.com/AdoptOpenJDK/openjdk${major_version}-binaries/releases/download/${jdk_folder}/OpenJDK${major_version}U-jdk_x64_${os}_hotspot_${software_version}${extension}"
-    doInstall "${software_dir}" "${download_url}" "java" "${software_version}"
+    local ext="tar.gz"
+    if doIsWindows
+    then
+      ext="zip"
+    fi
+    local arch
+    arch="$(uname -m)"
+    if [ "${arch}" = "x86_64" ]
+    then
+      arch="x64"
+    elif [ "${arch}" = "arm64" ]
+    then
+      arch="aarch64"
+    fi
+    doInstall "-" "${software_dir}" "java" "${version}" "" "${arch}" "${ext}" "${code}"
     if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
     then
       echo "Creating symlink as workaround for Java on MacOS"

@@ -12,11 +12,11 @@ Set up your IDE within minutes tailored for the requirements of your project.
 * *Automated* +
 Automate the setup and update, avoid manual steps and mistakes.
 * *Simple* +
-KISS (Keep It Small and Simple), no native installers that globally mess your OS or tool-integrations that break with every release. Instead, use templates and simple shell scripts.
+KISS (Keep It Small and Simple), no native installers that globally mess your OS or tool-integration that break with every release. Instead, use templates and simple shell scripts.
 * *Configurable* +
 You can change the link:configuration.asciidoc[configuration] depending on your needs. Furthermore, the link:settings.asciidoc[settings] contain configuration templates for the different tools (see link:configurator.asciidoc[configurator]).
 * *Maintainable* +
-For your project you should copy these link:settings.asciidoc[settings] to an own `git` repository that can be maintained and updated to manage the tool configurations during the project lifecycle. If you use github or gitlab every developer can easily suggest changes and improvements to these link:settings.asciidoc[settings] via pull/merge requests, which is easier to manage with big teams.
+For your project you should copy these link:settings.asciidoc[settings] to an own git repository that can be maintained and updated to manage the tool configurations during the project lifecycle. If you use GitHub or GitLab every developer can easily suggest changes and improvements to these link:settings.asciidoc[settings] via pull/merge requests, which is easier to manage with big teams.
 * *Customizable* +
 Do you need an additional tool you had never heard of before? Put it in the `software` folder of the link:structure.asciidoc[structure]. The `devon` link:cli.asciidoc[CLI] will then automatically add it to your `PATH` variable. +
 Further you can create your own link:cli.asciidoc#commandlets[commandlet] for your additional tool. For closed-source tools you can create your own archive and distribute it to your team members as long as you care about the terms and licenses of these tools.
@@ -41,7 +41,7 @@ We support the following platforms:
 
 * link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
 * link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
-* link:node.asciidoc[node].js, link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
+* link:node.asciidoc[node], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
 
 == Build-Systems
 We support the following build-systems:
@@ -96,8 +96,8 @@ Now you might ask:
 * But how about Windows CMD or Power-Shell? - it works!
 * But what if I use cygwin or git-bash on windows? - it works!
 * But I love to use ConEmu or Commander - it works with full integration!
-* How about MacOS Terminal or iTerm2? - it works with full integration!
-* But I use zsh  - it works!
+* How about macOS Terminal or iTerm2? - it works with full integration!
+* But I use Zsh  - it works!
 * ...? - it works!
 
 Wow! So let's get started with link:setup.asciidoc[download & setup].

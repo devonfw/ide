@@ -2,6 +2,16 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2021.12.001
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/616[#616]: Default eclipse version not downloadable
+* https://github.com/devonfw/ide/pull/607[#607]: fix url from eclipse plugins
+* https://github.com/devonfw/ide/issues/453[#453]: Automatic plugin installation for IntelliJ
+* https://github.com/devonfw/ide/issues/601[#601]: Update of node.js to 14.17.6 to fix CVE-2021-22930
+* https://github.com/devonfw/ide/pull/625[#625]: There is no doIsQuiet yet for CobiGen
+
 == 2021.04.002
 
 Update with the following bugfixes and improvements:

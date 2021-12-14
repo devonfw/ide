@@ -7,7 +7,7 @@ The product `devonfw-ide` is licensed under the following terms.
 
 Binaries of this product have been made available to you by https://devonfw.com[devonfw] under the https://github.com/devonfw/ide/blob/master/LICENSE[Apache Public License 2.0].
 
-The documentation of this product is licensed under the terms of the http://creativecommons.org/licenses/by-nd/4.0/[Creative Commons License (Attribution-NoDerivatives 4.0 International)].
+The documentation of this product is licensed under the terms of the http://creativecommons.org/licenses/by-nd/4.0/[Creative Commons License (Attribution-No Derivatives 4.0 International)].
 
 All of the source code to this product is available under licenses which are both free and open source.
 
@@ -47,7 +47,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://ant.apache.org/[Apache Ant]|Optional|https://github.com/apache/ant/blob/master/LICENSE[ASL 2.0]
 |https://gradle.org/[Gradle] |Optional|https://github.com/gradle/gradle/blob/master/LICENSE[ASL 2.0]
 |https://jenkins.io/[Jenkins] |Optional|https://github.com/jenkinsci/jenkins/blob/master/LICENSE.txt[MIT]
-|https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (CommunityEdition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
+|https://www.sonarsource.com/plans-and-pricing/community/[SonarQube (Community Edition)] |Optional|https://github.com/SonarSource/sonarqube/blob/master/LICENSE.txt[LGPL 3.0]
 |https://www.sonarlint.org/eclipse/[SonarLint] |Optional|https://github.com/SonarSource/sonarlint-eclipse/blob/master/LICENSE.txt[LGPL 3+]
 |https://github.com/devonfw/cicdgen[cicdgen] |Optional|https://github.com/devonfw/cicdgen/blob/develop/LICENSE.txt[ASL 2.0]
 |https://github.com/devonfw/devon4j[devon4j] |Optional|https://github.com/devonfw/devon4j/blob/develop/LICENSE[ASL 2.0]
