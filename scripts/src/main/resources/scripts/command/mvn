@@ -16,7 +16,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
+  doDevonCommand java setup
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
     local version=${MAVEN_VERSION:-3.8.1}

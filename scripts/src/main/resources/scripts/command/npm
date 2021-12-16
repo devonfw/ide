@@ -18,7 +18,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ ! -x "${NPM_CMD}" ]
   then
-    doDevonCommand node -q setup
+    doDevonCommand node setup
   else
     doEcho "npm is already installed at ${NPM_CMD}"
   fi
