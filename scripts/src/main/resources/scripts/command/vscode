@@ -19,19 +19,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
   then
     local version="${VSCODE_VERSION:-1.54.1}"
-    local ext="zip"
-    local os
-    if doIsMacOs
-    then
-      os="darwin"
-    elif doIsWindows
-    then
-      os="win32-x64-archive"
-    else
-      os="linux-x64"
-      ext="tgz"
-    fi
-    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}" "${os}" "" "${ext}"
+    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
     if [ "${?}" = 0 ]
     then
       if doIsMacOs

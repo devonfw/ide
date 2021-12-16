@@ -45,25 +45,7 @@ function doSetup() {
   doDevonCommand java -q setup
   if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2021-03}"
-    local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
-    local os
-    local ext
-    local arch
-    arch="$(uname -m)"
-    if doIsMacOs
-    then  
-      os="macosx-cocoa"
-      ext="dmg"
-    elif doIsWindows
-    then
-      os="win32"
-      ext="zip"
-    else
-      os="linux-gtk"
-      ext="tar.gz"
-    fi
-    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${version}" "${os}" "${arch}" "${ext}" "${eclipse_edition_type}"
+    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${ECLIPSE_VERSION:-2021-03}" "${ECLIPSE_EDITION_TYPE:-java}"
     if doIsMacOs
     then
       if [ ! -x "${ECLIPSE_HOME}/eclipse" ]

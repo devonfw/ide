@@ -31,7 +31,7 @@ function doSetup() {
     else
       ext="tar.gz"
     fi
-    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "-" "${arch}" "${ext}" "${software_edition_type}"
+    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "${software_edition_type}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."

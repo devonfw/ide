@@ -20,7 +20,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
   then
     local version="${GRADLE_VERSION:-5.5.1}"
-    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "-"
+    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "" "" "-"
   fi
   if [ -n "${1}" ]
   then

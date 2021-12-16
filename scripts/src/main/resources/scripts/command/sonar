@@ -23,7 +23,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${SONARQUBE_HOME}" ]
   then
     local version="${SONARQUBE_VERSION:-7.9.1}"
-    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "-"
+    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "" "" "-"
   fi
   if [ -n "${1}" ]
   then

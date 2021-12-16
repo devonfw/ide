@@ -20,7 +20,7 @@ function doSetup() {
   if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
   then
     local version=${MAVEN_VERSION:-3.8.1}
-    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "-"
+    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "" "" "-"
   fi
   if [ -n "${1}" ]
   then

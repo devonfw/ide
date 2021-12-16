@@ -23,11 +23,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -z "${JAVA_HOME}" ]
-  then
-    export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-    echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
-  fi
+  export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
   if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
   then
     local version="${JAVA_VERSION:-11.0.9.1_1}"
@@ -38,32 +34,15 @@ function doSetup() {
     else
       code="jdk-${version/_/%2B}"
     fi
-    local software_dir="${JAVA_HOME}"
-    if doIsMacOs
+    doInstall "-" "${JAVA_HOME}" "java" "${version}" "" "${code}"
+    if [ ! -d "${DEVON_IDE_HOME}/software/java/bin" ] && [ ! -d "${DEVON_IDE_HOME}/software/jdk" ] && doIsMacOs && [ -d "${DEVON_IDE_HOME}/software/java/Contents" ]
     then
-      software_dir="${DEVON_IDE_HOME}/software/jdk"
+      doEcho "Creating symlink as workaround for Java on MacOS"
+      doRunCommand "mv '${DEVON_IDE_HOME}/software/java' '${DEVON_IDE_HOME}/software/jdk'"
+      doRunCommand "ln -sf 'jdk/Contents/Home' '${DEVON_IDE_HOME}/software/java'"
+      doRunCommand "cp '${DEVON_IDE_HOME}/software/jdk/.devon.software.version' '${DEVON_IDE_HOME}/software/java'"
     fi
-    local ext="tar.gz"
-    if doIsWindows
-    then
-      ext="zip"
-    fi
-    local arch
-    arch="$(uname -m)"
-    if [ "${arch}" = "x86_64" ]
-    then
-      arch="x64"
-    elif [ "${arch}" = "arm64" ]
-    then
-      arch="aarch64"
-    fi
-    doInstall "-" "${software_dir}" "java" "${version}" "" "${arch}" "${ext}" "${code}"
-    if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-    then
-      echo "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "ln -sf 'jdk/Contents/Home' '${JAVA_HOME}'"
-      doExtendPath "${JAVA_HOME}"
-    fi
+    doExtendPath "${JAVA_HOME}"
   fi
   if [ -n "${1}" ] && ! doIsQuiet
   then
