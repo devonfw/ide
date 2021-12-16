@@ -475,6 +475,7 @@ function doDownload() {
     local mirrors_urls
     mirrors_urls="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/urls" "${mirrors_software_dir}/urls")"
     doDebug "Reading mirror URLs from ${mirrors_urls}"
+
     local major="${version//[^0-9]*}"
     local mirror
     local mirrors
@@ -560,6 +561,7 @@ function doDownloadInternal() {
   fi
   doEcho "Trying to download ${DOWNLOAD_FILENAME} from ${url}"
   local target="${target_folder}/${DOWNLOAD_FILENAME}"
+
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
     doEcho "Artifact already exists at ${target}\nTo force update please delete the file and run again."
