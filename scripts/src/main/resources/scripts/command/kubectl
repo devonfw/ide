@@ -18,19 +18,16 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if doIsKubernetesInstalled
   then
-    if [ "${1}" = "setup" ]
+    if [ "${1}" != "silent" ] && ! doIsQuiet
     then
       doEcho "Kubernetes is already installed at $(command -v kubectl)"
       kubectl version
     fi
     return
   fi
-  if doIsWindows
+  if doIsWindows || doIsMacOs
   then
-    doDevonCommand docker -q setup
-  elif doIsMacOs
-  then
-    doDevonCommand docker -q setup
+    doDevonCommand docker setup silent
   else
     doFail "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   fi
@@ -65,7 +62,7 @@ case ${1} in
   echo  
 ;;
 "setup" | "s" | "")
-  doSetup setup
+  doSetup "${2}"
 ;;
 *)
   doRun "${@}"
