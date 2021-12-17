@@ -26,7 +26,7 @@ function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
   if [ "${1}" != "silent" ] || [ ! -d "${JAVA_HOME}" ]
   then
-    local version="${JAVA_VERSION:-11.0.9.1_1}"
+    local version="${JAVA_VERSION:-11.0.13_8}"
     local code
     if [ "${version:0:1}" = "8" ]
     then
