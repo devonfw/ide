@@ -24,6 +24,10 @@ function doFail() {
   if [ -n "${2}" ]
   then
     echo "Exit code was ${2}"
+    if [ "${2}" = "0" ]
+    then
+      exit 1
+    fi
     exit "${2}"
   else
     exit 255
@@ -349,62 +353,129 @@ function doDevonCommandAndReturn() {
 # $2: the optional, target directory to save to
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
 # $4: the version of the software to download
-# $5: operating system name
-# $6: the optional architecture (e.g. x64 or x86_64)
-# $7: the optional extension (e.g. 'tar.gz' or 'zip')
-# $8: the optional code (magic value to avoid tool specific quirks in general functions)
-# $9: optional filename to save to
+# $5: the optional edition (e.g. "enterprise" or "community")
+# $6: the optional code (magic value to avoid tool specific quirks in general functions)
+# $7: operating system name
+# $8: the optional architecture (e.g. x64 or x86_64)
+# $9: the optional extension (e.g. 'tar.gz' or 'zip')
+# $10: the optional filename to download to
 function doDownload() {
   doLicenseAgreement
   local url="${1}"
   local target_dir="${2}"
   local software="${3}"
   local version="${4}"
-  local os="${5}"
-  local arch="${6}"
-  local ext="${7}"
-  local code="${8}"
-  local filename"${9}"
+  local edition="${5}"
+  local code="${6}"
+  local os="${7}"
+  local arch="${8}"
+  local ext="${9}"
+  local filename="${10}"
   if [ -z "${target_dir}" ]
   then
     target_dir="${DEVON_DOWNLOAD_DIR}"
   fi
   mkdir -p "${target_dir}"
   local tmp_file
-  tmp_file=$(mktemp -ut "${filename}.XXXXXX")
+  tmp_file=$(mktemp -ut "${software}-${version}.XXXXXX")
   if [ "${url}" = "" ] || [ "${url}" = "-" ]
   then
     if [ -z "${arch}" ]
     then
       arch="$(uname -m)"
     fi
-    local filename_fallback="${software}-${version}"
-    if [ -n "${os}" ]
+    if [ -z "${os}" ]
     then
-      filename_fallback="${filename_fallback}-${os}"
+      if doIsMacOs
+      then
+        os="mac"
+      elif doIsWindows
+      then
+        os="windows"
+      else
+        os="${OSTYPE}"
+      fi
     fi
-    if [ "${arch}" != "-" ]
-    then
-      filename_fallback="${filename_fallback}-${arch}"
-    fi
-    filename_fallback="${filename_fallback}.${ext}"
     local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
     doDebug "Cloning or updating download mirrors"
     doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
-    if [ ! -d "${mirrors_dir}/${software}" ]
+    local mirrors_software_dir="${mirrors_dir}/${software}"
+    if [ ! -d "${mirrors_software_dir}" ]
     then
-      doFail "No mirror is configured at ${mirrors_dir}/${software}"
+      doFail "No mirror is configured at ${mirrors_software_dir}"
     fi
-    local mirrors_file="${mirrors_dir}/${software}/${version}"
-    if [ ! -e "${mirrors_file}" ]
+    local mirrors_override_dir="${mirrors_software_dir}"
+    local folder
+    if [ -e "${mirrors_software_dir}/versions" ]
     then
-      doDebug "Mirror file not found for version at ${mirrors_file}"
-      mirrors_file="${mirrors_dir}/${software}/default"
+      while IFS='<' read -r folder version_limit
+      do
+        doVersionCompare "${version}" "${version_limit}"
+        result=${?}
+        # ${version} < ${version_limit} ?
+        if [ "${result}" = 2 ]
+        then
+          mirrors_override_dir="${mirrors_software_dir}/${folder}"
+          if [ ! -d "${mirrors_override_dir}" ]
+          then
+            doWarning "Configured version folder does not exist: ${mirrors_override_dir}"
+          fi
+        fi
+      done < "${mirrors_software_dir}/versions"
     fi
-    if [ ! -e "${mirrors_file}" ]
+    if [ "${mirrors_override_dir}" != "${mirrors_software_dir}" ]
     then
-      doFail "No mirror is configured at ${mirrors_file}"
+      doDebug "For software ${software} in version ${version} the mirror config is overridden by ${mirrors_override_dir}"
     fi
+    # remap architecture
+    local mirrors_arch
+    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
+    if [ -e "${mirrors_arch}" ]
+    then
+      while IFS="=" read -r key value
+      do
+        if [ "${key}" = "${arch}" ] || [ "${key}" = '*' ]
+        then
+          doDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
+          arch="${value}"
+          break
+        fi
+      done < "${mirrors_arch}"
+    fi
+    # map OS to ext(ension)
+    local mirrors_ext
+    mirrors_ext="$(doGetFirstExistingPath "${mirrors_override_dir}/ext-mappings" "${mirrors_software_dir}/ext-mappings")"
+    if [ -e "${mirrors_ext}" ]
+    then
+      while IFS="=" read -r key value
+      do
+        if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
+        then
+          doDebug "Mapped extension to ${value} for OS ${os} and software ${software} in version ${version}"
+          ext="${value}"
+          break
+        fi
+      done < "${mirrors_ext}"
+    fi
+    # remap operating system
+    local mirrors_os
+    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
+    local key
+    local value
+    while IFS="=" read -r key value
+    do
+      if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
+      then
+        doDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
+        os="${value}"
+        break
+      fi
+    done < "${mirrors_os}"
+    # get mirror URLs
+    local mirrors_urls
+    mirrors_urls="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/urls" "${mirrors_software_dir}/urls")"
+    doDebug "Reading mirror URLs from ${mirrors_urls}"
+
     local major="${version//[^0-9]*}"
     local mirror
     local mirrors
@@ -413,8 +484,20 @@ function doDownload() {
     do
       mirrors[i]="${mirror}"
       ((++i))
-    done < "${mirrors_file}"
-    # here we could actually pick the mirrors from the array in random order
+    done < "${mirrors_urls}"
+    # suffle mirrors to choose mirrors in random order and distribute load
+    local size="${#mirrors[*]}"
+    local rand
+    local tmp
+    local i
+    for ((i=size-1; i>0; i--))
+    do
+      rand=$((RANDOM%(size+1)))
+      tmp="${mirrors[i]}"
+      mirrors[i]="${mirrors[rand]}"
+      mirrors[rand]="${tmp}"
+    done
+    # download from mirrors, try next mirror on error
     for mirror in "${mirrors[@]}"
     do
       local mirror_url="${mirror}"
@@ -422,9 +505,29 @@ function doDownload() {
       mirror_url="${mirror_url//\$\{os\}/${os}}"
       mirror_url="${mirror_url//\$\{arch\}/${arch}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
-      mirror_url="${mirror_url//\$\{code\}/${code}}"
+      mirror_url="${mirror_url//\$\{edition\}/${edition}}"
       mirror_url="${mirror_url//\$\{major\}/${major}}"
-      doDownloadInternal "${mirror_url}" "${tmp_file}" "${target_dir}" "${filename}" "${filename_fallback}"
+      mirror_url="${mirror_url//\$\{code\}/${code}}"
+      if [ -z "${filename}" ]
+      then
+        filename="${software}-${version}"
+        if [ -n "${edition}" ]
+        then
+          filename="${filename}-${edition}"
+        fi
+        if [ "${os}" != "-" ] && [ -n "${os}" ]
+        then
+          filename="${filename}-${os}"
+        fi
+        if [ -n "${ext}" ]
+        then
+          filename="${filename}.${ext}"
+        else
+          doWarning "No filename extension configured for ${software} in version ${version}"
+          filename="${filename}.$(doGetExtension "${mirror_url}")"
+        fi
+      fi
+      doDownloadInternal "${mirror_url}" "${tmp_file}" "${target_dir}" "${filename}"
       local result=${?}
       if [ "${result}" = 0 ] || [ "${result}" = 255 ]
       then
@@ -447,20 +550,18 @@ function doDownload() {
 # $2: path to tmp-file to download to
 # $3: path to download folder
 # $4: optional download filename
-# $5: fallback download filename (default from URL maybe "stable" lacking extension)
 function doDownloadInternal() {
-  # DOWNLOAD_FILENAME is a return variable
+  local url="${1}"
+  local tmp_file="${2}"
+  local target_folder="${3}"
   DOWNLOAD_FILENAME="${4}"
   if [ -z "${DOWNLOAD_FILENAME}" ]
   then
-    DOWNLOAD_FILENAME="${1/*\//}"
-    if [ "${DOWNLOAD_FILENAME/*\./.}" = "${DOWNLOAD_FILENAME}" ]
-    then
-      DOWNLOAD_FILENAME="${5}"
-    fi
+    DOWNLOAD_FILENAME="${url/*\//}"
   fi
-  doDebug "Downloading ${DOWNLOAD_FILENAME} from ${1}"
-  local target="${3}/${DOWNLOAD_FILENAME}"
+  doEcho "Trying to download ${DOWNLOAD_FILENAME} from ${url}"
+  local target="${target_folder}/${DOWNLOAD_FILENAME}"
+
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
     doEcho "Artifact already exists at ${target}\nTo force update please delete the file and run again."
@@ -471,16 +572,61 @@ function doDownloadInternal() {
   then
     curl_opt="--silent"
   fi
-  curl ${curl_opt} -fL "${1}" -o "${2}"
+  curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
   local result=${?}
   if [ "${result}" != 0 ]
   then
-    doEcho "Failed to download ${1} with exit code ${result}"
+    doEcho "Failed to download ${url} with exit code ${result}"
     return ${result}
   else
-    mv "${2}" "${target}"
-    doDebug "Download of ${DOWNLOAD_FILENAME} from ${1} succeeded."
+    mv "${tmp_file}" "${target}"
+    doDebug "Download of ${DOWNLOAD_FILENAME} from ${url} succeeded."
   fi
+}
+
+# $1: filename (potentiall including absolute or relative path)
+# echos the file extension
+function doGetExtension() {
+  local filename=${1/*\//}
+  local ext="${filename/*\./}"
+  local filename_base="${filename:0:(${#filename}-${#ext}-1)}"
+  if [ "${filename_base/*\./.}" = ".tar" ]
+  then
+    ext="tar.${ext}"
+  fi
+  echo "${ext}"
+}
+
+#.$@ any number of file paths
+# echos the first of the given paths that does exist
+function doGetFirstExistingPathOrFail() {
+  local message="None of the followin path(s) exists:"
+  while [ -n "${1}" ]
+  do
+    message="${message}\n${1}"
+    if [ -e "${1}" ]
+    then
+      echo "${1}"
+      return
+    fi
+    shift
+  done
+  doFail "${message}"
+}
+
+#.$@ any number of file paths
+# echos the first of the given paths that does exist
+function doGetFirstExistingPath() {
+  while [ -n "${1}" ]
+  do
+    if [ -e "${1}" ]
+    then
+      echo "${1}"
+      return
+    fi
+    shift
+  done
+  return 1
 }
 
 # $1: the file to extract
@@ -514,7 +660,7 @@ function doExtract() {
       rm "${target_dir}/Applications"
     fi
   else
-    doFail "Unknown archive format: ${ext}. Can not extract ${1}" ${result}
+    doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
   doEcho "Successfully extracted archive ${filename} to updates/extracted"
 }
@@ -580,7 +726,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local backup_dir="${3}"
   shift 3
   
-  if [ "${#*}" == 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
     source_dir="${1}"
   fi
@@ -598,7 +744,7 @@ function doReplaceExtracted() {
     do
       if [ -e "${extracted_file}" ]
       then
-        if [ "${extracted_file/*\//}" == "workspaces" ]
+        if [ "${extracted_file/*\//}" = "workspaces" ]
         then
           doEcho "as the target already exists, omitting ${extracted_file}"
         else
@@ -758,29 +904,30 @@ function doMavenArchetype() {
 # $5: suffix (e.g. '-sources.jar')
 # $6: currentVersion
 function doUpgradeMavenArtifact() {
-  doLicenseAgreement
-  if [ -d "${1}/.git" ]
-  then
-    doEcho "Found git repository ${1} - updating via git"
-    doGitPullOrClone "${1}"
-    return ${?}
-  fi
-  local download_url="${2}"
+  local target_path="${1}"
+  local url="${2}"
   local artifact_id="${3}"
-  download_url="${download_url}/${artifact_id}"
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
+  doLicenseAgreement
+  if [ -d "${target_path}/.git" ]
+  then
+    doEcho "Found git repository ${target_path} - updating via git"
+    doGitPullOrClone "${target_path}"
+    return ${?}
+  fi
+  url="${url}/${artifact_id}"
   local current_repo="${DEVON_SOFTWARE_REPOSITORY}"
   if [ "${current_version}" = "0" ]
   then
     return 1
   fi
   doEcho "*** Software Update of ${artifact_id} ***"
-  doEcho "Updating ${1} from ${download_url}"
+  doEcho "Updating ${target_path} from ${url}"
   if [ "${target_version}" = "LATEST" ]
   then
-    doMavenGetLatestVersion "${download_url}"
+    doMavenGetLatestVersion "${url}"
     target_version="${LATEST_VERSION}"
     DEVON_SOFTWARE_REPOSITORY=
   fi
@@ -808,8 +955,8 @@ function doUpgradeMavenArtifact() {
   then 
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
-  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${suffix}" "-"
+  url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
+  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-"
   DEVON_SOFTWARE_REPOSITORY="${current_repo}"
 }
 
@@ -824,33 +971,41 @@ function doMoveGlobSafe() {
 }
 
 # $1: absolute target path
-# $2: URL
-# $3: Branch to checkout (optional)
+# $2: URL (may be URL#branch)
 function doGitPullOrClone() {
-  if [ -d "${1}/.git" ]
+  local dir="${1}"
+  local url="${2}"
+  local git_opts=""
+  if ! doIsDebug
+  then
+    git_opts="-q"
+  fi
+  if [ -d "${dir}/.git" ]
   then
     local remotes
-    remotes=$(cd "${1}" && git remote)
+    remotes=$(cd "${dir}" && git remote)
     if [ -n "${remotes}" ]
     then
-      doRunCommand "git pull" "" "${1}"
+      doRunCommand "git pull ${git_opts}" "" "${dir}"
     else
-      doEcho "Can not update local git repository: ${1}"
+      doEcho "Can not update local git repository: ${dir}"
       return 1
     fi
   else
-    if [ -z "${2}" ]
+    if [ -z "${url}" ]
     then
-      doFail "Not a git repository: ${1}"
+      doFail "Not a git repository: ${dir}"
     else
-      mkdir -p "${1}"      
-      pushd "${1}" || exit 255
-      doRunCommand "git clone --recursive '${2}' --config core.autocrlf=false ."
-      if [ -n "${3}" ]
-      then 
-        doRunCommand "git checkout ${3}"
+      mkdir -p "${dir}"
+      pushd "${dir}" > /dev/null || exit 255 
+      local branch="${url/*#/}"
+      url="${url%#*}"
+      doRunCommand "git clone ${git_opts} --recursive '${url}' --config core.autocrlf=false ."
+      if [ "${branch}" != "${url}" ]
+      then
+        doRunCommand "git checkout ${git_opts} ${branch}"
       fi
-      popd || exit 255
+      popd > /dev/null || exit 255 
     fi
   fi
 }
@@ -859,54 +1014,30 @@ function doGitPullOrClone() {
 # $2: absolute target path where to install
 # $3: name of software
 # $4: version of software
-# $5: optional OS indicator ('-' if OS independent)
-# $6: optional architecture (e.g. x86_64)
-# $7: optional extension (e.g. 'tar.gz' or 'zip')
-# $8: optional code (for tool specific quirks)
-# $9: optional software repository (overrides DEVON_SOFTWARE_REPOSITORY)
+# $5: the optional edition (e.g. "enterprise" or "community")
+# $6: optional code (for tool specific quirks)
+# $7: optional OS indicator ('-' if OS independent)
+# $8: optional architecture (e.g. x86_64)
+# $9: optional extension (e.g. 'tar.gz' or 'zip')
 function doInstall() {
   local url="${1}"
   local target_path="${2}"
   local software="${3}"
   local version="${4}"
-  local os="${5}"
-  local arch="${6}"
-  local ext="${7}"
-  local code="${8}"
-  local software_repository="${9}"
-  local filename
-  if [ -z "${software_repository}" ]
-  then
-    software_repository="${DEVON_SOFTWARE_REPOSITORY}"
-  fi
-  if [ -z "${os}" ]
-  then
-    if doIsMacOs
-    then
-      os="mac"
-    elif doIsWindows
-    then
-      os="windows"
-    else
-      os="linux"
-    fi
-  fi
+  local edition="${5}"
+  local code="${6}"
+  local os="${7}"
+  local arch="${8}"
+  local ext="${9}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
   then
     doFail "missing arguments for doInstall: ${*}"
   fi
   local result=0
-  local git_url="${url%#*}"
-  if [ "${git_url/*\./.}" = ".git" ]
+  if [ "${url/.git/}" != "${url}" ]
   then
-    local branch=${url/*.git#/}
-    if [ "${branch}" = "${git_url}" ]
-    then
-      doGitPullOrClone "${target_path}" "${url}"
-    else
-      doGitPullOrClone "${target_path}" "${git_url}" "${branch}"
-    fi
+    doGitPullOrClone "${target_path}" "${url}"
     return
   fi
   local version_file="${target_path}/.devon.software.version"
@@ -928,25 +1059,33 @@ function doInstall() {
     mkdir -p "${DEVON_IDE_HOME}/software"
   fi
   local repo="default"
-  if [ -n "${version}" ]
+  if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ] && [ -n "${version}" ]
   then
-    if [ -n "${software_repository}" ]
+    local filename="${software}-${version}"
+    if [ "${os}" != "-" ]
     then
-      filename="${software}-${version}"
-      if [ "${os}" != "-" ]
+      if [ -z "${os}" ]
       then
-        filename="${filename}-${os}"
+        if doIsMacOs
+        then
+          filename="${filename}-mac"
+        elif doIsWindows
+        then
+          filename="${filename}-windows"
+        else
+          filename="${filename}-linux"
+        fi
       fi
-      ext="tgz"
-      url="${software_repository}/${software}/${version}/${filename}.tgz"
-      result=1
-      repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
-      local host="${repo/\/*/}"
-      repo="${repo:${#host}}"
-      host="${host/:/_}"
-      repo="${host}/${repo//[^A-Za-z0-9._-]/_}"
-      download_dir="${download_dir}/${repo}"
     fi
+    ext="tgz"
+    url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}.tgz"
+    result=1
+    repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
+    local host="${repo/\/*/}"
+    repo="${repo:${#host}}"
+    host="${host/:/_}"
+    repo="${host}/${repo//[^A-Za-z0-9._-]/_}"
+    download_dir="${download_dir}/${repo}"
   fi
   doEcho "Starting installation of ${software} in version ${version} to ${target_path}"
   if [ -L "${target_path}" ]
@@ -962,9 +1101,9 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${os}" "${arch}" "${ext}" "${code}" "${filename}"
-    filename="${DOWNLOAD_FILENAME}"
-    doExtract "${download_dir}/${filename}" "${dir}"
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+    doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
     doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
     if [ "${install_path}" != "${DEVON_IDE_HOME}" ]
     then

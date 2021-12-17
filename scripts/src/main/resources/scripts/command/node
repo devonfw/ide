@@ -16,37 +16,12 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -n "${1}" ] || [ ! -d "${NODE_HOME}" ]
+  if [ "${1}" != "silent" ] || [ ! -d "${NODE_HOME}" ]
   then
     local version="${NODE_VERSION:-v14.17.6}"
-    local os
-    local arch
-    arch="$(uname -m)"
-    if [ "$arch" == "x86_64" ]
-    then
-      arch="x64"
-    elif [ "$arch" == "i386" ] || [ "$arch" == "i686" ]
-    then
-      arch="x86"
-    elif [ "$arch" == "aarch64" ]
-    then
-      arch="arm64"
-    fi
-    local ext="tar.gz"
-    if doIsMacOs
-    then
-      os="darwin"
-    elif doIsWindows
-    then
-      os="win"
-      ext="zip"
-    else
-      os="linux"
-      ext="tar.xz"
-    fi
-    doInstall "-" "${NODE_HOME}" "nodejs" "${version}" "${os}" "${arch}" "${ext}"
+    doInstall "-" "${NODE_HOME}" "nodejs" "${version}"
   fi
-  if [ -n "${1}" ] && ! doIsQuiet
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     local node_binary="${NODE_HOME}/node.exe"
     if [ ! -x "${node_binary}" ]
@@ -60,13 +35,13 @@ function doSetup() {
 function doSetupDevon4node() {
   if ! command -v devon4node &> /dev/null
   then
-    doDevonCommand yarn -q setup
+    doDevonCommand yarn setup silent
     doDevonCommand npm install -g @devon4node/cli@latest
   fi
 }
 
 function doRun() {
-  doSetup
+  doSetup silent
   doEcho "Running: node ${*}"
   if doIsQuiet
   then
@@ -95,7 +70,7 @@ case ${1} in
   exit
 ;;
 "setup" | "s")
-  doSetup setup
+  doSetup "${2}"
 ;;
 "create" | "c")
   shift

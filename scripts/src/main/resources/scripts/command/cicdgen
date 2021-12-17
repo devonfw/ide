@@ -18,24 +18,18 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if command -v cicdgen &> /dev/null && [ "${1}" != "update" ]
   then
-    if [ "${1}" = "setup" ]
+    if [ "${1}" != "silent" ]
     then
-      echo "cicdgen is already installed at $(command -v cicdgen)"
-      exit
+      doEcho "cicdgen is already installed at $(command -v cicdgen)"
+      return
     fi
   else
-    doDevonCommand npm -q setup
-    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
-    if [ ! -x "${npm_command}" ]
-    then
-      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
-    fi
-    doRunCommand "'${npm_command}' install -g @devonfw/cicdgen@latest" "install cicdgen"
+    doDevonCommand npm install -g @devonfw/cicdgen@latest
   fi
 }
 
 doRunCicdgen() {
-  doSetup
+  doSetup silent
   cicdgen generate "${@}"
 }
 

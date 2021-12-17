@@ -42,28 +42,10 @@ function doInstallEclipsePlugin() {
 }
 
 function doSetup() {
-  doDevonCommand java -q setup
-  if [ -n "${1}" ] || [ ! -d "${ECLIPSE_HOME}" ]
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2021-03}"
-    local eclipse_edition_type=${ECLIPSE_EDITION_TYPE:-java}
-    local os
-    local ext
-    local arch
-    arch="$(uname -m)"
-    if doIsMacOs
-    then  
-      os="macosx-cocoa"
-      ext="dmg"
-    elif doIsWindows
-    then
-      os="win32"
-      ext="zip"
-    else
-      os="linux-gtk"
-      ext="tar.gz"
-    fi
-    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${version}" "${os}" "${arch}" "${ext}" "${eclipse_edition_type}"
+    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${ECLIPSE_VERSION:-2021-03}" "${ECLIPSE_EDITION_TYPE:-java}"
     if doIsMacOs
     then
       if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
@@ -75,12 +57,12 @@ function doSetup() {
     fi
     doAddPlugins
   fi
-  if [ -n "${1}" ]
+  if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
   then
-    if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
-    then
-      doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
-    fi
+    doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
+  fi
+  if [ "${1}" != "silent" ] && ! isQuiet
+  then
     local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
     if [ ! -e "${eclipseproduct}" ]
     then
@@ -273,8 +255,12 @@ fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
 if [ -z "${1}" ]
 then
-  doSetup
+  doSetup silent
   doStartEclipse
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+  exit
 fi
 if [ "${1}" = "--all" ]
 then
@@ -285,7 +271,7 @@ while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    doSetup
+    doSetup silent
     doStartEclipse
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
@@ -296,9 +282,6 @@ do
   elif [ "${1}" = "ws-reverse-add" ]
   then
     doConfigureEclipse -x
-  elif [ "${1}" = "setup" ]
-  then
-    doSetup setup
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript eclipse

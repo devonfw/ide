@@ -16,18 +16,20 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand npm -q setup
-
-  local software_version=${NG_VERSION:-latest}
+  doDevonCommand npm setup silent
+  local version=${NG_VERSION:-latest}
   local installed_version
   installed_version=$(npm list -g --depth 0 | sed -n -e '/angular\/cli/ s/.*@//p')
-
-  if [ "$installed_version" == "$software_version" ] 
+  if [ "${installed_version}" == "${version}" ] 
   then
-    doEcho "Version ${installed_version} of angular-cli (ng) is already installed at ${NG_CMD}."
-  else
-    doEcho "Installing angular-cli ${software_version}..."
-    doDevonCommand npm install -g "@angular/cli@${software_version}"
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Version ${installed_version} of angular-cli (ng) is already installed at ${NG_CMD}."
+    fi
+  elif [ "${1}" != "silent" ] || [ "${version}" != "latest" ]
+  then
+    doEcho "Installing angular-cli ${version}..."
+    doDevonCommand npm install -g "@angular/cli@${version}"
   fi
 }
 
@@ -53,17 +55,17 @@ fi
 
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "create" ]
 then
   shift
-  doSetup
+  doSetup silent
   ng new "${@}"
 elif [ "${1}" = "cicd" ]
 then
   shift
   doDevonCommand cicdgen ng "${*}"
 else
-  doSetup
+  doSetup silent
   "${NG_CMD}" "${@}"
 fi

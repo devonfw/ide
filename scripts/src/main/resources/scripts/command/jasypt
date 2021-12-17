@@ -16,20 +16,19 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
+  doDevonCommand java setup silent
   if [ ! -e "${JASYPT_ARTIFACT}" ]
   then
     doEcho "Downloading jasypt version ${JASYPT_VERSION} to local maven repository..."
     doDevonCommand mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get "-Dartifact=org.jasypt:jasypt:${JASYPT_VERSION}"
-  elif [ -n "${1}" ]
+  elif [ "${1}" != "silent" ]
   then
     doEcho "Jasypt version ${JASYPT_VERSION} is already installed."
   fi
 }
 
 function doJasypt() {
-  
-  doSetup
+  doSetup silent
   if [ -z "${2}" ]
   then
     local masterpassword
@@ -43,7 +42,7 @@ function doJasypt() {
 }
 
 function doDecrypt() {
-  doSetup
+  doSetup silent
   java -cp "${JASYPT_ARTIFACT}" org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI "${@}"
 }
 
@@ -65,7 +64,7 @@ then
   echo "Options:"
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "encrypt" ]
 then
   shift

@@ -34,7 +34,7 @@ function doSetup() {
     project_force=""
     if doIsForce
     then
-      project_force="force"      
+      project_force="force"
     fi
     last_cwd="${PWD}"
     for file in "${SETTINGS_PATH}"/projects/*.properties

@@ -16,13 +16,13 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
-  if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
   then
     local version=${MAVEN_VERSION:-3.8.1}
-    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "-"
+    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "" "" "-"
   fi
-  if [ -n "${1}" ]
+  if [ "${1}" != "silent" ]
   then
     if [ -d "${SETTINGS_PATH}" ]
     then
@@ -68,7 +68,7 @@ function doSetup() {
       echo "Please run the following command to fix:"
       echo "devon setup"
     fi
-    if ! doIsQuiet
+    if [ "${1}" != "silent" ] && ! doIsQuiet
     then
       doRunCommand "'${MVN}' -v" "verify installation of maven"
     fi
@@ -77,7 +77,7 @@ function doSetup() {
 
 # $@: optional maven arguments
 function doGetProjectVersion() {
-  doSetup
+  doSetup silent
   local maven_project_version
   if [ -e ".mvn/maven.config" ]
   then
@@ -212,7 +212,7 @@ function doSetPomVersion() {
       rm pom.xml.bak
     fi
   fi
-  doSetup
+  doSetup silent
   local maven_project_version
   # shellcheck disable=SC2016
   maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
@@ -307,7 +307,7 @@ function doRunBuild() {
   then
     maven_cmd="./mvnw"
   else
-    doSetup
+    doSetup silent
   fi
   doEcho "Running: ${maven_cmd} ${*}"
   if doIsQuiet
@@ -344,7 +344,7 @@ then
   doRunBuild ${MVN_BUILD_OPTS:-clean install}
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "get-version" ]
 then
   doGetProjectVersion
