@@ -16,7 +16,7 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
-  if [ -n "${1}" ] || [ ! -d "${VSCODE_HOME}" ]
+  if [ "${1}" != "silent" ] || [ ! -d "${VSCODE_HOME}" ]
   then
     local version="${VSCODE_VERSION:-1.54.1}"
     doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
@@ -29,7 +29,6 @@ function doSetup() {
         chmod a+x "${VSCODE_HOME}/bin/code"
       fi
     fi
-	
     cleanupPlugins
     doAddPlugins
   fi
@@ -142,6 +141,10 @@ if [ -z "${1}" ]
 then
   doSetup
   doStartVsCode
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+  exit
 fi
 if [ "${1}" = "--all" ]
 then
@@ -152,7 +155,7 @@ while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
-    doSetup
+    doSetup silent
     doStartVsCode
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
@@ -163,9 +166,6 @@ do
   elif [ "${1}" = "ws-reverse-add" ]
   then
     doConfigureVsCode -x
-  elif [ "${1}" = "setup" ]
-  then
-    doSetup setup
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript vscode

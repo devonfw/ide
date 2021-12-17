@@ -18,8 +18,11 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {  
   if doIsDockerInstalled 
   then
-    doEcho "docker is already installed at $(command -v docker)"
-    docker version
+    if [ "${1}" != "silent" ] && ! isQuiet
+    then
+      doEcho "docker is already installed at $(command -v docker)"
+      docker version
+    fi
   else
     doRequireNotBatch
     #Start setup
@@ -59,7 +62,7 @@ function doSetup() {
 
 # Call Docker with specified arguments.
 function doRun() {
-  doSetup
+  doSetup silent
   doEcho "Running: docker ${*}"
   docker "${@}"
 }
@@ -85,7 +88,7 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
-  doSetup setup
+  doSetup setup "${2}"
 ;;
 *)
    doRun "${@}"

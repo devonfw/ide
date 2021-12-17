@@ -18,8 +18,9 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ ! -x "${NPM_CMD}" ]
   then
-    doDevonCommand node setup
-  else
+    doDevonCommand node setup silent
+  elif [ "${1}" != "silent" ]
+  then
     doEcho "npm is already installed at ${NPM_CMD}"
   fi
 }
@@ -56,7 +57,7 @@ function doCheckTopLevelProject() {
 }
 
 function doRunBuild() {
-  doSetup
+  doSetup silent
   doEcho "Running: npm ${*}"
   if doIsQuiet
   then
@@ -113,7 +114,7 @@ then
   fi
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "get-version" ]
 then
   doGetProjectVersion

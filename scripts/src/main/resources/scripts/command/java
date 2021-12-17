@@ -24,7 +24,7 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-  if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
+  if [ "${1}" != "silent" ] || [ ! -d "${JAVA_HOME}" ]
   then
     local version="${JAVA_VERSION:-11.0.9.1_1}"
     local code
@@ -44,7 +44,7 @@ function doSetup() {
     fi
     doExtendPath "${JAVA_HOME}"
   fi
-  if [ -n "${1}" ] && ! doIsQuiet
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     doRunCommand "'${JAVA_HOME}/bin/java' -version" "verify installation of Java"
   fi
@@ -93,10 +93,10 @@ then
   echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "create" ]
 then
-  doSetup
+  doSetup silent
   shift
   doCreate "${@}"
 elif [ "${1}" = "migrate" ]

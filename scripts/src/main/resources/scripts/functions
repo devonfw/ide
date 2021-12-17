@@ -904,29 +904,30 @@ function doMavenArchetype() {
 # $5: suffix (e.g. '-sources.jar')
 # $6: currentVersion
 function doUpgradeMavenArtifact() {
-  doLicenseAgreement
-  if [ -d "${1}/.git" ]
-  then
-    doEcho "Found git repository ${1} - updating via git"
-    doGitPullOrClone "${1}"
-    return ${?}
-  fi
-  local download_url="${2}"
+  local target_path="${1}"
+  local url="${2}"
   local artifact_id="${3}"
-  download_url="${download_url}/${artifact_id}"
   local target_version="${4}"
   local suffix="${5}"
   local current_version="${6}"
+  doLicenseAgreement
+  if [ -d "${target_path}/.git" ]
+  then
+    doEcho "Found git repository ${target_path} - updating via git"
+    doGitPullOrClone "${target_path}"
+    return ${?}
+  fi
+  url="${url}/${artifact_id}"
   local current_repo="${DEVON_SOFTWARE_REPOSITORY}"
   if [ "${current_version}" = "0" ]
   then
     return 1
   fi
   doEcho "*** Software Update of ${artifact_id} ***"
-  doEcho "Updating ${1} from ${download_url}"
+  doEcho "Updating ${target_path} from ${url}"
   if [ "${target_version}" = "LATEST" ]
   then
-    doMavenGetLatestVersion "${download_url}"
+    doMavenGetLatestVersion "${url}"
     target_version="${LATEST_VERSION}"
     DEVON_SOFTWARE_REPOSITORY=
   fi
@@ -954,8 +955,8 @@ function doUpgradeMavenArtifact() {
   then 
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
-  download_url="${download_url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${1}" "${download_url}" "${artifact_id}" "${target_version}" "${suffix}" "-"
+  url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
+  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-"
   DEVON_SOFTWARE_REPOSITORY="${current_repo}"
 }
 
