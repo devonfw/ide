@@ -726,7 +726,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local backup_dir="${3}"
   shift 3
   
-  if [ "${#*}" == 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
     source_dir="${1}"
   fi
@@ -744,7 +744,7 @@ function doReplaceExtracted() {
     do
       if [ -e "${extracted_file}" ]
       then
-        if [ "${extracted_file/*\//}" == "workspaces" ]
+        if [ "${extracted_file/*\//}" = "workspaces" ]
         then
           doEcho "as the target already exists, omitting ${extracted_file}"
         else
