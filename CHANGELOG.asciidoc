@@ -2,6 +2,15 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2021.12.002
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/641[#641]: Improve tools download to be stable
+* https://github.com/devonfw/ide/issues/650[#650]: Update java version to 11.0.13_8
+* https://github.com/devonfw/ide/issues/618[#618]: IDE does not support JDK 17
+* https://github.com/devonfw/ide/issues/604[#604]: Installation error with eclipse plugins
+
 == 2021.12.001
 
 Update with the following bugfixes and improvements:
