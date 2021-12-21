@@ -28,7 +28,7 @@ function doFail() {
     then
       exit 1
     fi
-    exit "\e[91m${2}\e[39m"
+    exit -e "\e[91m${2}\e[39m"
   else
     exit 255
   fi
