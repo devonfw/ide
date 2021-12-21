@@ -89,7 +89,7 @@ function doRunCommand() {
   fi
   if [ ${result} = 0 ]
   then
-    doDebug "Succeeded to ${message}"
+    doDebug -e "\e[92mSucceeded to ${message}\e[39m"
   else
     doEcho -e "\e[91mFailed to run command: ${1}\e[39m"
     doFail "Failed to ${message}" ${result}
@@ -159,7 +159,7 @@ function doDebug() {
 
 # $@: warning message
 function doWarning() {
-  echo -e "WARNING: ${*}"
+  echo -e "\e[93mWARNING: ${*}\e[39m"
 }
 
 # $@: warning message

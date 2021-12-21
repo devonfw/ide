@@ -7,6 +7,11 @@ if "%1%" == "--version" (
   goto :print_version
 )
 
+Set _fBYellow=[93m
+Set _fBGreen=[92m
+Set _fBRed=[91m
+Set _RESET=[0m
+
 rem Auto-install oursevles...
 if not exist "%USERPROFILE%\scripts" (
   md "%USERPROFILE%\scripts"
@@ -37,9 +42,9 @@ if not exist "%USERPROFILE%\scripts\devon.bat" (
       set "PATH=%PATH%;%USERPROFILE%\scripts"
     )
   )
-  echo The devon CLI script has been installed to your windows system.
-  echo Now in any new command shell, you can call devon to setup your IDE enviromennt variables.
-  echo You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'
+  echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
+  echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
+  echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
 )
 if "%1%" == "" (
   goto :setup_env
@@ -71,12 +76,10 @@ if exists "%BASH_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 echo:
-Set _fBYellow=[93m
-Set _RESET=[0m
 echo %_fBYellow%*** ATTENTION ***%_RESET%
-echo Bash has not been found on your system!
-echo Please install git for windows on your system.
-echo https://git-scm.com/download/win
+echo %_fBRed%Bash has not been found on your system!%_RESET%
+echo %_fBRed%Please install git for windows on your system.%_RESET%
+echo %_fBRed%https://git-scm.com/download/win%_RESET%
 goto :eof
 
 :bash_detected
