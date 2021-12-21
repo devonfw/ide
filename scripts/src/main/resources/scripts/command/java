@@ -35,9 +35,10 @@ function doSetup() {
       code="jdk-${version/_/%2B}"
     fi
     doInstall "-" "${JAVA_HOME}" "java" "${version}" "" "${code}"
-    if [ ! -d "${DEVON_IDE_HOME}/software/java/bin" ] && [ ! -d "${DEVON_IDE_HOME}/software/jdk" ] && doIsMacOs && [ -d "${DEVON_IDE_HOME}/software/java/Contents" ]
+    if [ ! -d "${DEVON_IDE_HOME}/software/java/bin" ] && doIsMacOs && [ -d "${DEVON_IDE_HOME}/software/java/Contents" ]
     then
       doEcho "Creating symlink as workaround for Java on MacOS"
+      doRunCommand "rm -rf '${DEVON_IDE_HOME}/software/jdk'"
       doRunCommand "mv '${DEVON_IDE_HOME}/software/java' '${DEVON_IDE_HOME}/software/jdk'"
       doRunCommand "ln -sf 'jdk/Contents/Home' '${DEVON_IDE_HOME}/software/java'"
       doRunCommand "cp '${DEVON_IDE_HOME}/software/jdk/.devon.software.version' '${DEVON_IDE_HOME}/software/java'"
