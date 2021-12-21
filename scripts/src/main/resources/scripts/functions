@@ -567,12 +567,8 @@ function doDownloadInternal() {
     doEcho "Artifact already exists at ${target}\nTo force update please delete the file and run again."
     return 255
   fi
-  local curl_opt=""
-  if [ -n "${quiet}" ]
-  then
-    curl_opt="--silent"
-  fi
-  curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
+  SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+  bash $SCRIPT_DIR/mcurl -o "${tmp_file}" "${url}"
   local result=${?}
   if [ "${result}" != 0 ]
   then
