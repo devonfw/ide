@@ -669,7 +669,7 @@ function doExtract() {
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho "Successfully extracted archive ${filename} to updates/extracted"
+  doEcho -e "\e[92mSuccessfully extracted archive ${filename} to updates/extracted\e[39m"
 }
 
 # $1: absolute path of file or folder to move
@@ -1116,7 +1116,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho "Successfully installed ${software}"
+    doEcho -e "\e[92mSuccessfully installed ${software}\e[39m"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
