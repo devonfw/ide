@@ -318,8 +318,9 @@ function doUpdateSoftware() {
   local tool
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
-    doEcho "\n*** Setting up ${tool} ***"
+    doEcho -e "\e[96m\n*** Setting up ${tool} ***\e[39m"
     doDevonCommand "${tool}" setup
+    doEcho -e "\e[92mSuccess\e[39m"
   done
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
@@ -331,7 +332,7 @@ function doUpdateSoftware() {
       software_version="${tool%%:*}"
       if [ -n "${software_version}" ]
       then
-        doEcho "\n*** Setting up ${software} ***"
+        doEcho -e "\e[96m\n*** Setting up ${software} ***\e[39m"
         tool="${tool#*:}"
         arch=""
         if [ "${tool:0:4}" = "all:" ]
@@ -355,6 +356,7 @@ function doUpdateSoftware() {
           fi
         fi
         doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+        doEcho -e "\e[92mSuccess\e[39m"
       fi
     fi
   done

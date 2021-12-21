@@ -19,16 +19,16 @@ DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
 # $2: optional exit code
 function doFail() {
   doEchoAttention ""
-  echo -e "ERROR: ${1}"
-  echo "We are sorry for the inconvenience. Please check the above errors, resolve them and try again."
+  echo -e "\e[91mERROR: ${1}\e[39m"
+  echo -e "\e[91mWe are sorry for the inconvenience. Please check the above errors, resolve them and try again.\e[39m"
   if [ -n "${2}" ]
   then
-    echo "Exit code was ${2}"
+    echo -e "\e[91mExit code was ${2}\e[39m"
     if [ "${2}" = "0" ]
     then
       exit 1
     fi
-    exit "${2}"
+    exit "\e[91m${2}\e[39m"
   else
     exit 255
   fi
@@ -36,10 +36,10 @@ function doFail() {
 
 function doEchoAttention() {
   echo
-  echo "******** ATTENTION ********"
+  echo -e "\e[93m******** ATTENTION ********\e[39m"
   if [ -n "${1}" ]
   then
-    echo -e "${@}"
+    echo -e "\e[93m${@}\e[39m"
   fi
 }
 
@@ -48,7 +48,7 @@ function doEchoAttention() {
 function doResult() {
   if [ "${2}" = 0 ]
   then
-    doEcho "Succeeded to ${1}"
+    doEcho -e "\e[32mSucceeded to ${1}\e[39m"
   else
     if [ -z "${2}" ]
     then
@@ -91,7 +91,7 @@ function doRunCommand() {
   then
     doDebug "Succeeded to ${message}"
   else
-    doEcho "Failed to run command: ${1}"
+    doEcho -e "\e[91mFailed to run command: ${1}\e[39m"
     doFail "Failed to ${message}" ${result}
   fi
 }
@@ -334,7 +334,7 @@ function doDevonCommandAndReturn() {
   else
     if [ ! -x "${command}" ]
     then
-      doEcho "Command ${1} is not executable. Trying to repair..."
+      doEcho -e "\e[93mCommand ${1} is not executable. Trying to repair...\e[39m"
       chmod a+x "${command}"
     fi
     shift
@@ -343,7 +343,7 @@ function doDevonCommandAndReturn() {
     result=${?}
     if [ ${result} != 0 ]
     then
-      doEcho "ERROR: command '${command_name} ${*}' failed with exit code ${result}"
+      doEcho -e "\e[91mERROR: command '${command_name} ${*}' failed with exit code ${result}\e[39m"
       return ${result}
     fi
   fi  
@@ -576,11 +576,11 @@ function doDownloadInternal() {
   local result=${?}
   if [ "${result}" != 0 ]
   then
-    doEcho "Failed to download ${url} with exit code ${result}"
+    doEcho -e "\e[91mFailed to download ${url} with exit code ${result}\e[39m"
     return ${result}
   else
     mv "${tmp_file}" "${target}"
-    doDebug "Download of ${DOWNLOAD_FILENAME} from ${url} succeeded."
+    doDebug -e "\e[32mDownload of ${DOWNLOAD_FILENAME} from ${url} succeeded.\e[39m"
   fi
 }
 

@@ -71,7 +71,9 @@ if exists "%BASH_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 echo:
-echo *** ATTENTION ***
+Set _fBYellow=[93m
+Set _RESET=[0m
+echo %_fBYellow%*** ATTENTION ***%_RESET%
 echo Bash has not been found on your system!
 echo Please install git for windows on your system.
 echo https://git-scm.com/download/win
