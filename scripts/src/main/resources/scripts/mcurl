@@ -70,7 +70,7 @@ shift $(($OPTIND-1))
 url=${@: -1}
 
 if ! [[ $url =~ ^https?://.*$ ]];then
-    printf "\e[31mInvalid URL $url\e[0m\n"
+    printf "\e[91mInvalid URL $url\e[39m\n"
     usage
     exit 1
 fi
@@ -85,7 +85,7 @@ echo "Download $url to $file_to_save with $slices tasks."
 size_in_byte=$(curl -I "$url" 2>/dev/null | sed -n 's/\([Cc]ontent-[Ll]ength:\)\(.*\)/\2/p' | tr -d [[:space:]])
 
 if ! [[ $size_in_byte =~ ^[0-9]+$ ]];then
-    printf "\e[31mCould not get content length, make sure your resource have content length response.\e[0m\n"
+    printf "\e[91mCould not get content length, make sure your resource have content length response.\e[39m\n"
     exit 1
 fi
 
