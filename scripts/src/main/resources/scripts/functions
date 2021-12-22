@@ -589,7 +589,7 @@ function doDownloadInternal() {
 
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
-    doWarn "Artifact already exists at ${target}\nTo force update please delete the file and run again."
+    logWarn "Artifact already exists at ${target}\nTo force update please delete the file and run again."
     return 255
   fi
   local curl_opt=""
