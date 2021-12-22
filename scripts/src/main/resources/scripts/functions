@@ -406,12 +406,18 @@ function doDownload() {
     fi
     local mirrors_override_dir="${mirrors_software_dir}"
     local folder
+    local result
     if [ -e "${mirrors_software_dir}/versions" ]
     then
       while IFS='<' read -r folder version_limit
       do
-        doVersionCompare "${version}" "${version_limit}"
-        result=${?}
+        if [ "${version_limit}" = '*' ]
+        then
+          result=2
+        else
+          doVersionCompare "${version}" "${version_limit}"
+          result=${?}
+        fi
         # ${version} < ${version_limit} ?
         if [ "${result}" = 2 ]
         then
@@ -420,6 +426,7 @@ function doDownload() {
           then
             doWarning "Configured version folder does not exist: ${mirrors_override_dir}"
           fi
+          break;
         fi
       done < "${mirrors_software_dir}/versions"
     fi
