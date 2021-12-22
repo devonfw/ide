@@ -78,7 +78,7 @@ do
   echo "Next version: ${next_version}"
   if [ "${next_version/-SNAPSHOT/}" == "${next_version}" ]
   then
-    doWarning "Next version is not a SNAPSHOT version!"
+    logWarn "Next version is not a SNAPSHOT version!"
   fi
   echo
   if doIsDevVersion "${current_version}"

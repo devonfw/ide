@@ -15,20 +15,23 @@ fi
 source "${DEVON_IDE_HOME}/scripts/environment-project" export
 DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
 
+function logError() {
+  echo -e "\e[91m${1}\e[39m"
+}
+
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
 function doFail() {
   doEchoAttention ""
-  echo -e "\e[91mERROR: ${1}\e[39m"
-  echo -e "\e[91mWe are sorry for the inconvenience. Please check the above errors, resolve them and try again.\e[39m"
+  logError "${1}\nWe are sorry for the inconvenience. Please check the above errors, resolve them and try again."
   if [ -n "${2}" ]
   then
-    echo -e "\e[91mExit code was ${2}\e[39m"
+    logError "Exit code was ${2}"
     if [ "${2}" = "0" ]
     then
       exit 1
     fi
-    exit -e "\e[91m${2}\e[39m"
+    logError "${2}"
   else
     exit 255
   fi
@@ -48,7 +51,7 @@ function doEchoAttention() {
 function doResult() {
   if [ "${2}" = 0 ]
   then
-    doEcho -e "\e[32mSucceeded to ${1}\e[39m"
+    logSuccess "Succeeded to ${1}"
   else
     if [ -z "${2}" ]
     then
@@ -73,7 +76,7 @@ function doRunCommand() {
       doFail "Working directory ${3} does not exist."
     fi
   fi
-  doDebug "Running command: ${1}"
+  logDebug "Running command: ${1}"
   eval "${1}"
   result=${?}
   if [ -n "${3}" ]
@@ -89,9 +92,9 @@ function doRunCommand() {
   fi
   if [ ${result} = 0 ]
   then
-    doDebug -e "\e[92mSucceeded to ${message}\e[39m"
+    logSuccess "Succeeded to ${message}"
   else
-    doEcho -e "\e[91mFailed to run command: ${1}\e[39m"
+    logError "Failed to run command: ${1}"
     doFail "Failed to ${message}" ${result}
   fi
 }
@@ -149,7 +152,17 @@ function doEcho() {
   echo -e "${@}"
 }
 
-function doDebug() {
+# $@: messages to output
+function logInfo() {
+  echo -e "\e[34m${@}\e[39m"
+}
+
+# $@: messages to output
+function logStep() {
+  echo -e "\e[35m*** ${@} ***\e[39m"
+}
+
+function logDebug() {
   if ! doIsDebug
   then
     return
@@ -158,13 +171,23 @@ function doDebug() {
 }
 
 # $@: warning message
-function doWarning() {
-  echo -e "\e[93mWARNING: ${*}\e[39m"
+function logWarn() {
+  echo -e "\e[93m${*}\e[39m"
+}
+
+# $@: success message
+function logSuccess() {
+  echo -e "\e[92m${*}\e[39m"
+}
+
+# $@: success message
+function logInteract() {
+  echo -e "\e[96m${*}\e[39m"
 }
 
 # $@: warning message
 function doConfirmWarning() {
-  doWarning "${@}"
+  logWarn "${@}"
   echo
   doAskToContinue ""
 }
@@ -179,7 +202,7 @@ function doAskToContinue() {
   fi
   if [ -n "${force}" ]
   then
-    doEcho "${question}"
+    logInteract "${question}"
     return
   fi
   if [ -z "${batch}" ] 
@@ -187,7 +210,7 @@ function doAskToContinue() {
     local answer
     while true
     do
-      echo -e "${question}"
+      logInteract "${question}"
       read -r -p "(yes/no): " answer
       if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
       then
@@ -202,7 +225,7 @@ function doAskToContinue() {
           exit 255
         fi
       else
-        echo "Please answer yes or no (or hit return for yes)."
+        logInteract "Please answer yes or no (or hit return for yes)."
       fi
     done
   fi
@@ -276,19 +299,14 @@ function doLicenseAgreement() {
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
     fi
-    while true
-    do
-      read -r -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
-      case "${answer}" in
-        yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
-          break;;
-        no)
-          exit 255;;
-        *)
-          echo "Please answer yes or no.";;
-      esac
-    done
+
+    local res=$(doAskToContinue "Do you accept these terms of use and all license agreements?" "return")
+    if [ $res != 255 ]
+    then
+      echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"      
+    else
+      exit 255
+    fi
     echo
   fi
 }
@@ -316,7 +334,7 @@ function doDevonCommandAllWorkspaces() {
       cd .. || exit 1
     elif [ "${file}" != "readme.txt" ]
     then
-      doWarning "The workspaces should only contain folder but ${file} is not"
+      logWarn "The workspaces should only contain folder but ${file} is not"
     fi
   done
 }
@@ -334,7 +352,7 @@ function doDevonCommandAndReturn() {
   else
     if [ ! -x "${command}" ]
     then
-      doEcho -e "\e[93mCommand ${1} is not executable. Trying to repair...\e[39m"
+      logWarn "Command ${1} is not executable. Trying to repair..."
       chmod a+x "${command}"
     fi
     shift
@@ -343,7 +361,7 @@ function doDevonCommandAndReturn() {
     result=${?}
     if [ ${result} != 0 ]
     then
-      doEcho -e "\e[91mERROR: command '${command_name} ${*}' failed with exit code ${result}\e[39m"
+      logError "Command '${command_name} ${*}' failed with exit code ${result}"
       return ${result}
     fi
   fi  
@@ -397,7 +415,7 @@ function doDownload() {
       fi
     fi
     local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
-    doDebug "Cloning or updating download mirrors"
+    logDebug "Cloning or updating download mirrors"
     doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
     local mirrors_software_dir="${mirrors_dir}/${software}"
     if [ ! -d "${mirrors_software_dir}" ]
@@ -424,7 +442,7 @@ function doDownload() {
           mirrors_override_dir="${mirrors_software_dir}/${folder}"
           if [ ! -d "${mirrors_override_dir}" ]
           then
-            doWarning "Configured version folder does not exist: ${mirrors_override_dir}"
+            logWarn "Configured version folder does not exist: ${mirrors_override_dir}"
           fi
           break;
         fi
@@ -432,7 +450,7 @@ function doDownload() {
     fi
     if [ "${mirrors_override_dir}" != "${mirrors_software_dir}" ]
     then
-      doDebug "For software ${software} in version ${version} the mirror config is overridden by ${mirrors_override_dir}"
+      logDebug "For software ${software} in version ${version} the mirror config is overridden by ${mirrors_override_dir}"
     fi
     # remap architecture
     local mirrors_arch
@@ -443,7 +461,7 @@ function doDownload() {
       do
         if [ "${key}" = "${arch}" ] || [ "${key}" = '*' ]
         then
-          doDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
+          logDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
           arch="${value}"
           break
         fi
@@ -458,7 +476,7 @@ function doDownload() {
       do
         if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
         then
-          doDebug "Mapped extension to ${value} for OS ${os} and software ${software} in version ${version}"
+          logDebug "Mapped extension to ${value} for OS ${os} and software ${software} in version ${version}"
           ext="${value}"
           break
         fi
@@ -473,7 +491,7 @@ function doDownload() {
     do
       if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
       then
-        doDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
+        logDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
         os="${value}"
         break
       fi
@@ -481,7 +499,7 @@ function doDownload() {
     # get mirror URLs
     local mirrors_urls
     mirrors_urls="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/urls" "${mirrors_software_dir}/urls")"
-    doDebug "Reading mirror URLs from ${mirrors_urls}"
+    logDebug "Reading mirror URLs from ${mirrors_urls}"
 
     local major="${version//[^0-9]*}"
     local mirror
@@ -530,7 +548,7 @@ function doDownload() {
         then
           filename="${filename}.${ext}"
         else
-          doWarning "No filename extension configured for ${software} in version ${version}"
+          logWarn "No filename extension configured for ${software} in version ${version}"
           filename="${filename}.$(doGetExtension "${mirror_url}")"
         fi
       fi
@@ -571,7 +589,7 @@ function doDownloadInternal() {
 
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
-    doEcho "Artifact already exists at ${target}\nTo force update please delete the file and run again."
+    doWarn "Artifact already exists at ${target}\nTo force update please delete the file and run again."
     return 255
   fi
   local curl_opt=""
@@ -583,11 +601,11 @@ function doDownloadInternal() {
   local result=${?}
   if [ "${result}" != 0 ]
   then
-    doEcho -e "\e[91mFailed to download ${url} with exit code ${result}\e[39m"
+    logWarn "Failed to download ${url} with exit code ${result}"
     return ${result}
   else
     mv "${tmp_file}" "${target}"
-    doDebug -e "\e[32mDownload of ${DOWNLOAD_FILENAME} from ${url} succeeded.\e[39m"
+    logSuccess "Download of ${DOWNLOAD_FILENAME} from ${url} succeeded."
   fi
 }
 
@@ -669,7 +687,7 @@ function doExtract() {
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho -e "\e[92mSuccessfully extracted archive ${filename} to updates/extracted\e[39m"
+  logSuccess "Successfully extracted archive ${filename} to updates/extracted"
 }
 
 # $1: absolute path of file or folder to move
@@ -930,7 +948,7 @@ function doUpgradeMavenArtifact() {
   then
     return 1
   fi
-  doEcho "*** Software Update of ${artifact_id} ***"
+  logStep "Software Update of ${artifact_id}"
   doEcho "Updating ${target_path} from ${url}"
   if [ "${target_version}" = "LATEST" ]
   then
@@ -1039,7 +1057,7 @@ function doInstall() {
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
   then
-    doFail "missing arguments for doInstall: ${*}"
+    doFail "Missing arguments for doInstall: ${*}"
   fi
   local result=0
   if [ "${url/.git/}" != "${url}" ]
@@ -1109,14 +1127,14 @@ function doInstall() {
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
     doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-    doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    logDebug "Received download file ${DOWNLOAD_FILENAME}"
     doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
     doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
     if [ "${install_path}" != "${DEVON_IDE_HOME}" ]
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho -e "\e[92mSuccessfully installed ${software}\e[39m"
+    logSuccess "Successfully installed ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
@@ -1133,7 +1151,7 @@ function doInstall() {
   if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
     doExtendPath "${target_path}"
-    doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
+    logInteract "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
   if [ "${install_path}" != "${target_path}" ]
   then
@@ -1195,7 +1213,7 @@ function doConfigureWorkspace() {
   fi
   if [ ${result} = 0 ]
   then
-    doEcho "Your workspace ${WORKSPACE} has been ${action}"  
+    logSuccess "Your workspace ${WORKSPACE} has been ${action}"  
   else
     doFail "Your workspace ${WORKSPACE} could not be ${action}"
   fi
@@ -1230,7 +1248,7 @@ function doCreateIdeScript() {
   then
     echo -e "${script_data}" > "${script_file}"
     chmod a+x "${script_file}"
-    doDebug "Created script ${script_file}"
+    logSuccess "Created script ${script_file}"
   fi
 }
 
@@ -1381,12 +1399,12 @@ function doIsWindows() {
 }
 
 function doIsPackageJsonContainingScript() {
-  doDebug "checking if package.json contains script section named $1"
+  logDebug "Checking if package.json contains script section named $1"
   if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
   then
     return 0
   else
-    doEcho "no build script is present in package.json - skipping to run build script."
+    doEcho "No build script is present in package.json - skipping to run build script."
     return 255
   fi
 }

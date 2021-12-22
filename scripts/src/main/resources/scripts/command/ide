@@ -136,7 +136,7 @@ function doSetupConf() {
       then
         if [ -f "${conf}" ]
         then
-          doDebug "Configuration ${conf} already exists - skipping to copy from ${template}."
+          logDebug "Configuration ${conf} already exists - skipping to copy from ${template}."
         else
           if [ "${basename}" != "settings.xml" ]
           then
@@ -300,7 +300,7 @@ function doSetup() {
   then
     doUpdateProjects
   else
-    doWarning "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
+    logWarn "Skipping project setup as DEVON_SKIP_PROJECT_SETUP is ${DEVON_SKIP_PROJECT_SETUP}"
   fi
   local ide
   for ide in "${DEVON_CREATE_START_SCRIPTS[@]}"
@@ -318,9 +318,9 @@ function doUpdateSoftware() {
   local tool
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
-    doEcho -e "\e[96m\n*** Setting up ${tool} ***\e[39m"
+    logStep "Setting up ${tool}"
     doDevonCommand "${tool}" setup
-    doEcho -e "\e[92mSuccess\e[39m"
+    logSuccess "Success"
   done
   default_repo=
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
@@ -332,7 +332,7 @@ function doUpdateSoftware() {
       software_version="${tool%%:*}"
       if [ -n "${software_version}" ]
       then
-        doEcho -e "\e[96m\n*** Setting up ${software} ***\e[39m"
+        logStep "Setting up ${software}"
         tool="${tool#*:}"
         arch=""
         if [ "${tool:0:4}" = "all:" ]
@@ -356,7 +356,7 @@ function doUpdateSoftware() {
           fi
         fi
         doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
-        doEcho -e "\e[92mSuccess\e[39m"
+        logSuccess "Success"
       fi
     fi
   done
@@ -384,6 +384,7 @@ function doUninstallFromHome() {
     doRunCommand "rm '${1}/scripts/devon'"
   fi
   doRunCommand "rm -rf '${1}/.devon'"
+  logSuccess "Successfully uninstalled devonfw-ide from home directory"
 }
 
 function doUninstall() {
@@ -410,9 +411,10 @@ function doUninstall() {
     fi
     reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
-  echo "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
-  echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
-  echo "Goodbye and have a nice day!"
+  logSuccess "Successfully uninstalled devonfw-ide"
+  logSuccess "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
+  logSuccess "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
+  logSuccess "Goodbye and have a nice day!"
 }
 
 target_version="LATEST"
@@ -497,4 +499,4 @@ else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
 echo
-echo "Completed ${*}"
+logSuccess "Completed ${*}"

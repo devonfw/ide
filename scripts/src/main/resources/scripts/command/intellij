@@ -65,7 +65,7 @@ function doAddPlugins() {
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ]
       then
-        doWarning "Invalid intellij plugin config: ${file}"
+        logWarn "Invalid intellij plugin config: ${file}"
       elif [ "${plugin_active}" = "true" ]
       then
         doAddPlugin "${plugin_id}"

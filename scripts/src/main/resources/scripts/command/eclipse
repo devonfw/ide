@@ -34,8 +34,7 @@ function doInstallEclipsePlugin() {
   if [ "${result}" != 0 ]
   then
     echo
-    echo "******** ATTENTION ********"
-    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
+    doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
     echo
   fi
   return "${result}"
@@ -82,7 +81,7 @@ function doAddPluginFromConfig() {
     doLoadProperties "${1}"
     if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
     then
-      doWarning "Invalid eclipse plugin config: ${file}"
+      logWarn "Invalid eclipse plugin config: ${file}"
     elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
       # check if plugin successfully installed
@@ -114,7 +113,7 @@ function doAddPlugins() {
       doAddPluginFromConfig "${file}"
     done
   else
-    doWarning "Legacy eclipse plugin mechanism detected. Please migrate to ${SETTINGS_PATH}/eclipse/plugins:\nhttps://github.com/devonfw/ide/blob/master/documentation/eclipse.asciidoc"
+    logWarn "Legacy eclipse plugin mechanism detected. Please migrate to ${SETTINGS_PATH}/eclipse/plugins:\nhttps://github.com/devonfw/ide/blob/master/documentation/eclipse.asciidoc"
     if [ -z "${ECLIPSE_PLUGINS}" ]
     then
       doAddPlugin startexplorer
