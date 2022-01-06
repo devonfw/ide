@@ -2,6 +2,17 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2021.12.003
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/664[#664]/https://github.com/devonfw/ide/issues/662[662]: scripts/command/eclipse: line 79: isQuiet: command not found
+* https://github.com/devonfw/ide/issues/665[#665]: devon ide update should update all installed tools
+* https://github.com/devonfw/ide/issues/669[#669]: Installation of custom tools broken
+* https://github.com/devonfw/ide/issues/667[#667]: devon npm setup ignores a given version
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/23?closed=1[milestone 2021.12.003].
+
 == 2021.12.002
 
 Update with the following bugfixes and improvements:
