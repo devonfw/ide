@@ -594,7 +594,7 @@ function doDownloadInternal() {
 # $1: filename (potentiall including absolute or relative path)
 # echos the file extension
 function doGetExtension() {
-  local filename=${1/*\//}
+  local filename="${1/*\//}"
   local ext="${filename/*\./}"
   local filename_base="${filename:0:(${#filename}-${#ext}-1)}"
   if [ "${filename_base/*\./.}" = ".tar" ]
