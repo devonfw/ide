@@ -23,6 +23,10 @@ function doSetup() {
   then
     doEcho "npm is already installed at ${NPM_CMD}"
   fi
+  if [ -n "${NPM_VERSION}" ]
+  then
+    doDevonCommand npm install -g npm@${NPM_VERSION}
+  fi
 }
 
 function doGetProjectVersion() {
