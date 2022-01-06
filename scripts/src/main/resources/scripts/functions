@@ -925,7 +925,7 @@ function doUpgradeMavenArtifact() {
     return ${?}
   fi
   url="${url}/${artifact_id}"
-  local current_repo="${DEVON_SOFTWARE_REPOSITORY}"
+  local repository="${DEVON_SOFTWARE_REPOSITORY}"
   if [ "${current_version}" = "0" ]
   then
     return 1
@@ -936,7 +936,7 @@ function doUpgradeMavenArtifact() {
   then
     doMavenGetLatestVersion "${url}"
     target_version="${LATEST_VERSION}"
-    DEVON_SOFTWARE_REPOSITORY=
+    repository="-"
   fi
   if [ -n "${current_version}" ]
   then
@@ -963,8 +963,7 @@ function doUpgradeMavenArtifact() {
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
   url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-"
-  DEVON_SOFTWARE_REPOSITORY="${current_repo}"
+  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-" "" "" "" "${repository}"
 }
 
 # $1: target
@@ -1026,6 +1025,7 @@ function doGitPullOrClone() {
 # $7: optional OS indicator ('-' if OS independent)
 # $8: optional architecture (e.g. x86_64)
 # $9: optional extension (e.g. 'tar.gz' or 'zip')
+# $10: optional software repo
 function doInstall() {
   local url="${1}"
   local target_path="${2}"
@@ -1036,6 +1036,7 @@ function doInstall() {
   local os="${7}"
   local arch="${8}"
   local ext="${9}"
+  local repository="${10}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
   then
@@ -1066,7 +1067,11 @@ function doInstall() {
     mkdir -p "${DEVON_IDE_HOME}/software"
   fi
   local repo="default"
-  if [ -n "${DEVON_SOFTWARE_REPOSITORY}" ] && [ -n "${version}" ]
+  if [ -z "${repository}" ]
+  then
+    repository="${DEVON_SOFTWARE_REPOSITORY}"
+  fi
+  if [ -n "${repository}" ] && [ "${repository}" != "-" ] && [ -n "${version}" ]
   then
     local filename="${software}-${version}"
     if [ "${os}" != "-" ]
@@ -1085,9 +1090,9 @@ function doInstall() {
       fi
     fi
     ext="tgz"
-    url="${DEVON_SOFTWARE_REPOSITORY}/${software}/${version}/${filename}.tgz"
+    url="${repository}/${software}/${version}/${filename}.tgz"
     result=1
-    repo="${DEVON_SOFTWARE_REPOSITORY/*:\/\//}"
+    repo="${repository/*:\/\//}"
     local host="${repo/\/*/}"
     repo="${repo:${#host}}"
     host="${host/:/_}"
