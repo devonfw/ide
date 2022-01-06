@@ -76,7 +76,7 @@ function doSetup() {
   then
     doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
   fi
-  if [ "${1}" != "silent" ] && ! isQuiet
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
     if [ ! -e "${eclipseproduct}" ]
