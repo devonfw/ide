@@ -25,7 +25,7 @@ function doSetup() {
   fi
   if [ -n "${NPM_VERSION}" ]
   then
-    doDevonCommand npm install -g npm@${NPM_VERSION}
+    doDevonCommand npm install -g "npm@${NPM_VERSION}"
   fi
 }
 
