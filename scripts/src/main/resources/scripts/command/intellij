@@ -133,6 +133,11 @@ function doConfigureIntellij() {
 
 function doStartIntellij() {
   doConfigureIntellij "-u"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
+  then
+    JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+    doExtendPath "${JAVA_HOME}"
+  fi
   echo "launching IntelliJ..."
   local IDEA="${IDEA_HOME}/bin/idea64.exe"
   if [ ! -f "${IDEA}" ];
