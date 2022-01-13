@@ -15,7 +15,7 @@ The full list of changes for this release can be found in https://github.com/dev
 
 Update with the following bugfixes and improvements:
 
-* https://github.com/devonfw/ide/issues/664[#664]/https://github.com/devonfw/ide/issues/662[662]: scripts/command/eclipse: line 79: isQuiet: command not found
+* https://github.com/devonfw/ide/issues/664[#664] / https://github.com/devonfw/ide/issues/662[662]: scripts/command/eclipse: line 79: isQuiet: command not found
 * https://github.com/devonfw/ide/issues/665[#665]: devon ide update should update all installed tools
 * https://github.com/devonfw/ide/issues/669[#669]: Installation of custom tools broken
 * https://github.com/devonfw/ide/issues/667[#667]: devon npm setup ignores a given version
