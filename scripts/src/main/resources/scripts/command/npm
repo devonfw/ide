@@ -26,7 +26,7 @@ function doSetup() {
     installed_version=$(${NPM_CMD} -version)
   fi
 
-  if [ -z "$software_version" ] || [ "$installed_version" == "$software_version" ] 
+  if [ -z "${software_version}" ] || [ "${installed_version}" == "${software_version}" ] 
   then
     if [ "${1}" != "silent" ]
     then
@@ -35,7 +35,7 @@ function doSetup() {
   else
     local download_url="https://registry.npmjs.org/npm/-/npm-${software_version}.tgz"
     local software_dir="${NODE_HOME}/node_modules/npm"
-    doInstall "${software_dir}" "${download_url}" "npm" "${software_version}"
+    doInstall "${download_url}" "${software_dir}" "npm" "${software_version}"
     if [ -f "${NODE_HOME}/npm" ]
     then 
       rm "${NODE_HOME}/npm"
