@@ -29,7 +29,7 @@ function doInstallEclipsePlugin() {
   local plugin="${1/\.feature\.group*/}"
   echo "Installing eclipse plugin ${plugin} from ${2}"
   # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
   result=${?}
   if [ "${result}" != 0 ]
   then
@@ -46,9 +46,14 @@ function doSetup() {
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
     local version="${ECLIPSE_VERSION:-2021-12}"
-    if [ -n "${JAVA_VERSION}" ]
+    local javaVersion="${EXTRA_JAVA_VERSION}"
+    if [ -z "${javaVersion}" ]
     then
-      doVersionCompare "${JAVA_VERSION}" "11u0"
+      javaVersion="${JAVA_VERSION}"
+    fi
+    if [ -n "${javaVersion}" ]
+    then
+      doVersionCompare "${javaVersion}" "11u0"
       if [ "${?}" == 2 ]
       then
         # Java version is lower than 11
@@ -56,7 +61,7 @@ function doSetup() {
         if [ "${?}" != 2 ]
         then
           # Eclipse version is >= 2020-09
-          doWarning "You are using eclipse version ${version} that requires Java 11 or newer.\nHowever, JAVA_VERSION is ${JAVA_VERSION} - in this setup eclipse can not work. Please update JAVA_VERSION in your settings/devon.properties!"
+          doConfirmWarning "You are using eclipse version ${version} that requires Java 11 or newer.\nHowever, [EXTRA_]JAVA_VERSION is ${javaVersion} - in this setup eclipse can not work.\nPlease update JAVA_VERSION, set EXTRA_JAVA_VERSION or downgrade ECLIPSE_VERSION in your settings/devon.properties!"
         fi
       fi
     fi
@@ -76,7 +81,7 @@ function doSetup() {
   then
     doFail "Eclipse binary is not available in ${ECLIPSE_HOME}"
   fi
-  if [ "${1}" != "silent" ] && ! isQuiet
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
     if [ ! -e "${eclipseproduct}" ]
@@ -215,10 +220,10 @@ function doStartEclipse() {
   if doIsWindows
   then
     # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
   else
     # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
   fi
 }
 
@@ -247,7 +252,7 @@ function doImportEclipse() {
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
 # CLI
@@ -268,6 +273,11 @@ then
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
+ECLIPSE_JAVA_HOME="${JAVA_HOME}"
+if [ -n "${EXTRA_JAVA_VERSION}" ]
+then
+  ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+fi
 if [ -z "${1}" ]
 then
   doSetup silent

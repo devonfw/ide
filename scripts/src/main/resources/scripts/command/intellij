@@ -75,6 +75,7 @@ function doAddPlugins() {
 }
 
 function doAddPlugin() {
+  local pluginId="${1}"
   local intellij_build
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local filename
@@ -92,11 +93,11 @@ function doAddPlugin() {
 
   if [ -n "${1}" ] && [ -n "${intellij_build}" ]
   then
-    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${1}&build=${intellij_build}"
+    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
     filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
     filename="${filename##*/}"
     filename="${filename%%\?*}"
-    doDownload "${download_url}" "${filename}" "${download_dir}"
+    doDownload "${download_url}" "${download_dir}" "intellij-plugin-${intellij_build}-${pluginId}" "" "" "" "" "" "" "${filename}"
     if [ "${filename##*.}" = "zip" ]
     then
       local extract_name=${filename%.*}
@@ -132,6 +133,11 @@ function doConfigureIntellij() {
 
 function doStartIntellij() {
   doConfigureIntellij "-u"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
+  then
+    JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+    doExtendPath "${JAVA_HOME}"
+  fi
   echo "launching IntelliJ..."
   local IDEA="${IDEA_HOME}/bin/idea64.exe"
   if [ ! -f "${IDEA}" ];
