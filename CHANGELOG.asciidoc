@@ -2,6 +2,15 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2021.12.004
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/678[#678]: Support extra Java for IDEs via EXTRA_JAVA_VERSION
+* https://github.com/devonfw/ide/issues/680[#680]: Intellij Plugin installation broken
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/25?closed=1[milestone 2021.12.004].
+
 == 2021.12.003
 
 Update with the following bugfixes and improvements:
