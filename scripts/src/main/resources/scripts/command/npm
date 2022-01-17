@@ -33,9 +33,8 @@ function doSetup() {
       doEcho "Version ${installed_version} of npm is already installed at ${NPM_CMD}"
     fi
   else
-    local download_url="https://registry.npmjs.org/npm/-/npm-${software_version}.tgz"
     local software_dir="${NODE_HOME}/node_modules/npm"
-    doInstall "${download_url}" "${software_dir}" "npm" "${software_version}"
+    doInstall "-" "${software_dir}" "npm" "${software_version}"
     if [ -f "${NODE_HOME}/npm" ]
     then 
       rm "${NODE_HOME}/npm"
