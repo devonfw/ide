@@ -926,8 +926,9 @@ function doUpgradeMavenArtifact() {
   fi
   url="${url}/${artifact_id}"
   local repository="${DEVON_SOFTWARE_REPOSITORY}"
-  if [ "${current_version}" = "0" ]
+  if [ "${current_version}" = "0" ] && ! doIsForce
   then
+    echo "Current version of ${artifact_id} is 0. Update is aborted. Use force (-f) to enforce update."
     return 1
   fi
   doEcho "*** Software Update of ${artifact_id} ***"
@@ -938,7 +939,7 @@ function doUpgradeMavenArtifact() {
     target_version="${LATEST_VERSION}"
     repository="-"
   fi
-  if [ -n "${current_version}" ]
+  if [ -n "${current_version}" ] && [ "${current_version}" != "0" ]
   then
     doVersionCompare "${target_version}" "${current_version}"
     result=${?}
