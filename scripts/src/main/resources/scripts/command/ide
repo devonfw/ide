@@ -57,7 +57,8 @@ function doUpdateScripts() {
       then
         cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
       fi
-      doFail "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      doWarning "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      exit 0
     fi
   fi
 }
