@@ -24,9 +24,30 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-  if [ "${1}" != "silent" ] || [ ! -d "${JAVA_HOME}" ]
+  local version="${JAVA_VERSION:-11.0.13_8}"
+  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software" "Java"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
   then
-    local version="${JAVA_VERSION:-11.0.13_8}"
+    if [ "${EXTRA_JAVA_VERSION}" = "${version}" ]
+    then
+      doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
+    fi
+    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra" "extra-Java"
+  fi
+}
+
+# $1: mode (e.g. 'silent')
+# $2: version
+# $3: software path
+# $4: label (e.g. 'extra Java')
+function doSetupJava() {
+  local mode="${1}"
+  local version="${2}"
+  local path="${3}"
+  local javaLabel="${4}"
+  local javaHome="${path}/java"
+  if [ "${mode}" != "silent" ] || [ ! -d "${javaHome}" ]
+  then
     local code
     if [ "${version:0:1}" = "8" ]
     then
@@ -34,20 +55,24 @@ function doSetup() {
     else
       code="jdk-${version/_/%2B}"
     fi
-    doInstall "-" "${JAVA_HOME}" "java" "${version}" "" "${code}"
-    if [ ! -d "${DEVON_IDE_HOME}/software/java/bin" ] && doIsMacOs && [ -d "${DEVON_IDE_HOME}/software/java/Contents" ]
+    doInstall "-" "${javaHome}" "java" "${version}" "" "${code}"
+    if [ ! -d "${javaHome}/bin" ] && doIsMacOs && [ -d "${javaHome}/Contents" ]
     then
-      doEcho "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "rm -rf '${DEVON_IDE_HOME}/software/jdk'"
-      doRunCommand "mv '${DEVON_IDE_HOME}/software/java' '${DEVON_IDE_HOME}/software/jdk'"
-      doRunCommand "ln -sf 'jdk/Contents/Home' '${DEVON_IDE_HOME}/software/java'"
-      doRunCommand "cp '${DEVON_IDE_HOME}/software/jdk/.devon.software.version' '${DEVON_IDE_HOME}/software/java'"
+      doEcho "Creating symlink as workaround for ${javaLabel} on MacOS"
+      local jdkHome="${path}/jdk"
+      doRunCommand "rm -rf '${jdkHome}'"
+      doRunCommand "mv '${javaHome}' '${jdkHome}'"
+      doRunCommand "ln -sf 'jdk/Contents/Home' '${javaHome}'"
+      doRunCommand "cp '${jdkHome}/.devon.software.version' '${javaHome}'"
     fi
-    doExtendPath "${JAVA_HOME}"
+    if [ "${javaHome}" = "${JAVA_HOME}" ]
+    then
+      doExtendPath "${JAVA_HOME}"
+    fi
   fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
+  if [ "${mode}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${JAVA_HOME}/bin/java' -version" "verify installation of Java"
+    doRunCommand "'${javaHome}/bin/java' -version" "verify installation of ${javaLabel}"
   fi
 }
 

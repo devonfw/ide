@@ -16,13 +16,46 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ ! -x "${NPM_CMD}" ]
+  local software_version=${NPM_VERSION}
+  local installed_version
+  if [ -x "${NPM_CMD}" ]
   then
+    installed_version=$(${NPM_CMD} -version)
+  else 
     doDevonCommand node setup silent
-  elif [ "${1}" != "silent" ]
-  then
-    doEcho "npm is already installed at ${NPM_CMD}"
+    installed_version=$(${NPM_CMD} -version)
   fi
+
+  if [ -z "${software_version}" ] || [ "${installed_version}" == "${software_version}" ] 
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Version ${installed_version} of npm is already installed at ${NPM_CMD}"
+    fi
+  else
+    local software_dir="${NODE_HOME}/node_modules/npm"
+    doInstall "-" "${software_dir}" "npm" "${software_version}"
+    if [ -f "${NODE_HOME}/npm" ]
+    then 
+      rm "${NODE_HOME}/npm"
+    fi    
+    if [ -f "${NODE_HOME}/npm.cmd" ]
+    then 
+      rm "${NODE_HOME}/npm.cmd"
+    fi
+    if [ -f "${NODE_HOME}/npx" ]
+    then 
+      rm "${NODE_HOME}/npx"
+    fi    
+    if [ -f "${NODE_HOME}/npx.cmd" ]
+    then 
+      rm "${NODE_HOME}/npx.cmd"
+    fi
+    cp "${software_dir}/bin/npm" "${NODE_HOME}"
+    cp "${software_dir}/bin/npm.cmd" "${NODE_HOME}"
+    cp "${software_dir}/bin/npx" "${NODE_HOME}"
+    cp "${software_dir}/bin/npx.cmd" "${NODE_HOME}"
+  fi    
 }
 
 function doGetProjectVersion() {
@@ -92,6 +125,12 @@ then
   echo "Options:"
   exit
 fi
+
+if [ -z "${NODE_HOME}" ]
+then
+  NODE_HOME="${DEVON_IDE_HOME}/software/node"
+fi
+
 NPM_CMD="${DEVON_IDE_HOME}/software/node/npm"
 if [ ! -x "${NPM_CMD}" ]
 then
