@@ -2,6 +2,16 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2021.12.005
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/693[#693]: Docker isQuiet: command not found
+* https://github.com/devonfw/ide/pull/668[#668]: Bugfix for issue #667 - devon npm setup ignores a given version
+* https://github.com/devonfw/ide/pull/686[#686]: Improve UX for "devon ide update" on windows
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/26?closed=1[milestone 2021.12.005].
+
 == 2021.12.004
 
 Update with the following bugfixes and improvements:
