@@ -32,7 +32,7 @@ The `devonfw-ide` is designed to be *non-invasive* to your operating system and 
 * The `devon` alias is added to your shell config (`~/.bashrc` and `~/.zshrc`, search for `alias devon="source ~/.devon/devon"`).
 * On Windows the `devon.bat` command is copied to your home directory (`%USERPROFILE%\scripts\devon.bat`)
 * On Windows this `%USERPROFILE%\scripts` directory is added to the `PATH` of your user.
-* The `devonfw-ide` will download a third party software to your `~/Downloads` folder to reduce redundant storage.
+* The `devonfw-ide` will download a third party software to your `~/Downloads/devonfw-ide` folder to reduce redundant storage. You have to delete this folder manually as we do not want to be responsible for data-loss in case users manually put files here.
 
 == Testing SNAPSHOT releases
 
