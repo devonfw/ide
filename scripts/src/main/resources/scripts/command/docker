@@ -18,7 +18,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {  
   if doIsDockerInstalled 
   then
-    if [ "${1}" != "silent" ] && ! isQuiet
+    if [ "${1}" != "silent" ] && ! doIsQuiet
     then
       doEcho "docker is already installed at $(command -v docker)"
       docker version
