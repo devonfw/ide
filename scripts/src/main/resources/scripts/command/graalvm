@@ -51,8 +51,8 @@ function doSetup() {
 # Call GraalVM with specified arguments
 function doRun() {
   doSetup silent
-  command="${GRAALVM_HOME}/bin/${@}"
-  if [ -f $( echo "$command" | cut -d ' ' -f1 ) ]
+  command="${GRAALVM_HOME}/bin/$*"
+  if [ -f "$( echo "$command" | cut -d ' ' -f1 )" ]
   then
     ${command}
   else
