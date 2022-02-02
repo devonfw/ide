@@ -51,7 +51,7 @@ function doSetup() {
 # Call GraalVM with specified arguments
 function doRun() {
   doSetup silent
-  "${GRAALVM_HOME}"/bin/${@}
+  "${GRAALVM_HOME}"/bin/"${@}"
 }
 
 # CLI
