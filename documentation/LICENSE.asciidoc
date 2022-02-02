@@ -57,6 +57,7 @@ The following table shows the components that may be used. The column `inclusion
 |http://www.jasypt.org/[jasypt] |Optional|http://www.jasypt.org/license.html[ASL 2.0]
 |https://www.docker.com/[docker]|Optional|https://docs.docker.com/engine/#licensing[ASL 2.0] and https://www.docker.com/legal/docker-software-end-user-license-agreement[EULA]
 |https://kubernetes.io/[kubernetes]|Optional|https://github.com/kubernetes/kubernetes/blob/master/LICENSE[ASL 2.0]
+|https://www.graalvm.org/[GraalVM] |Optional|https://github.com/oracle/graal/blob/master/LICENSE[GPLv2]
 |=======================
 
 == Apache Software License - Version 2.0

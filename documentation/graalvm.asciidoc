@@ -1,0 +1,26 @@
+:toc:
+toc::[]
+
+= GraalVM
+
+The `graalvm` commandlet allows to install and use https://www.graalvm.org/[graalvm]. Calling `devon graalvm gu «args»` is more or less the same as calling `gu «args»` but with the benefit that the version of graalvm preferred by your project is used (and will be installed if not yet available).
+
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues please give us feedback so we can improve.
+
+The arguments (`devon graalvm «args»`) are explained by the following table:
+
+.Usage of `devon graalvm`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|`setup`                   |setup graalvm (install and verify), link:configuration.asciidoc[configurable] via `GRAAL_VERSION`
+|`«args»`                  |run graalvm with the given arguments (`«args»`)
+|=======================
+
+
+Please note that the `graalvm` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
