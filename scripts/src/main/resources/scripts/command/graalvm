@@ -51,7 +51,13 @@ function doSetup() {
 # Call GraalVM with specified arguments
 function doRun() {
   doSetup silent
-  "${GRAALVM_HOME}"/bin/"${@}"
+  command="${GRAALVM_HOME}/bin/${@}"
+  if [ -f $( echo "$command" | cut -d ' ' -f1 ) ]
+  then
+    ${command}
+  else
+    doFail "Command not found"
+  fi
 }
 
 # CLI
