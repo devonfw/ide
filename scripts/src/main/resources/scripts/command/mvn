@@ -23,8 +23,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    local version="$(doGetMavenVersion)"
-    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "" "" "-"
+    doInstall "-" "${MAVEN_HOME}" "maven" "$(doGetMavenVersion)" "" "" "-"
   fi
   if [ "${1}" != "silent" ]
   then
@@ -328,7 +327,7 @@ function doRunBuild() {
   then
     maven_arguments="-q ${maven_arguments}"
   fi
-  "${maven_cmd}" ${maven_arguments} "${@}"
+  "${maven_cmd}" "${maven_arguments}" "${@}"
   exit ${?}
 }
 
