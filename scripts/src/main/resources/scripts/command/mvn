@@ -14,12 +14,16 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
+function doGetMavenVersion() {
+  echo "${MAVEN_VERSION:-3.8.1}"
+}
+
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    local version=${MAVEN_VERSION:-3.8.1}
+    local version="$(doGetMavenVersion)"
     doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "" "" "-"
   fi
   if [ "${1}" != "silent" ]
@@ -303,6 +307,7 @@ function doCheckNoSnapshots() {
 
 function doRunBuild() {
   local maven_cmd="${MVN}"
+  local maven_arguments=""
   if [ -x mvnw ]
   then
     maven_cmd="./mvnw"
@@ -310,14 +315,21 @@ function doRunBuild() {
     doSetup silent
   fi
   doEcho "Running: ${maven_cmd} ${*}"
+  if [ -n "${MAVEN_ARGS}" ]
+  then
+    doVersionCompare "$(doGetMavenVersion)" "4.0"
+    if [ "${?}" == 2 ]
+    then
+      # Maven version is lower than 4.0 (3.x)
+	  maven_arguments="${MAVEN_ARGS}"
+	fi
+  fi
   if doIsQuiet
   then
-    "${maven_cmd}" -q "${@}"
-    exit ${?}
-  else
-    "${maven_cmd}" "${@}"
-    exit ${?}
+    maven_arguments="-q ${maven_arguments}"
   fi
+  "${maven_cmd}" ${maven_arguments} "${@}"
+  exit ${?}
 }
 
 # CLI
