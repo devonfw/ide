@@ -313,7 +313,6 @@ function doRunBuild() {
   else
     doSetup silent
   fi
-  doEcho "Running: ${maven_cmd} ${*}"
   if [ -n "${MAVEN_ARGS}" ]
   then
     doVersionCompare "$(doGetMavenVersion)" "4.0"
@@ -325,9 +324,21 @@ function doRunBuild() {
   fi
   if doIsQuiet
   then
-    maven_arguments="-q ${maven_arguments}"
+    if [ -n "${maven_arguments}" ]
+	then
+      maven_arguments="-q ${maven_arguments}"
+	else
+      maven_arguments="-q"
+	fi
   fi
-  "${maven_cmd}" "${maven_arguments}${@}"
+  if [ -n "${maven_arguments}" ]
+  then
+    doEcho "Running: ${maven_cmd} ${maven_arguments} ${*}"
+    "${maven_cmd}" "${maven_arguments}" "${@}"
+  else
+    doEcho "Running: ${maven_cmd} ${*}"
+    "${maven_cmd}" "${@}"
+  fi
   exit ${?}
 }
 
