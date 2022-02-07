@@ -44,7 +44,7 @@ function doSetup() {
     fi
     doInstall "-" "${installDir}" "graalvm" "${version}"
     echo -e "export GRAALVM_HOME=${GRAALVM_HOME}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
-    doExtendPath ${GRAALVM_HOME}
+    doExtendPath "${GRAALVM_HOME}"
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
@@ -76,6 +76,7 @@ function doRun() {
 
   if [ -f "${binary}" ]
   then
+    # shellcheck disable=SC2086
     "${binary}" ${subcommand}
   else
     doFail "Command not found"
