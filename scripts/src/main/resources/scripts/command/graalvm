@@ -47,18 +47,35 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${GRAALVM_HOME}/bin/java' -version" "verify installation of GraalVM"
+    local java_binary="${GRAALVM_HOME}/bin/java"
+    if [ ! -f "${java_binary}" ]
+    then
+      java_binary="${GRAALVM_HOME}/bin/java.exe"
+    fi
+    doRunCommand "'${java_binary}' -version" "verify installation of GraalVM"
   fi
-  export GRAALVM_HOME="{$GRAALVM_HOME}"
+  export GRAALVM_HOME="$GRAALVM_HOME"
 }
 
 # Call GraalVM with specified arguments
 function doRun() {
   doSetup silent
-  command="${GRAALVM_HOME}/bin/$*"
-  if [ -f "$( echo "$command" | cut -d ' ' -f1 )" ]
+  command="$GRAALVM_HOME/bin/$*"
+  local binary=${command%% *}
+  local subcommand=${command/"$binary"/}
+  if [ -f "${binary}" ]
   then
-    ${command}
+    binary=${binary}
+  elif [ -f "${binary}.exe" ]
+  then
+    binary=${binary}".exe"
+  else
+    binary=${binary}".cmd"
+  fi
+
+  if [ -f "${binary}" ]
+  then
+    "${binary}" ${subcommand}
   else
     doFail "Command not found"
   fi
