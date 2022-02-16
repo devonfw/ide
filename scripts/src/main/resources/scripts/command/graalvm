@@ -44,7 +44,6 @@ function doSetup() {
     fi
     doInstall "-" "${installDir}" "graalvm" "${version}"
     echo -e "export GRAALVM_HOME=${GRAALVM_HOME}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
-    doExtendPath "${GRAALVM_HOME}"
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
@@ -55,7 +54,6 @@ function doSetup() {
     fi
     doRunCommand "'${java_binary}' -version" "verify installation of GraalVM"
   fi
-  export GRAALVM_HOME
 }
 
 # Call GraalVM with specified arguments
