@@ -18,7 +18,7 @@ The arguments (`devon graalvm «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|`setup`                   |setup graalvm (install and verify), link:configuration.asciidoc[configurable] via `GRAAL_VERSION`
+|`setup`                   |setup graalvm (install and verify), link:configuration.asciidoc[configurable] via `GRAALVM_VERSION`
 |`«args»`                  |run graalvm with the given arguments (`«args»`)
 |=======================
 

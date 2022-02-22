@@ -19,15 +19,15 @@ function doSetup() {
   installDir="${DEVON_IDE_HOME}/software/extra/graalvm"
   if doIsMacOs
   then
-    GRAALVM_HOME="${DEVON_IDE_HOME}/software/extra/graalvm/Contents/Home"
+    GRAALVM_HOME="${installDir}/Contents/Home"
   else
     GRAALVM_HOME="${installDir}"
   fi
 
   doDevonCommand java setup silent
-  if [ ! -d "${installDir}" ]
+  if [ "${1}" != "silent" ] || [ ! -d "${installDir}" ]
   then
-    local version="${GRAAL_VERSION:-22.0.0.2}"
+    local version="${GRAALVM_VERSION:-22.0.0.2}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then
@@ -43,8 +43,14 @@ function doSetup() {
       fi
     fi
     doInstall "-" "${installDir}" "graalvm" "${version}"
-    echo -e "export GRAALVM_HOME=${GRAALVM_HOME}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+
+    graalvm_export="export GRAALVM_HOME=${GRAALVM_HOME}"
+    if ! grep -q "${graalvm_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
+    then
+      echo -e "\n${graalvm_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+    fi
   fi
+
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     local java_binary="${GRAALVM_HOME}/bin/java"
