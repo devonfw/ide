@@ -51,7 +51,7 @@ function doSetup() {
     if [ -z "$TERRAFORM_VERSION" ]
     then
       doEcho "Getting latest release..."
-      TERRAFORM_VERSION=`curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | awk -F "," '/version/ {print $2}' | awk -F ":" '{print $2}'|sed 's/"//g'`
+      TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | awk -F "," '/version/ {print $2}' | awk -F ":" '{print $2}'|sed 's/"//g')
     fi
 
     doInstall "-" "$TERRAFORM_HOME" "terraform" "${TERRAFORM_VERSION}"
