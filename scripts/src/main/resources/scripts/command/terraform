@@ -15,7 +15,6 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 # Check if terraform is installed.
-#
 function doIsTerraformInstalled() {
   if command -v terraform &> /dev/null
   then 
@@ -27,7 +26,7 @@ function doIsTerraformInstalled() {
 
 # Call Terraform with specified arguments.
 function doRun() {
-  doEcho "Running: terraform ${*}"
+  doSetup silent
   terraform "${@}"
 }
 
@@ -35,26 +34,27 @@ function doSetup() {
 
   if doIsTerraformInstalled 
   then
-    doEcho "terraform is already installed at $(command -v terraform)"
-    terraform version
-    echo
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then 
+      terraform version
+      echo
+    fi 
   else
-      # Check if TERRAFORM_HOME is already set
-    #
-    if [ -z "$TERRAFORM_HOME" ]
+    # Check if TERRAFORM_HOME is already set
+    if [ -z "${TERRAFORM_HOME}" ]
     then
       doEcho "set TERRAFORM_HOME..."
-      export TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
+      TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
     fi
 
-    # get leatest release
-    if [ -z "$TERRAFORM_VERSION" ]
+    # Get leatest release
+    if [ -z "${TERRAFORM_VERSION}" ]
     then
       doEcho "Getting latest release..."
-      TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | awk -F "," '/version/ {print $2}' | awk -F ":" '{print $2}'|sed 's/"//g')
+      TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | sed 's/v//')
     fi
 
-    doInstall "-" "$TERRAFORM_HOME" "terraform" "${TERRAFORM_VERSION}"
+    doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
     terraform -install-autocomplete
   fi
 }
@@ -71,16 +71,10 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
+  doEcho "Installating Terraform..."
   doSetup
 ;;
 *)
-  if doIsTerraformInstalled 
-  then
-    doRun "${@}"
-  else
-    doEcho "terraform is not installed, installing..."
-    doSetup
-    doRun "${@}"
-  fi
+  doRun "${@}"
 ;;
 esac
