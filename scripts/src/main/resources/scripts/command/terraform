@@ -37,13 +37,11 @@ function doSetup() {
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then 
       terraform version
-      echo
     fi 
   else
     # Check if TERRAFORM_HOME is already set
     if [ -z "${TERRAFORM_HOME}" ]
     then
-      doEcho "set TERRAFORM_HOME..."
       TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
     fi
 
