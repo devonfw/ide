@@ -37,16 +37,11 @@ function doSetup() {
     else
       doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
-    local ts="${version}"
-    if [ "${ts}" = "stable" ]
-    then
-      ts="$(date +%Y-%m)"
-    fi
     doDownload "-" "" "docker" "${version}" "" "${code}"
     if doIsWindows
     then
       doEcho "Installating Docker Desktop for Windows..."
-      doRunCommand "${DEVON_DOWNLOAD_DIR}/${filename}"
+      doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
     elif doIsMacOs
     then
       doEcho "Installating Docker Desktop for MacOS..."
