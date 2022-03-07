@@ -16,6 +16,8 @@ The arguments (`devon java «args»`) are explained by the following table:
 |`cicd «args»`                       |generate cicd files for the current devon4java project
 |=======================
 
+Since `2021.12.003` an extra version of Java can be configured via `EXTRA_JAVA_VERSION` link:variables.asciidoc[variable]. This can be used to launch your IDE with a different (newer) version of Java but keeping the build of your project stable.
+
 == create
 You can choose to create a Spring or Quarkus application with the create command.
 ```

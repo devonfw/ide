@@ -16,21 +16,22 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  local version=${YARN_VERSION:-latest}
+  local version="${YARN_VERSION:-latest}"
   local installed_version
   if command -v yarn &> /dev/null
   then
-    installed_version=$(yarn -version)
+    installed_version="$(yarn -version)"
   fi
 
-  if [ "$installed_version" == "$version" ] 
+  if [ "${installed_version}" == "${version}" ] 
   then
-    if [ -n "${1}" ]
+    if [ "${1}" != "silent" ]
     then
       doEcho "Version ${installed_version} of yarn is already installed at $(command -v yarn)"
     fi
-  else
-    doDevonCommand npm -q setup
+  elif [ "${1}" != "silent" ] || [ "${version}" != "latest" ]
+  then
+    doDevonCommand npm setup silent
     if command -v npm &> /dev/null
     then
       doRunCommand "npm install -g yarn@${version}"
@@ -72,7 +73,7 @@ function doCheckTopLevelProject() {
 }
 
 function doRunBuild() {
-  doSetup
+  doSetup silent
   doEcho "Running: yarn ${*}"
   if doIsQuiet
   then
@@ -123,7 +124,7 @@ then
   fi
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "get-version" ]
 then
   doGetProjectVersion

@@ -57,7 +57,8 @@ function doUpdateScripts() {
       then
         cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
       fi
-      doFail "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      doWarning "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      exit 0
     fi
   fi
 }
@@ -316,12 +317,27 @@ function doUpdateProjects() {
 
 function doUpdateSoftware() {
   local tool
-  for tool in "${DEVON_IDE_TOOLS[@]}"
-  do
-    doEcho "\n*** Setting up ${tool} ***"
-    doDevonCommand "${tool}" setup
-  done
-  default_repo=
+  local tool_path
+  if [ -d "${DEVON_IDE_HOME}/software" ]
+  then
+    for tool_path in "${DEVON_IDE_HOME}/software"/*
+    do
+      tool="${tool_path/*\//}"
+      if [ "${tool}" == "maven" ]
+      then
+        tool="mvn"
+      elif [ "${tool}" == "sonarqube" ]
+      then
+        tool="sonar"
+      fi
+      if [ -d "${tool_path}" ] && [ -e "${DEVON_IDE_HOME}/scripts/command/${tool}" ]
+      then
+        doEcho "\n*** Setting up ${tool} ***"
+        doDevonCommand "${tool}" setup
+      fi
+    done
+  fi
+  local default_repo=""
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do
     software="${tool%%:*}"
@@ -333,10 +349,10 @@ function doUpdateSoftware() {
       then
         doEcho "\n*** Setting up ${software} ***"
         tool="${tool#*:}"
-        arch=""
+        local os=""
         if [ "${tool:0:4}" = "all:" ]
         then
-          arch="-"
+          os="-"
           tool="${tool:4}"
         fi
         repo="${tool}"
@@ -354,8 +370,24 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+        doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
       fi
+    fi
+  done
+  for tool in "${DEVON_IDE_TOOLS[@]}"
+  do
+    tool_path="${DEVON_IDE_HOME}/software/${tool}"
+    if [ "${tool}" == "maven" ]
+    then
+      tool_path="${DEVON_IDE_HOME}/software/mvn"
+    elif [ "${tool}" == "sonar" ]
+    then
+      tool_path="${DEVON_IDE_HOME}/software/sonarqube"
+    fi
+    if [ ! -d "${tool_path}" ]
+    then
+      doEcho "\n*** Setting up ${tool} ***"
+      doDevonCommand "${tool}" setup
     fi
   done
 }

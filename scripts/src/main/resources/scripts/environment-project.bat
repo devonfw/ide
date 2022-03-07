@@ -34,14 +34,16 @@ if not exist "%SETTINGS_PATH%" (
 )
 setlocal EnableDelayedExpansion
 for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
-  if exist "%SOFTWARE_PATH%\%%i\bin" (
-    set "IDE_PATH=%SOFTWARE_PATH%\%%i\bin;!IDE_PATH!"
-  ) else (
-    set "IDE_PATH=%SOFTWARE_PATH%\%%i;!IDE_PATH!"
-  )
-  rem Load custom configuration of software
-  if exist "%SOFTWARE_PATH%\%%i\ide-config.bat" (
-    call "%SOFTWARE_PATH%\%%i\ide-config.bat"
+  if not "%%i" == "extra" (
+    if exist "%SOFTWARE_PATH%\%%i\bin" (
+      set "IDE_PATH=%SOFTWARE_PATH%\%%i\bin;!IDE_PATH!"
+    ) else (
+      set "IDE_PATH=%SOFTWARE_PATH%\%%i;!IDE_PATH!"
+    )
+    rem Load custom configuration of software
+    if exist "%SOFTWARE_PATH%\%%i\ide-config.bat" (
+      call "%SOFTWARE_PATH%\%%i\ide-config.bat"
+    )
   )
 )
 (

@@ -14,15 +14,18 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
+function doGetMavenVersion() {
+  echo "${MAVEN_VERSION:-3.8.1}"
+}
+
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
-  if [ -n "${1}" ] || [ ! -d "${MAVEN_HOME}" ]
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    local version=${MAVEN_VERSION:-3.8.1}
-    doInstall "-" "${MAVEN_HOME}" "maven" "${version}" "-"
+    doInstall "-" "${MAVEN_HOME}" "maven" "$(doGetMavenVersion)" "" "" "-"
   fi
-  if [ -n "${1}" ]
+  if [ "${1}" != "silent" ]
   then
     if [ -d "${SETTINGS_PATH}" ]
     then
@@ -68,7 +71,7 @@ function doSetup() {
       echo "Please run the following command to fix:"
       echo "devon setup"
     fi
-    if ! doIsQuiet
+    if [ "${1}" != "silent" ] && ! doIsQuiet
     then
       doRunCommand "'${MVN}' -v" "verify installation of maven"
     fi
@@ -77,7 +80,7 @@ function doSetup() {
 
 # $@: optional maven arguments
 function doGetProjectVersion() {
-  doSetup
+  doSetup silent
   local maven_project_version
   if [ -e ".mvn/maven.config" ]
   then
@@ -212,7 +215,7 @@ function doSetPomVersion() {
       rm pom.xml.bak
     fi
   fi
-  doSetup
+  doSetup silent
   local maven_project_version
   # shellcheck disable=SC2016
   maven_project_version="$("${MVN}" -q org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version -DforceStdout)"
@@ -303,21 +306,40 @@ function doCheckNoSnapshots() {
 
 function doRunBuild() {
   local maven_cmd="${MVN}"
+  local maven_arguments=""
   if [ -x mvnw ]
   then
     maven_cmd="./mvnw"
   else
-    doSetup
+    doSetup silent
   fi
-  doEcho "Running: ${maven_cmd} ${*}"
+  if [ -n "${MAVEN_ARGS}" ]
+  then
+    doVersionCompare "$(doGetMavenVersion)" "4.0"
+    if [ "${?}" == 2 ]
+    then
+      # Maven version is lower than 4.0 (3.x)
+	  maven_arguments="${MAVEN_ARGS}"
+	fi
+  fi
   if doIsQuiet
   then
-    "${maven_cmd}" -q "${@}"
-    exit ${?}
-  else
-    "${maven_cmd}" "${@}"
-    exit ${?}
+    if [ -n "${maven_arguments}" ]
+	then
+      maven_arguments="-q ${maven_arguments}"
+	else
+      maven_arguments="-q"
+	fi
   fi
+  if [ -n "${maven_arguments}" ]
+  then
+    doEcho "Running: ${maven_cmd} ${maven_arguments} ${*}"
+    "${maven_cmd}" "${maven_arguments}" "${@}"
+  else
+    doEcho "Running: ${maven_cmd} ${*}"
+    "${maven_cmd}" "${@}"
+  fi
+  exit ${?}
 }
 
 # CLI
@@ -344,7 +366,7 @@ then
   doRunBuild ${MVN_BUILD_OPTS:-clean install}
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "get-version" ]
 then
   doGetProjectVersion

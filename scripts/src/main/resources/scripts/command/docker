@@ -18,30 +18,22 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {  
   if doIsDockerInstalled 
   then
-    doEcho "docker is already installed at $(command -v docker)"
-    docker version
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doEcho "docker is already installed at $(command -v docker)"
+      docker version
+    fi
   else
     doRequireNotBatch
     #Start setup
     local version="${DOCKER_VERSION:-stable}"
-    local os
-    local arch
-    local ext
     local code
-    local filename
-    arch="$(uname -m)"
-    if [ "${arch}" = "x86_64" ]
-    then
-      arch="amd64"
-    fi
     if doIsWindows
     then
       code="Docker%20Desktop%20Installer"
-      ext="exe"
     elif doIsMacOs
     then
       code="Docker"
-      ext="dmg"
     else
       doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
@@ -50,8 +42,7 @@ function doSetup() {
     then
       ts="$(date +%Y-%m)"
     fi
-    filename="${code//\%20/_}-${ts}.${ext}"
-    doDownload "-" "" "docker" "${version}" "${os}" "${arch}" "${ext}" "${code}" "${filename}"
+    doDownload "-" "" "docker" "${version}" "" "${code}"
     if doIsWindows
     then
       doEcho "Installating Docker Desktop for Windows..."
@@ -71,7 +62,7 @@ function doSetup() {
 
 # Call Docker with specified arguments.
 function doRun() {
-  doSetup
+  doSetup silent
   doEcho "Running: docker ${*}"
   docker "${@}"
 }
@@ -80,7 +71,7 @@ function doRun() {
 function doIsDockerInstalled() {
   if command -v docker &> /dev/null
   then 
-    doEcho "docker is already installed at $(command -v docker)"
+    return
   else
     return 255
   fi
@@ -97,7 +88,7 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
-  doSetup setup
+  doSetup setup "${2}"
 ;;
 *)
    doRun "${@}"
