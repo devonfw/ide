@@ -22,6 +22,8 @@ include::eclipse.asciidoc[leveloffset=3]
 
 include::gradle.asciidoc[leveloffset=3]
 
+include::helm.asciidoc[leveloffset=3]
+
 include::help.asciidoc[leveloffset=3]
 
 include::ide.asciidoc[leveloffset=3]

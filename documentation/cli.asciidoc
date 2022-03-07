@@ -55,6 +55,7 @@ The following commandlets are currently available:
 * link:docker.asciidoc[docker]
 * link:eclipse.asciidoc[eclipse]
 * link:gradle.asciidoc[gradle]
+* link:helm.asciidoc[helm]
 * link:help.asciidoc[help]
 * link:ide.asciidoc[ide]
 * link:intellij.asciidoc[intellij]
