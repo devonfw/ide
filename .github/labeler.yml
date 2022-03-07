@@ -14,7 +14,7 @@ documentation:
   - 'documentation/**/*'
 
 eclipse:
-  - any: ['eclipsef-m2e/**/*', 'eclipse']
+  - any: ['eclipse-m2e/**/*', 'eclipse']
 
 intellij:
   - 'intellij'
@@ -23,7 +23,7 @@ java:
   - 'java'
 
 javascript:
-  - any: ['node', 'npm', 'ng', yarn]
+  - any: ['node', 'npm', 'ng', 'yarn']
 
 npm:
   - 'npm'
