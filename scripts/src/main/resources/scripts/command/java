@@ -94,7 +94,7 @@ function doCreate() {
   fi
 
   local framework
-  local mavenArgs
+  local mavenargs
   local package
   local artifactId
   while [[ -n "${1}" ]]
@@ -134,11 +134,9 @@ function doCreate() {
     read -r -p "(Select a framework: 'quarkus' or 'spring'): " framework
   done
 
-  echo $framework
-
   if [[ "${framework}" = "quarkus" ]]
   then
-    startQuarkusProject ${dbtype}
+    startQuarkusProject "${dbtype}"
   elif [[ "${framework}" = "spring" ]]
   then
     if [[ -z "${package}" ]] && [[ -z "${mavenargs}"  ]]
@@ -146,7 +144,7 @@ function doCreate() {
       doEcho "No package or other parameter passed, we need at least a package to create a spring application more information https://devonfw.com/website/pages/docs/devonfw-guide_ide.wiki_cli.asciidoc.html#devonfw-guide_ide.wiki_java.asciidoc_create" 
       read -r -p "Pass a package and optional parameters as shown in the examples: " mavenargs
     fi
-    doMavenArchetype ${package} ${mavenargs} ${dbtype} ${artifactId}
+    doMavenArchetype "${package}" "${mavenargs}" "${dbtype}" "${artifactId}"
   fi
   exit ${?}
 }
@@ -167,15 +165,16 @@ function startQuarkusProject() {
     fi
   done
 
-  local artifact=$(echo "${url}" | grep -o 'a=[^\&]*')
+  local artifact="$(echo "${url}" | grep -o 'a=[^\&]*')"
   if [[ -z "${artifact}" ]]
   then 
     artifact="myapp"
     url="${url}&a=${artifact}"
   else
     artifact=${artifact:2}
-  fi  
-  local group=$(echo "${url}" | grep -o 'g=[^\&]*')
+  fi
+
+  local group="$(echo "${url}" | grep -o 'g=[^\&]*')"
   if [[ -z "${group}" ]]
   then 
     group="com.devonfw.quarkus"
@@ -186,7 +185,7 @@ function startQuarkusProject() {
 
   doEcho "Project will be created in workspaces/main folder"
   local database_arr=(postgresql mariadb mysql h2 mssql db2 derby oracle dynamodb mongodb redis)
-  local database_extensions_arr=(e=jdbc-postgresql e=jdbc-mariadb e=jdbc-mysql e=jdbc-h2 e=jdbc-mssql e=jdbc-db2 e=jdbc-derby e=jdbc-oracle e=amazon-dynamodb e=mongodb-client e=redis-client)
+  local database_extensions_arr=("e=jdbc-postgresql" "e=jdbc-mariadb" "e=jdbc-mysql" "e=jdbc-h2" "e=jdbc-mssql" "e=jdbc-db2" "e=jdbc-derby" "e=jdbc-oracle" "e=amazon-dynamodb" "e=mongodb-client" "e=redis-client")
   local database_extension
   if [[ -n "${1}" ]]
   then 
@@ -204,7 +203,7 @@ function startQuarkusProject() {
     doWarning "Dbtype ${1} is not supported, Project will be created regardless"
   fi
 
-  subst=`expr substr $url 25 ${#url}`
+  subst=$(expr substr $url 25 ${#url})
   url="https://code.quarkus.io/d${subst}"
 
   extractedFolderBasePath="${DEVON_IDE_HOME}/updates/extracted/${artifact}"
@@ -223,7 +222,7 @@ function startQuarkusProject() {
   rm "${DEVON_IDE_HOME}/updates/quarkus.zip"
 
   local groupIdFolders="${group//[.]/"/"}"
-  doCreateModernProjectStructure ${artifact} ${PWD} ${groupIdFolders}
+  doCreateModernProjectStructure "${artifact}" "${PWD}" "${groupIdFolders}"
   doMoveQuarkusFilesToModernStructure "${extractedFolderBasePath}/" "${PWD}/${artifact}/"
 
   ## cleanup
@@ -245,28 +244,28 @@ function doMoveQuarkusFilesToModernStructure() {
   restFiles=$(grep --with-filename '@Path' -r "${extractedFolderBasePath}/")
   if [[ -n $restFiles ]]
   then 
-    mv ${restFiles/:@Path*} "${PWD}/${artifact}/src/main/java/${groupIdFolders}/${artifact}/rest/v1"
+    mv "${restFiles/:@Path*}" "${PWD}/${artifact}/src/main/java/${groupIdFolders}/${artifact}/rest/v1"
   fi
 
-  testFiles=`eval find '${extractedFolderBasePath}/src/test/*' -type f`
+  testFiles=$(eval find '${extractedFolderBasePath}/src/test/*' -type f)
   if [[ -n $testFiles ]]
   then
     mkdir -p "${PWD}/${artifact}/test/java/${groupIdFolders}/${artifact}/rest/v1"
-    mv ${testFiles} "${PWD}/${artifact}/test/java/${groupIdFolders}/${artifact}/rest/v1" 
+    mv "${testFiles}" "${PWD}/${artifact}/test/java/${groupIdFolders}/${artifact}/rest/v1" 
   fi
 
-  projectFiles=`eval find "${extractedFolderBasePath}/" -maxdepth 1 -type f `
+  projectFiles=$(eval find "${extractedFolderBasePath}/" -maxdepth 1 -type f)
   if [[ -n $projectFiles ]]
   then 
-    mv ${projectFiles} "${DEVON_IDE_HOME}/updates/extracted/${artifact}/.mvn" "${PWD}/${artifact}/"
+    mv "${projectFiles}" "${DEVON_IDE_HOME}/updates/extracted/${artifact}/.mvn" "${PWD}/${artifact}/"
   fi
 
-  otherFiles=`eval find "${extractedFolderBasePath}/" -type f`
+  otherFiles=$(eval find "${extractedFolderBasePath}/" -type f)
   if [[ -n $otherFiles ]]
   then 
     mkdir -p "${PWD}/${artifact}/otherFiles"
     doEchoAttention "We have found some files provided by Quarkus that couldn't be assigned to our project structure, we moved them into otherFiles folder and you have to relocate them by yourself"
-    mv ${otherFiles} "${PWD}/${artifact}/otherFiles"
+    mv "${otherFiles}" "${PWD}/${artifact}/otherFiles"
   fi
 }
 
