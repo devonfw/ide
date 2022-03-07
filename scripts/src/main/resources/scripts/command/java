@@ -205,6 +205,9 @@ function startQuarkusProject() {
     doWarning "Dbtype ${1} is not supported, Project will be created regardless"
   fi
 
+  subst=$(echo "$url" | cut -d '/' -f 4)
+  url="https://code.quarkus.io/d${subst}"
+
   extractedFolderBasePath="${DEVON_IDE_HOME}/updates/extracted/${artifact}"
   if [[ -d "${artifact}" ]]
   then 
