@@ -165,7 +165,8 @@ function startQuarkusProject() {
     fi
   done
 
-  local artifact="$(echo "${url}" | grep -o 'a=[^\&]*')"
+  local artifact
+  artifact="$(echo "${url}" | grep -o 'a=[^\&]*')"
   if [[ -z "${artifact}" ]]
   then 
     artifact="myapp"
@@ -174,7 +175,8 @@ function startQuarkusProject() {
     artifact=${artifact:2}
   fi
 
-  local group="$(echo "${url}" | grep -o 'g=[^\&]*')"
+  local group
+  group="$(echo "${url}" | grep -o 'g=[^\&]*')"
   if [[ -z "${group}" ]]
   then 
     group="com.devonfw.quarkus"
@@ -202,9 +204,6 @@ function startQuarkusProject() {
   then 
     doWarning "Dbtype ${1} is not supported, Project will be created regardless"
   fi
-
-  subst=$(expr substr $url 25 ${#url})
-  url="https://code.quarkus.io/d${subst}"
 
   extractedFolderBasePath="${DEVON_IDE_HOME}/updates/extracted/${artifact}"
   if [[ -d "${artifact}" ]]
