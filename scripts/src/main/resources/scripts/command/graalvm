@@ -65,26 +65,21 @@ function doSetup() {
 # Call GraalVM with specified arguments
 function doRun() {
   doSetup silent
-  command="$GRAALVM_HOME/bin/$*"
-  local binary=${command%% *}
-  local subcommand=${command/"$binary"/}
-  if [ -f "${binary}" ]
+  local binary="${GRAALVM_HOME}/bin/${1}"
+  shift
+  if [ ! -x "${binary}" ]
   then
-    binary=${binary}
-  elif [ -f "${binary}.exe" ]
-  then
-    binary=${binary}".exe"
-  else
-    binary=${binary}".cmd"
+    if [ -f "${binary}.exe" ]
+    then
+      binary=${binary}".exe"
+    fi
+    if [ -f "${binary}.cmd" ]
+    then
+      binary=${binary}".cmd"
+    fi
   fi
 
-  if [ -f "${binary}" ]
-  then
-    # shellcheck disable=SC2086
-    "${binary}" ${subcommand}
-  else
-    doFail "Command not found"
-  fi
+  doRunCommand "${binary} ${*}"
 }
 
 # CLI
