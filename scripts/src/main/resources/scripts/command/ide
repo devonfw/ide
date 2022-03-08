@@ -320,7 +320,7 @@ function doUpdateSoftware() {
   local tool_path
   if [ -d "${DEVON_IDE_HOME}/software" ]
   then
-    for tool_path in "${DEVON_IDE_HOME}/software"/*
+    for tool_path in "${DEVON_IDE_HOME}/software"/* "${DEVON_IDE_HOME}/software/extra/graalvm"
     do
       tool="${tool_path/*\//}"
       if [ "${tool}" == "maven" ]
@@ -377,14 +377,14 @@ function doUpdateSoftware() {
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     tool_path="${DEVON_IDE_HOME}/software/${tool}"
-    if [ "${tool}" == "maven" ]
+    if [ "${tool}" == "mvn" ]
     then
-      tool_path="${DEVON_IDE_HOME}/software/mvn"
+      tool_path="${DEVON_IDE_HOME}/software/maven"
     elif [ "${tool}" == "sonar" ]
     then
       tool_path="${DEVON_IDE_HOME}/software/sonarqube"
     fi
-    if [ ! -d "${tool_path}" ]
+    if [ ! -d "${tool_path}" ] && [ ! -d "${DEVON_IDE_HOME}/software/extra/graalvm" ]
     then
       doEcho "\n*** Setting up ${tool} ***"
       doDevonCommand "${tool}" setup
