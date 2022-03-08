@@ -22,7 +22,7 @@ function doRun() {
 
 function doSetup() {
 
-  if $(command -v terraform &> /dev/null) 
+  if command -v terraform &> /dev/null 
   then
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then 
