@@ -14,16 +14,6 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-# Check if terraform is installed.
-function doIsTerraformInstalled() {
-  if command -v terraform &> /dev/null
-  then 
-    return
-  else
-    return 255
-  fi
-}
-
 # Call Terraform with specified arguments.
 function doRun() {
   doSetup silent
@@ -32,7 +22,7 @@ function doRun() {
 
 function doSetup() {
 
-  if doIsTerraformInstalled 
+  if $(command -v terraform &> /dev/null) 
   then
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then 
