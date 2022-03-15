@@ -306,7 +306,7 @@ function doCheckNoSnapshots() {
 
 function doRunBuild() {
   local maven_cmd="${MVN}"
-  local maven_arguments=""
+  local maven_arguments="--settings=${DEVON_IDE_HOME}/conf/.m2/settings.xml"
   if [ -x mvnw ]
   then
     maven_cmd="./mvnw"
@@ -319,17 +319,17 @@ function doRunBuild() {
     if [ "${?}" == 2 ]
     then
       # Maven version is lower than 4.0 (3.x)
-	  maven_arguments="${MAVEN_ARGS}"
-	fi
+	    maven_arguments="${MAVEN_ARGS}"
+	  fi
   fi
   if doIsQuiet
   then
     if [ -n "${maven_arguments}" ]
-	then
-      maven_arguments="-q ${maven_arguments}"
-	else
-      maven_arguments="-q"
-	fi
+    then
+        maven_arguments="-q ${maven_arguments}"
+    else
+        maven_arguments="-q"
+    fi
   fi
   if [ -n "${maven_arguments}" ]
   then
