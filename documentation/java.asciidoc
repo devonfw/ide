@@ -78,7 +78,7 @@ devon java create -f quarkus
 ```
 You have to pass a https://code.quarkus.io/ link with the project information to the command line. The package, artifactId, and the project version should be set in Quarkus project configurator.
 ```
-devon java create -f quarkus -Ddbtype=postgresql
+devon java create -f quarkus -DdbType=postgresql
 ```
 Will create an app where a PostgreSQL JDBC driver is included.
 
