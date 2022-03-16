@@ -30,58 +30,49 @@ Choosing the framework can be done with
 -f spring or -framework quarkus
 ```
 
-=== Spring 
+=== Spring
+To create a new devon4j application using spring, you should add the argument option `-f spring` to make this explicit.
 Examples for create a new devon4j spring application:
-```
-devon java create -f spring
-```
-Will create a Spring app, the user has to pass at least a package name in the creation process.
 
-```
-devon java create com.example.domain.myapp
-```
 ```
 devon java create -f spring com.example.domain.myapp 
 ```
 Will both create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 ```
-devon java create -Dversion=0.0.1-alpha1 com.example.domain.myapp
+devon java create -f spring -Dversion=0.0.1-alpha1 com.example.domain.myapp
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `0.0.1-alpha1`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp com.example.group
+devon java create -f spring com.example.domain.myapp com.example.group
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp com.example.group demo-app
+devon java create -f spring com.example.domain.myapp com.example.group demo-app
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp -DartifactId=demo-app -DdbType=hana
+devon java create -f spring com.example.domain.myapp -DartifactId=demo-app -DdbType=hana
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and SAP hana database.
 
 ```
-devon java create com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
+devon java create -f spring com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
 ```
 Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
 
-The -f parameter can be added to every command.
+=== Quarkus
+To create a new devon4j application using Quarkus, you have to add the argument option `-f quarkus` to make this explicit.
+Further, you have to pass a https://code.quarkus.io/ link with the project information to the command line.
+The package, artifactId, and the project version should be set in Quarkus project configurator.
 
-=== Quarkus 
 Examples for creating a new devon4j Quarkus application:
-```
-devon java create -f quarkus
-```
-You have to pass a https://code.quarkus.io/ link with the project information to the command line. The package, artifactId, and the project version should be set in Quarkus project configurator.
 ```
 devon java create -f quarkus -DdbType=postgresql
 ```
 Will create an app where a PostgreSQL JDBC driver is included.
-
 
 == migrate
 Example for migrating a devon4j application:
