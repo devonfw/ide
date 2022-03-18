@@ -1162,9 +1162,9 @@ function doInstall() {
   then
     doEcho "Creating symlink as workaround for ${software} on MacOS"
     local target_software_macos=${target_path%\/*}/macos
-    if [ ! -d ${target_software_macos} ]
+    if [ ! -d "${target_software_macos}" ]
     then
-      mkdir -p ${target_software_macos}
+      mkdir -p "${target_software_macos}"
     fi
     local target_software_software=${target_software_macos}/${dir}
     doRunCommand "rm -rf '${target_software_software}'"
