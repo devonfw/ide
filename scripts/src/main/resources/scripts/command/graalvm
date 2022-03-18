@@ -17,12 +17,7 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {
   installDir="${DEVON_IDE_HOME}/software/extra/graalvm"
-  if doIsMacOs
-  then
-    GRAALVM_HOME="${installDir}/Contents/Home"
-  else
-    GRAALVM_HOME="${installDir}"
-  fi
+  GRAALVM_HOME="${installDir}"
 
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${installDir}" ]
