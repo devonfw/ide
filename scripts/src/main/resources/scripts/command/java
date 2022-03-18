@@ -94,31 +94,11 @@ function doCreate() {
   fi
 
   local framework
-  local mavenargs
-  local package
-  local artifactId
-  while [[ -n "${1}" ]]
-  do
-    if [[ "${1}" == "-f" ]] || [[ "${1}" == "-framework" ]]  
-    then
-      framework=${2}
-      shift
-    elif [[ "${1:0:8}" == "-DdbType" ]]
-    then 
-      dbtype=${1:9}
-    elif [[ "${1:0:2}" == "-D" ]]
-    then
-      mavenargs="${mavenargs} ${1}"
-    elif [[ "${1}" =~ [a-z]+[.][a-z]+([.][a-z]+)* ]]
-    then 
-      package="${package} ${1}"
-    elif [[ "${1}" =~ [^.]* ]]
-    then
-      ## some better definition for a artifactID TODO
-      artifactId+=${1}
-    fi
+  if [[ "${1}" == "-f" ]] || [[ "${1}" == "-framework" ]]  
+  then
+    framework=${2}
     shift
-  done
+  fi
 
   while [[ -z "${framework}" ]] || [[ "${framework}" != "spring" ]] && [[ "${framework}" != "quarkus" ]]
   do
@@ -136,29 +116,33 @@ function doCreate() {
 
   if [[ "${framework}" = "quarkus" ]]
   then
+    local dbtype
+    while [ -n "${1}" ]
+    do
+      if [[ "${1:0:8}" == "-DdbType" ]]
+      then
+        dbtype=${1:9}
+      fi
+      shift
+    done
     startQuarkusProject "${dbtype}"
   elif [[ "${framework}" = "spring" ]]
   then
-    if [[ -z "${package}" ]] && [[ -z "${mavenargs}"  ]]
-    then 
-      doEcho "No package or other parameter passed, we need at least a package to create a spring application more information https://devonfw.com/website/pages/docs/devonfw-guide_ide.wiki_cli.asciidoc.html#devonfw-guide_ide.wiki_java.asciidoc_create" 
-      read -r -p "Pass a package and optional parameters as shown in the examples: " mavenargs
-    fi
-    doMavenArchetype "${package}" "${mavenargs}" "${dbtype}" "${artifactId}"
+    doMavenArchetype "${@}"
   fi
   exit ${?}
 }
 
-# dbtype
+#1 dbtype
 function startQuarkusProject() {
   local message='\nPlease select your preferred extensions and set the project group-, artifactId-, and version
-  on the opened site https://code.quarkus.io/ or just press return to use a configured project from our 
-  templates guides with some extensions that we recommend to start with \n' 
+on the opened site https://code.quarkus.io/ or just press return to use a configured project from our 
+templates guides with some extensions that we recommend to start with \n' 
   while [[ ! "$url" =~ ^https://code.quarkus.io/.* ]]
   do
     doEchoAttention -e "$message"
-    #doOpen "https://code.quarkus.io/"
-    read -r -p "(Copy the url and paste it here) The url has to start like this:https://code.quarkus.io/... or just press return to use our simple REST API template project" url
+    doOpen "https://code.quarkus.io/"
+    read -rep $'(Copy the url and paste it here or just press return)\n' url
     if [[  -z "${url}" ]]
     then 
       url="https://code.quarkus.io/?g=com.devonfw.quarkus&e=resteasy&e=resteasy-jackson&e=hibernate-validator&e=hibernate-orm"
@@ -203,7 +187,7 @@ function startQuarkusProject() {
   fi
   if [[ -z "${database_extension}" ]] && [[ -n ${1} ]]
   then 
-    doWarning "Dbtype ${1} is not supported, Project will be created regardless"
+    doWarning "dbType ${1} is not supported, Project will be created regardless"
   fi
 
   subst=$(echo "$url" | cut -d '/' -f 4)
@@ -228,14 +212,13 @@ function startQuarkusProject() {
   doCreateModernProjectStructure "${artifact}" "${PWD}" "${groupIdFolders}"
   doMoveQuarkusFilesToModernStructure "${extractedFolderBasePath}/" "${PWD}/${artifact}/"
 
-  ## cleanup
+  # cleanup
   rm -r "${extractedFolderBasePath}"
 }
 
 function doMoveQuarkusFilesToModernStructure() {
-  ## mv dockerfolder can be moved 
   mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/docker" "${PWD}/${artifact}/src/main"
-  ## resources folder can be moved
+
   mv "${DEVON_IDE_HOME}/updates/extracted/${artifact}/src/main/resources" "${PWD}/${artifact}/src/main"
 
   if [ -d "${extractedFolderBasePath}/src/test/resources" ]
