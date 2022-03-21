@@ -17,24 +17,18 @@ source "$(dirname "${0}")"/../functions
 # Call Terraform with specified arguments.
 function doRun() {
   doSetup silent
-  terraform "${@}"
+  doRunCommand "${TERRAFORM_HOME}/terraform ${@}"
 }
 
 function doSetup() {
-
-  if command -v terraform &> /dev/null 
+  # Check if TERRAFORM_HOME is already set
+  if [ -z "${TERRAFORM_HOME}" ]
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then 
-      terraform version
-    fi 
-  else
-    # Check if TERRAFORM_HOME is already set
-    if [ -z "${TERRAFORM_HOME}" ]
-    then
-      TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
-    fi
+    TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
+  fi
 
+  if [ ! -d ${TERRAFORM_HOME} ] || [ "${1}" != "silent" ]
+  then
     # Get leatest release
     if [ -z "${TERRAFORM_VERSION}" ]
     then
@@ -43,7 +37,12 @@ function doSetup() {
     fi
 
     doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
-    terraform -install-autocomplete
+
+    ERG=$(grep terraform ~/.bashrc >/dev/null; echo $?)
+    if [ ${ERG} != 0 ]
+    then
+      terraform -install-autocomplete
+    fi
   fi
 }
 
