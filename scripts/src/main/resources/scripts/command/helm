@@ -14,37 +14,21 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-# Check if helm is installed.
-function doIsHelmInstalled() {
-  if command -v helm &> /dev/null
-  then
-    return
-  else
-    return 255
-  fi
-}
-
 # Call helm with specified arguments.
 function doRun() {
   doSetup silent
-  helm "${@}"
+  doRunCommand "${HELM_HOME}/helm ${@}"
 }
 
 function doSetup() {
-
-  if doIsHelmInstalled
+  # Check if HELM_HOME is already set
+  if [ -z "${HELM_HOME}" ]
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      helm version
-    fi
- else
-    # Check if HELM_HOME is already set
-    if [ -z "${HELM_HOME}" ]
-    then
-      HELM_HOME="${DEVON_IDE_HOME}/software/helm"
-    fi
+    HELMFORM_HOME="${DEVON_IDE_HOME}/software/helm"
+  fi
 
+  if [ ! -d ${HELM_HOME} ] || [ "${1}" != "silent" ]
+  then
     # Get leatest release
     if [ -z "${HELM_VERSION}" ]
     then
@@ -55,7 +39,6 @@ function doSetup() {
     doInstall "-" "${HELM_HOME}" "helm" "${HELM_VERSION}"
   fi
 }
-
 
 # CLI
 case ${1} in 
