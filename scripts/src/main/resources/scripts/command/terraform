@@ -44,6 +44,14 @@ function doSetup() {
       terraform -install-autocomplete
     fi
   fi
+
+  if command -v terraform &> /dev/null 
+  then
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doRunCommand "terraform version"
+    fi 
+  fi
 }
 
 
