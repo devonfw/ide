@@ -24,7 +24,7 @@ function doSetup() {
   # Check if HELM_HOME is already set
   if [ -z "${HELM_HOME}" ]
   then
-    HELMFORM_HOME="${DEVON_IDE_HOME}/software/helm"
+    HELM_HOME="${DEVON_IDE_HOME}/software/helm"
   fi
 
   if [ ! -d ${HELM_HOME} ] || [ "${1}" != "silent" ]
@@ -38,6 +38,15 @@ function doSetup() {
 
     doInstall "-" "${HELM_HOME}" "helm" "${HELM_VERSION}"
   fi
+
+  if command -v helm &> /dev/null 
+  then
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doRunCommand "helm version"
+    fi 
+  fi
+
 }
 
 # CLI
