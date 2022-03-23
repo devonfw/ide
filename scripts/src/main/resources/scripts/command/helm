@@ -39,13 +39,10 @@ function doSetup() {
     doInstall "-" "${HELM_HOME}" "helm" "${HELM_VERSION}"
   fi
 
-  if command -v helm &> /dev/null 
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doRunCommand "helm version"
-    fi 
-  fi
+    doRunCommand "helm version"
+  fi 
 
 }
 
