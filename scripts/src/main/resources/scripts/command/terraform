@@ -52,6 +52,7 @@ function doSetup() {
 
 }
 
+TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
 
 # CLI
 case ${1} in 
