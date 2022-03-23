@@ -21,12 +21,6 @@ function doRun() {
 }
 
 function doSetup() {
-  # Check if HELM_HOME is already set
-  if [ -z "${HELM_HOME}" ]
-  then
-    HELM_HOME="${DEVON_IDE_HOME}/software/helm"
-  fi
-
   if [ ! -d ${HELM_HOME} ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
@@ -45,6 +39,8 @@ function doSetup() {
   fi 
 
 }
+
+HELM_HOME="${DEVON_IDE_HOME}/software/helm"
 
 # CLI
 case ${1} in 
