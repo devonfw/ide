@@ -45,13 +45,11 @@ function doSetup() {
     fi
   fi
 
-  if command -v terraform &> /dev/null 
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doRunCommand "terraform version"
-    fi 
-  fi
+    doRunCommand "terraform version"
+  fi 
+
 }
 
 
