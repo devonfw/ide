@@ -56,6 +56,7 @@ The following commandlets are currently available:
 * link:eclipse.asciidoc[eclipse]
 * link:graalvm.asciidoc[graalvm]
 * link:gradle.asciidoc[gradle]
+* link:helm.asciidoc[helm]
 * link:help.asciidoc[help]
 * link:ide.asciidoc[ide]
 * link:intellij.asciidoc[intellij]
