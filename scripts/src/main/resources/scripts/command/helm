@@ -21,7 +21,7 @@ function doRun() {
 }
 
 function doSetup() {
-  if [ ! -d ${HELM_HOME} ] || [ "${1}" != "silent" ]
+  if [ ! -d "${HELM_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
     if [ -z "${HELM_VERSION}" ]
