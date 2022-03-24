@@ -52,6 +52,8 @@ include::release.asciidoc[leveloffset=3]
 
 include::sonar.asciidoc[leveloffset=3]
 
+include::terraform.asciidoc[leveloffset=3]
+
 include::vscode.asciidoc[leveloffset=3]
 
 include::yarn.asciidoc[leveloffset=3]
