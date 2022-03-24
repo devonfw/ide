@@ -21,12 +21,6 @@ function doRun() {
 }
 
 function doSetup() {
-  # Check if TERRAFORM_HOME is already set
-  if [ -z "${TERRAFORM_HOME}" ]
-  then
-    TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
-  fi
-
   if [ ! -d ${TERRAFORM_HOME} ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
@@ -38,8 +32,7 @@ function doSetup() {
 
     doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
 
-    ERG=$(grep terraform ~/.bashrc >/dev/null; echo $?)
-    if [ ${ERG} != 0 ]
+    if ! grep terraform ~/.bashrc >/dev/null
     then
       terraform -install-autocomplete
     fi
