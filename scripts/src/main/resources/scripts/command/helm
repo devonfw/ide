@@ -17,7 +17,7 @@ source "$(dirname "${0}")"/../functions
 # Call helm with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${HELM_HOME}/helm ${@}"
+  doRunCommand "${HELM_HOME}/helm" "${@}"
 }
 
 function doSetup() {
