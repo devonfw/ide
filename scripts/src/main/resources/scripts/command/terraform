@@ -17,11 +17,11 @@ source "$(dirname "${0}")"/../functions
 # Call Terraform with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${TERRAFORM_HOME}/terraform ${@}"
+  doRunCommand "${TERRAFORM_HOME}/terraform" "${@}"
 }
 
 function doSetup() {
-  if [ ! -d ${TERRAFORM_HOME} ] || [ "${1}" != "silent" ]
+  if [ ! -d "${TERRAFORM_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
     if [ -z "${TERRAFORM_VERSION}" ]
