@@ -162,6 +162,7 @@ public class Migrations {
         .pom().replaceProperty("devon4j.version", "2020.04.001") //
         .replaceDependency(new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping", null),
             new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping-dozer", null))
+        .and().java().replace("this.flyway.setTarget(this.migrationVersion);", "//TODO: remove the empty if")
         .and().java().replace("new PageRequest", "PageRequest.of").replace("new Sort", "Sort.by").and().next()
         .to(VersionIdentifier.ofDevon4j("2020.04.002")).pom().replaceProperty("devon4j.version", "2020.04.002") //
         .replaceDependency(
