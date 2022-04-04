@@ -3,29 +3,25 @@ toc::[]
 
 = Introduction
 
-To forestall our decision, we chose Rancher Desktop as licence free Docker Desktop alternative. 
-Rancher Desktop gives you an easy and fast way to setup tools like docker-cli, docker-compose, other docker functionalities
-as well as kubernetes via kubectl. New releases are published regularly and the community around this alternative is growing.
-
+As https://www.docker.com/blog/updating-product-subscriptions/[Docker Desktop has changed its licensing] we have been looking for a license-free alternative.
+This document gives a rationale why we have choosen https://rancherdesktop.io/[Rancher Desktop] as alternative to setup and manage https://www.docker.com/[docker] and https://kubernetes.io/[kubernetes].
 
 = Why we chose Rancher Desktop as Docker-Desktop alternative 
 
-
-
-Some main criteria we had in mind during our comparision where:
+Our main criteria for tool comparision were:
 
 * The softwares licence
 * Match of toolset compared to Docker Desktop
-* Complexity of installing and setting up the toolset as a user and as a developer
-* Stability of the potential solution
-
+* Complexity of installing and setting up the toolset
+* Stability of the solution
+* Future-proofness (community activitiy, regular updates and fixes)
 
 [cols="asciidoc",options="header",grid="cols"]
 |======================
 |        |*Rancher Desktop*|*Podman-Minikube*|*Others*
 |*Pro*   |
 - It comes very close to what Docker-Desktop offers, as it installs most of Docker-Desktop's cli-tools  -> Almost frictionless shift +
-- Installs and sets up a good toolset including typical docker-compnents as well as kubernetes +
+- Installs and sets up a good toolset including typical docker compnents as well as kubernetes +
 - Makes installation and setup very easy +
 - Cloud tools like Helm or Terraform are usable +
 - Works on macOS, Windows and Linux +
@@ -44,19 +40,19 @@ Interesting components: +
 - e.g. Lazydocker gives a pretty and compact graphical component +
 - e.g. MicroK8s as a lightweight, fast version of Kubernetes +
 |*Contra*|
--doensn't have all features Docker Desktop has, like image security scans 
+-does not have all features Docker Desktop has, like image security scans 
 |
 - Has most usual Docker-commands, but not all of them +
 - For ongoing Docker-projects might not be worth it, because of some differences to Docker -> Porblems during software migration +
 - GUI less +
 - More work when it comes to implementation +
 - minikube only gives us one cluster +
-- Doensn't have all features Docker Desktop has, like image security scans +
+- Does not have all features Docker Desktop has, like image security scans +
 |
 - In some cases not available for all OS +
 - Software often just one component of what we need (like Kind for running Clusters using Docker; Buildah for building Containers...), therefore need to mix tools +
 - Especially for a manual mix of tools severe implementation/maintenance increase possible +
-- More prone to bugs, particularly when using an rather uncommon mix of tools +
+- More error-prone, particularly when using a rather uncommon mix of tools +
 - Unclear future of some projects +
-- Some options are bleeding edge
+- Some options were bleeding edge
 |======================
