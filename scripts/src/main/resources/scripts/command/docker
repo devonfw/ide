@@ -19,113 +19,121 @@ function doSetup() {
   if [ ! "$DOCKER_EDITION" = "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
-
-    doIsRancherInstalled 
-    echo $?
-    if doIsRancherInstalled 
+    if [[ $(uname -r | grep -i microsoft) ]]
+    then 
+      echo "It seems that you are running the setup from inside a WSL shell."
+      echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+    else
+      if doIsRancherInstalled 
+      then
+        doIsWindows 
+        queryWin=$?
+        if [ "${1}" != "silent" ] && ! doIsQuiet
+        then
+          #give the User the installation location when using linux or mac
+          if [ queryWin != 0 ]
+          then
+            doEcho "Rancher Desktop is already installed at $(command -v devon docker)"
+          else
+            doEcho "Rancher Desktop is already installed"
+          fi
+        fi
+      else
+        doRequireNotBatch
+        latestversion=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
+        previousversion="1.2.1"
+        if [[ "$latestversion" =~ ^[0-9]\.[0-9].[0-9]$ ]] 
+        then
+          if [ "$latestversion" > "$previousversion" ]
+          then
+            echo "setting RANCHER_VERSION"
+            RANCHER_VERSION=$latestversion
+            echo "RANCHER_VERSION is $RANCHER_VERSION"
+          fi
+        fi
+        local version="${RANCHER_VERSION:-1.2.1}"
+        local code
+        #to download Rancher Desktop we need a bit more work compared to Docker-Desktop 
+        #as the download-URL isn't well structured
+        if doIsWindows
+        then
+          arch="-"
+          ext="windows"
+          os="windows"
+        elif doIsMacOs
+        then
+          ext="mac"
+          os="mac"
+          #options that work with mac OS
+          #arch="arm64"
+          #arch="x86_64"
+          arch="$(uname -m)"
+        else
+          arch="-"
+          ext="other"
+          os="linux"
+        fi
+        doDownload "-" "" "rancher" "${version}" "" "${arch}" "${os}" "${arch}" "${ext}"
+        if doIsWindows
+        then
+          doEcho "Installing Rancher Desktop for Windows..."
+          doRunCommand "${DEVON_DOWNLOAD_DIR}/rancher-${version}-Rancher.Desktop.Setup..exe" 
+        elif doIsMacOs
+        then
+          doEcho "Installing Rancher Desktop for MacOS..."
+          local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+          mkdir -p "${mount_dir}"
+          doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+          doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
+          doRunCommand "hdiutil detach -force '${mount_dir}'"
+        fi
+        mkdir "${DEVON_IDE_HOME}"/software/rancher; touch rancher-install-info.txt; echo "Rancher Desktop installed globally" > install-info.txt
+        ls "${DEVON_IDE_HOME}"/software/rancher
+        read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      fi
+    fi
+  else
+    if doIsDockerInstalled 
     then
-      echo "INSIDE THE RANCHER-INSTALLED LOOP"
       if [ "${1}" != "silent" ] && ! doIsQuiet
       then
-        doEcho "Rancher-Desktop is already installed at $(command -v rancher)"
-        rancher version
+        doEcho "docker is already installed at $(command -v docker)"
+        docker version
       fi
     else
       doRequireNotBatch
-  #   if doIsWindows || doIsMacOs
-  #   then
-  #     doDevonCommand rancher setup silent
-      local version="${RANCHER_VERSION:-1.1.1}"
+      local version="${DOCKER_VERSION:-stable}"
       local code
-      #include case for windows and for mac
-      #for this understand how mirrors work
       if doIsWindows
       then
-        code="Rancher.Desktop.Setup."
-        ############################## echo block for debugging
-        echo "for windows setting code to: ${code}"
-        ##############################
+        code="Docker%20Desktop%20Installer"
       elif doIsMacOs
       then
-        code=""
+        code="Docker"
       else
-        code="rancher-desktop-linux-v"
-        ############################## echo block for debugging
-        echo "for linux setting code to: ${code}"
-        ##############################
+        doFail "Sorry, docker-installation support is not yet implemented for your OS. Please use Rancher Desktop instead, or install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
       fi
-        ############################## echo block for debugging
-        echo "starting download for rancher with version ${version} and ${code}"
-        ##############################
-      doDownload "-" "" "rancher" "${version}" "" "${code}"
+      doDownload "-" "" "docker" "${version}" "" "${code}"
       if doIsWindows
       then
-        doEcho "Installing Rancher Desktop for Windows..."
-        doRunCommand "${DEVON_DOWNLOAD_DIR}/rancher-1.1.1-windows.exe"
+          doEcho "installing Docker Desktop for Windows..."
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
       elif doIsMacOs
       then
-        doEcho "Installing Rancher Desktop for MacOS..."
+          doEcho "installing Docker Desktop for MacOS..."
         local mount_dir="${DEVON_IDE_HOME}/updates/volume"
         mkdir -p "${mount_dir}"
         doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
         doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
         doRunCommand "hdiutil detach -force '${mount_dir}'"
       fi
-      mkdir "${DEVON_IDE_HOME}"/software/rancher; touch rancher-install-info.txt; echo "Rancher Desktop installed globally" > install-info.txt
-      ls "${DEVON_IDE_HOME}"/software/rancher
-      read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
-    fi
-
-
-
-  else
-  if doIsDockerInstalled 
-  then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doEcho "docker is already installed at $(command -v docker)"
-      docker version
-    fi
-  else
-    doRequireNotBatch
-    #Start setup
-      ##############################
-
-      echo "Docker Version was set to: ${DOCKER_VERSION}"
-
-      ##############################
-    local version="${DOCKER_VERSION:-stable}"
-    local code
-    if doIsWindows
-    then
-      code="Docker%20Desktop%20Installer"
-    elif doIsMacOs
-    then
-      code="Docker"
-    else
-      doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-    fi
-    doDownload "-" "" "docker" "${version}" "" "${code}"
-    if doIsWindows
-    then
-        doEcho "installing Docker Desktop for Windows..."
-      doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
-    elif doIsMacOs
-    then
-        doEcho "installing Docker Desktop for MacOS..."
-      local mount_dir="${DEVON_IDE_HOME}/updates/volume"
-      mkdir -p "${mount_dir}"
-      doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
-      doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
-      doRunCommand "hdiutil detach -force '${mount_dir}'"
-    fi
-    read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
     fi
   fi
 }
 
 
-# Call Docker with specified arguments.
+# Call Docker with specified arguments.   
 function doRun() {
   doSetup silent
   doEcho "Running: docker ${*}"
@@ -144,13 +152,26 @@ function doIsDockerInstalled() {
 
 #OS independent check if Rancher Desktop is installed.
 function doIsRancherInstalled() {
-    if [ -f "${DEVON_IDE_HOME}/software/rancher/rancher-install-info.txt" ]
-    ###################Problem: Wenn Rancher Desktop über Windows deinstalliert wird,
-    ###################so bleibt diese Testdatei 
-    then 
-      return
+    if doIsWindows
+    then
+      touch tmp-res-install-query rd-install-test.ps1
+      echo 'if($env:Path -like "*Rancher Desktop*") { set-content .\tmp-res-install-query "installed"} else {set-content .\tmp-res-install-query "not"}' > rd-install-test.ps1
+      powershell.exe -Command ".\rd-install-test.ps1"
+      installvar=$(awk 'NR=1' tmp-res-install-query)
+      rm tmp-res-install-query rd-install-test.ps1
+      if [ ${installvar}="installed" ]
+      then
+        return 
+      else
+        return 255
+      fi
     else
-      return 255
+      if command -v rancher-desktop &> /dev/null
+      then
+        return
+      else
+        return 255
+      fi
     fi
 }
 
@@ -162,7 +183,7 @@ case ${1} in
   echo "Arguments:"
   echo " setup                    setup docker on your machine (global installation)."
   echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
-  echo
+  echo 
 ;;
 "setup" | "s" | "")
   doSetup setup "${2}"
