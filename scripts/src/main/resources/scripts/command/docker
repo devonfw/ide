@@ -83,7 +83,7 @@ function doSetup() {
           doEcho "Installing Rancher Desktop for MacOS..."
           local mount_dir="${DEVON_IDE_HOME}/updates/volume"
           mkdir -p "${mount_dir}"
-          doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+          doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/rancher-${version}-Rancher.Desktop-.dmg'"
           doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
           doRunCommand "hdiutil detach -force '${mount_dir}'"
         fi
