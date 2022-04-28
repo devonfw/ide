@@ -34,7 +34,7 @@ function doSetup() {
       fi
       local version="${AZURECLI_VERSION}"
       #Download installation files & modify the filepath for powershell syntax e.g. /c/... -> c:/...
-      doDownload "-" "" "azurecli" "${version}" &> /dev/null
+      doDownload "-" "" "az" "${version}" &> /dev/null
       #Install Azure CLI for Windows
       doEcho "Installing Azure CLI for Windows..."
       modifyPathStructure 
@@ -52,10 +52,10 @@ function doSetup() {
 #modify a filepath for powershell path syntax e.g. /c/... -> c:/...
 function modifyPathStructure(){
   modifiedPath=${DEVON_DOWNLOAD_DIR}
-  local partition=$(echo ${modifiedPath} | cut -f2 -d'/')
+  local partition=$(echo "${modifiedPath}" | cut -f2 -d'/')
   partition=${partition}:'/'
-  modifiedPath=${partition}$(echo ${modifiedPath} | cut -f3- -d'/')
-  modifiedPath=$(echo ${modifiedPath} | tr '/' \\\\)
+  modifiedPath=${partition}$(echo "${modifiedPath}" | cut -f3- -d'/')
+  modifiedPath=$(echo "${modifiedPath}" | tr '/' \\\\)
 }
 
 #Install Azure CLI for Windows via Powershell Command
@@ -63,9 +63,9 @@ function installOnWindows(){
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\azurecli-${version}-windows.msi /quiet'" &> /dev/null || exit_code=$?
     if [[ -z "${exit_code}" ]]
       then 
-        read -r -p "Azure CLI has been installed and ready to use. Restart the console to use Azure Cli." answer doRunCommand "reset"
+        read -r -p "Azure CLI has been installed and ready to use. Restart the console to use Azure Cli."
       else 
-        read -p  "Admin rights are required to install Azure CLI. Would you like to start the setup again? (Y/n)..." answer
+        read -r -p  "Admin rights are required to install Azure CLI. Would you like to start the setup again? (Y/n)..." answer
         case ${answer:0:1} in 
           y|Y )
             doEcho "Installing Azure CLI for Windows..."
