@@ -52,7 +52,7 @@ function doSetup() {
 #modify a filepath for powershell path syntax e.g. /c/... -> c:/...
 function modifyPathStructure(){
   modifiedPath=${DEVON_DOWNLOAD_DIR}
-  local partition=$(echo "${modifiedPath}" | cut -f2 -d'/')
+  partition=$(echo "${modifiedPath}" | cut -f2 -d'/')
   partition=${partition}:'/'
   modifiedPath=${partition}$(echo "${modifiedPath}" | cut -f3- -d'/')
   modifiedPath=$(echo "${modifiedPath}" | tr '/' \\\\)
