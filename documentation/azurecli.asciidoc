@@ -1,0 +1,47 @@
+:toc:
+toc::[]
+
+= Azure CLI
+
+The Azure CLI commandlet allows to install and use https://github.com/Azure/azure-cli[Azure CLI].
+
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
+
+The arguments (`devon az «args»`) are explained by the following table:
+
+.Usage of `devon az`
+[options="header"]
+|=======================
+|*Argument(s)*             |*Meaning*
+|`setup`                   |setup Azure CLI (install and verify) as per above flow.
+|`«args»`                  |call Azure CLI with the specified arguments. Call `az help` for details or use `az` directly as preferred." (`«args»`)
+|=======================
+
+== Setup
+The `az` commandlet will install Azure CLI automatically. Windows user must confirm the User Access Control to run the installation as administrator.
+Please note that besides the sandbox concept of devonfw-ide this is a global installation on your system.
+When uninstalling Azure CLI, you may have to manually uninstall.
+
+**Uninstall process instructions:**
+
+- https://docs.microsoft.com/de-de/cli/azure/install-azure-cli-windows?tabs=azure-cli#uninstall[Windows]
+
+- https://docs.microsoft.com/de-de/cli/azure/install-azure-cli-linux?pivots=script#uninstall[MacOS and Linux]
+
+== Requirements
+**MacOS and Linux users requires the following software:**
+
+- https://www.python.org/downloads/[Python 3.6.x, 3.7.x oder 3.8.x]
+- https://sourceware.org/libffi/[libffi]
+- https://www.openssl.org/source/[OpenSSL 1.0.2]
+
+== Usage
+After the installation is complete, you may need to restart the console. Run `az help` from any shell of your OS directly to get started and use the online documentations and resources on the web to get familiar with Azure CLI. It is not our intention to repeat this here.
+
+Please note that the `az` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
+
