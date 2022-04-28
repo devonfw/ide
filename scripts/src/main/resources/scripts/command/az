@@ -42,7 +42,6 @@ function doSetup() {
       elif doIsMacOs
       then
         curl -L https://aka.ms/InstallAzureCli | bash 
-        exec -l $SHELL
         hash -r
       else doFail "Sorry, azurecli-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
