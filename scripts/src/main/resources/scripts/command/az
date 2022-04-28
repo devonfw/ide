@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  if doIsAzureInstalled
+  then
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doEcho "Azure CLI is already installed at $(command -v az)"
+    fi
+  else
+    doRequireNotBatch
+    #Install Azure CLI contingent on OS
+    if doIsWindows
+    then
+      # Get leatest release
+      if [ -z "${AZURECLI_VERSION}" ]
+      then
+        doEcho "Getting latest release..."
+        AZURECLI_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
+      fi
+      local version="${AZURECLI_VERSION}"
+      #Download installation files & modify the filepath for powershell syntax e.g. /c/... -> c:/...
+      doDownload "-" "" "azurecli" "${version}" &> /dev/null
+      #Install Azure CLI for Windows
+      doEcho "Installing Azure CLI for Windows..."
+      modifyPathStructure 
+      installOnWindows
+      elif doIsMacOs
+      then
+        curl -L https://aka.ms/InstallAzureCli | bash 
+        exec -l $SHELL
+        hash -r
+      else doFail "Sorry, azurecli-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+    fi
+  fi
+}
+
+#modify a filepath for powershell path syntax e.g. /c/... -> c:/...
+function modifyPathStructure(){
+  modifiedPath=${DEVON_DOWNLOAD_DIR}
+  local partition=$(echo ${modifiedPath} | cut -f2 -d'/')
+  partition=${partition}:'/'
+  modifiedPath=${partition}$(echo ${modifiedPath} | cut -f3- -d'/')
+  modifiedPath=$(echo ${modifiedPath} | tr '/' \\\\)
+}
+
+#Install Azure CLI for Windows via Powershell Command
+function installOnWindows(){
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\azurecli-${version}-windows.msi /quiet'" &> /dev/null || exit_code=$?
+    if [[ -z "${exit_code}" ]]
+      then 
+        read -r -p "Azure CLI has been installed and ready to use. Restart the console to use Azure Cli." answer doRunCommand "reset"
+      else 
+        read -p  "Admin rights are required to install Azure CLI. Would you like to start the setup again? (Y/n)..." answer
+        case ${answer:0:1} in 
+          y|Y )
+            doEcho "Installing Azure CLI for Windows..."
+            exit_code=""
+            installOnWindows
+          ;;
+          * )
+            doEcho "The setup is canceled."
+          ;;
+        esac
+      fi
+    }
+
+# OS independet check if Azure CLI is installed
+function doIsAzureInstalled() {
+  if command -v az &> /dev/null
+  then 
+    return
+  else
+    return 255
+  fi
+}
+
+function doRun() {
+  doSetup silent
+  doEcho "Running: Azure CLI ${*}"
+  az "${@}"
+}
+
+# CLI
+case ${1} in
+"help" | "-h")
+  echo "Install Azure CLI."
+  echo
+  echo "Arguments:"
+  echo " setup                    install Azure CLI on your machine (global installation)."
+  echo " <<args>>                 call Azure CLI with the specified arguments. Call az --help for details or use Azure CLI directly as preferred."
+  echo
+;;
+
+"setup" | "s")
+  doEcho "Installing Azure CLI..."
+  doSetup
+;;
+
+"")
+if ! doIsAzureInstalled
+then
+  doEcho "Installing Azure CLI..."
+  doSetup
+else doRun "${@}"
+fi
+;;
+
+*)
+if doIsAzureInstalled
+then
+  doRun "${@}"
+else doEcho "Unknown argument "
+fi
+;;
+esac
