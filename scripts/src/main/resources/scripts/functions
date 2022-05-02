@@ -672,6 +672,44 @@ function doExtract() {
   doEcho "Successfully extracted archive ${filename} to updates/extracted"
 }
 
+# $1: the file to unzip
+# $2: target_dirfunction doUnzip() {
+  if ! command -v unzip &> /dev/null
+  then
+    pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
+
+    for t in ${pckmngers[@]}; do
+      command -v $t > /dev/null
+      if [ "$?" -eq "0" ]
+      then
+        pckmnger=${t}
+      fi
+    done
+    case ${pckmnger} in
+    apt-get) doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    yum)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    pacman)  doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} -S unzip";;
+    emerge)  doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    zypp)    doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    apk)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} add unzip";;
+    dnf)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    brew)    doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    *)       doEcho "please install unzip manually and start again"
+             exit;;
+    esac
+  fi
+  doEcho "unzip archive..."
+  doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+}
+
 # $1: absolute path of file or folder to move
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
