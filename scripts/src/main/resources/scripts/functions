@@ -674,14 +674,13 @@ function doExtract() {
 
 # $1: the file to unzip
 # $2: target_dir
-
 function doUnzip() {
   if ! command -v unzip &> /dev/null
   then
     pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
 
-    for t in ${pckmngers[@]}; do
-      command -v ${t} > /dev/null
+    for t in "${pckmngers[@]}"; do
+      command -v "${t}" > /dev/null
       if [ "${?}" -eq "0" ]
       then
         pckmnger=${t}
