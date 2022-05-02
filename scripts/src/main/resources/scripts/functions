@@ -673,8 +673,9 @@ function doExtract() {
 }
 
 # $1: the file to unzip
-# $2: target_dirfunction 
-doUnzip() {
+# $2: target_dir
+
+function doUnzip() {
   if ! command -v unzip &> /dev/null
   then
     pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
