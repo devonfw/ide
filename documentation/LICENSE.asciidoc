@@ -60,6 +60,8 @@ The following table shows the components that may be used. The column `inclusion
 |https://helm.sh/[helm]|Optional|https://github.com/devonfw/ide/blob/master/LICENSE[ASL 2.0]
 |https://terraform.io/[terraform]|Optional|https://github.com/hashicorp/terraform/blob/main/LICENSE[Mozilla Public License 2.0]
 |https://www.graalvm.org/[GraalVM] |Optional|https://github.com/oracle/graal/blob/master/LICENSE[GPLv2] (with the “Classpath” Exception)
+|https://github.com/Azure/azure-cli[AzureCLI] |Optional| https://github.com/Azure/azure-cli/blob/dev/LICENSE[MIT]
+
 |=======================
 
 == Apache Software License - Version 2.0
