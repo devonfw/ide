@@ -19,7 +19,7 @@ function doSetup() {
   if [ "$DOCKER_EDITION" != "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
-    if [[ $(uname -r | grep -i microsoft) ]]
+    if uname -r | grep -i microsoft
     then 
       echo "It seems that you are running the setup from inside a WSL shell."
       echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
@@ -31,7 +31,7 @@ function doSetup() {
         if [ "${1}" != "silent" ] && ! doIsQuiet
         then
           #give the User the installation location when using linux or mac
-          if [ queryWin != 0 ]
+          if [ $queryWin != 0 ]
           then
             doEcho "Rancher Desktop is already installed at $(command -v devon docker)"
           else
@@ -40,11 +40,11 @@ function doSetup() {
         fi
       else
         doRequireNotBatch
-        latestversion=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
+        latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
         previousversion="1.2.1"
         if [[ "$latestversion" =~ ^[0-9]\.[0-9].[0-9]$ ]] 
         then
-          if [ "$latestversion" > "$previousversion" ]
+          if [ "$latestversion" \> "$previousversion" ]
           then
             echo "setting RANCHER_VERSION"
             RANCHER_VERSION=$latestversion
@@ -159,7 +159,7 @@ function doIsRancherInstalled() {
       powershell.exe -Command ".\rd-install-test.ps1"
       installvar=$(awk 'NR=1' tmp-res-install-query)
       rm tmp-res-install-query rd-install-test.ps1
-      if [ ${installvar} = "installed" ]
+      if [ "${installvar}" = "installed" ]
       then
         return 
       else
