@@ -155,6 +155,7 @@ function doIsRancherInstalled() {
     if doIsWindows
     then
       touch tmp-res-install-query rd-install-test.ps1
+      # shellcheck disable=SC2016,2028
       echo 'if($env:Path -like "*Rancher Desktop*") { set-content .\tmp-res-install-query "installed"} else {set-content .\tmp-res-install-query "not"}' > rd-install-test.ps1
       powershell.exe -Command ".\rd-install-test.ps1"
       installvar=$(awk 'NR=1' tmp-res-install-query)
