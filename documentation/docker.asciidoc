@@ -30,7 +30,7 @@ The arguments (`devon docker «args»`) are explained by the following table:
 == setup
 The Docker commandlet will install Docker Desktop or Rancher Desktop automatically.
 This depends on how the variable DOCKER_EDITION was set. We chose to set Rancher Desktop as standard
-for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set (please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative.asciidoc] motivating why we added Rancher Desktop to the docker commandlet).
+for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set (please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] motivating why we added Rancher Desktop to the docker commandlet).
 Docker Desktop can still be used as before, by setting the variable DOCKER_EDITION equal to "DOCKERDESKTOP". 
 This can be done by your projects ide-admin in the link:usage.asciidoc#developer[settings file]. If you want to switch from Rancher Desktop to Docker Desktop, then add a line with the following content 
 "DOCKER_EDITION=DOCKERDESKTOP" 

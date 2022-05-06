@@ -16,7 +16,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {  
-  if [ ! "$DOCKER_EDITION" = "DOCKERDESKTOP" ]
+  if [ "$DOCKER_EDITION" != "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
     if [[ $(uname -r | grep -i microsoft) ]]
@@ -159,7 +159,7 @@ function doIsRancherInstalled() {
       powershell.exe -Command ".\rd-install-test.ps1"
       installvar=$(awk 'NR=1' tmp-res-install-query)
       rm tmp-res-install-query rd-install-test.ps1
-      if [ ${installvar}="installed" ]
+      if [ ${installvar} = "installed" ]
       then
         return 
       else
