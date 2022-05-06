@@ -1195,6 +1195,23 @@ function doInstall() {
       ln -s "${install_path}" "${target_path}"
     fi
   fi
+
+  # macos workaround
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents" ]
+  then
+    doEcho "Creating symlink as workaround for ${software} on MacOS"
+    local target_software_macos=${target_path%\/*}/macos
+    if [ ! -d "${target_software_macos}" ]
+    then
+      mkdir -p "${target_software_macos}"
+    fi
+    local target_software_software=${target_software_macos}/${dir}
+    doRunCommand "rm -rf '${target_software_software}'"
+    doRunCommand "mv '${target_path}' '${target_software_software}'"
+    doRunCommand "ln -sf 'macos/${dir}/Contents/Home' '${target_path}'"
+    doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+  fi
+
   return ${result}
 }
 

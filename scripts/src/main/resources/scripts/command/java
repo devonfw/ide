@@ -25,14 +25,14 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
   local version="${JAVA_VERSION:-11.0.13_8}"
-  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software" "Java"
+  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software"
   if [ -n "${EXTRA_JAVA_VERSION}" ]
   then
     if [ "${EXTRA_JAVA_VERSION}" = "${version}" ]
     then
       doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
     fi
-    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra" "extra-Java"
+    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra"
   fi
 }
 
@@ -44,9 +44,8 @@ function doSetupJava() {
   local mode="${1}"
   local version="${2}"
   local path="${3}"
-  local javaLabel="${4}"
-  local javaHome="${path}/java"
-  if [ "${mode}" != "silent" ] || [ ! -d "${javaHome}" ]
+  local java_path="${path}/java"
+  if [ "${mode}" != "silent" ] || [ ! -d "${java_path}" ]
   then
     local code
     if [ "${version:0:1}" = "8" ]
@@ -55,24 +54,17 @@ function doSetupJava() {
     else
       code="jdk-${version/_/%2B}"
     fi
-    doInstall "-" "${javaHome}" "java" "${version}" "" "${code}"
-    if [ ! -d "${javaHome}/bin" ] && doIsMacOs && [ -d "${javaHome}/Contents" ]
-    then
-      doEcho "Creating symlink as workaround for ${javaLabel} on MacOS"
-      local jdkHome="${path}/jdk"
-      doRunCommand "rm -rf '${jdkHome}'"
-      doRunCommand "mv '${javaHome}' '${jdkHome}'"
-      doRunCommand "ln -sf 'jdk/Contents/Home' '${javaHome}'"
-      doRunCommand "cp '${jdkHome}/.devon.software.version' '${javaHome}'"
-    fi
-    if [ "${javaHome}" = "${JAVA_HOME}" ]
+    doInstall "-" "${java_path}" "java" "${version}" "" "${code}"
+    if [ "${java_path}" = "${JAVA_HOME}" ]
     then
       doExtendPath "${JAVA_HOME}"
     fi
+    # delete not used jdk for old installations
+    rm -rf "${DEVON_IDE_HOME}/software/jdk"
   fi
   if [ "${mode}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${javaHome}/bin/java' -version" "verify installation of ${javaLabel}"
+    doRunCommand "'${java_path}/bin/java' -version" "verify installation of Java"
   fi
 }
 
