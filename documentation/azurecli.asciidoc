@@ -40,6 +40,9 @@ When uninstalling Azure CLI, you may have to manually uninstall.
 - https://sourceware.org/libffi/[libffi]
 - https://www.openssl.org/source/[OpenSSL 1.0.2]
 
+== Configuration File
+The configuration file is located at `conf/.azure`. Don't forget to set the environment variables of your IDE with `devon` before setting new configurations for Azure.
+
 == Usage
 After the installation is complete, you may need to restart the console. Run `az help` from any shell of your OS directly to get started and use the online documentations and resources on the web to get familiar with Azure CLI. It is not our intention to repeat this here.
 
