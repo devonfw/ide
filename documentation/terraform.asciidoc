@@ -1,0 +1,27 @@
+:toc:
+toc::[]
+
+= Terraform
+
+The terraform commandlet allows to install and use https://www.terraform.io/[Terraform].
+
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
+
+The arguments (`devon terraform «args»`) are explained by the following table:
+
+.Usage of `devon terraform`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install terraform on your machine.
+|`«args»`         |call terraform with the specified arguments. Call `terraform --help` for details or use terraform directly as preferred."
+|=======================
+
+
+
+  
