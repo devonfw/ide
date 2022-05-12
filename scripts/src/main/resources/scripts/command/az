@@ -49,7 +49,7 @@ function doSetup() {
   fi
 }
 
-#modify a filepath for powershell path syntax e.g. /c/... -> c:/...
+# modify a filepath for powershell path syntax e.g. /c/... -> c:/...
 function modifyPathStructure(){
   modifiedPath=${DEVON_DOWNLOAD_DIR}
   partition=$(echo "${modifiedPath}" | cut -f2 -d'/')
@@ -58,19 +58,14 @@ function modifyPathStructure(){
   modifiedPath=$(echo "${modifiedPath}" | tr '/' \\\\)
 }
 
-#Install Azure CLI for Windows via Powershell Command
-function installOnWindows(){
-  while true; do echo -n .; sleep 1; done & trap 'kill $!' SIGTERM SIGKILL
-  powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\az-${version}-windows.msi /quiet'" &> /dev/null || exit_code=$?
+# Install Azure CLI for Windows via Powershell Command
+function installOnWindows(){  
+  powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\az-${version}-windows.msi /QB-!'" &> /dev/null || exit_code=$?
   if [[ -z "${exit_code}" ]]
   then 
-    kill $!
-    echo "done"
-    echo ""
-    read -r -p "Azure CLI has been installed and ready to use. Restart the console to use Azure Cli."
+    setConfigDir
+    read -r -p "Azure CLI has been installed and is ready to use. Restart the console to use Azure CLI." answer doRunCommand "devon"
   else
-    kill $! 
-    echo ""
     read -r -p "Admin rights are required to install Azure CLI. Would you like to start the setup again? (Y/n)" answer 
     case ${answer:0:1} in 
       y|Y )
@@ -84,6 +79,16 @@ function installOnWindows(){
     esac
   fi
   }
+
+# Set directory for azure cli configuration file
+function setConfigDir() {
+  azurecli_export="export AZURE_CONFIG_DIR=${DEVON_IDE_HOME}/conf/.azure"
+  if ! grep -q "${azurecli_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
+    then
+      echo -e "\n${azurecli_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+  fi
+  echo "AZURE_CONFIG_DIR is set to ${DEVON_IDE_HOME}/conf/.azure"
+}
 
 # OS independet check if Azure CLI is installed
 function doIsAzureInstalled() {
