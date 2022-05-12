@@ -56,7 +56,7 @@ function installOnWindows(){
   if [[ -z "${exit_code}" ]]
   then 
     setConfigDir
-    doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI." 
+    doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI regular." 
   else
     read -r -p "You must run the installation with administration rights. Would you like to start the installation again? (Y/n)" answer 
     case ${answer:0:1} in 
@@ -79,6 +79,7 @@ function setConfigDir() {
     then
       doRunCommand "export AZURE_CONFIG_DIR=${DEVON_IDE_HOME}/conf/.azure"
       echo -e "\n${azurecli_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      doEcho "Location of Azure's configuration file is set to ${DEVON_IDE_HOME}/conf/.azure"
   fi
   
 }
