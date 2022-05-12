@@ -672,6 +672,45 @@ function doExtract() {
   doEcho "Successfully extracted archive ${filename} to updates/extracted"
 }
 
+# $1: the file to unzip
+# $2: target_dir
+function doUnzip() {
+  if ! command -v unzip &> /dev/null
+  then
+    pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
+
+    for t in "${pckmngers[@]}"; do
+      command -v "${t}" > /dev/null
+      if [ "${?}" -eq "0" ]
+      then
+        pckmnger=${t}
+      fi
+    done
+    case ${pckmnger} in
+    apt-get) doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    yum)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    pacman)  doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} -S unzip";;
+    emerge)  doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    zypp)    doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    apk)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} add unzip";;
+    dnf)     doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    brew)    doEcho "installing unzip..."
+             doRunCommand "sudo ${pckmnger} install unzip";;
+    *)       doEcho "please install unzip manually and start again"
+             exit;;
+    esac
+  fi
+  doEcho "unzip archive..."
+  doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+}
+
 # $1: absolute path of file or folder to move
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
@@ -1156,6 +1195,23 @@ function doInstall() {
       ln -s "${install_path}" "${target_path}"
     fi
   fi
+
+  # macos workaround
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents" ]
+  then
+    doEcho "Creating symlink as workaround for ${software} on MacOS"
+    local target_software_macos=${target_path%\/*}/macos
+    if [ ! -d "${target_software_macos}" ]
+    then
+      mkdir -p "${target_software_macos}"
+    fi
+    local target_software_software=${target_software_macos}/${dir}
+    doRunCommand "rm -rf '${target_software_software}'"
+    doRunCommand "mv '${target_path}' '${target_software_software}'"
+    doRunCommand "ln -sf 'macos/${dir}/Contents/Home' '${target_path}'"
+    doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+  fi
+
   return ${result}
 }
 
