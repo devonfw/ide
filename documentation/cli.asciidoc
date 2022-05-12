@@ -50,7 +50,7 @@ However, when you automate and want to avoid "command not found" errors, you can
 
 The following commandlets are currently available:
 
-* link:azurecli.asciidoc[az]
+* link:az.asciidoc[az]
 * link:build.asciidoc[build]
 * link:cobigen.asciidoc[cobigen]
 * link:docker.asciidoc[docker]
