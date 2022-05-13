@@ -654,7 +654,9 @@ function doExtract() {
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
-    doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+    # activate doUnzip
+    #doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+    doUnzip ${1} ${target_dir}
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
@@ -666,10 +668,17 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
+  # Extension fo msi and exe files
+  elif [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+  then
+    doEcho "move installation software"
+    doRunCommand "mv ${1} ${target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho "Successfully extracted archive ${filename} to updates/extracted"
+  # Extension fo msi and exe files
+  #doEcho "Successfully extracted archive ${filename} to updates/extracted"
+  doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
 # $1: the file to unzip
@@ -720,6 +729,8 @@ function doReplaceExtractedFile() {
     doFail "The file or folder to move does not exist: ${1}"
   fi
   local filename="${1/*\//}"
+  # Extension fo msi and exe files
+  local ext="${filename/*\./.}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
   if [ -n "${2}" ]
@@ -729,14 +740,22 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
+    # Extension fo msi and exe files
+    if [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+    then
+      (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
+    fi
   else
     doBackup "${target}" "${3}"
     if [ ! -d "${target_dir}" ]
     then
       mkdir -p "${target_dir}"
     fi
-    doRunCommand "mv '${1}' '${target}'"
+    # Extension fo msi and exe files
+    if [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+    then
+      doRunCommand "mv '${1}' '${target}'"
+    fi
   fi
 }
 
@@ -1161,7 +1180,9 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho "Successfully installed ${software}"
+    # Extension fo msi and exe files
+    #doEcho "Successfully installed ${software}"
+    doEcho "Successfully installed ${software} or installation software for ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
