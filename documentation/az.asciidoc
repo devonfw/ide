@@ -3,7 +3,7 @@ toc::[]
 
 = Azure CLI
 
-The Azure CLI commandlet allows to install and use https://github.com/Azure/azure-cli[Azure CLI].
+The Azure CLI commandlet allows to install and use https://github.com/Azure/azure-cli[Azure CLI]. Currently, the command works only for Windows.
 
 *ATTENTION:*
 Currently this feature is new and therefore experimental.
@@ -31,14 +31,10 @@ When uninstalling Azure CLI, you may have to manually uninstall.
 
 - https://docs.microsoft.com/de-de/cli/azure/install-azure-cli-windows?tabs=azure-cli#uninstall[Windows]
 
-- https://docs.microsoft.com/de-de/cli/azure/install-azure-cli-linux?pivots=script#uninstall[MacOS and Linux]
-
 == Requirements
-**MacOS and Linux users requires the following software:**
+**Windows users requires the following software:**
 
-- https://www.python.org/downloads/[Python 3.6.x, 3.7.x oder 3.8.x]
-- https://sourceware.org/libffi/[libffi]
-- https://www.openssl.org/source/[OpenSSL 1.0.2]
+- https://docs.microsoft.com/en-us/powershell//[Powershell]
 
 == Configuration File
 The configuration file is located at `conf/.azure`. Don't forget to set the environment variables of your IDE with `devon` before setting new configurations for Azure.
