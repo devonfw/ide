@@ -9,7 +9,7 @@ This directory is the heart of the `devonfw-ide` and contains the required link:
 ----
 /scripts
 ├──/ https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/command[command]
-│  ├── link:aws.asciidoc[aw]
+│  ├── link:aws.asciidoc[aws]
 │  ├── link:build.asciidoc[build]
 │  ├── link:docker.asciidoc[docker]
 │  ├── link:eclipse.asciidoc[eclipse]
