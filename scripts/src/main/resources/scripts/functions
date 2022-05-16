@@ -654,9 +654,7 @@ function doExtract() {
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
-    # activate doUnzip
-    #doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
-    doUnzip ${1} ${target_dir}
+    doUnzip "${1}" "${target_dir}"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
