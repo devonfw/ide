@@ -668,7 +668,6 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
-  # Extension fo msi, pkg and exe files
   elif doIsInstallerExtension "${ext}"
   then
     doEcho "move installation software"
@@ -676,8 +675,6 @@ function doExtract() {
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  # Extension fo msi, pkg and exe files
-  #doEcho "Successfully extracted archive ${filename} to updates/extracted"
   doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
@@ -743,7 +740,6 @@ function doReplaceExtractedFile() {
     doFail "The file or folder to move does not exist: ${1}"
   fi
   local filename="${1/*\//}"
-  # Extension fo msi, pkg and exe files
   local ext="${filename/*\./.}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
@@ -754,18 +750,13 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    # Extension fo msi, pkg and exe files
-    if ! doIsInstallerExtension "${ext}"
-    then
-      (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
-    fi
+    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
   else
     doBackup "${target}" "${3}"
     if [ ! -d "${target_dir}" ]
     then
       mkdir -p "${target_dir}"
     fi
-    # Extension fo msi, pkg and exe files
     if ! doIsInstallerExtension "${ext}"
     then
       doRunCommand "mv '${1}' '${target}'"
@@ -1194,9 +1185,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    # Extension fo msi, pkg and exe files
-    #doEcho "Successfully installed ${software}"
-    doEcho "Successfully installed ${software} or installation software for ${software}"
+    doEcho "Successfully installed (installation software for) ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
