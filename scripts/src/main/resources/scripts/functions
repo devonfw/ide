@@ -668,15 +668,15 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
-  # Extension fo msi and exe files
-  elif [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+  # Extension fo msi, pkg and exe files
+  elif doIsInstallerExtension "${ext}"
   then
     doEcho "move installation software"
     doRunCommand "mv ${1} ${target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  # Extension fo msi and exe files
+  # Extension fo msi, pkg and exe files
   #doEcho "Successfully extracted archive ${filename} to updates/extracted"
   doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
@@ -720,6 +720,20 @@ function doUnzip() {
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
 
+# $1: the file extesion e.g. ${ext}
+function doIsInstallerExtension()
+{
+  local myext=${1}
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ]
+  then
+    return 0
+  fi
+  if ! [ "${myext}" = ".msi" ] && ! [ "${myext}" = ".exe" ] && ! [ "${myext}" = ".pkg" ]
+  then
+    return 1
+  fi
+}
+
 # $1: absolute path of file or folder to move
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
@@ -729,7 +743,7 @@ function doReplaceExtractedFile() {
     doFail "The file or folder to move does not exist: ${1}"
   fi
   local filename="${1/*\//}"
-  # Extension fo msi and exe files
+  # Extension fo msi, pkg and exe files
   local ext="${filename/*\./.}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
@@ -740,8 +754,8 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    # Extension fo msi and exe files
-    if [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+    # Extension fo msi, pkg and exe files
+    if ! doIsInstallerExtension "${ext}"
     then
       (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
     fi
@@ -751,8 +765,8 @@ function doReplaceExtractedFile() {
     then
       mkdir -p "${target_dir}"
     fi
-    # Extension fo msi and exe files
-    if [ "${ext}" = ".msi" ] || [ "${ext}" != ".exe" ]
+    # Extension fo msi, pkg and exe files
+    if ! doIsInstallerExtension "${ext}"
     then
       doRunCommand "mv '${1}' '${target}'"
     fi
@@ -1180,7 +1194,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    # Extension fo msi and exe files
+    # Extension fo msi, pkg and exe files
     #doEcho "Successfully installed ${software}"
     doEcho "Successfully installed ${software} or installation software for ${software}"
   else
