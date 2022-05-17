@@ -116,11 +116,11 @@ function doSetup() {
       doDownload "-" "" "docker" "${version}" "" "${code}"
       if doIsWindows
       then
-          doEcho "installing Docker Desktop for Windows..."
+        doEcho "installing Docker Desktop for Windows..."
         doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
       elif doIsMacOs
       then
-          doEcho "installing Docker Desktop for MacOS..."
+        doEcho "installing Docker Desktop for MacOS..."
         local mount_dir="${DEVON_IDE_HOME}/updates/volume"
         mkdir -p "${mount_dir}"
         doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
