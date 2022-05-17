@@ -16,7 +16,7 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {  
-  if [ "$DOCKER_EDITION" != "DOCKERDESKTOP" ]
+  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
@@ -40,15 +40,16 @@ function doSetup() {
         fi
       else
         doRequireNotBatch
+        local latestversion
         latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
-        previousversion="1.2.1"
-        if [[ "$latestversion" =~ ^[0-9]\.[0-9].[0-9]$ ]] 
+        local previousversion="1.2.1"
+        if [[ "${latestversion}" =~ ^[0-9]\.[0-9].[0-9]$ ]] 
         then
-          if [ "$latestversion" \> "$previousversion" ]
+          if [ "${latestversion}" \> "${previousversion}" ]
           then
-            echo "setting RANCHER_VERSION"
-            RANCHER_VERSION=$latestversion
-            echo "RANCHER_VERSION is $RANCHER_VERSION"
+            doEcho "setting RANCHER_VERSION"
+            RANCHER_VERSION=${latestversion}
+            doEcho "RANCHER_VERSION is ${RANCHER_VERSION}"
           fi
         fi
         local version="${RANCHER_VERSION:-1.2.1}"
