@@ -100,7 +100,7 @@ That's why it is often enough to implement code for Mac or Linux (at least to so
 
 Let's get to the practical part of the Bash-usage. 
 
-**If you are using Windows**, _then please install WSL so you will be able to use Bash as well. E.g. https://www.youtube.com/watch?v=qYlgUDKKK5A[watch this] guide untill Minute 5:58 for a basic setup on Windows and some command examples._
+**If you are using Windows**, make sure that you have git-bash installed, so you can execute the Bash commands mentioned in this intruduction. [Here you can find git for windows](https://git-scm.com/download/win). In some cases later on you may want or need to use WSL. Our project teams standard way is to install WSL via Rancher Desktop, which is easily installable with the devon-ide by using the command `devon docker setup`. If you don't have the devon-ide yet, then you can follow [this guide](https://github.com/devonfw/ide/blob/master/documentation/setup.asciidoc)
 
 On the internet are some really good ressources for Bash-beginners.
 That's what I now want to make use of by sharing https://www.youtube.com/watch?v=oxuRxtrO2Ag [this robust introduction], going through some of the most important commands and concepts in round about 70 Minutes (you can find a list of the commands introduced by Joe at the videos description).
