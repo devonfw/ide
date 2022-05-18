@@ -38,16 +38,13 @@ For more information:
 
 Further explanations for ShellCheck errors can be found in the https://www.shellcheck.net/wiki/[ShellCheck Wiki].
 Own code can also be tested with the https://www.shellcheck.net/[Online ShellCheck].
-ShellCheck can also be run on the local development environment. To do this, ShellCheck (https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.zip[win], https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.darwin.x86_64.tar.xz[mac]) can be extracted to the program directory. In the resource folder of the project (`scripts/src/main/resources`) the following command can now be executed for Windows
+ShellCheck can also be run on the local development environment. To do this, ShellCheck (https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.zip[win], https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.darwin.x86_64.tar.xz[mac]) can be extracted to the program directory. For windows the path to the executable (`C:\Program Files\shellcheck-stable`) must be written to the path (https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53[instruction]). In the resource folder of the project (`scripts/src/main/resources`) the following command can now be executed in the git-bash:
 
 ```
-& "C:\Program Files\shellcheck-stable\shellcheck.exe" {scriptname}
+shellcheck.exe -x -e SC2181 setup scripts/devon scripts/environment-project scripts/functions scripts/command/*
 ```
 
-or for Mac / Linux
-```
-shellcheck -x -e SC2181 setup scripts/devon scripts/environment-project scripts/functions scripts/command/*
-```
+For Mac and Linux, ShellCheck is automatically called during the build process (`mvn install`).
 
 == Create a new commandlet
 
