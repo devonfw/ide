@@ -99,17 +99,17 @@ Let's get to the practical part of the Bash-usage.
 
 **If you are using Windows**, make sure that you have git-bash installed, so you can execute the Bash commands mentioned in this intruduction. [Here you can find git for windows](https://git-scm.com/download/win). In some cases later on you may want or need to use WSL. Our project teams standard way is to install WSL via Rancher Desktop, which is easily installable with the devon-ide by using the command `devon docker setup`. If you don't have the devon-ide yet, then you can follow [this guide](https://github.com/devonfw/ide/blob/master/documentation/setup.asciidoc)
 
-On the internet are some really good ressources for Bash-beginners.
-That's what I now want to make use of by sharing https://www.youtube.com/watch?v=oxuRxtrO2Ag [this robust introduction], going through some of the most important commands and concepts in round about 70 Minutes (you can find a list of the commands introduced by Joe at the videos description).
-There are some really usefull commands, that I would have liked to know back then when I started with Bash.
+Now I want to share a good and rather short video for Bash-beginners with you.
+In https://www.youtube.com/watch?v=oxuRxtrO2Ag[this robust introduction] , where you will be going through some of the most important commands and concepts in round about 70 Minutes (you can find a list of the commands introduced there at the videos description).
+There are some really usefull commands, that I would have liked to know back then when I started with Bash.  
 When you have learned the knowledge from this video, then you'll be a big step further on your journey with Bash. 
-I think it is really worth watching such a video and to directly play around with those commands on your own Shell simultaneously.
+It is really worth watching such a video while simultaneously directly playing around with those commands on your own Shell.
 This makes the learning process faster and also way more interesting than simply reading or listenning to such a tutorial.  
 
 When you used to program in some other languages, you for sure know how helpful a google search in combination with the results on stackexchange can be.
 If not, then google your question regarding Bash as usual and mostly you'll find a way to get together the code you want. 
 Sometimes it needs more patience to get an acceptable result or to find out that a command you already knew includes what you need, if you add the proper tag to its execution.
-Take the commands and some of their tags mentioned in https://www.freecodecamp.org/news/linux-command-line-Bash-tutorial/[this rather brief tutorial] as an example. Also definetely try to use the help function from time to time, e.g. type in `ls --help` and you'll see how much more the command `ls` can offer.
+Take the commands and some of their tags mentioned in https://www.freecodecamp.org/news/linux-command-line-Bash-tutorial/[this rather brief tutorial] as an example. Also definetely try to use the help function from time to time, e.g. type in `ls --help` and you'll see how much more the command `ls` can offer. 
 On the other side, especialy at the beginning, it is better to get an overview of available tags by googling e.g. 
 *ls tags Bash* to get a way prettier overview plus examples regarding a commands tags like https://www.tecmint.com/15-basic-ls-command-examples-in-linux/[here] for `ls`.
 
