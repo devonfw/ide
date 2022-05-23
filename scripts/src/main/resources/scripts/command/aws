@@ -32,7 +32,7 @@ function doPackageInstall()
   if doIsWindows
   then
     doEcho "Windows Installation..."
-    windows_path_to_package=$(cygpath -w ${path_to_package})
+    windows_path_to_package=$(cygpath -w "${path_to_package}")
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${current_version}-AWSCLIV2.msi /quiet'"
   elif doIsMacOs
   then
@@ -43,7 +43,7 @@ function doPackageInstall()
   fi
   if [ "${enable_ide_update}" == "y" ]
   then
-    if [ ! -d ${DEVON_IDE_HOME}/software/aws/ ]
+    if [ ! -d "${DEVON_IDE_HOME}/software/aws/" ]
     then
       doRunCommand "mkdir ${DEVON_IDE_HOME}/software/aws/"
     fi
@@ -68,7 +68,7 @@ function doSetup() {
       AWS_HOME="${DEVON_IDE_HOME}/software/aws"
     fi
   fi
-  if [ ! -d ${AWS_HOME} ] || [ "${1}" != "silent" ]
+  if [ ! -d "${AWS_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
     if [ -z "${AWS_VERSION}" ]
