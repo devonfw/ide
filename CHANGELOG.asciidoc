@@ -18,6 +18,8 @@ New release with improved cloud tool support and various improvements and bugfix
 * https://github.com/devonfw/ide/issues/696[#696]: Move CobiGen home folder from user home to ide per default
 * https://github.com/devonfw/ide/issues/683[#683]: Generalize MacOS app workaround
 
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/27?closed=1[milestone 2022.04.001].
+
 == 2021.12.005
 
 Update with the following bugfixes and improvements:
