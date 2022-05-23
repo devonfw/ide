@@ -718,7 +718,11 @@ function doUnzip() {
 function doIsInstallerExtension()
 {
   local myext="${1/*\./.}"
-  return $([ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ])
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ]
+  then
+    return
+  fi
+  return 255
 }
 
 # $1: absolute path of file or folder to move
