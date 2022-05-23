@@ -17,7 +17,7 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${AWS_HOME}/aws ${@}"
+  doRunCommand "${AWS_HOME}/aws" "${@}"
 }
 
 # $1: path_to_package
@@ -27,7 +27,8 @@ function doPackageInstall()
   local path_to_package="${1}"
   local enable_ide_update="${2}"
   local version_file="${path_to_package}/.devon.software.version"
-  local current_version="$(cat "${version_file}")"
+  local current_version
+  current_version="$(cat "${version_file}")"
 
   if doIsWindows
   then
