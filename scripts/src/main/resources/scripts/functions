@@ -666,10 +666,9 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
-  elif doIsInstallerExtension "${ext}"
+  elif doIsInstallerExtension "${filename}"
   then
-    doEcho "move installation software"
-    doRunCommand "mv ${1} ${target_dir}"
+     doRunCommand "mv ${1} ${target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
@@ -715,18 +714,11 @@ function doUnzip() {
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
 
-# $1: the file extesion e.g. ${ext}
+# $1: filename (e.g. ${filename})
 function doIsInstallerExtension()
 {
-  local myext=${1}
-  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ]
-  then
-    return 0
-  fi
-  if ! [ "${myext}" = ".msi" ] && ! [ "${myext}" = ".exe" ] && ! [ "${myext}" = ".pkg" ]
-  then
-    return 1
-  fi
+  local myext="${1/*\./.}"
+  return $([ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ])
 }
 
 # $1: absolute path of file or folder to move
@@ -738,7 +730,6 @@ function doReplaceExtractedFile() {
     doFail "The file or folder to move does not exist: ${1}"
   fi
   local filename="${1/*\//}"
-  local ext="${filename/*\./.}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
   if [ -n "${2}" ]
@@ -755,10 +746,7 @@ function doReplaceExtractedFile() {
     then
       mkdir -p "${target_dir}"
     fi
-    if ! doIsInstallerExtension "${ext}"
-    then
-      doRunCommand "mv '${1}' '${target}'"
-    fi
+    doRunCommand "mv '${1}' '${target}'"
   fi
 }
 
@@ -787,16 +775,14 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4-$N: contents of $1
+# $4: contents for $1
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
-  shift 3
-  
-  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ -n "${4}" ] && [ -d "${4}" ] && [[ ! "${4}" =~ .*\.app ]]
   then
-    source_dir="${1}"
+    source_dir="${4}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
