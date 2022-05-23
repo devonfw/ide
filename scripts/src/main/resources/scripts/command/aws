@@ -22,8 +22,7 @@ function doRun() {
 
 # $1: path_to_package
 # $2: enable_ide_update
-function doPackageInstall()
-{
+function doPackageInstall() {
   local path_to_package="${1}"
   local enable_ide_update="${2}"
   local version_file="${path_to_package}/.devon.software.version"
