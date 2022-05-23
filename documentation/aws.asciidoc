@@ -5,14 +5,7 @@ toc::[]
 
 The aws commandlet allows to install and use https://aws.amazon.com/cli/[aws cli].
 
-*ATTENTION:*
-Currently this feature is new and therefore experimental.
-It may change in incompatible ways in the next releases until we reach a stable state.
-We hope that all is working fine for you.
-However, do not expect everything to work out of the box.
-In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
-
-The arguments (`devon helm «args»`) are explained by the following table:
+The arguments (`devon aws «args»`) are explained by the following table:
 
 .Usage of `devon aws`
 [options="header"]
