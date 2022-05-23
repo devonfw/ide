@@ -654,7 +654,7 @@ function doExtract() {
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
-    doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+    doUnzip "${1}" "${target_dir}"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
@@ -666,10 +666,13 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
+  elif doIsInstallerExtension "${filename}"
+  then
+     doRunCommand "mv ${1} ${target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho "Successfully extracted archive ${filename} to updates/extracted"
+  doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
 # $1: the file to unzip
@@ -709,6 +712,17 @@ function doUnzip() {
   fi
   doEcho "unzip archive..."
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+}
+
+# $1: filename (e.g. ${filename})
+function doIsInstallerExtension()
+{
+  local myext="${1/*\./.}"
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ]
+  then
+    return
+  fi
+  return 255
 }
 
 # $1: absolute path of file or folder to move
@@ -765,16 +779,14 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4-$N: contents of $1
+# $4: contents for $1
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
-  shift 3
-  
-  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ -n "${4}" ] && [ -d "${4}" ] && [[ ! "${4}" =~ .*\.app ]]
   then
-    source_dir="${1}"
+    source_dir="${4}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
@@ -1161,7 +1173,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho "Successfully installed ${software}"
+    doEcho "Successfully installed (installation software for) ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
