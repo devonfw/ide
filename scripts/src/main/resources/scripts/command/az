@@ -37,13 +37,14 @@ function doSetup() {
       doEcho "Installing Azure CLI for Windows..."
       modifyPathStructure
       installOnWindows
-    else doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+    else
+      doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
   fi
 }
 
 # modify a filepath for powershell path syntax e.g. /c/... -> c:/...
-function modifyPathStructure(){
+function modifyPathStructure() {
   modifiedPath=${DEVON_DOWNLOAD_DIR}
   partition=$(echo "${modifiedPath}" | cut -f2 -d'/'):'/' # -> <partition>:/
   modifiedPath=${partition}$(echo "${modifiedPath}" | cut -f3- -d'/')
@@ -51,11 +52,11 @@ function modifyPathStructure(){
 }
 
 # Install Azure CLI for Windows via Powershell Command
-function installOnWindows(){ 
+function installOnWindows() { 
   if doIsPwshInstalled
   then
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\az-${version}-windows.msi /QB-!'" &> /dev/null || exit_code=$?
-    if [[ -z "${exit_code}" ]]
+    if [ -z "${exit_code}" ]
     then 
       setConfigDir
       doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI regular." 
