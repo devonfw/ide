@@ -7,7 +7,7 @@ call scripts\devon.bat ide setup %*
 reg import system/windows/cmd/devon-cmd.reg
 reg import system/windows/power-shell/devon-power-shell.reg
 
-dir %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\wt1.exe >NUL 2>NUL
+dir %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\wt.exe >NUL 2>NUL
 if "%ERRORLEVEL%" == "0" (
   reg import system/windows/wt-cmd/devon-wt-cmd.reg
 )
