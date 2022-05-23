@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+
+function doSetup() {
+  if [ ! -d "${PYTHON_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    # Get leatest release
+    if [ -z "${PYTHON_VERSION}" ]
+    then
+	  doEcho "Python Home: ${PYTHON_HOME}"
+      doEcho "Getting latest release..."
+	  # curl returns content of page, grep returns only version numbers, sort is sorting by version numbers and removing duplicates
+	  # tail and head are returning the penultimate line, since it contains the latest stable version
+      PYTHON_VERSION=$(curl -L https://www.python.org/ftp/python 2>&1 | grep -o '3\.[0-9]*\.[0-9]*' | sort -u -V | tail -n2 | head -n1)
+	  doEcho "Getting pip install file"
+	  # https://github.com/pypa/get-pip
+	  $(curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py)
+	  fi
+
+    doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
+    doRunPython "get-pip.py"
+
+	if [ -a $(find $PYTHON_HOME -name '*._pth') ]
+	then
+	  PTH_FILE="$(find $PYTHON_HOME -name '*._pth')"
+	  	doEcho "Freeing Python from embedded Mode..."
+	  sed -i -e 's/#import site/import site/g' $PTH_FILE
+  else
+    doEcho "Error. Couldn't find _pth file."
+	fi
+		
+  fi
+
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "python --version"
+  fi 
+
+}
+
+function doRunPython() {
+  doSetup silent
+  doEcho "Running: python ${*}"
+  if doIsQuiet
+  then
+    python "${@}" > /dev/null
+  else
+    python "${@}"
+  fi
+}
+
+function doRunPip() {
+  doSetup silent
+  if [ "${1}" = "pip" ]
+  then
+    doEcho "Running: ${*}"
+    doEcho "${2} ${3}"
+    if doIsQuiet
+    then
+      ${PIP_HOME} ${2} ${3} > /dev/null
+    else
+      ${PIP_HOME} ${2} ${3}
+    fi
+  elif [ "${1}" = "pip3" ]
+  then
+    doEcho "Running: pip3 ${*}"
+    if doIsQuiet
+    then
+      ${PIP3_HOME} "${@}" > /dev/null
+    else
+      ${PIP3_HOME} "${@}"
+    fi
+
+  fi
+
+}
+
+PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+PIP_HOME="${PYTHON_HOME}/Scripts/pip"
+PIP3_HOME="${PYTHON_HOME}/Scripts/pip3"
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Install Python."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup Python."
+  echo
+;;
+"setup" | "s" | "")
+  doEcho "Installating python..."
+  doSetup
+;;
+"version" | "-v" | "--version")
+   python --version
+;;
+"pip" | "pip3")
+    doRunPip "${@}"
+;;
+*)
+    doRunPython "${@}"
+;;
+esac

@@ -1,0 +1,21 @@
+:toc:
+toc::[]
+
+= Python
+
+The Python Commandlet allows to install and use the Python CLI and pip.
+
+
+The arguments (`devon python «args»`) are explained by the following table:
+
+.Usage of `python`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install python on your machine.
+|`help`           |access additional help information.
+|`version`        |Get version of currently installed Python version.
+|`pip`            |Call pip.
+|`pip3`           |Call pip3.
+|`«args»`         |call python with the specified arguments."
+|=======================
