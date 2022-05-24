@@ -154,12 +154,12 @@ function doIsRancherInstalled() {
 
 function doInstallVpnkit() {
   #get latest version of the vpnkit and download its tar.gz file
+  local partialUrl
+  # shellcheck disable=SC1083  
   partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
-  VPNversion=${partialUrl##*/}
-  downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
+  local VPNversion=${partialUrl##*/}
+  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
   curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
-  touch activate-vpnkit
-  touch vpnkit-setup.ps1
 
   #at first write a bash-script
   touch activate-vpnkit
@@ -169,10 +169,12 @@ function doInstallVpnkit() {
   #now write a pwsh-script which also executes the above bash-script in WSL
   touch vpnkit-setup.ps1
   #go to needed path by using pushd to be able to get back easily with popd for running the above bash script
-  #echo '$oldpath = pwd' > vpnkit-setup.ps1
+  # shellcheck disable=SC1083
   echo 'mv wsl-vpnkit.tar.gz $env:USERPROFILE' >> vpnkit-setup.ps1
   echo 'echo "between mv and pushd"' >> vpnkit-setup.ps1  
+  # shellcheck disable=SC1083
   echo 'pushd $env:USERPROFILE' >> vpnkit-setup.ps1
+  # shellcheck disable=SC1083
   echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2' >> vpnkit-setup.ps1
   echo 'wsl -d wsl-vpnkit' >> vpnkit-setup.ps1
   echo 'popd' >> vpnkit-setup.ps1
@@ -181,7 +183,6 @@ function doInstallVpnkit() {
   #execute the powershell-script directly and the script for inside wsl indirectly
   powershell.exe -Command ".\vpnkit-setup.ps1"
   rm activate-vpnkit vpnkit-setup.ps1
-
 }
 
 
