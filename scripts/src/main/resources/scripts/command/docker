@@ -43,7 +43,7 @@ function doSetup() {
         local version="${RANCHER_VERSION}"
   	  	if [ -z "${version}" ]
         then 
-          version=1.3.0
+          version="1.3.0"
           latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
           doVersionCompare "${latestversion}" "${version}"
           VersCompRes=${?}
