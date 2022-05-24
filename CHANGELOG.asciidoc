@@ -4,14 +4,14 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2022.04.001
 
-WIP: Release in progress, will come soon
-
 New release with improved cloud tool support and various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/690[#690]: Support for RancherDesktop
+* https://github.com/devonfw/ide/issues/710[#710]: Add VPN enhancement to RancherDesktop
+* https://github.com/devonfw/ide/issues/695[#695]: Docker setup not working
 * https://github.com/devonfw/ide/issues/636[#636]: Helm integration
 * https://github.com/devonfw/ide/issues/637[#637]: Terraform integration
 * https://github.com/devonfw/ide/issues/638[#638]: GraalVM integration
-* https://github.com/devonfw/ide/issues/695[#695]: Docker setup not working
 * https://github.com/devonfw/ide/issues/734[#734]: unzip: command not found (zip support)
 * https://github.com/devonfw/ide/issues/701[#701]: Support for windows terminal
 * https://github.com/devonfw/ide/pull/700[#700]: support for MAVEN_ARGS variable for mvn 3.x
