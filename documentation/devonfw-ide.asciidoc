@@ -1,16 +1,99 @@
 = devonfw-ide
 
-include::devonfw-ide-introduction.asciidoc[leveloffset=1]
+== What is devonfw-ide?
 
-<<<<
+`devondw-ide` is a collection of tools and technologies bundled together to help you get started with your project development immediately. It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs, VSCode and everything else you may need to quick start your development. All you need to do is download and extract a zip file and execute its setup.
 
-include::devonfw-ide-usage.asciidoc[leveloffset=1]
+That is not all. `devonfw-ide` gives you its own command shell where you can execute `devon` commands. Here is a small example of what you can do with `devonfw-ide` CLI:
 
-<<<<
 
-include::devonfw-ide-advanced.asciidoc[leveloffset=1]
+[source,bash]
+--------
+[/]$ devon
+You are not inside a devonfw-ide installation: /
+[/]$ cd /projects/devonfw
+[devonfw]$ mvn
+zsh: command not found: mvn
+[devonfw]$ devon
+devonfw-ide environment variables have been set for /projects/devonfw in workspace main
+[devonfw]$ mvn -v
+Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
+Maven home: /projects/devonfw/software/maven
+Java version: 1.8.0_191, vendor: Oracle Corporation, runtime: /projects/devonfw/software/java
+Default locale: en_DE, platform encoding: UTF-8
+OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
+[devonfw]$ cd /projects/ide-test/workspaces/test/my-project
+[my-project]$ devon
+devonfw-ide environment variables have been set for /projects/ide-test in workspace test
+[my-project]$ mvn -v
+Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
+Maven home: /projects/ide-test/software/maven
+Java version: 11.0.2, vendor: Oracle Corporation, runtime: /projects/ide-test/software/jdk/Contents/Home
+Default locale: en_DE, platform encoding: UTF-8
+OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
+[ide-test]$ devon eclipse
+launching Eclipse for workspace test...
+[my-project]$ devon build
+[INFO] Scanning for projects...
+...
+[INFO] BUILD SUCCESS
+--------
 
-<<<<
+The softwares you get through `devonfw-ide` does not contaminate the environment/path variables of your entire system. Also, you can choose to customize the softwares before you download the ide. So you can play the role of your project admin and select which softwares and which versions of those softwares your project needs, and then distribute it to your team.
 
-include::devonfw-ide-support.asciidoc[leveloffset=1]
+http://devonfw.com[devonfw] provides a solution to building applications which combine best-in-class frameworks and libraries as well as industry proven practices and code conventions.
+It massively speeds up development, reduces risks and helps deliver better results.
 
+
+== Why do you need devonfw-ide?
+
+Every developer needs great tools to work efficiently. Setting up these tools manually can be tedious and error-prone. Furthermore, some projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
+
+The `devonfw-ide` will solve these issues. Here are the features you will find through `devonfw-ide`:
+
+* *Efficient* +
+Set up your IDE within minutes tailored for the requirements of your project.
+* *Automated* +
+Automate the setup and update, avoid manual steps and mistakes.
+* *Simple* +
+KISS (Keep It Small and Simple), no native installers that globally mess your OS or tool-integration that break with every release. Instead, use templates and simple shell scripts.
+* *Configurable* +
+You can change the link:configuration.asciidoc[configuration] depending on your needs. Furthermore, the link:settings.asciidoc[settings] contain configuration templates for the different tools (see link:configurator.asciidoc[configurator]).
+* *Maintainable* +
+For your project you should copy these link:settings.asciidoc[settings] to an own git repository that can be maintained and updated to manage the tool configurations during the project lifecycle. If you use GitHub or GitLab every developer can easily suggest changes and improvements to these link:settings.asciidoc[settings] via pull/merge requests, which is easier to manage with big teams.
+* *Customizable* +
+Do you need an additional tool you had never heard of before? Put it in the `software` folder of the link:structure.asciidoc[structure]. The `devon` link:cli.asciidoc[CLI] will then automatically add it to your `PATH` variable. +
+Further you can create your own link:cli.asciidoc#commandlets[commandlet] for your additional tool. For closed-source tools you can create your own archive and distribute it to your team members as long as you care about the terms and licenses of these tools.
+* *Multi-platform* +
+It works on all major platforms: Windows, Mac and Linux.
+* *Multi-tenancy* +
+You can have several instances of the `devonfw-ide` "link:setup.asciidoc[installed]" on your machine for different projects with different tools, tool versions and configurations. You won’t need to set up any physical installation nor changing your operating system. "Installations" of `devonfw-ide` do not interfere with each other nor with other installed software.
+* *Multiple Workspaces* +
+It supports working with different link:workspaces.asciidoc[workspaces] on different branches. You can create and update new workspaces with a few clicks. You can see the workspace name in the title-bar of your IDE so you do not get confused and work on the right branch.
+* *Free* +
+The `devonfw-ide` is free just like everything from https://devonfw.com[devonfw]. See link:license.asciidoc[LICENSE] for details.
+
+=== IDEs
+We support the following IDEs:
+
+* link:eclipse.asciidoc[Eclipse]
+* link:vscode.asciidoc[Visual Studio Code]
+* link:intellij.asciidoc[IntelliJ]
+
+=== Platforms
+We support the following platforms:
+
+* link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
+* link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
+* link:node.asciidoc[node], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
+
+=== Build-Systems
+We support the following build-systems:
+
+* link:mvn.asciidoc[mvn] (maven)
+* link:npm.asciidoc[npm]
+* link:gradle.asciidoc[gradle]
+
+However, also other IDEs, platforms, or tools can be easily integrated as link:cli.asciidoc#commandlet[commandlet].
+
+Excited to get started? Quick start here.
