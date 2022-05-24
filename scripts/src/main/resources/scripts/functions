@@ -782,14 +782,15 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4: contents for $1
+# $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
-  if [ -n "${4}" ] && [ -d "${4}" ] && [[ ! "${4}" =~ .*\.app ]]
+  shift 3
+  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
-    source_dir="${4}"
+    source_dir="${1}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
