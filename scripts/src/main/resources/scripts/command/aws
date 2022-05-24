@@ -21,53 +21,27 @@ function doRun() {
 }
 
 # $1: path_to_package
-# $2: enable_ide_update
-function doPackageInstall() {
+function doPackageInstall()
+{
   local path_to_package="${1}"
-  local enable_ide_update="${2}"
-  local version_file="${path_to_package}/.devon.software.version"
-  local current_version
-  current_version="$(cat "${version_file}")"
 
   if doIsWindows
   then
-    doEcho "Windows Installation..."
+    doEcho "Installing AWS for Windows..."
     windows_path_to_package=$(cygpath -w "${path_to_package}")
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${current_version}-AWSCLIV2.msi /quiet'"
   elif doIsMacOs
   then
-    doEcho "Installating aws for MacOS..."
+    doFail "Sorry, AWS CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   else
-    doEcho "Installating aws for Linux..."
+    doEcho "Installating AWS for Linux..."
     doRunCommand "sudo ${path_to_package}/install"
   fi
-  if [ "${enable_ide_update}" == "y" ]
-  then
-    if [ ! -d "${DEVON_IDE_HOME}/software/aws/" ]
-    then
-      doRunCommand "mkdir ${DEVON_IDE_HOME}/software/aws/"
-    fi
-    doRunCommand "cp ${version_file} ${DEVON_IDE_HOME}/software/aws/"
-  fi
-  #doRunCommand "rm -rf ${path_to_package}"
+  doRunCommand "rm -rf ${path_to_package}"
 }
 
 function doSetup() {
 
-  # start installation after extract
-  local inst_pack="y"
-  local enable_ide_update="n"
-
-  # Check if AWS_HOME is already set
-  if [ -z "${AWS_HOME}" ]
-  then
-    if [ "${inst_pack}" == "y" ]
-    then
-      AWS_HOME="${DEVON_IDE_HOME}/updates/install/aws"
-    else
-      AWS_HOME="${DEVON_IDE_HOME}/software/aws"
-    fi
-  fi
   if [ ! -d "${AWS_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
@@ -80,24 +54,23 @@ function doSetup() {
     doInstall "-" "${AWS_HOME}" "aws" "${AWS_VERSION}" 
     if [ "${?}" = 0 ]
     then
-      if [ "${inst_pack}" == "y" ]
-      then
-        doPackageInstall "${AWS_HOME}" "${enable_ide_update}"
-      fi
+      doPackageInstall "${AWS_HOME}"
     fi
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doEcho "logon again to test aws with \"aws version\""
+    doEcho "logon again to test aws with \"aws --version\""
   fi 
 
 }
 
+AWS_HOME="${DEVON_IDE_HOME}/updates/install/aws"
+
 # CLI
 case ${1} in 
 "help" | "-h")
-  echo "Install aws."
+  echo "Setup AWS CLI."
   echo
   echo "Arguments:"
   echo " setup                    install aws on your machine."
@@ -105,7 +78,6 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
-  doEcho "Installating aws..."
   doSetup
 ;;
 *)
