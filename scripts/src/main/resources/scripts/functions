@@ -508,8 +508,8 @@ function doDownload() {
     for mirror in "${mirrors[@]}"
     do
       local mirror_url="${mirror}"
-      mirror_url="${mirror_url//\$\{version\}/${version}}"
       mirror_url="${mirror_url//\$\{os\}/${os}}"
+      mirror_url="${mirror_url//\$\{version\}/${version}}"
       mirror_url="${mirror_url//\$\{arch\}/${arch}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
