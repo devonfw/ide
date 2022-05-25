@@ -2,7 +2,7 @@
 
 == What is devonfw-ide?
 
-`devondw-ide` is a standardized, open-source collection of customizable tools and technologies bundled together to help you get started with your project development immediately. 
+`devondw-ide` is a standardized, open-source toolbox or construction kit allowing you to pick and choose those tools which fit the requirements and needs of your project.
 
 It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs, VSCode and everything else you may need to quick start your development. All you need to do is download and extract a zip file and execute its setup, reducing your initial setup time for starting a project from days to minutes.
 
