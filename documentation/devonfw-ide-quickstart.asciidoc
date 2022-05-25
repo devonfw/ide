@@ -1,0 +1,35 @@
+= Devonfw-ide quickstart
+
+== Prerequisites
+We try to make it as simple as possible for you. However, there are some minimal prerequisites:
+
+* You need to have a tool to extract `*.tar.gz` files (`tar` and `gzip`). On Windows before Version 10 (1803) use https://www.7-zip.org/[7-zip]. On all other platforms this comes out of the box.
+* You need to have https://git-scm.com[git] and https://curl.haxx.se/[curl] installed.
+** On Windows you only need to  download and install https://git-scm.com/download/win[git for windows]. This also ships with `bash` and `curl`.
+** On Linux you might need to install the above tools in case they are not present (e.g. `sudo apt-get install git curl` or `sudo yum install git-core curl`)
+** On MacOS you only need to download and install https://git-scm.com/download/mac[git for mac].
+
+== Download
+The latest release of `devonfw-ide` can be downloaded from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] (You can find all releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central]).
+
+== Install
+* Create a central folder like `C:\projects` or `/projects`. 
+* Inside this folder, create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) to this new folder. Run the command `setup` in this folder (on windows double clicking on `setup.bat`).
+* It will ask to enter setting url. Just press ENTER. 
+Once installation is complete you will be able to see success message on command-line. Press any key to exit from setup command-line.
+
+== Use
+
+After installation is complete, right click in folder where you have installed ide. You will see options like "Open devonfw command shell here" and "Open devonfw powershell here" in windows.
+
+.Right-click Options in ide
+image::images/right-click-options.png["Right-click Options in ide"]
+
+Launch devonfw command line and execute `devon help` command. 
+
+You should be able to similar output as :
+
+.Sample output for devon help
+image::images/sample-output-ide-help.png["Sample output for devon help "]
+
+Congratulations, you are all set to use your ide!!!
