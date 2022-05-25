@@ -2,44 +2,17 @@
 
 == What is devonfw-ide?
 
-`devondw-ide` is a collection of tools and technologies bundled together to help you get started with your project development immediately. It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs, VSCode and everything else you may need to quick start your development. All you need to do is download and extract a zip file and execute its setup.
+`devondw-ide` is a standardized, open-source collection of customizable tools and technologies bundled together to help you get started with your project development immediately. 
 
-That is not all. `devonfw-ide` gives you its own command shell where you can execute `devon` commands. Here is a small example of what you can do with `devonfw-ide` CLI:
+It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs, VSCode and everything else you may need to quick start your development. All you need to do is download and extract a zip file and execute its setup, reducing your initial setup time for starting a project from days to minutes.
 
+That is not all. `devonfw-ide` gives you its own command shell where you can execute `devon` commands. Here is a small video which showcases what you can do with `devonfw-ide`:
 
-[source,bash]
---------
-[/]$ devon
-You are not inside a devonfw-ide installation: /
-[/]$ cd /projects/devonfw
-[devonfw]$ mvn
-zsh: command not found: mvn
-[devonfw]$ devon
-devonfw-ide environment variables have been set for /projects/devonfw in workspace main
-[devonfw]$ mvn -v
-Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
-Maven home: /projects/devonfw/software/maven
-Java version: 1.8.0_191, vendor: Oracle Corporation, runtime: /projects/devonfw/software/java
-Default locale: en_DE, platform encoding: UTF-8
-OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
-[devonfw]$ cd /projects/ide-test/workspaces/test/my-project
-[my-project]$ devon
-devonfw-ide environment variables have been set for /projects/ide-test in workspace test
-[my-project]$ mvn -v
-Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
-Maven home: /projects/ide-test/software/maven
-Java version: 11.0.2, vendor: Oracle Corporation, runtime: /projects/ide-test/software/jdk/Contents/Home
-Default locale: en_DE, platform encoding: UTF-8
-OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
-[ide-test]$ devon eclipse
-launching Eclipse for workspace test...
-[my-project]$ devon build
-[INFO] Scanning for projects...
-...
-[INFO] BUILD SUCCESS
---------
+[youtube video link]
 
-The softwares you get through `devonfw-ide` does not contaminate the environment/path variables of your entire system. Also, you can choose to customize the softwares before you download the ide. So you can play the role of your project admin and select which softwares and which versions of those softwares your project needs, and then distribute it to your team.
+Or you can also try out `devonfw-ide` in our interactive Katacoda scenario without having to download it at all:
+
+[katacoda tutorial link]
 
 http://devonfw.com[devonfw] provides a solution to building applications which combine best-in-class frameworks and libraries as well as industry proven practices and code conventions.
 It massively speeds up development, reduces risks and helps deliver better results.
