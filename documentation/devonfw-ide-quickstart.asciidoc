@@ -1,4 +1,4 @@
-= Devonfw-ide quickstart
+= devonfw-ide Quickstart
 
 == Prerequisites
 We try to make it as simple as possible for you. However, there are some minimal prerequisites:
@@ -18,7 +18,7 @@ The latest release of `devonfw-ide` can be downloaded from https://repository.so
 * It will ask to enter setting url. Just press ENTER. 
 Once installation is complete you will be able to see success message on command-line. Press any key to exit from setup command-line.
 
-== Use
+== Verify your installation
 
 After installation is complete, right click in folder where you have installed ide. You will see options like "Open devonfw command shell here" and "Open devonfw powershell here" in windows.
 
@@ -31,5 +31,8 @@ You should be able to similar output as :
 
 .Sample output for devon help
 image::images/sample-output-ide-help.png["Sample output for devon help "]
+
+
+For example, to launch your IDEs like Eclipse in windows run eclipse-main.bat from your folder. For other ides refer (placeholder)
 
 Congratulations, you are all set to use your ide!!!
