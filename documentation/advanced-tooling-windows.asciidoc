@@ -22,6 +22,7 @@ Just right-click on the folder you would like to open in a terminal and choose f
 * Open devonfw cmd shell here
 * Open devonfw PowerShell here
 * Open devonfw Cygwin Bash here (only if cygwin was installed during setup)
+* Open devonfw cmd shell in Windows Terminal here (only if Windows Terminal is installed on the system)
 
 == Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:
@@ -84,7 +85,7 @@ Are you are used to symbolic and hard links in Linux? Do you have to work with W
 If you even want to have it integrated in windows explorer you might want to install http://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[linkshellextension]. However, you might want to disable SmartMove in the http://schinagl.priv.at/nt/hardlinkshellext/hardlinkshellext.html#configuration[configuration] if you face strange performance issues when moving folders.
 
 === Linux
-Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (an a light weight VM).
+Install https://www.cygwin.com/[Cygwin] and get your bash in windows with ssh-agent, awk, sed, tar, and all the tools you love (or hate). Windows 10 has already a Linux as an installable feature included: WSL and from Version 2004 on WSL2, which is a native Linux Kernel running on Windows (in a light weight VM).
 
 === X11
 Do you want to connect via SSH and need to open an X11 app from the server? Do you want to see the GUI on your windows desktop?

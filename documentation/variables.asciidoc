@@ -26,11 +26,14 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |*`M2_REPO`*|`$DEVON_IDE_HOME/conf/.m2/repository`|Path to your local maven repository. For projects without high security demands, you may change this to the maven default `~/.m2/repository` and share your repository among multiple projects.
 |*`MAVEN_HOME`*|`$DEVON_IDE_HOME/software/maven`|Path to Maven
 |*`MAVEN_OPTS`*|`-Xmx512m -Duser.home=$DEVON_IDE_HOME/conf`|Maven options
+|*`DOCKER_EDITION`*|e.g. `DOCKERDESKTOP`| If set as `DOCKERDESKTOP` the command `devon docker setup` will setup Docker Desktop globally at the users computer. Otherwise the setup of Rancher Desktop will be started.| 
+|*`GRAALVM_HOME`*|`$DEVON_IDE_HOME/software/extra/graalvm`|Path to GraalVM
 |`DEVON_SOFTWARE_REPOSITORY`|`-`|Project specific or custom link:software.asciidoc#repository[software-repository].
 |`DEVON_SOFTWARE_PATH`|`-`|Globally shared user-specific link:software.asciidoc#shared[local software installation location].
 |`ECLIPSE_VMARGS`|`-Xms128M -Xmx768M -XX:MaxPermSize=256M`|JVM options for Eclipse
 |deprecated: `ECLIPSE_PLUGINS`|`-`|Array with "feature groups" and "update site URLs" to customize required link:eclipse.asciidoc#plugins[eclipse plugins]. Deprecated - see link:eclipse.asciidoc#plugins[Eclipse plugins].
 |`«TOOL»_VERSION`|`-`|The version of the tool `«TOOL»` to install and use (e.g. `ECLIPSE_VERSION` or `MAVEN_VERSION`).
+|`EXTRA_JAVA_VERSION`|`-`|An additional (newer) version of link:java.asciidoc[java] that will be used to run java-based IDEs (e.g. link:eclipse.asciidoc[eclipse] or link:intellij.asciidoc[intellij]).
 |`«TOOL»_BUILD_OPTS`|e.g.`clean install`|The arguments provided to the build-tool `«TOOL»` in order to run a build.
 |`«TOOL»_RELEASE_OPTS`|e.g.`clean deploy -Dchangelist= -Pdeploy`|The arguments provided to the build-tool `«TOOL»` in order to perform a release build.
 |`DEVON_IDE_TRACE`||If value is not an empty string, the `devonfw-ide` scripts will trace each script line executed. For bash two lines output: before and again after expansion. *ATTENTION:* This is not a regular variable working via `devon.properties`. Instead manually do `export DEVON_IDE_TRACE=true` in bash or `DEVON_IDE_TRACE=true` in windows CMD before running a devon command to get a trace log that you can provide to experts in order to trace down a bug and see what went wrong.

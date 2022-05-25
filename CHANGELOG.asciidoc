@@ -2,6 +2,68 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.04.001
+
+New release with improved cloud tool support and various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/690[#690]: Support for RancherDesktop
+* https://github.com/devonfw/ide/issues/710[#710]: Add VPN enhancement to RancherDesktop
+* https://github.com/devonfw/ide/issues/695[#695]: Docker setup not working
+* https://github.com/devonfw/ide/issues/636[#636]: Helm integration
+* https://github.com/devonfw/ide/issues/637[#637]: Terraform integration
+* https://github.com/devonfw/ide/issues/638[#638]: GraalVM integration
+* https://github.com/devonfw/ide/issues/734[#734]: unzip: command not found (zip support)
+* https://github.com/devonfw/ide/issues/701[#701]: Support for windows terminal
+* https://github.com/devonfw/ide/pull/700[#700]: support for MAVEN_ARGS variable for mvn 3.x
+* https://github.com/devonfw/ide/issues/696[#696]: Move CobiGen home folder from user home to ide per default
+* https://github.com/devonfw/ide/issues/683[#683]: Generalize MacOS app workaround
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/27?closed=1[milestone 2022.04.001].
+
+== 2021.12.005
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/693[#693]: Docker isQuiet: command not found
+* https://github.com/devonfw/ide/pull/668[#668]: Bugfix for issue #667 - devon npm setup ignores a given version
+* https://github.com/devonfw/ide/pull/686[#686]: Improve UX for "devon ide update" on windows
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/26?closed=1[milestone 2021.12.005].
+
+== 2021.12.004
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/678[#678]: Support extra Java for IDEs via EXTRA_JAVA_VERSION
+* https://github.com/devonfw/ide/issues/680[#680]: Intellij Plugin installation broken
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/25?closed=1[milestone 2021.12.004].
+
+== 2021.12.003
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/664[#664] / https://github.com/devonfw/ide/issues/662[662]: scripts/command/eclipse: line 79: isQuiet: command not found
+* https://github.com/devonfw/ide/issues/665[#665]: devon ide update should update all installed tools
+* https://github.com/devonfw/ide/issues/669[#669]: Installation of custom tools broken
+* https://github.com/devonfw/ide/issues/667[#667]: devon npm setup ignores a given version
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/23?closed=1[milestone 2021.12.003].
+
+== 2021.12.002
+
+Update with the following bugfixes and improvements:
+
+* https://github.com/devonfw/ide/issues/641[#641]: Improve tools download to be stable
+* https://github.com/devonfw/ide/issues/650[#650]: Update java version to 11.0.13_8
+* https://github.com/devonfw/ide/issues/649[#649]: Update eclipse version to 2021‑12
+* https://github.com/devonfw/ide/issues/538[#538]: Make Eclipse version dependent on JAVA_VERSION
+* https://github.com/devonfw/ide/issues/658[#658]: Update intellij to 2021.3
+* https://github.com/devonfw/ide/issues/618[#618]: IDE does not support JDK 17
+* https://github.com/devonfw/ide/issues/604[#604]: Installation error with eclipse plugins
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/22?closed=1[milestone 2021.12.002].
+
 == 2021.12.001
 
 Update with the following bugfixes and improvements:
@@ -11,6 +73,8 @@ Update with the following bugfixes and improvements:
 * https://github.com/devonfw/ide/issues/453[#453]: Automatic plugin installation for IntelliJ
 * https://github.com/devonfw/ide/issues/601[#601]: Update of node.js to 14.17.6 to fix CVE-2021-22930
 * https://github.com/devonfw/ide/pull/625[#625]: There is no doIsQuiet yet for CobiGen
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/21?closed=1[milestone 2021.12.001].
 
 == 2021.04.002
 

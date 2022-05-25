@@ -16,26 +16,16 @@ source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
-  doDevonCommand java -q setup
-  if [ -n "${1}" ] || [ ! -d "${IDEA_HOME}" ]
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    local version="${INTELLIJ_VERSION:-2020.2.1}"
-    local software_edition_type="${INTELLIJ_EDITION_TYPE:-C}"
-    local ext
-    if doIsMacOs
-    then
-      ext="dmg"
-    elif doIsWindows
-    then
-      ext="win.zip"
-    else
-      ext="tar.gz"
-    fi
-    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "-" "${arch}" "${ext}" "${software_edition_type}"
+    local version="${INTELLIJ_VERSION:-2021.3}"
+    local edition="${INTELLIJ_EDITION_TYPE:-C}"
+    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "${edition}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
-      if [ "${software_edition_type}" = "U"  ]
+      if [ "${edition}" = "U"  ]
       then
         mv "${DEVON_IDE_HOME}/software/intellij/IntelliJ IDEA.app" "${DEVON_IDE_HOME}/software/intellij/IntelliJ.app"
       else
@@ -52,9 +42,8 @@ function doSetup() {
     export PATH="${IDEA_HOME}/bin:${PATH}"
     doAddPlugins
   fi
-  if [ -n "${1}" ]
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "command -v idea" "verify installation of IntelliJ"
     if [ -e "${IDEA_HOME}/product-info.json" ]
     then
       doRunCommand "cat '${IDEA_HOME}/product-info.json'"
@@ -85,6 +74,7 @@ function doAddPlugins() {
 }
 
 function doAddPlugin() {
+  local pluginId="${1}"
   local intellij_build
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local filename
@@ -102,11 +92,11 @@ function doAddPlugin() {
 
   if [ -n "${1}" ] && [ -n "${intellij_build}" ]
   then
-    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${1}&build=${intellij_build}"
+    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
     filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
     filename="${filename##*/}"
     filename="${filename%%\?*}"
-    doDownload "${download_url}" "${filename}" "${download_dir}"
+    doDownload "${download_url}" "${download_dir}" "intellij-plugin-${intellij_build}-${pluginId}" "" "" "" "" "" "" "${filename}"
     if [ "${filename##*.}" = "zip" ]
     then
       local extract_name=${filename%.*}
@@ -142,6 +132,11 @@ function doConfigureIntellij() {
 
 function doStartIntellij() {
   doConfigureIntellij "-u"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
+  then
+    JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+    doExtendPath "${JAVA_HOME}"
+  fi
   echo "launching IntelliJ..."
   local IDEA="${IDEA_HOME}/bin/idea64.exe"
   if [ ! -f "${IDEA}" ];
@@ -181,8 +176,12 @@ fi
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
 if [ -z "${1}" ]
 then
-  doSetup
+  doSetup silent
   doStartIntellij
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+  exit
 fi
 if [ "${1}" = "--all" ]
 then
@@ -193,6 +192,7 @@ while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
+    doSetup silent
     shift
     doStartIntellij "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
@@ -204,9 +204,6 @@ do
   elif [ "${1}" = "ws-reverse-add" ]
   then
     doConfigureIntellij "-x"
-  elif [ "${1}" = "setup" ]
-  then
-    doSetup setup
   elif [ "${1}" = "create-script" ]
   then
     doCreateIdeScript intellij

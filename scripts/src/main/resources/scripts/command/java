@@ -23,14 +23,30 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ -z "${JAVA_HOME}" ]
+  export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
+  local version="${JAVA_VERSION:-11.0.13_8}"
+  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
   then
-    export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-    echo "JAVA_HOME is not set, assuming ${JAVA_HOME}"
+    if [ "${EXTRA_JAVA_VERSION}" = "${version}" ]
+    then
+      doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
+    fi
+    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra"
   fi
-  if [ -n "${1}" ] || [ ! -d "${JAVA_HOME}" ]
+}
+
+# $1: mode (e.g. 'silent')
+# $2: version
+# $3: software path
+# $4: label (e.g. 'extra Java')
+function doSetupJava() {
+  local mode="${1}"
+  local version="${2}"
+  local path="${3}"
+  local java_path="${path}/java"
+  if [ "${mode}" != "silent" ] || [ ! -d "${java_path}" ]
   then
-    local version="${JAVA_VERSION:-11.0.9.1_1}"
     local code
     if [ "${version:0:1}" = "8" ]
     then
@@ -38,36 +54,17 @@ function doSetup() {
     else
       code="jdk-${version/_/%2B}"
     fi
-    local software_dir="${JAVA_HOME}"
-    if doIsMacOs
+    doInstall "-" "${java_path}" "java" "${version}" "" "${code}"
+    if [ "${java_path}" = "${JAVA_HOME}" ]
     then
-      software_dir="${DEVON_IDE_HOME}/software/jdk"
-    fi
-    local ext="tar.gz"
-    if doIsWindows
-    then
-      ext="zip"
-    fi
-    local arch
-    arch="$(uname -m)"
-    if [ "${arch}" = "x86_64" ]
-    then
-      arch="x64"
-    elif [ "${arch}" = "arm64" ]
-    then
-      arch="aarch64"
-    fi
-    doInstall "-" "${software_dir}" "java" "${version}" "" "${arch}" "${ext}" "${code}"
-    if [ ! -d "${JAVA_HOME}" ] && [ -d "${DEVON_IDE_HOME}/software/jdk" ] && [ "${software_dir}" = "${DEVON_IDE_HOME}/software/jdk" ]
-    then
-      echo "Creating symlink as workaround for Java on MacOS"
-      doRunCommand "ln -sf 'jdk/Contents/Home' '${JAVA_HOME}'"
       doExtendPath "${JAVA_HOME}"
     fi
+    # delete not used jdk for old installations
+    rm -rf "${DEVON_IDE_HOME}/software/jdk"
   fi
-  if [ -n "${1}" ] && ! doIsQuiet
+  if [ "${mode}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${JAVA_HOME}/bin/java' -version" "verify installation of Java"
+    doRunCommand "'${java_path}/bin/java' -version" "verify installation of Java"
   fi
 }
 
@@ -114,10 +111,10 @@ then
   echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "create" ]
 then
-  doSetup
+  doSetup silent
   shift
   doCreate "${@}"
 elif [ "${1}" = "migrate" ]

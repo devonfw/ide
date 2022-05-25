@@ -16,13 +16,13 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
-  if [ -n "${1}" ] || [ ! -d "${GRADLE_HOME}" ]
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${GRADLE_HOME}" ]
   then
     local version="${GRADLE_VERSION:-5.5.1}"
-    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "-"
+    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "" "" "-"
   fi
-  if [ -n "${1}" ]
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     doRunCommand "'${GRADLE}' -v" "verify installation of gradle"
   fi
@@ -62,7 +62,7 @@ function doRunBuild() {
   then
     gradle_cmd="./gradlew"
   else
-    doSetup
+    doSetup silent
   fi
   doEcho "Running: ${gradle_cmd} ${*}"
   if doIsQuiet
@@ -98,7 +98,7 @@ then
   doRunBuild ${GRADLE_BUILD_OPTS:-clean dist}
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 else
   if [ "${1}" = "get-version" ]
   then

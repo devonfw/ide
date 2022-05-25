@@ -24,14 +24,15 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |`create-script`          |create launch script for this IDE, your current workspace and your OS
 |=======================
 
-There are variables that can be used for Eclipse. These are explained by the following table:
+There are link:variables.asciidoc[variables] that can be used for Eclipse. These are explained by the following table:
 
 .Variables of devonfw-ide for Eclipse
 [options="header"]
 |=======================
-|*Variable*|*Default-Value*|*Meaning*
-|*`ECLIPSE_VERSION`*|`2020-12`|The version of the tool Eclipse to install and use.
-|*`ECLIPSE_EDITION_TYPE`*|Java|The edition of the tool Eclipse to install and use. You can choose between Java for standard edition or JEE for enterprise edition.
+|*Variable*|*Meaning*
+|*`ECLIPSE_VERSION`*|The version of the tool Eclipse to install and use.
+|*`ECLIPSE_EDITION_TYPE`*|The edition of the tool Eclipse to install and use. You can choose between Java for standard edition or JEE for enterprise edition.
+|*`EXTRA_JAVA_VERSION`|You can set this to a different (newer) version of Java used to launch your IDE (other than `JAVA_VERSION` that is used to build your project)
 |=======================
 
 == plugins

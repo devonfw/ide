@@ -18,12 +18,12 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if command -v ionic &> /dev/null
   then
-    if [ -n "${1}" ]
+    if [ "${1}" != "silent" ]
     then
-      echo "ionic-cli (ionic) is already installed at $(command -v ionic)"
+      doEcho "ionic-cli (ionic) is already installed at $(command -v ionic)"
     fi
   else
-    doDevonCommand npm -q setup
+    doDevonCommand npm setup silent
     local npm_command="${DEVON_IDE_HOME}/software/node/npm"
     if [ ! -x "${npm_command}" ]
     then
@@ -50,17 +50,17 @@ fi
 
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "create" ]
 then
   shift
-  doSetup
+  doSetup silent
   ionic start "${@}"
 elif [ "${1}" = "cicd" ]
 then
   shift
   doDevonCommand cicdgen ng "${*}"
 else
-  doSetup
+  doSetup silent
   ionic "${@}"
 fi

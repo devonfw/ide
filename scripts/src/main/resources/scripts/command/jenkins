@@ -16,16 +16,16 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  doDevonCommand java -q setup
+  doDevonCommand java setup silent
   if [ -d "${JENKINS_HOME}" ]
   then
-    if [ -n "${1}" ]
+    if [ "${1}" != "silent" ]
     then
       echo "Jenkins is already installed at ${JENKINS_HOME}"
     fi
   else
     local version=${JENKINS_VERSION:-latest}
-    doDownload "-" "" "jenkins" "${version}" "-"
+    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "" "jenkins.war"
     mkdir -p "${JENKINS_HOME}"
     doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
     # http://localhost:9999/jnlpJars/jenkins-cli.jar
@@ -34,14 +34,14 @@ function doSetup() {
     doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
     cd "${cwd}" || exit 255
   fi
-  if [ -n "${1}" ]
+  if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verify installation of Jenkins"
   fi
 }
 
 function doStart() {
-  doSetup
+  doSetup silent
   doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
   sleep 15  
   echo
@@ -91,7 +91,7 @@ then
   echo "Options:"
 elif [ "${1}" = "setup" ]
 then
-  doSetup setup
+  doSetup "${2}"
 elif [ "${1}" = "start" ]
 then
   doStart
