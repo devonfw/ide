@@ -15,7 +15,7 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  if doIsAzureInstalled
+  if command -v az &> /dev/null
   then
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then
@@ -35,7 +35,6 @@ function doSetup() {
       doDownload "-" "" "az" "${version}"
       # Install Azure CLI for Windows
       doEcho "Installing Azure CLI for Windows..."
-      modifyPathStructure
       installOnWindows
     else
       doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -43,41 +42,25 @@ function doSetup() {
   fi
 }
 
-# modify a filepath for powershell path syntax e.g. /c/... -> c:/...
-function modifyPathStructure() {
-  modifiedPath=${DEVON_DOWNLOAD_DIR}
-  partition=$(echo "${modifiedPath}" | cut -f2 -d'/'):'/' # -> <partition>:/
-  modifiedPath=${partition}$(echo "${modifiedPath}" | cut -f3- -d'/')
-  modifiedPath="${modifiedPath////\\}"
-}
-
 # Install Azure CLI for Windows via Powershell Command
 function installOnWindows() { 
-  if doIsPwshInstalled
-  then
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${modifiedPath}\az-${version}-windows.msi /QB-!'" &> /dev/null || exit_code=$?
-    if [ -z "${exit_code}" ]
-    then 
-      setConfigDir
-      doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI regular." 
+  winPath=$(cygpath -w "${DEVON_DOWNLOAD_DIR}")
+  powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${winPath}\az-${version}-windows.msi /QB-!'" &> /dev/null
+  if [ "${?}" = 0 ]
+  then 
+    setConfigDir
+    doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI regular." 
+  else
+    if doAskToContinue "\nAdministration rights are required. Do you want to restart the installation?"
+    then
+      doEcho "\nInstalling Azure CLI for Windows..."
+      installOnWindows
     else
-      read -r -p "You must run the installation with administration rights. Would you like to start the installation again? (Y/n)" answer 
-      case ${answer:0:1} in 
-        y|Y )
-          doEcho "\nInstalling Azure CLI for Windows..."
-          exit_code=""
-          installOnWindows
-        ;;
-        * )
-          doEcho "The installation has been canceled."
-        ;;
-      esac
+      doEcho "The installation has been canceled."
     fi
-  else doEcho "Powershell must be installed on your system to continue the installation."
   fi
 }
     
-
 # Set directory for azure cli configuration file
 function setConfigDir() {
   azureconf_dir="${DEVON_IDE_HOME}/conf/.azure"
@@ -90,31 +73,14 @@ function setConfigDir() {
   fi
 }
 
-# OS independet check if Azure CLI is installed
-function doIsAzureInstalled() {
-  if command -v az &> /dev/null
-  then 
-    return
-  else
-    return 255
-  fi
-}
-
-# Check if Powershell is installed
-function doIsPwshInstalled() {
-  if command -v powershell &> /dev/null
-  then
-    return
-  else
-    return 255
-  fi
-}
-
 function doRun() {
   doSetup silent
-  doEcho "Running: Azure CLI ${*}"
-  setConfigDir
-  az "${@}"
+  if command -v az &> /dev/null
+  then
+    doEcho "Running: Azure CLI ${*}"
+    setConfigDir
+    az "${@}"
+  fi
 }
 
 # CLI
@@ -129,24 +95,10 @@ case ${1} in
 ;;
 
 "setup" | "s")
-  doEcho "Installing Azure CLI..."
-  doSetup
-;;
-
-"")
-if ! doIsAzureInstalled
-then
-  doEcho "Installing Azure CLI..."
-  doSetup
-else doRun "${@}"
-fi
+  doSetup "${2}"
 ;;
 
 *)
-if doIsAzureInstalled
-then
   doRun "${@}"
-else doEcho "Unknown argument "
-fi
 ;;
 esac
