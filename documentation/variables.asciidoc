@@ -26,6 +26,7 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |*`M2_REPO`*|`$DEVON_IDE_HOME/conf/.m2/repository`|Path to your local maven repository. For projects without high security demands, you may change this to the maven default `~/.m2/repository` and share your repository among multiple projects.
 |*`MAVEN_HOME`*|`$DEVON_IDE_HOME/software/maven`|Path to Maven
 |*`MAVEN_OPTS`*|`-Xmx512m -Duser.home=$DEVON_IDE_HOME/conf`|Maven options
+|*`DOCKER_EDITION`*|e.g. `DOCKERDESKTOP`| If set as `DOCKERDESKTOP` the command `devon docker setup` will setup Docker Desktop globally at the users computer. Otherwise the setup of Rancher Desktop will be started.| 
 |*`GRAALVM_HOME`*|`$DEVON_IDE_HOME/software/extra/graalvm`|Path to GraalVM
 |`DEVON_SOFTWARE_REPOSITORY`|`-`|Project specific or custom link:software.asciidoc#repository[software-repository].
 |`DEVON_SOFTWARE_PATH`|`-`|Globally shared user-specific link:software.asciidoc#shared[local software installation location].

@@ -436,15 +436,16 @@ function doDownload() {
     fi
     # remap architecture
     local mirrors_arch
+    local arch_new="${arch}"
     mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
     if [ -e "${mirrors_arch}" ]
     then
       while IFS="=" read -r key value
       do
-        if [ "${key}" = "${arch}" ] || [ "${key}" = '*' ]
+        if [ "${key}" = "${arch_new}" ] || [ "${key}" = '*' ]
         then
-          doDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
-          arch="${value}"
+          doDebug "Remapped architecture from ${arch_new} to ${value} for software ${software} in version ${version}"
+          arch_new="${value}"
           break
         fi
       done < "${mirrors_arch}"
@@ -466,15 +467,16 @@ function doDownload() {
     fi
     # remap operating system
     local mirrors_os
+    local os_new="${os}"
     mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
     local key
     local value
     while IFS="=" read -r key value
     do
-      if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
+      if [ "${key}" = "${os_new}" ] || [ "${key}" = '*' ]
       then
-        doDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
-        os="${value}"
+        doDebug "Remapped OS from ${os_new} to ${value} for software ${software} in version ${version}"
+        os_new="${value}"
         break
       fi
     done < "${mirrors_os}"
@@ -508,13 +510,14 @@ function doDownload() {
     for mirror in "${mirrors[@]}"
     do
       local mirror_url="${mirror}"
+      mirror_url="${mirror_url//\$\{os\}/${os_new}}"
       mirror_url="${mirror_url//\$\{version\}/${version}}"
-      mirror_url="${mirror_url//\$\{os\}/${os}}"
-      mirror_url="${mirror_url//\$\{arch\}/${arch}}"
+      mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
       mirror_url="${mirror_url//\$\{major\}/${major}}"
       mirror_url="${mirror_url//\$\{code\}/${code}}"
+
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
@@ -654,7 +657,7 @@ function doExtract() {
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
-    doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+    doUnzip "${1}" "${target_dir}"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
@@ -666,10 +669,13 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
+  elif doIsInstallerExtension "${filename}"
+  then
+     doRunCommand "mv ${1} ${target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho "Successfully extracted archive ${filename} to updates/extracted"
+  doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
 # $1: the file to unzip
@@ -709,6 +715,17 @@ function doUnzip() {
   fi
   doEcho "unzip archive..."
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+}
+
+# $1: filename (e.g. ${filename})
+function doIsInstallerExtension()
+{
+  local myext="${1/*\./.}"
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ]
+  then
+    return
+  fi
+  return 255
 }
 
 # $1: absolute path of file or folder to move
@@ -765,13 +782,12 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4-$N: contents of $1
+# $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
   shift 3
-  
   if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
     source_dir="${1}"
@@ -1161,7 +1177,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho "Successfully installed ${software}"
+    doEcho "Successfully installed (installation software for) ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
