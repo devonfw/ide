@@ -1,0 +1,20 @@
+= Get devonfw-ide ready for project
+
+You can customize devonfw-ide as per your project needs.i.e you can add or remove software as per your project needs as well as can change version of softwares etc.
+To customize ide for your project you need to modify ide-settings repository and use that modified setting while installing devonfw-ide on local. 
+
+So we define 2 major steps here:
+
+** **Customize ide for ide:** 
+  A person who is responsisble to modify and maintain a devonfw-ide as per project need is called as Admin/Lead developer. 
+  You can assign one or more lead developers as per your requirement. 
+  To customize your ide you need to follow below steps.
+
+  * Setup repository for ide-settings
+  * Understand structure of ide-settings
+  * Customize ide-settings for your project
+  * Add custom softwares in devonfw-ide
+  * Share ide-settings repository with team
+  
+ ** **Work with customized ide: ** Other team member in a team should use customized ide setting url created by admin/Lead Developer. This developers are users.
+
