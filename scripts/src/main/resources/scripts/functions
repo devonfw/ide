@@ -436,15 +436,16 @@ function doDownload() {
     fi
     # remap architecture
     local mirrors_arch
+    local arch_new="${arch}"
     mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
     if [ -e "${mirrors_arch}" ]
     then
       while IFS="=" read -r key value
       do
-        if [ "${key}" = "${arch}" ] || [ "${key}" = '*' ]
+        if [ "${key}" = "${arch_new}" ] || [ "${key}" = '*' ]
         then
-          doDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
-          arch="${value}"
+          doDebug "Remapped architecture from ${arch_new} to ${value} for software ${software} in version ${version}"
+          arch_new="${value}"
           break
         fi
       done < "${mirrors_arch}"
@@ -466,15 +467,16 @@ function doDownload() {
     fi
     # remap operating system
     local mirrors_os
+    local os_new="${os}"
     mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
     local key
     local value
     while IFS="=" read -r key value
     do
-      if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
+      if [ "${key}" = "${os_new}" ] || [ "${key}" = '*' ]
       then
-        doDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
-        os="${value}"
+        doDebug "Remapped OS from ${os_new} to ${value} for software ${software} in version ${version}"
+        os_new="${value}"
         break
       fi
     done < "${mirrors_os}"
@@ -508,13 +510,14 @@ function doDownload() {
     for mirror in "${mirrors[@]}"
     do
       local mirror_url="${mirror}"
+      mirror_url="${mirror_url//\$\{os\}/${os_new}}"
       mirror_url="${mirror_url//\$\{version\}/${version}}"
-      mirror_url="${mirror_url//\$\{os\}/${os}}"
-      mirror_url="${mirror_url//\$\{arch\}/${arch}}"
+      mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
       mirror_url="${mirror_url//\$\{major\}/${major}}"
       mirror_url="${mirror_url//\$\{code\}/${code}}"
+
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
@@ -779,14 +782,15 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4: contents for $1
+# $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
-  if [ -n "${4}" ] && [ -d "${4}" ] && [[ ! "${4}" =~ .*\.app ]]
+  shift 3
+  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
-    source_dir="${4}"
+    source_dir="${1}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
