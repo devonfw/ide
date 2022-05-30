@@ -70,7 +70,7 @@ AWS_HOME="${DEVON_IDE_HOME}/updates/install/aws"
 # CLI
 case ${1} in 
 "help" | "-h")
-  echo "Setup AWS CLI."
+  echo "Setup or run AWS CLI (command-line interface for Amazon-Web-Services)."
   echo
   echo "Arguments:"
   echo " setup                    install aws on your machine."
