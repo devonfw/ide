@@ -1045,14 +1045,27 @@ function doGitPullOrClone() {
   if [ -d "${dir}/.git" ]
   then
     local remotes
-    remotes=$(cd "${dir}" && git remote)
+    remotes="$(cd "${dir}" && git remote)"
+    local message="Can not update git repository: ${dir}\n"
     if [ -n "${remotes}" ]
     then
-      doRunCommand "git pull ${git_opts}" "" "${dir}"
+      git pull "${git_opts}"
+      if [ "$?" = 0 ]
+      then
+        return
+      fi
+      local branch
+      branch="$(git branch --show-current)"
+      if [ -z "$(git ls-remote --heads origin "${branch}")" ]
+      then
+        message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
+      else
+        doFail "${message}See above error for details - check your network connectivity and retry."
+      fi
     else
-      doEcho "Can not update local git repository: ${dir}"
-      return 1
+      message="${message}This is a local git repo with no remote - if you did this for testing, you may continue...\n"
     fi
+    doAskToContinue "${message}Do you want to ignore the problem and continue anyhow?"
   else
     if [ -z "${url}" ]
     then
