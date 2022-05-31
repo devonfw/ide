@@ -74,7 +74,7 @@ case ${1} in
   echo
   echo "Arguments:"
   echo " setup                    install aws on your machine."
-  echo " <<args>>                 call aws with the specified arguments. Call aws --help for details or use helm directly as preferred."
+  echo " <<args>>                 call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
   echo
 ;;
 "setup" | "s" | "")
