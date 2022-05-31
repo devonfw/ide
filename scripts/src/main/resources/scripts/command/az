@@ -45,7 +45,8 @@ function doPackageInstall() {
   local path_to_package="${1}"
   if doIsWindows
   then 
-    local winPath=$(cygpath -w "${path_to_package}")
+    local winPath
+    winPath=$(cygpath -w "${path_to_package}")
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${winPath}\az-${AZ_VERSION}-windows.msi /QB-!'" &> /dev/null
     if [ "${?}" = 0 ]
     then
