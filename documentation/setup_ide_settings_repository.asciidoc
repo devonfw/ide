@@ -1,0 +1,59 @@
+= Setup devonfw-ide settings repository for your project
+
+You can easily customize and configure devonfw-ide for the requirements of your project. To do so, you need to create your own project-specific settings git repository. Share this url with all developers for the setup.
+
+Admin/Lead deveoper is responsible for creating and maintaining this settings repoitory. Though all developer can suggest changes to these settings we recommend to have one team member who is responsible to ensure that everything stays consistent and works. 
+
+Follow setp-by-step guide below to setup settings repository:
+
+* Fork ide-settings to a git repository specific for your project. In case you are using github, all you need to do is use the Fork button. In other cases, simply create a new and empty git repository and clone this to your machine. Then add the default ide-settings as origin, fetch and pull from it:
+
+[source]
+----
+git remote add upstream https://github.com/devonfw/ide-settings.git
+git fetch upstream
+git pull upstream master
+git push
+----
+
+Now you should have a full fork as a copy of the settings git repo with all its history that is ready for upstream merges.
+
+* Before making changes to setting, you need to understand the structure. More details can be found here[placeholder for structure page details].
+
+* Study the configuration[placeholder for configuration page details] and understand that general settings can be tweaked in the toplevel devon.properties file of your settings git repository.
+
+* Configure the tools and their versions for your project. Here is an example:
+
+[source]
+----
+DEVON_IDE_TOOLS=(java mvn eclipse)
+ECLIPSE_VERSION=2020-06
+# use e.g. 8u242b08 for Java 8
+#JAVA_VERSION=8u242b08
+JAVA_VERSION=11.0.5_10
+MAVEN_VERSION=3.6.2
+----
+
+This way you will take over control of the tools and their versions for every developer in your project team and ensure that things get reproducible.
+
+* In case you need a proprietary or unsupported tool, you can study how to include custom tools.[link here]
+
+* In case you have very restrictive policies about downloading tools from the internet, you can create and configure a software repository for your project or company. [link here]
+
+* In your settings git repository you will find a projects folder. Here you will find configurations files for every git project relevant for your actual project. Feel free to create new projects for your needs and delete the devonfw specific default projects. The projects documentation will explain you how to do this. [link here]
+
+* For every IDE you will also find an according folder in your settings git repository. Here are the individual configuration settings for that IDE. You can change them by directly editing the according configuration files directly with a text-editor in your settings git repository. However, this is a really complex way and will take you a lot of time to find the right file and property to tweak for your actual need. Instead we suggest to study how to customize IDE specific settings.[link here]
+
+* You may also create new sub-folders in your settings git repository and put individual things according to your needs. E.g. you could add scripts for greasemonkey or tampermonkey, as well as scripts for your database or whatever may be useful and worth to share in your team. However, to share and maintain knowledge we recommend to use a wiki instead.
+
+* You may want to customize the Eclipse spellchecker dictionary for your project and your language.
+
+All described in the above steps (except the first one) can be used to manage and update the configuration during the project lifecycle. However, when you have done changes especially in a larger project, please consider the following best-practices to avoid that a large teams gets blocked by a non-functional IDE:
+
+** Commit your changes to a feature-branch.
+
+** First test the changes yourself.
+
+** If all works as expected, pick a pilot user of the team to test the changes from the feature branch (go to settings folder, git fetch, git checkout -t origin/feature/«name», devon ide update).
+
+** Only after that works well for a couple of days, inform the entire team to update.
