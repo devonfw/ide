@@ -61,6 +61,13 @@ For a new tool create a folder in https://github.com/devonfw/ide-mirrors[ide-mir
 
 It is important that the line endings of all files are UNIX `\n`.
 
+Note that all rules within a mapping are checked from top to bottom.
+If the first rule matches, the other rules are ignored. Therefore, the *-rule should always be last.
+With the `os-mapping` the *-rule should be used for the Linux distributions, since the OS type is not only linux, but varies strongly.
+
+It is also possible to use variables in the mapping files. 
+For example, if the architecture in the download link only appears for Windows, `{arch}` can be used in the `os-mapping`.
+
 === Commandlet
 Use an existing commandlet like https://github.com/devonfw/ide/blob/master/scripts/src/main/resources/scripts/command/helm[HELM] as a reference.
 Create a file with the name of the tool and put it in the folder https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/command[scripts/command].
