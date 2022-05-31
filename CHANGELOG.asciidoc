@@ -2,6 +2,17 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.04.002
+
+New release with improved cloud tool support and various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/711[#711]: AWS CLI integration
+* https://github.com/devonfw/ide/issues/712[#712]: Azure CLI integration
+* https://github.com/devonfw/ide/issues/713[#713]: Python integration
+* https://github.com/devonfw/ide/issues/632[#632]: fork detection buggy
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.001].
+
 == 2022.04.001
 
 New release with improved cloud tool support and various improvements and bugfixes:
