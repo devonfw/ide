@@ -177,35 +177,32 @@ function doAskToContinue() {
   then
     question="${1}"
   fi
-  if [ -n "${force}" ]
+  if [ -n "${force}" ] || [ -n "${batch}" ]
   then
-    doEcho "${question}"
+    doEcho "${question}\nYes (batch/force)"
     return
   fi
-  if [ -z "${batch}" ] 
-  then
-    local answer
-    while true
-    do
-      echo -e "${question}"
-      read -r -p "(yes/no): " answer
-      if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+  local answer
+  while true
+  do
+    echo -e "${question}"
+    read -r -p "(yes/no): " answer
+    if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+    then
+      return
+    elif [ "${answer}" = "no" ]
+    then
+      doEcho "No..."
+      if [ "${2}" = "return" ]
       then
-        return
-      elif [ "${answer}" = "no" ]
-      then
-        doEcho "No..."
-        if [ "${2}" = "return" ]
-        then
-          return 255
-        else
-          exit 255
-        fi
+        return 255
       else
-        echo "Please answer yes or no (or hit return for yes)."
+        exit 255
       fi
-    done
-  fi
+    else
+      echo "Please answer yes or no (or hit return for yes)."
+    fi
+  done
 }
 
 function doLogo() {
