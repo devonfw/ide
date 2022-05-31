@@ -1054,8 +1054,8 @@ function doGitPullOrClone() {
       local branch
       branch="$(git branch --show-current)"
       local branchRemoteRef
-      branchRemoteRef="$(git ls-remote --heads origin "${branch}")"
-      if [ -z "{branchRemoteRef}" ]
+      branchRemoteRef="$(git ls-remote --heads origin "${branch}" 2>&1)"
+      if [ -z "${branchRemoteRef}" ]
       then
         message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
       else
