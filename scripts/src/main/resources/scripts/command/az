@@ -26,39 +26,38 @@ function doSetup() {
     if doIsWindows
     then
       # Get leatest release
-      if [ -z "${AZURECLI_VERSION}" ]
+      if [ -z "${AZ_VERSION}" ]
       then
         doEcho "Getting latest release..."
-        AZURECLI_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
+        AZ_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
       fi
-      local version="${AZURECLI_VERSION}"
-      doDownload "-" "" "az" "${version}"
-      # Install Azure CLI for Windows
-      doEcho "Installing Azure CLI for Windows..."
-      installOnWindows
-    else
-      doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+
+      doInstall "-" "${AZ_HOME}" "az" "${AZ_VERSION}"
+      if [ "${?}" = 0 ]
+      then
+        doPackageInstall "${AZ_HOME}"
+      fi
     fi
   fi
 }
 
-# Install Azure CLI for Windows via Powershell Command
-function installOnWindows() { 
-  winPath=$(cygpath -w "${DEVON_DOWNLOAD_DIR}")
-  powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${winPath}\az-${version}-windows.msi /QB-!'" &> /dev/null
-  if [ "${?}" = 0 ]
+function doPackageInstall() {
+  local path_to_package="${1}"
+  if doIsWindows
   then 
-    setConfigDir
-    doEcho "Azure CLI has been installed and is ready to use. \n\n******** IMPORTANT ******** \nRestart the console to use Azure CLI regular." 
-  else
-    if doAskToContinue "\nAdministration rights are required. Do you want to restart the installation?"
+    local winPath=$(cygpath -w "${path_to_package}")
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${winPath}\az-${AZ_VERSION}-windows.msi /QB-!'" &> /dev/null
+    if [ "${?}" = 0 ]
     then
-      doEcho "\nInstalling Azure CLI for Windows..."
-      installOnWindows
+      setConfigDir
+      doEcho "\nAzure CLI ist installed now. Great! \nTo get started you may need to restart your current shell."
     else
-      doEcho "The installation has been canceled."
+      doEcho "\nThe setup was canceled. Rerun the setup to install Azure CLI."
     fi
+  else
+    doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   fi
+  doRunCommand "rm -rf ${path_to_package}"
 }
     
 # Set directory for azure cli configuration file
@@ -82,6 +81,8 @@ function doRun() {
     az "${@}"
   fi
 }
+
+AZ_HOME="${DEVON_IDE_HOME}/updates/install/az"
 
 # CLI
 case ${1} in
