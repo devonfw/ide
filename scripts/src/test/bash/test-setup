@@ -20,10 +20,9 @@ CLI="${PWD}/scripts/devon"
 cd workspaces/main
 "${CLI}" java create com.example.demoapp
 cd demoapp
-#"${CLI}" build
 DEVON4J_VERSION="$(doGetVersion)"
 cd ..
-"${CLI}" mvn archetype:generate -DarchetypeGroupId=io.oasp.java.templates -DarchetypeArtifactId=oasp4j-template-server -DarchetypeVersion=2.6.0 -Dpackage=com.example -DgroupId=com.example.legacyapp -DartifactId=legacyapp -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false
+"${CLI}" mvn -B archetype:generate -DarchetypeGroupId=io.oasp.java.templates -DarchetypeArtifactId=oasp4j-template-server -DarchetypeVersion=2.6.0 -Dpackage=com.example -DgroupId=com.example.legacyapp -DartifactId=legacyapp -Dversion=1.0.0-SNAPSHOT -DinteractiveMode=false
 cd legacyapp
 OLD_VERSION="undefined"
 NEW_VERSION="$(doGetVersion)"
@@ -34,16 +33,8 @@ do
   "${CLI}" java migrate single
   status=${?}
   NEW_VERSION="$(doGetVersion)"
-  if [ "${status}" = 0 ]
+  if [ "${status}" != 0 ]
   then
-    #"${CLI}" build
-    result=${?}
-    #if [ "${result}" != 0 ]
-    #then
-    #  echo "Failed migration at ${NEW_VERSION} (from ${OLD_VERSION}) with exit code ${result}"
-    #  exit ${result}
-    #fi
-  else
     if [ "${NEW_VERSION}" = "${DEVON4J_VERSION}" ]
     then
       echo "Successfully upgraded to devon4j ${DEVON4J_VERSION}."
