@@ -10,8 +10,10 @@ New release with improved cloud tool support and various improvements and bugfix
 * https://github.com/devonfw/ide/issues/712[#712]: Azure CLI integration
 * https://github.com/devonfw/ide/issues/713[#713]: Python integration
 * https://github.com/devonfw/ide/issues/632[#632]: fork detection buggy
+* https://github.com/devonfw/ide/issues/687[#687]: error on git pull
+* https://github.com/devonfw/ide/issues/770[#770]: first small fixes for VPNKit
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.001].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.002].
 
 == 2022.04.001
 
