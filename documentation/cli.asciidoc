@@ -51,6 +51,7 @@ However, when you automate and want to avoid "command not found" errors, you can
 The following commandlets are currently available:
 
 * link:aws.asciidoc[aws]
+* link:az.asciidoc[az]
 * link:build.asciidoc[build]
 * link:cobigen.asciidoc[cobigen]
 * link:docker.asciidoc[docker]

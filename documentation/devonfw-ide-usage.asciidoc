@@ -16,6 +16,8 @@ include::cli.asciidoc[leveloffset=2]
 
 include::aws.asciidoc[leveloffset=3]
 
+include::az.asciidoc[leveloffset=3]
+
 include::build.asciidoc[leveloffset=3]
 
 include::docker.asciidoc[leveloffset=3]
