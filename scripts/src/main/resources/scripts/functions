@@ -1045,7 +1045,6 @@ function doGitPullOrClone() {
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
-    echo "DEBUG TODO: ${remotes}"
     if [ -n "${remotes}" ]
     then
       git pull "${git_opts}"
