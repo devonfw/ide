@@ -1,0 +1,24 @@
+= Custom
+
+In some cases, a project might need a (proprietary) tool(s) that (are) not supported by `devonfw-ide`. A very simple solution is to get a release of `devonfw-ide` and add the tool(s) to the software folder and then distribute this modified release to your team. However, this has several drawbacks as you then have a fork of `devonfw-ide` all will loose your tool(s) when updating to a new release.
+
+As a solution for this need, `devonfw-ide` let's you configure custom tools via the `DEVON_IDE_CUSTOM_TOOLS` link:variables.asciidoc[variable]. It can be defined in link:configuration.asciidoc[`devon.properties`] of your link:settings.asciidoc[settings] git repository as an array of the custom tools you need to add.
+Each entry applies:
+
+* It needs to have the form `«tool»:«version»[:all][:«repository-url»]`
+* The first entry must have the `«repository-url»` included which is used as default
+* Further entries will inherit this default if omitted
+* This URL is used in the same way as described above for a software xref:repository[repository].
+* The `DEVON_SOFTWARE_REPOSITORY` variable is ignored by this feature.
+* The optional infix `:all` is used to indicate that the tool is platform independent. Otherwise, an OS specific infix is appended to the URL file to download for your platform (`windows`, `linux`, or `mac`).
+
+As an example, we define it in `${DEVON_IDE_HOME}/settings/devon.properties`:
+```
+DEVON_IDE_CUSTOM_TOOLS=(jboss-eap:7.1.4.GA:all:https://host.tld/projects/my-project firefox:70.0.1)
+```
+This will download and extract the following content to your `software` folder:
+
+* `https://host.tld/projects/my-project/jboss-eap/7.1.4.GA/jboss-eap-7.1.4.GA.tgz`
+* `https://host.tld/projects/my-project/firefox/70.0.1/firefox-70.0.1-windows.tgz`
+
+Please note that if you are not using windows, the `-windows` suffix will be `-mac` or `-linux`.
