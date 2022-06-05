@@ -33,6 +33,6 @@ You should be able to similar output as :
 image::images/sample-output-ide-help.png["Sample output for devon help "]
 
 
-For example, to launch your IDEs like Eclipse in windows run eclipse-main.bat from your folder. For other ides refer (placeholder)
+For example, to launch your IDEs like Eclipse in windows run eclipse-main.bat from your folder.
 
 Congratulations, you are all set to use your ide!!!
