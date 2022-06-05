@@ -20,7 +20,7 @@ Now you should have a full fork as a copy of the settings git repo with all its 
 
 * Before making changes to setting, you need to understand the structure. More details can be found link:structure.asciidoc[here]
 
-* Study the link:configuration.asciidoc[configuration] and understand that general settings can be tweaked in the toplevel devon.properties file of your settings git repository.
+* Study the link:configuration.asciidoc[configuration] and understand general settings that can be tweaked in the toplevel devon.properties file of your settings git repository.
 
 * Configure the tools and their versions for your project. Here is an example:
 
@@ -38,9 +38,9 @@ This way you will take over control of the tools and their versions for every de
 
 * In case you need a proprietary or unsupported tool, you can study how to include link:custom_tools.asciidoc[custom tools].
 
-* In case you have very restrictive policies about downloading tools from the internet, you can create and configure a software repository for your project or company. [link here]
+* In case you have very restrictive policies about downloading tools from the internet, you can create and configure a software repository for your project or company link link:custom_software_repository.asciidoc[here].
 
-* In your settings git repository you will find a projects folder. Here you will find configurations files for every git project relevant for your actual project. Feel free to create new projects for your needs and delete the devonfw specific default projects. The projects documentation will explain you how to do this. [link here]
+* In your settings git repository you will find a projects folder. Here you will find configurations files for every git project relevant for your actual project. Feel free to create new projects for your needs and delete the devonfw specific default projects. The projects documentation will explain you how to do this.Click link:projects.asciidoc[here]
 
 * For every IDE you will also find an according folder in your settings git repository. Here are the individual configuration settings for that IDE. You can change them by directly editing the according configuration files directly with a text-editor in your settings git repository. However, this is a really complex way and will take you a lot of time to find the right file and property to tweak for your actual need. Instead we suggest to study how to customize IDE specific settings.[link here]
 
