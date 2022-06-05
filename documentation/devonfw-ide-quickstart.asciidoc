@@ -15,7 +15,7 @@ The latest release of `devonfw-ide` can be downloaded from https://repository.so
 == Install
 * Create a central folder like `C:\projects` or `/projects`. 
 * Inside this folder, create a sub-folder for your new project such as `my-project` and extract the contents of the downloaded archive (`devonfw-ide-scripts-*.tar.gz`) to this new folder. Run the command `setup` in this folder (on windows double clicking on `setup.bat`).
-* It will ask to enter setting url. Just press ENTER. 
+* It will ask to enter setting url. To use default setting just press ENTER. In case you have customized your ide-seetings then enter settings_url. 
 Once installation is complete you will be able to see success message on command-line. Press any key to exit from setup command-line.
 
 == Verify your installation
