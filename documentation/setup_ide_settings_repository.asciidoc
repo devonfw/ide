@@ -18,9 +18,9 @@ git push
 
 Now you should have a full fork as a copy of the settings git repo with all its history that is ready for upstream merges.
 
-* Before making changes to setting, you need to understand the structure. More details can be found here[placeholder for structure page details].
+* Before making changes to setting, you need to understand the structure. More details can be found link:structure.asciidoc[here]
 
-* Study the configuration[placeholder for configuration page details] and understand that general settings can be tweaked in the toplevel devon.properties file of your settings git repository.
+* Study the link:configuration.asciidoc[configuration] and understand that general settings can be tweaked in the toplevel devon.properties file of your settings git repository.
 
 * Configure the tools and their versions for your project. Here is an example:
 
@@ -36,7 +36,7 @@ MAVEN_VERSION=3.6.2
 
 This way you will take over control of the tools and their versions for every developer in your project team and ensure that things get reproducible.
 
-* In case you need a proprietary or unsupported tool, you can study how to include custom tools.[link here]
+* In case you need a proprietary or unsupported tool, you can study how to include link:custom_tools.asciidoc[custom tools].
 
 * In case you have very restrictive policies about downloading tools from the internet, you can create and configure a software repository for your project or company. [link here]
 
