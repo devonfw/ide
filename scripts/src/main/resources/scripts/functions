@@ -150,22 +150,22 @@ function doEcho() {
 
 # $@: messages to output
 function doInfo() {
-  echo -e "\e[34m${*}\e[39m"
+  echo -e "\033[34m${*}\033[39m"
 }
 
 # $@: messages to output
 function doEchoStep() {
-  echo -e "\n\e[35m*** ${*} ***\e[39m"
+  echo -e "\n\033[35m*** ${*} ***\033[39m"
 }
 
 # $@: messages to output
 function doEchoOption() {
-  echo -e "\e[96m${*}\e[39m"
+  echo -e "\033[96m${*}\033[39m"
 }
 
 # $@: success message
 function doEchoInteraction() {
-  echo -e "\e[96m${*}\e[39m"
+  echo -e "\033[96m${*}\033[39m"
 }
 
 function doDebug() {
@@ -178,17 +178,17 @@ function doDebug() {
 
 # $@: warning message
 function doWarning() {
-  echo -e "\e[93m${*}\e[39m"
+  echo -e "\033[93m${*}\033[39m"
 }
 
 # $@: messages to output
 function doError() {
-  echo -e "\e[91m${1}\e[39m"
+  echo -e "\033[91m${1}\033[39m"
 }
 
 # $@: success message
 function doSuccess() {
-  echo -e "\e[92m${*}\e[39m"
+  echo -e "\033[92m${*}\033[39m"
 }
 
 # $@: success message
