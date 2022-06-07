@@ -307,7 +307,7 @@ function doSetup() {
   local ide
   for ide in "${DEVON_CREATE_START_SCRIPTS[@]}"
   do
-    doEcho "\n*** Creating start-scripts for IDE ${ide} ***"
+    doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
 }
@@ -389,7 +389,7 @@ function doUpdateSoftware() {
     fi
     if [ ! -d "${tool_path}" ] && [ ! -d "${DEVON_IDE_HOME}/software/extra/graalvm" ]
     then
-      doEcho "\n*** Setting up ${tool} ***"
+      doEchoStep "Setting up ${tool}"
       doDevonCommand "${tool}" setup
     fi
   done

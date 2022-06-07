@@ -35,10 +35,10 @@ function doFail() {
 
 function doEchoAttention() {
   echo
-  echo -e "\e[93m******** ATTENTION ********\e[39m"
+  doWarning "******** ATTENTION ********"
   if [ -n "${1}" ]
   then
-    echo -e "\e[93m${@}\e[39m"
+    doWarning "${@}"
   fi
 }
 
@@ -150,17 +150,17 @@ function doEcho() {
 
 # $@: messages to output
 function doInfo() {
-  echo -e "\e[34m${@}\e[39m"
+  echo -e "\e[34m${*}\e[39m"
 }
 
 # $@: messages to output
 function doEchoStep() {
-  echo -e "\e[35m*** ${@} ***\e[39m"
+  echo -e "\n\e[35m*** ${*} ***\e[39m"
 }
 
 # $@: messages to output
 function doEchoOption() {
-  echo -e "\e[96m${@}\e[39m"
+  echo -e "\e[96m${*}\e[39m"
 }
 
 # $@: success message
@@ -307,10 +307,8 @@ function doLicenseAgreement() {
     if doIsBatch
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
-    fi
-
-    local res=$(doAskToContinue "Do you accept these terms of use and all license agreements?" "return")
-    if [ $res != 255 ]
+    fi    
+    if doAskToContinue "Do you accept these terms of use and all license agreements?" "return"
     then
       echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"      
     else
