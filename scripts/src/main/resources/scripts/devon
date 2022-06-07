@@ -145,7 +145,7 @@ then
     logError "DEVON_IDE_HOME does not exist!"
     if [ -n "${DEVON_IDE_HOME}" ]
     then
-      echo "It seems as if you original installation (${DEVON_IDE_HOME}) has been moved."
+      doEcho "It seems as if your original installation (${DEVON_IDE_HOME}) has been moved."
       if [ -f ~/.devon/home ]
       then
         rm ~/.devon/home
