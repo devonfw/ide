@@ -15,10 +15,6 @@ fi
 source "${DEVON_IDE_HOME}/scripts/environment-project" export
 DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
 
-function doError() {
-  echo -e "\e[91m${1}\e[39m"
-}
-
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
 function doFail() {
@@ -183,6 +179,11 @@ function doDebug() {
 # $@: warning message
 function doWarning() {
   echo -e "\e[93m${*}\e[39m"
+}
+
+# $@: messages to output
+function doError() {
+  echo -e "\e[91m${1}\e[39m"
 }
 
 # $@: success message
