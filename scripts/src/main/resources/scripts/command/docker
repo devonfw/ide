@@ -24,18 +24,16 @@ function doSetup() {
       echo "It seems that you are running the setup from inside a WSL shell."
       echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
-      if doIsRancherInstalled 
+      if doIsRancherInstalled
       then
-        doIsWindows 
-        queryWin=$?
         if [ "${1}" != "silent" ] && ! doIsQuiet
         then
           #give the User the installation location when using linux or mac
-          if [ $queryWin != 0 ]
+          if doIsWindows
           then
-            doEcho "Rancher Desktop is already installed at $(command -v devon docker)"
-          else
             doEcho "Rancher Desktop is already installed"
+          else
+            doEcho "Rancher Desktop is already installed at $(command -v docker)"
           fi
         fi
       else
@@ -92,11 +90,11 @@ function doSetup() {
       doDownload "-" "" "docker" "${version}" "" "${code}"
       if doIsWindows
       then
-        doEcho "installing Docker Desktop for Windows..."
+        doEchoStep "Installing Docker Desktop for Windows..."
         doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
       elif doIsMacOs
       then
-        doEcho "installing Docker Desktop for MacOS..."
+        doEchoStep "Installing Docker Desktop for MacOS..."
         local mount_dir="${DEVON_IDE_HOME}/updates/volume"
         mkdir -p "${mount_dir}"
         doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
