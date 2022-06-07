@@ -335,7 +335,7 @@ function doUpdateSoftware() {
       then
         doEchoStep "Setting up ${tool}"
         doDevonCommand "${tool}" setup
-        logSuccess "Success"
+        doSuccess "Success"
       fi
     done
   fi
