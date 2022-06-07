@@ -92,7 +92,7 @@ then
     doEcho "Creating main workspace directory"
     mkdir -p "${WORKSPACE_PATH}"
   else
-    logWarn "Workspace ${WORKSPACE} does not exist"
+    doWarning "Workspace ${WORKSPACE} does not exist"
   fi
 fi
 doLoadProperties "${WORKSPACE_PATH}/devon.properties" "" "${@}"
