@@ -27,7 +27,7 @@ function doFail() {
     then
       exit 1
     fi
-    doError "${2}"
+    exit "${2}"
   else
     exit 255
   fi
