@@ -89,10 +89,10 @@ if [ ! -d "${WORKSPACE_PATH}" ]
 then
   if [ "${WORKSPACE}" = "main" ]
   then
-    doEcho "Creating main workspace directory"
+    echo "Creating main workspace directory"
     mkdir -p "${WORKSPACE_PATH}"
   else
-    doWarning "Workspace ${WORKSPACE} does not exist"
+    echo "Workspace ${WORKSPACE} does not exist"
   fi
 fi
 doLoadProperties "${WORKSPACE_PATH}/devon.properties" "" "${@}"
