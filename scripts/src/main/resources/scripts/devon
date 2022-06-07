@@ -57,7 +57,7 @@ do
   fi
   if [ "${PWD}" = "/" ]
   then
-    echo "You are not inside a devonfw-ide installation: ${L_PWD}"
+    echo -e "\033[93mYou are not inside a devonfw-ide installation: ${L_PWD}\033[39m"
     cd "${L_PWD}" || exit 255
     break
   fi
@@ -107,7 +107,7 @@ then
   fi
 
   alias devon="source ~/.devon/devon"
-  echo "The devon CLI script has been installed to your system."
+  echo -e "\033[92mThe devon CLI script has been installed to your system.\033[39m"
   echo "Now in any new shell, you can call devon to setup your IDE environment variables."
   echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
 fi
@@ -142,10 +142,10 @@ then
   fi
   if ! [ -d "${DEVON_IDE_HOME}" ]
   then
-    echo "ERROR: DEVON_IDE_HOME does not exist!"
+    echo -e "\033[91mDEVON_IDE_HOME does not exist!\033[39m"
     if [ -n "${DEVON_IDE_HOME}" ]
     then
-      echo "It seems as if you original installation (${DEVON_IDE_HOME}) has been moved."
+      echo "It seems as if your original installation (${DEVON_IDE_HOME}) has been moved."
       if [ -f ~/.devon/home ]
       then
         rm ~/.devon/home
@@ -156,7 +156,7 @@ then
   then
     if [ ! -x "${DEVON_IDE_HOME}/scripts/command/${command}" ]
     then
-      echo "Command ${command} is not executable. Trying to repair"
+      echo -e "\033[93mCommand ${command} is not executable. Trying to repair\033[39m"
       chmod a+x "${DEVON_IDE_HOME}/scripts/command/${command}"
     fi
     if [ -n "${args}" ]
@@ -168,7 +168,7 @@ then
       result=${?}
     fi
   else
-    echo "Unknown command ${command}"
+    echo -e "\033[91mUnknown command ${command}\033[39m"
     result=255
   fi  
 fi

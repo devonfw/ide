@@ -162,7 +162,8 @@ public class Migrations {
         .pom().replaceProperty("devon4j.version", "2020.04.001") //
         .replaceDependency(new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping", null),
             new VersionIdentifier("com.devonfw.java.modules", "devon4j-beanmapping-dozer", null))
-        .and().java().replace("new PageRequest", "PageRequest.of").replace("new Sort", "Sort.by").and().next()
+        .and().java().replace("this.flyway.setTarget(this.migrationVersion);", "//TODO: remove the empty if").and()
+        .java().replace("new PageRequest", "PageRequest.of").replace("new Sort", "Sort.by").and().next()
         .to(VersionIdentifier.ofDevon4j("2020.04.002")).pom().replaceProperty("devon4j.version", "2020.04.002") //
         .replaceDependency(
             new VersionIdentifier("com.devonfw.java.modules", "devon4j-test", null, VersionIdentifier.SCOPE_TEST),
@@ -193,6 +194,14 @@ public class Migrations {
         .and() //
         .next().to(VersionIdentifier.ofDevon4j("2021.04.003")).pom() //
         .replaceProperty("devon4j.version", "2021.04.003") //
+        .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2022.04.001")).pom() //
+        .replaceProperty("devon4j.version", "2022.04.001") //
+        .replaceProperty("spring.boot.version", "2.6.7") //
+        .replaceProperty("spring.cloud.dependencies.version", "2021.0.1") //
+        .replaceProperty("jackson.version", "2.13.2.20220328") //
+        .replaceProperty("guava.version", "31.1-jre") //
+        .replaceProperty("cxf.version", "3.5.2") //
         .and() //
         .next().build();
   }

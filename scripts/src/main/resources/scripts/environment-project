@@ -92,7 +92,7 @@ then
     echo "Creating main workspace directory"
     mkdir -p "${WORKSPACE_PATH}"
   else
-    echo "WARNING: Worksapce ${WORKSPACE} does not exist"
+    echo "Workspace ${WORKSPACE} does not exist"
   fi
 fi
 doLoadProperties "${WORKSPACE_PATH}/devon.properties" "" "${@}"
@@ -129,17 +129,20 @@ fi
 SOFTWARE_PATH=${DEVON_IDE_HOME}/software
 for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
 do
-  if [ -d "${SOFTWARE_FOLDER}/bin" ]
+  if [ "${SOFTWARE_FOLDER}" != "${SOFTWARE_PATH}/extra" ]
   then
-    PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
-  else
-    PATH="${SOFTWARE_FOLDER}:${PATH}"
-  fi
-  # Load custom configuration of software
-  if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
-  then
-    # shellcheck disable=SC1090
-    source "${SOFTWARE_FOLDER}/ide-config"
+    if [ -d "${SOFTWARE_FOLDER}/bin" ]
+    then
+      PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
+    else
+      PATH="${SOFTWARE_FOLDER}:${PATH}"
+    fi
+    # Load custom configuration of software
+    if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
+    then
+      # shellcheck disable=SC1090
+      source "${SOFTWARE_FOLDER}/ide-config"
+    fi
   fi
 done
 

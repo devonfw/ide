@@ -57,12 +57,14 @@ function doUpdateScripts() {
       then
         cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
       fi
-      doFail "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      doWarning "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
+      exit 0
     fi
   fi
 }
 
 function doUpdateSettings() {
+  local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git"
   if [ ! -d "${SETTINGS_PATH}" ]
   then
     if [ -n "${1}" ]
@@ -81,7 +83,7 @@ function doUpdateSettings() {
         echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
         echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
         echo
-        read -r -p "Settings URL: " answer
+        read -r -p "Settings URL [${defaultSettingsUrl}]: " answer
         if [ -z "${answer}" ]
         then
           SETTINGS_URL="-"
@@ -92,7 +94,7 @@ function doUpdateSettings() {
     fi
     if [ "${SETTINGS_URL}" == "-" ]
     then
-      SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
+      SETTINGS_URL="${defaultSettingsUrl}"
     fi
     doInstall "${SETTINGS_URL}" "${SETTINGS_PATH}" "devonfw-ide-settings"
     if [ ${?} = 0 ]
@@ -305,7 +307,7 @@ function doSetup() {
   local ide
   for ide in "${DEVON_CREATE_START_SCRIPTS[@]}"
   do
-    doEcho "\n*** Creating start-scripts for IDE ${ide} ***"
+    doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
 }
@@ -316,12 +318,28 @@ function doUpdateProjects() {
 
 function doUpdateSoftware() {
   local tool
-  for tool in "${DEVON_IDE_TOOLS[@]}"
-  do
-    doEcho "\n*** Setting up ${tool} ***"
-    doDevonCommand "${tool}" setup
-  done
-  default_repo=
+  local tool_path
+  if [ -d "${DEVON_IDE_HOME}/software" ]
+  then
+    for tool_path in "${DEVON_IDE_HOME}/software"/* "${DEVON_IDE_HOME}/software/extra/graalvm"
+    do
+      tool="${tool_path/*\//}"
+      if [ "${tool}" == "maven" ]
+      then
+        tool="mvn"
+      elif [ "${tool}" == "sonarqube" ]
+      then
+        tool="sonar"
+      fi
+      if [ -d "${tool_path}" ] && [ -e "${DEVON_IDE_HOME}/scripts/command/${tool}" ]
+      then
+        doEchoStep "Setting up ${tool}"
+        doDevonCommand "${tool}" setup
+        doSuccess "Success"
+      fi
+    done
+  fi
+  local default_repo=""
   for tool in "${DEVON_IDE_CUSTOM_TOOLS[@]}"
   do
     software="${tool%%:*}"
@@ -331,12 +349,12 @@ function doUpdateSoftware() {
       software_version="${tool%%:*}"
       if [ -n "${software_version}" ]
       then
-        doEcho "\n*** Setting up ${software} ***"
+        doEchoStep "Setting up ${software}"
         tool="${tool#*:}"
-        arch=""
+        local os=""
         if [ "${tool:0:4}" = "all:" ]
         then
-          arch="-"
+          os="-"
           tool="${tool:4}"
         fi
         repo="${tool}"
@@ -354,8 +372,25 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${DEVON_IDE_HOME}/software/${software}" "-" "${software}" "${software_version}" ".tgz" "${arch}" "${repo}"
+        doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
+        doSuccess "Success"
       fi
+    fi
+  done
+  for tool in "${DEVON_IDE_TOOLS[@]}"
+  do
+    tool_path="${DEVON_IDE_HOME}/software/${tool}"
+    if [ "${tool}" == "mvn" ]
+    then
+      tool_path="${DEVON_IDE_HOME}/software/maven"
+    elif [ "${tool}" == "sonar" ]
+    then
+      tool_path="${DEVON_IDE_HOME}/software/sonarqube"
+    fi
+    if [ ! -d "${tool_path}" ] && [ ! -d "${DEVON_IDE_HOME}/software/extra/graalvm" ]
+    then
+      doEchoStep "Setting up ${tool}"
+      doDevonCommand "${tool}" setup
     fi
   done
 }
@@ -382,6 +417,7 @@ function doUninstallFromHome() {
     doRunCommand "rm '${1}/scripts/devon'"
   fi
   doRunCommand "rm -rf '${1}/.devon'"
+  doSuccess "Successfully uninstalled devonfw-ide from home directory"
 }
 
 function doUninstall() {
@@ -408,9 +444,10 @@ function doUninstall() {
     fi
     reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
-  echo "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
-  echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
-  echo "Goodbye and have a nice day!"
+  doSuccess "Successfully uninstalled devonfw-ide"
+  doSuccess "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
+  doSuccess "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
+  doSuccess "Goodbye and have a nice day!"
 }
 
 target_version="LATEST"
@@ -495,4 +532,4 @@ else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
 echo
-echo "Completed ${*}"
+doSuccess "Completed ${*}"

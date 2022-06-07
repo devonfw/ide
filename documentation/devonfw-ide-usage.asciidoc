@@ -14,13 +14,21 @@ include::variables.asciidoc[leveloffset=2]
 
 include::cli.asciidoc[leveloffset=2]
 
+include::aws.asciidoc[leveloffset=3]
+
+include::az.asciidoc[leveloffset=3]
+
 include::build.asciidoc[leveloffset=3]
 
 include::docker.asciidoc[leveloffset=3]
 
+include::docker-desktop-alternative.asciidoc[leveloffset=3]
+
 include::eclipse.asciidoc[leveloffset=3]
 
 include::gradle.asciidoc[leveloffset=3]
+
+include::helm.asciidoc[leveloffset=3]
 
 include::help.asciidoc[leveloffset=3]
 
@@ -49,6 +57,8 @@ include::npm.asciidoc[leveloffset=3]
 include::release.asciidoc[leveloffset=3]
 
 include::sonar.asciidoc[leveloffset=3]
+
+include::terraform.asciidoc[leveloffset=3]
 
 include::vscode.asciidoc[leveloffset=3]
 
