@@ -6,7 +6,7 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
 then
   # shellcheck disable=SC2007,SC2154
-  doEcho "$[devon_ide_version]"
+  echo "$[devon_ide_version]"
   return 0 2>/dev/null
   exit 0
 fi
@@ -42,7 +42,7 @@ do
     fi
     if [ -z "${1}" ]
     then
-      doEcho "devonfw-ide environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
+      echo "devonfw-ide environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
     fi
     cd "${L_PWD}" || exit 255
     break
@@ -57,7 +57,7 @@ do
   fi
   if [ "${PWD}" = "/" ]
   then
-    doError "You are not inside a devonfw-ide installation: ${L_PWD}"
+    echo -e "\e[93mYou are not inside a devonfw-ide installation: ${L_PWD}\e[39m"
     cd "${L_PWD}" || exit 255
     break
   fi
@@ -107,9 +107,9 @@ then
   fi
 
   alias devon="source ~/.devon/devon"
-  logSuccess "The devon CLI script has been installed to your system."
-  logSuccess "Now in any new shell, you can call devon to setup your IDE environment variables."
-  logSuccess "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
+  echo -e "\e[92mThe devon CLI script has been installed to your system.\e[39m"
+  echo "Now in any new shell, you can call devon to setup your IDE environment variables."
+  echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
 fi
 if ! [ -f ~/.devon/home ] && [ -n "${DEVON_IDE_HOME}" ]
 then
@@ -142,10 +142,10 @@ then
   fi
   if ! [ -d "${DEVON_IDE_HOME}" ]
   then
-    logError "DEVON_IDE_HOME does not exist!"
+    echo -e "\e[91mDEVON_IDE_HOME does not exist!\e[39m"
     if [ -n "${DEVON_IDE_HOME}" ]
     then
-      doEcho "It seems as if your original installation (${DEVON_IDE_HOME}) has been moved."
+      echo "It seems as if your original installation (${DEVON_IDE_HOME}) has been moved."
       if [ -f ~/.devon/home ]
       then
         rm ~/.devon/home
@@ -156,7 +156,7 @@ then
   then
     if [ ! -x "${DEVON_IDE_HOME}/scripts/command/${command}" ]
     then
-      logWarn "Command ${command} is not executable. Trying to repair"
+      echo -e "\e[93mCommand ${command} is not executable. Trying to repair\e[39m"
       chmod a+x "${DEVON_IDE_HOME}/scripts/command/${command}"
     fi
     if [ -n "${args}" ]
@@ -168,7 +168,7 @@ then
       result=${?}
     fi
   else
-    logError "Unknown command ${command}"
+    echo -e "\e[91mUnknown command ${command}\e[39m"
     result=255
   fi  
 fi

@@ -59,7 +59,7 @@ function doAddPlugins() {
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ]
       then
-        logWarn "Invalid vscode plugin config: ${file}"
+        doWarning "Invalid vscode plugin config: ${file}"
       elif [ "${plugin_active}" = "true" ]
       then
         pluginsToInstall="${pluginsToInstall} --install-extension ${plugin_id}"
