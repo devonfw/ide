@@ -77,13 +77,13 @@ function doImportProject() {
   then
     doFail "Invalid project configuration ${1} - both 'path' and 'git_url' have to be defined."
   fi
-  doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
-  doDebug "Pull or clone git project ${project_path}..."
+  logDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+  logDebug "Pull or clone git project ${project_path}..."
   project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
   mkdir -p "${project_workspace_path}"
   cd "${project_workspace_path}" || exit 255
   doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
-  doDebug "Building project with devon command: ${project_build_cmd}"
+  logDebug "Building project with devon command: ${project_build_cmd}"
   if [ -n "${project_build_cmd}" ]
   then
     cd "${project_path}/${project_build_path}" || exit 255

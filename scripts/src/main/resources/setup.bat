@@ -1,6 +1,9 @@
 @echo off
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
+Set _fBGreen=[92m
+Set _RESET=[0m
+
 pushd %~dp0
 echo Setting up your devonfw-ide in %CD%
 call scripts\devon.bat ide setup %*
@@ -18,7 +21,7 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
   "%CYGWIN_HOME%\bin\bash.exe" -l -c "cd \"%CD%\";./scripts/devon"
 )
 
-echo Setup of devonfw-ide completed
+echo %_fBGreen%Setup of devonfw-ide completed%_RESET%
 if not "%1%" == "-b" (
   pause
 )
