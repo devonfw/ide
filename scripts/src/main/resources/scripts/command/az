@@ -37,6 +37,15 @@ function doSetup() {
       then
         doPackageInstall "${AZ_HOME}"
       fi   
+    elif doIsMacOs
+    then
+      doRunCommand "python3 -m venv ${AZ_MAC_HOME}"
+      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install --upgrade pip"
+      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install wheel"
+      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install azure-cli"
+      setConfigDir
+    else
+      doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
     fi
   fi
 }
@@ -55,13 +64,6 @@ function doPackageInstall() {
     else
       doError "The setup was canceled or failed. Rerun the setup to install Azure CLI."
     fi
-  elif doIsMacOs
-  then
-    doRunCommand "python3 -m venv ${AZ_MAC_HOME}"
-    doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install --upgrade pip"
-    doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install wheel"
-    doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install azure-cli"
-    setConfigDir
   else
     doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   fi
