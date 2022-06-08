@@ -23,18 +23,20 @@ function doSetup() {
     fi
   else
     doRequireNotBatch
+    if doIsWindows
     # Get leatest release
-    if [ -z "${AZ_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      AZ_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
-    fi
+      if [ -z "${AZ_VERSION}" ]
+      then
+        doEcho "Getting latest release..."
+        AZ_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
+      fi
 
-    doInstall "-" "${AZ_HOME}" "az" "${AZ_VERSION}"
-    if [ "${?}" = 0 ]
-    then
-      doPackageInstall "${AZ_HOME}"
-    fi   
+      doInstall "-" "${AZ_HOME}" "az" "${AZ_VERSION}"
+      if [ "${?}" = 0 ]
+      then
+        doPackageInstall "${AZ_HOME}"
+      fi   
+    fi
   fi
 }
 
