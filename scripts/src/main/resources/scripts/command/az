@@ -24,7 +24,8 @@ function doSetup() {
   else
     doRequireNotBatch
     if doIsWindows
-    # Get leatest release
+    then
+      # Get leatest release
       if [ -z "${AZ_VERSION}" ]
       then
         doEcho "Getting latest release..."
