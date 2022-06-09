@@ -8,6 +8,7 @@ ATTENTION: This release is still WIP (work in progress) and not yet released.
 
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/781[#781]: Support for DotNet
 * https://github.com/devonfw/ide/issues/777[#777]: Support for colored output
 * https://github.com/devonfw/ide/issues/749[#749]: Prompt default value for Settings URL
 * https://github.com/devonfw/ide/pull/785[#785]: fix passing args to terraform and helm on proxy usage
