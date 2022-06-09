@@ -90,7 +90,7 @@ function doRun() {
     setConfigDir
     if doIsMacOs
     then
-      ${AZ_MAC_DIR}/bin/az "${@}"
+      "${AZ_MAC_DIR}"/bin/az "${@}"
     else
       az "${@}"
     fi
