@@ -173,7 +173,7 @@ function doDebug() {
   then
     return
   fi
-  echo -e "${@}"
+  echo -e "\033[90m${*}\033[39m"
 }
 
 # $@: warning message
