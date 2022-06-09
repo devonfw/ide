@@ -39,10 +39,10 @@ function doSetup() {
       fi   
     elif doIsMacOs
     then
-      doRunCommand "python3 -m venv ${AZ_MAC_HOME}"
-      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install --upgrade pip"
-      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install wheel"
-      doRunCommand "${AZ_MAC_HOME}/bin/python -m pip install azure-cli"
+      doRunCommand "python3 -m venv ${AZ_MAC_DIR}"
+      doRunCommand "${AZ_MAC_DIR}/bin/python -m pip install --upgrade pip"
+      doRunCommand "${AZ_MAC_DIR}/bin/python -m pip install wheel"
+      doRunCommand "${AZ_MAC_DIR}/bin/python -m pip install azure-cli"
       setConfigDir
     else
       doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -90,7 +90,7 @@ function doRun() {
     setConfigDir
     if doIsMacOs
     then
-      ${AZ_MAC_HOME}/bin/az "${@}"
+      ${AZ_MAC_DIR}/bin/az "${@}"
     else
       az "${@}"
     fi
@@ -98,7 +98,7 @@ function doRun() {
 }
 
 AZ_HOME="${DEVON_IDE_HOME}/updates/install/az"
-AZ_MAC_HOME="${DEVON_IDE_HOME}/software/azure"
+AZ_MAC_DIR="${DEVON_IDE_HOME}/software/azure"
 
 # CLI
 case ${1} in
