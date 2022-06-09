@@ -3,13 +3,26 @@
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
 
+function doExists() {
+  if [ -e "${1}" ]
+  then
+    return
+  else
+    return 255
+  fi
+}
 
 function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${DOTNET_HOME}" ]
   then
     doInstall "-" "${DOTNET_HOME}" "dotnet" "${DOTNET_VERSION:-6.0.300}"
-    doRun new -i devon4net.WebApi.Template
+    if doExists ~/.templateengine/packages/Devon4Net.WebAPI.Template*
+    then
+      doDebug "Devon4net template already installed."
+    else
+      doRun new -i devon4net.WebApi.Template
+    fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
