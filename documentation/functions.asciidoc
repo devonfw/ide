@@ -1,0 +1,95 @@
+= Beschreibung der 52 Funktionen
+
+:toc:
+toc::[]
+
+= doFail
+The doFail function is called with an error message as the first parameter and an exit code as the second parameter. The function first calls the doEchoAttention function without parameter, followed by the specified error message and a message on how to proceed. If a 0 is specified as the exit code, the function ends with exit code 1, otherwise with the specified exit code. If no exit code is specified, the function terminates with exit code 255.
+
+= doEchoAttention
+The doEchoAttention function returns the header ******** ATTENTION ******** followed by the message specified as a parameter. Backslash-escaped characters, for example \n for new line, are also allowed in the message.
+
+= doResult
+The function doResult outputs the message passed as the first parameter, depending on the second parameter as Succeeded for 0 or Failed for all other values. If the second parameter is not specified, Failed (internal error missing exit code) is output.
+
+= doRunCommand
+The doRunCommand function can be given 3 parameters, the command to be executed, a message to be printed and the directory in which the command is to be executed. First, the function is checked whether the specified directory exists. If the directory does not exist, it will take the current directory. Then the command is executed and depending on the return value of the command, a message is output that starts with "Succeed" or "Failed".
+
+= doIsForce
+The doIsForce function returns a 0 if the force variable is set.
+
+= doIsBatch
+The doIsBatch function returns a 0 if the batch variable is set.
+
+= doRequireNotBatch
+The doRequireNotBatch function uses doIsBatch to check whether the batch variable is set and, if set, issues the error message "Cannot proceed in batch mode as interactive installation is required. Please rerun without batch option.".
+
+= doIsQuiet
+The doIsQuiet function returns a 0 if the quiet variable is set.
+
+= doIsDebug
+The function returns 0 if the debug variable is set and the -q option is not specified.
+
+= doIsIgnoredFolder
+
+= doEcho
+The doEcho function prints the arguments passed to it if the variable quiet is not set. Backslash-escaped characters, for example \n for new line, are also allowed in the message.
+
+= doDebug
+The doDebug function is called with arguments that are printed if the variable debug is set. Backslash-escaped characters, for example \n for new line, are also allowed in the arguments.
+
+= doWarning
+= doConfirmWarning
+= doAskToContinue
+= doLogo
+The doLogo function returns the devon logo.
+
+= doOpen
+The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
+
+= doLicenseAgreement
+= doDevonCommand
+= doDevonCommandAllWorkspaces
+= doDevonCommandAndReturn
+= doDownload
+= doDownloadInternal
+= doGetExtension
+The doGetExtension function is given a file name as a parameter, including the path, and returns the file extension as the result.
+
+= doGetFirstExistingPathOrFail
+= doGetFirstExistingPath
+= doExtract
+The doExtract function is given the file to be extracted and possibly a path to where it should be extracted. Then the right tool is selected based on the file extension and the file is unzipped.
+
+= doUnzip
+The doUnzip function checks if an unzip program is installed, and if not, installs the program. The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
+
+= doIsInstallerExtension
+= doReplaceExtractedFile
+= doBackup
+= doReplaceExtractedSkipSingleFolder
+= doReplaceExtracted
+= doMavenGetLatestVersion
+= doIsDevVersion
+= doArrayContainsItemWithPrefix
+= doMavenArchetype
+= doUpgradeMavenArtifact
+= doMoveGlobSafe
+= doGitPullOrClone
+= doInstall
+= doExtendPath
+= doConfigureWorkspace
+= doRunConfigurator
+= doCreateIdeScript
+= doVersionCompare
+= doGetNextVersion
+= doIsMacOs
+The doIsMacOs function returns 0 if the operating system is detected as MacOs. If not, a 255 is returned.
+
+= doIsWindows
+The doIsWindows function returns 0 if the operating system is detected as Windows. If not, a 255 is returned.
+
+= doIsPackageJsonContainingScript
+= doRequireWsl
+= doParseOption
+
