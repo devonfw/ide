@@ -13,7 +13,6 @@ function doExists() {
 }
 
 function doSetup() {
-  doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${DOTNET_HOME}" ]
   then
     doInstall "-" "${DOTNET_HOME}" "dotnet" "${DOTNET_VERSION:-6.0.300}"
