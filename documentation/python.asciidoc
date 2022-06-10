@@ -16,6 +16,6 @@ The arguments (`devon python «args»`) are explained by the following table:
 |`help`           |access additional help information.
 |`version`        |Get version of currently installed Python version.
 |`pip`            |Call pip.
-|`pip3`           |Call pip3.
+|`pip3`           |Call pip3. (Windows only)
 |`«args»`         |call python with the specified arguments."
 |=======================
