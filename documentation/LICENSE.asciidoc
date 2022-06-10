@@ -61,6 +61,9 @@ The following table shows the components that may be used. The column `inclusion
 |https://terraform.io/[terraform]|Optional|https://github.com/hashicorp/terraform/blob/main/LICENSE[Mozilla Public License 2.0]
 |https://www.graalvm.org/[GraalVM] |Optional|https://github.com/oracle/graal/blob/master/LICENSE[GPLv2] (with the “Classpath” Exception)
 |https://rancherdesktop.io/[Rancher Desktop]|Optional|https://github.com/rancher-sandbox/rancher-desktop/blob/main/LICENSE[ASL 2.0]
+|https://github.com/Azure/azure-cli[AzureCLI] |Optional| https://github.com/Azure/azure-cli/blob/dev/LICENSE[MIT]
+|https://aws.amazon.com/cli/[AWS cli] |Optional|https://github.com/aws/aws-cli/blob/develop/LICENSE.txt[ASL 2.0]
+|https://dotnet.microsoft.com/[Dotnet] |https://github.com/dotnet/core/blob/master/LICENSE.TXT[MIT] (https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx[Terms])
 |=======================
 
 == Apache Software License - Version 2.0
