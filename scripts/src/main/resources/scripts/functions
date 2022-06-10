@@ -701,7 +701,7 @@ function doExtract() {
     fi
   elif doIsInstallerExtension "${filename}"
   then
-     doRunCommand "mv ${1} ${target_dir}"
+     doRunCommand "mv \"${1}\" \"${target_dir}\""
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
