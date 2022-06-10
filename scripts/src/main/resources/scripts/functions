@@ -19,11 +19,10 @@ DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
 # $2: optional exit code
 function doFail() {
   doEchoAttention ""
-  echo -e "ERROR: ${1}"
-  echo "We are sorry for the inconvenience. Please check the above errors, resolve them and try again."
+  doError "${1}\nWe are sorry for the inconvenience. Please check the above errors, resolve them and try again."
   if [ -n "${2}" ]
   then
-    echo "Exit code was ${2}"
+    doError "Exit code was ${2}"
     if [ "${2}" = "0" ]
     then
       exit 1
@@ -36,10 +35,10 @@ function doFail() {
 
 function doEchoAttention() {
   echo
-  echo "******** ATTENTION ********"
+  doWarning "******** ATTENTION ********"
   if [ -n "${1}" ]
   then
-    echo -e "${@}"
+    doWarning "${@}"
   fi
 }
 
@@ -48,7 +47,7 @@ function doEchoAttention() {
 function doResult() {
   if [ "${2}" = 0 ]
   then
-    doEcho "Succeeded to ${1}"
+    doSuccess "Succeeded to ${1}"
   else
     if [ -z "${2}" ]
     then
@@ -89,9 +88,9 @@ function doRunCommand() {
   fi
   if [ ${result} = 0 ]
   then
-    doDebug "Succeeded to ${message}"
+    doSuccess "Succeeded to ${message}"
   else
-    doEcho "Failed to run command: ${1}"
+    doError "Failed to run command: ${1}"
     doFail "Failed to ${message}" ${result}
   fi
 }
@@ -149,17 +148,52 @@ function doEcho() {
   echo -e "${@}"
 }
 
+# $@: messages to output
+function doInfo() {
+  echo -e "\033[34m${*}\033[39m"
+}
+
+# $@: messages to output
+function doEchoStep() {
+  echo -e "\n\033[35m*** ${*} ***\033[39m"
+}
+
+# $@: messages to output
+function doEchoOption() {
+  echo -e "\033[96m${*}\033[39m"
+}
+
+# $@: success message
+function doEchoInteraction() {
+  echo -e "\033[96m${*}\033[39m"
+}
+
 function doDebug() {
   if ! doIsDebug
   then
     return
   fi
-  echo -e "${@}"
+  echo -e "\033[90m${*}\033[39m"
 }
 
 # $@: warning message
 function doWarning() {
-  echo -e "WARNING: ${*}"
+  echo -e "\033[93m${*}\033[39m"
+}
+
+# $@: messages to output
+function doError() {
+  echo -e "\033[91m${1}\033[39m"
+}
+
+# $@: success message
+function doSuccess() {
+  echo -e "\033[92m${*}\033[39m"
+}
+
+# $@: success message
+function doQuestion() {
+  doEchoInteraction "${@}"
 }
 
 # $@: warning message
@@ -177,35 +211,33 @@ function doAskToContinue() {
   then
     question="${1}"
   fi
-  if [ -n "${force}" ]
+  if [ -n "${force}" ] || [ -n "${batch}" ]
   then
-    doEcho "${question}"
+    doQuestion "${question}"
+    doEcho "Yes (batch/force)"
     return
   fi
-  if [ -z "${batch}" ] 
-  then
-    local answer
-    while true
-    do
-      echo -e "${question}"
-      read -r -p "(yes/no): " answer
-      if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+  local answer
+  while true
+  do
+    doQuestion "${question}"
+    read -r -p "(yes/no): " answer
+    if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+    then
+      return
+    elif [ "${answer}" = "no" ]
+    then
+      doEcho "No..."
+      if [ "${2}" = "return" ]
       then
-        return
-      elif [ "${answer}" = "no" ]
-      then
-        doEcho "No..."
-        if [ "${2}" = "return" ]
-        then
-          return 255
-        else
-          exit 255
-        fi
+        return 255
       else
-        echo "Please answer yes or no (or hit return for yes)."
+        exit 255
       fi
-    done
-  fi
+    else
+      doQuestion "Please answer yes or no (or hit return for yes)."
+    fi
+  done
 }
 
 function doLogo() {
@@ -275,20 +307,13 @@ function doLicenseAgreement() {
     if doIsBatch
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
+    fi    
+    if doAskToContinue "Do you accept these terms of use and all license agreements?" "return"
+    then
+      echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"      
+    else
+      exit 255
     fi
-    while true
-    do
-      read -r -p "Do you accept these terms of use and all license agreements? (yes/no) " answer
-      case "${answer}" in
-        yes)
-          echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"
-          break;;
-        no)
-          exit 255;;
-        *)
-          echo "Please answer yes or no.";;
-      esac
-    done
     echo
   fi
 }
@@ -300,7 +325,12 @@ function doDevonCommand() {
   result=${?}
   if [ ${result} != 0 ]
   then
-    exit ${result}
+    if ! doIsBatch
+    then
+      doAskToContinue "Failed to run devon ${*} - do you want to continue?"
+    else
+      exit ${result}
+    fi
   fi
 }
 
@@ -334,7 +364,7 @@ function doDevonCommandAndReturn() {
   else
     if [ ! -x "${command}" ]
     then
-      doEcho "Command ${1} is not executable. Trying to repair..."
+      doWarning "Command ${1} is not executable. Trying to repair..."
       chmod a+x "${command}"
     fi
     shift
@@ -343,7 +373,7 @@ function doDevonCommandAndReturn() {
     result=${?}
     if [ ${result} != 0 ]
     then
-      doEcho "ERROR: command '${command_name} ${*}' failed with exit code ${result}"
+      doError "Command '${command_name} ${*}' failed with exit code ${result}"
       return ${result}
     fi
   fi  
@@ -436,15 +466,16 @@ function doDownload() {
     fi
     # remap architecture
     local mirrors_arch
+    local arch_new="${arch}"
     mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
     if [ -e "${mirrors_arch}" ]
     then
       while IFS="=" read -r key value
       do
-        if [ "${key}" = "${arch}" ] || [ "${key}" = '*' ]
+        if [ "${key}" = "${arch_new}" ] || [ "${key}" = '*' ]
         then
-          doDebug "Remapped architecture from ${arch} to ${value} for software ${software} in version ${version}"
-          arch="${value}"
+          doDebug "Remapped architecture from ${arch_new} to ${value} for software ${software} in version ${version}"
+          arch_new="${value}"
           break
         fi
       done < "${mirrors_arch}"
@@ -466,15 +497,16 @@ function doDownload() {
     fi
     # remap operating system
     local mirrors_os
+    local os_new="${os}"
     mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
     local key
     local value
     while IFS="=" read -r key value
     do
-      if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
+      if [ "${key}" = "${os_new}" ] || [ "${key}" = '*' ]
       then
-        doDebug "Remapped OS from ${os} to ${value} for software ${software} in version ${version}"
-        os="${value}"
+        doDebug "Remapped OS from ${os_new} to ${value} for software ${software} in version ${version}"
+        os_new="${value}"
         break
       fi
     done < "${mirrors_os}"
@@ -508,13 +540,14 @@ function doDownload() {
     for mirror in "${mirrors[@]}"
     do
       local mirror_url="${mirror}"
+      mirror_url="${mirror_url//\$\{os\}/${os_new}}"
       mirror_url="${mirror_url//\$\{version\}/${version}}"
-      mirror_url="${mirror_url//\$\{os\}/${os}}"
-      mirror_url="${mirror_url//\$\{arch\}/${arch}}"
+      mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
       mirror_url="${mirror_url//\$\{major\}/${major}}"
       mirror_url="${mirror_url//\$\{code\}/${code}}"
+
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
@@ -571,7 +604,7 @@ function doDownloadInternal() {
 
   if [ -f "${target}" ] && [ -z "${force}" ]
   then
-    doEcho "Artifact already exists at ${target}\nTo force update please delete the file and run again."
+    doWarning "Artifact already exists at ${target}\nTo force update please delete the file and run again."
     return 255
   fi
   local curl_opt=""
@@ -583,11 +616,11 @@ function doDownloadInternal() {
   local result=${?}
   if [ "${result}" != 0 ]
   then
-    doEcho "Failed to download ${url} with exit code ${result}"
+    doWarning "Failed to download ${url} with exit code ${result}"
     return ${result}
   else
     mv "${tmp_file}" "${target}"
-    doDebug "Download of ${DOWNLOAD_FILENAME} from ${url} succeeded."
+    doSuccess "Download of ${DOWNLOAD_FILENAME} from ${url} succeeded."
   fi
 }
 
@@ -672,7 +705,7 @@ function doExtract() {
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doEcho "Successfully extracted/moved archive ${filename} to updates/extracted"
+  doSuccess "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
 # $1: the file to unzip
@@ -779,14 +812,15 @@ function doBackup() {
 # $1: path of the extracted name to install (move to target)
 # $2: optional target (e.g. "${DEVON_IDE_HOME}/software/")
 # $3: backup path
-# $4: contents for $1
+# $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
-  if [ -n "${4}" ] && [ -d "${4}" ] && [[ ! "${4}" =~ .*\.app ]]
+  shift 3
+  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
-    source_dir="${4}"
+    source_dir="${1}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
 }
@@ -952,7 +986,7 @@ function doMavenArchetype() {
   then
     doFail "Project ${target_artifact_id} already exists at ${PWD}"
   fi
-  doDevonCommand mvn archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
+  doDevonCommand mvn -B archetype:generate "-DarchetypeGroupId=${ARCHETYPE_GROUP_ID}" "-DarchetypeArtifactId=${ARCHETYPE_ARTIFACT_ID}" -DinteractiveMode=false "${target_args[@]}"
 }
 
 # $1: target path (e.g. "${DEVON_IDE_HOME}/software/")
@@ -982,7 +1016,7 @@ function doUpgradeMavenArtifact() {
     echo "Current version of ${artifact_id} is 0. Update is aborted. Use force (-f) to enforce update."
     return 1
   fi
-  doEcho "*** Software Update of ${artifact_id} ***"
+  doEchoStep "Software Update of ${artifact_id}"
   doEcho "Updating ${target_path} from ${url}"
   if [ "${target_version}" = "LATEST" ]
   then
@@ -1040,15 +1074,33 @@ function doGitPullOrClone() {
   fi
   if [ -d "${dir}/.git" ]
   then
+    pushd "${dir}" > /dev/null || exit 255 
     local remotes
-    remotes=$(cd "${dir}" && git remote)
+    remotes="$(git remote)"
+    local message="Can not update git repository: ${dir}\n"
     if [ -n "${remotes}" ]
     then
-      doRunCommand "git pull ${git_opts}" "" "${dir}"
+      git pull "${git_opts}"
+      local result="$?"
+      popd > /dev/null || exit 255 
+      if [ "${result}" = 0 ]
+      then
+        return
+      fi
+      local branch
+      branch="$(git branch --show-current)"
+      local branchRemoteRef
+      branchRemoteRef="$(git ls-remote --heads origin "${branch}" 2>&1)"
+      if [ -z "${branchRemoteRef}" ]
+      then
+        message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
+      else
+        doFail "${message}See above error for details - check your network connectivity and retry."
+      fi
     else
-      doEcho "Can not update local git repository: ${dir}"
-      return 1
+      message="${message}This is a local git repo with no remote - if you did this for testing, you may continue...\n"
     fi
+    doAskToContinue "${message}Do you want to ignore the problem and continue anyhow?"
   else
     if [ -z "${url}" ]
     then
@@ -1092,7 +1144,7 @@ function doInstall() {
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
   then
-    doFail "missing arguments for doInstall: ${*}"
+    doFail "Missing arguments for doInstall: ${*}"
   fi
   local result=0
   if [ "${url/.git/}" != "${url}" ]
@@ -1173,7 +1225,7 @@ function doInstall() {
     then
       echo "${version}" > "${version_file}"
     fi
-    doEcho "Successfully installed (installation software for) ${software}"
+    doSuccess "Successfully installed ${software}"
   else
     doEcho "Software ${software} seems to be already available in ${install_path}"
     result=1
@@ -1190,7 +1242,7 @@ function doInstall() {
   if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
     doExtendPath "${target_path}"
-    doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
+    doQuestion "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
   if [ "${install_path}" != "${target_path}" ]
   then
@@ -1269,7 +1321,7 @@ function doConfigureWorkspace() {
   fi
   if [ ${result} = 0 ]
   then
-    doEcho "Your workspace ${WORKSPACE} has been ${action}"  
+    doSuccess "Your workspace ${WORKSPACE} has been ${action}"  
   else
     doFail "Your workspace ${WORKSPACE} could not be ${action}"
   fi
@@ -1304,7 +1356,7 @@ function doCreateIdeScript() {
   then
     echo -e "${script_data}" > "${script_file}"
     chmod a+x "${script_file}"
-    doDebug "Created script ${script_file}"
+    doSuccess "Created script ${script_file}"
   fi
 }
 
@@ -1455,12 +1507,12 @@ function doIsWindows() {
 }
 
 function doIsPackageJsonContainingScript() {
-  doDebug "checking if package.json contains script section named $1"
+  doDebug "Checking if package.json contains script section named $1"
   if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
   then
     return 0
   else
-    doEcho "no build script is present in package.json - skipping to run build script."
+    doEcho "No build script is present in package.json - skipping to run build script."
     return 255
   fi
 }
