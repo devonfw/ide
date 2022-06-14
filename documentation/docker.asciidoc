@@ -29,7 +29,6 @@ The arguments (`devon docker «args»`) are explained by the following table:
 
 == setup
 
-=== Choosing either Docker Desktop or Rancher Desktop for installation
 The Docker commandlet will install Docker Desktop or Rancher Desktop automatically.
 This depends on how the variable DOCKER_EDITION was set. We chose to set Rancher Desktop as standard
 for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set (please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] motivating why we added Rancher Desktop to the docker commandlet).
@@ -38,24 +37,24 @@ This can be done by your projects ide-admin in the link:usage.asciidoc#developer
 "DOCKER_EDITION=DOCKERDESKTOP" 
 (without the quotes around the allocation) to the file devon.properties located at the path ${DEVON_IDE_HOME}/conf/devon.properties.
 
-=== installation and setup of Rancher Desktop 
+=== installation and customization of Rancher Desktop 
 
-===== installation
+==== installation
 
 The installation of Rancher Desktop will be handled with the help of a graphical user interface. After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
 
-image::images/RDInstallerInfoWindow.PNG[]
+image::images/RDInstallerInfoWindow.png[]
 
 After that you may need to wait for around half a minute until the installer of Rancher Desktop pops up. Then, when you accepted the Licence Agreement 
 
-image::images/RDInstallPic1.PNG[]
+image::images/RDInstallPic1.png[]
 
 the installation process starts, which will look like this:
 
-image::images/RDInstallPic2.PNG[]
+image::images/RDInstallPic2.png[]
 
 
-==== important setup step regarding container runtime
+==== important settings to set regarding container runtime
 
 After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings". Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
 
@@ -66,7 +65,7 @@ image::images/EnablingDockerd.png[]
 If you use Windows, then make sure to go to the Settings named "WSL Integration".
 There you can choose the WSL Shells you want Rancher Desktop to work on. 
 
-image::images/WSLdistrosRD.PNG[]
+image::images/WSLdistrosRD.png[]
 
 Besides that the tools like docker or kubectl should 
 directly work with CMD or Powershell.
@@ -132,13 +131,13 @@ Please note that the `docker` commandlet is a link:cli.asciidoc#command-wrapper[
 === start up failure of Rancher Desktop
 If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows. E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
 
-image::images/RDWaitingForServices.PNG[]
+image::images/RDWaitingForServices.png[]
 
 To fix this common issue related to WSL2, we included this https://github.com/sakai135/wsl-vpnkit[wsl-vpnkit] to the installation of Rancher Desktop. If you still run into problems, then please disconnect from your VPN, start Rancher Desktop and wait untill the progress bar disappears
 
-image::images/RDCompletedStartup.PNG
+image::images/RDCompletedStartup.png
 
 or, when using Windows, untill you see a small blue Rancher Desktop icon in your Notification Area (in the following picture it is on the right bottom of the screen next to the taskbar). 
 
-image::images/RDCompletedIconNotificArea.PNG[]
+image::images/RDCompletedIconNotificArea.png[]
 
