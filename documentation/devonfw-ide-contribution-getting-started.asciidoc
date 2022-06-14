@@ -38,10 +38,10 @@ For more information:
 
 Further explanations for ShellCheck errors can be found in the https://www.shellcheck.net/wiki/[ShellCheck Wiki].
 Own code can also be tested with the https://www.shellcheck.net/[Online ShellCheck].
-ShellCheck can also be run on the local development environment. To do this, ShellCheck (https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.zip[win], https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.darwin.x86_64.tar.xz[mac]) can be extracted to the program directory. For windows the path to the executable (`C:\Program Files\shellcheck-stable`) must be written to the path (https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53[instruction]). In the resource folder of the project (`scripts/src/main/resources`) the following command can now be executed in the git-bash:
+ShellCheck can also be run on the local development environment. To do this, ShellCheck (https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.zip[win], https://github.com/koalaman/shellcheck/releases/download/stable/shellcheck-stable.darwin.x86_64.tar.xz[mac]) can be extracted to the program directory. For windows the path to the executable (`C:\Program Files\shellcheck-stable`) has to be added to the `PATH` environment variable (https://medium.com/@kevinmarkvi/how-to-add-executables-to-your-path-in-windows-5ffa4ce61a53[instruction]). In the resource folder of the project (`scripts/src/main/resources`) the following command can now be executed in the git-bash:
 
 ```
-shellcheck.exe -x -e SC2181 setup scripts/devon scripts/environment-project scripts/functions scripts/command/*
+shellcheck -x -e SC2181 setup scripts/devon scripts/environment-project scripts/functions scripts/command/*
 ```
 
 For Mac and Linux, ShellCheck is automatically called during the build process (`mvn install`).
@@ -51,7 +51,7 @@ For Mac and Linux, ShellCheck is automatically called during the build process (
 === IDE-Mirrors
 Many programs have a download link that depends on the operating system. 
 
-For a new tool create a folder in https://github.com/devonfw/ide-mirrors[ide-mirrors] repository with its name containing the following files:
+For a new tool create a folder in https://github.com/devonfw/ide-mirrors[ide-mirrors] repository named like the tool and the commandlet with the following files:
 
 * `urls` contains the download URL(s) that typically contain placeholders like `${ext}` for extension, `${os}` for operating-system, `${arch}` for CPU architecture, or `${code}` for commandlet specific things. The file can hold multiple URLs - one per line. This is used if multiple https://en.wikipedia.org/wiki/Mirror_site[mirrors] are available so the load gets distributed. Therefore devonfw-ide will shuffle the URLs into random order and then try them sequentially so if one URL does not work (e.g. mirror unavailable) it will try the next one.
 * `ext-mapping` contains the mapping from operating system (OS) to the according file extension filled into the `${ext}` placeholder of the download for that OS.
@@ -65,8 +65,8 @@ Note that all rules within a mapping are checked from top to bottom.
 If the first rule matches, the other rules are ignored. Therefore, the *-rule should always be last.
 With the `os-mapping` the *-rule should be used for the Linux distributions, since the OS type is not only linux, but varies strongly.
 
-It is also possible to use variables in the mapping files. 
-For example, if the architecture in the download link only appears for Windows, `{arch}` can be used in the `os-mapping`.
+It is also possible to use variables in the mapping files (esp. in `os-mapping` that happens first before other variables get replaced). 
+For example, if the architecture in the download link only appears for Windows, `{arch}` can be used in the `os-mapping. For an example see https://github.com/devonfw/ide-mirrors/blob/master/rancher/os-mappings[here].
 
 === Commandlet
 Use an existing commandlet like https://github.com/devonfw/ide/blob/master/scripts/src/main/resources/scripts/command/helm[HELM] as a reference.
@@ -80,6 +80,8 @@ Use the `doInstall` method for the installation, which downloads the tool based 
 doInstall "-" "«installation-folder»" "«tool-name»" "«tool-version»"
 ```
 
+For standard installations omit `"«installation-folder»"` (use the empty string arg `""`) what will install to `${DEVON_IDE_HOME}/software/«tool-name»`.
+
 === LICENSE
 Find the license for the new tool and add the tool to the table of `Third party components` of the link:LICENSE.asciidoc[LICENSE].
 If the license itself does not exist, add it to the end of the file as a new section.
@@ -92,6 +94,8 @@ In the configuration files many link:variables.asciidoc[variables] can be define
 
 == Tipps and tricks
 
+The following sub-sections give you some tipps and tricks to boost your productivty when developing features for `devonfw-ide`.
+
 === Symbolic Links to ease testing and commiting in Windows
 
 With https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[symbolic links] you can use one file that is located inside one directory in multiple other directories, without copying the whole file the the other directories. The file is still only saved at the initial location, but can be accessed through the  created links in a much more comfortable way. So you are actually just linked to the original file and therefore don't have to worry about differing versions of the file in your directory. This is very helpful for testing our devon-ide, because e.g. the commandlets folder for testing is not the same as the commandlets folder for git-commits. 
@@ -102,11 +106,9 @@ Now changes you make in the first mentioned file  will directly be available in 
 
 === developer tools
 
-* Simple Tab Groups: Firefox plugin that helps to separate tabs e.g. tabs for projekt A, projekt B, travelplanning or hobbies 
-* gitfork: Tool for Windows and Mac that makes working with git easier and gives a better overview compared to just using a shell 
+* https://addons.mozilla.org/en-US/firefox/addon/simple-tab-groups/[Simple Tab Groups]: Firefox plugin that helps to separate tabs e.g. tabs for projekt A, projekt B, travelplanning or hobbies 
+* https:[//git-]fork.com/[git-fork]: Tool for Windows and Mac that makes working with git easier and gives a better overview compared to just using a shell 
 * https://www.heise.de/tipps-tricks/SSH-unter-Windows-10-nutzen-4224757.html[Windows Terminal]: A tool that enables the user to use CLIs of various kinds like git-bash, Powershell, CMD, WSL-Shells or Putty
-
-
 
 === Bash (Linux's Borne Again Shell)
 **For beginners:**
