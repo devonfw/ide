@@ -16,46 +16,98 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {  
-  if doIsDockerInstalled 
+  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doEcho "docker is already installed at $(command -v docker)"
-      docker version
+    echo "Rancher Desktop set as option"
+    if uname -r | grep -i microsoft
+    then 
+      echo "It seems that you are running the setup from inside a WSL shell."
+      echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+    else
+      if doIsRancherInstalled
+      then
+        if [ "${1}" != "silent" ] && ! doIsQuiet
+        then
+          #give the User the installation location when using linux or mac
+          if doIsWindows
+          then
+            doEcho "Rancher Desktop is already installed"
+          else
+            doEcho "Rancher Desktop is already installed at $(command -v docker)"
+          fi
+        fi
+      else
+        doRequireNotBatch
+        local version="${RANCHER_VERSION}"
+  	  	if [ -z "${version}" ]
+        then 
+          version="1.3.0"
+          latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
+          doVersionCompare "${latestversion}" "${version}"
+          VersCompRes=${?}
+          if [ "${VersCompRes}" = 1 ]
+          then
+            version=${latestversion}
+          fi
+        fi
+        local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
+        doInstall "-" "${rancher_install_dir}" "rancher" "${version}" 
+        if doIsWindows
+        then
+          doEcho "Installing Rancher Desktop for Windows..."
+          doInstallVpnkit
+          doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
+        elif doIsMacOs
+        then
+          doRunCommand "cp -a '${rancher_install_dir}'/*.app /Applications/"
+        else
+          doFail "Your OS is not supported currently"
+        fi
+        read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      fi
     fi
   else
-    doRequireNotBatch
-    #Start setup
-    local version="${DOCKER_VERSION:-stable}"
-    local code
-    if doIsWindows
+    if doIsDockerInstalled 
     then
-      code="Docker%20Desktop%20Installer"
-    elif doIsMacOs
-    then
-      code="Docker"
+      if [ "${1}" != "silent" ] && ! doIsQuiet
+      then
+        doEcho "docker is already installed at $(command -v docker)"
+        docker version
+      fi
     else
-      doFail "Sorry, docker-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+      doRequireNotBatch
+      local version="${DOCKER_VERSION:-stable}"
+      local code
+      if doIsWindows
+      then
+        code="Docker%20Desktop%20Installer"
+      elif doIsMacOs
+      then
+        code="Docker"
+      else
+        doFail "Sorry, docker-installation support is not yet implemented for your OS. Please use Rancher Desktop instead, or install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+      fi
+      doDownload "-" "" "docker" "${version}" "" "${code}"
+      if doIsWindows
+      then
+        doEchoStep "Installing Docker Desktop for Windows..."
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
+      elif doIsMacOs
+      then
+        doEchoStep "Installing Docker Desktop for MacOS..."
+        local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+        mkdir -p "${mount_dir}"
+        doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+        doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
+        doRunCommand "hdiutil detach -force '${mount_dir}'"
+      fi
+      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
     fi
-    doDownload "-" "" "docker" "${version}" "" "${code}"
-    if doIsWindows
-    then
-      doEcho "Installating Docker Desktop for Windows..."
-      doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
-    elif doIsMacOs
-    then
-      doEcho "Installating Docker Desktop for MacOS..."
-      local mount_dir="${DEVON_IDE_HOME}/updates/volume"
-      mkdir -p "${mount_dir}"
-      doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
-      doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
-      doRunCommand "hdiutil detach -force '${mount_dir}'"
-    fi
-    read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
   fi
 }
 
-# Call Docker with specified arguments.
+
+# Call Docker with specified arguments.   
 function doRun() {
   doSetup silent
   doEcho "Running: docker ${*}"
@@ -72,6 +124,59 @@ function doIsDockerInstalled() {
   fi
 }
 
+#OS independent check if Rancher Desktop is installed.
+function doIsRancherInstalled() {
+    if doIsWindows
+    then
+      touch tmp-res-install-query rd-install-test.ps1
+      # shellcheck disable=SC2016,2028
+      echo 'if($env:Path -like "*Rancher Desktop*") { set-content .\tmp-res-install-query "installed"} else {set-content .\tmp-res-install-query "not"}' > rd-install-test.ps1
+      powershell.exe -Command ".\rd-install-test.ps1"
+      installvar=$(awk 'NR=1' tmp-res-install-query)
+      rm tmp-res-install-query rd-install-test.ps1
+      if [ "${installvar}" = "installed" ]
+      then
+        return 
+      else
+        return 255
+      fi
+    else
+      if command -v rancher-desktop &> /dev/null
+      then
+        return
+      else
+        return 255
+      fi
+    fi
+}
+
+function doInstallVpnkit() {
+  #get latest version of the vpnkit and download its tar.gz file
+  local partialUrl
+  # shellcheck disable=SC1083  
+  partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
+  local VPNversion=${partialUrl##*/}
+  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
+  curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
+
+  #write a powershell-script
+  #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
+  #execute command to start wsl-vpnkit
+  # shellcheck disable=SC1083,SC2129,SC2016
+  {
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz' 
+    echo 'pushd $env:USERPROFILE'
+    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2'
+    echo 'popd'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
+  } > vpnkit-setup.ps1
+
+  #execute the powershell-script 
+  powershell.exe -Command ".\vpnkit-setup.ps1"
+  rm vpnkit-setup.ps1
+}
+
+
 # CLI
 case ${1} in 
 "help" | "-h")
@@ -80,7 +185,7 @@ case ${1} in
   echo "Arguments:"
   echo " setup                    setup docker on your machine (global installation)."
   echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
-  echo
+  echo 
 ;;
 "setup" | "s" | "")
   doSetup setup "${2}"

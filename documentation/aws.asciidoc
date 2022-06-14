@@ -1,0 +1,15 @@
+:toc:
+toc::[]
+
+= aws
+
+The aws commandlet allows to install and use https://aws.amazon.com/cli/[aws cli].
+
+The arguments (`devon aws «args»`) are explained by the following table:
+
+.Usage of `devon aws`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install aws cli on your machine.
+|=======================

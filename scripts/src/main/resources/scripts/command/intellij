@@ -44,7 +44,6 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "command -v idea" "verify installation of IntelliJ"
     if [ -e "${IDEA_HOME}/product-info.json" ]
     then
       doRunCommand "cat '${IDEA_HOME}/product-info.json'"

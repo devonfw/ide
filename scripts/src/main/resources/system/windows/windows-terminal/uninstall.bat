@@ -1,0 +1,1 @@
+regedit.exe /S devon-wt-cmd-uninstall.reg

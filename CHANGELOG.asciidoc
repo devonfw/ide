@@ -2,21 +2,48 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.04.001
+== 2022.04.003
 
-WIP: Release in progress, will come soon
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/781[#781]: Support for DotNet
+* https://github.com/devonfw/ide/issues/770[#770]: RancherDesktop can not be installed
+* https://github.com/devonfw/ide/issues/777[#777]: Support for colored output
+* https://github.com/devonfw/ide/issues/749[#749]: Prompt default value for Settings URL
+* https://github.com/devonfw/ide/pull/785[#785]: fix passing args to terraform and helm on proxy usage
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/30?closed=1[milestone 2022.04.003].
+
+== 2022.04.002
 
 New release with improved cloud tool support and various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/711[#711]: AWS CLI integration
+* https://github.com/devonfw/ide/issues/712[#712]: Azure CLI integration
+* https://github.com/devonfw/ide/issues/713[#713]: Python integration
+* https://github.com/devonfw/ide/issues/632[#632]: fork detection buggy
+* https://github.com/devonfw/ide/issues/687[#687]: error on git pull
+* https://github.com/devonfw/ide/issues/770[#770]: first small fixes for VPNKit
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.002].
+
+== 2022.04.001
+
+New release with improved cloud tool support and various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/690[#690]: Support for RancherDesktop
+* https://github.com/devonfw/ide/issues/710[#710]: Add VPN enhancement to RancherDesktop
+* https://github.com/devonfw/ide/issues/695[#695]: Docker setup not working
 * https://github.com/devonfw/ide/issues/636[#636]: Helm integration
 * https://github.com/devonfw/ide/issues/637[#637]: Terraform integration
 * https://github.com/devonfw/ide/issues/638[#638]: GraalVM integration
-* https://github.com/devonfw/ide/issues/695[#695]: Docker setup not working
 * https://github.com/devonfw/ide/issues/734[#734]: unzip: command not found (zip support)
 * https://github.com/devonfw/ide/issues/701[#701]: Support for windows terminal
 * https://github.com/devonfw/ide/pull/700[#700]: support for MAVEN_ARGS variable for mvn 3.x
 * https://github.com/devonfw/ide/issues/696[#696]: Move CobiGen home folder from user home to ide per default
 * https://github.com/devonfw/ide/issues/683[#683]: Generalize MacOS app workaround
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/27?closed=1[milestone 2022.04.001].
 
 == 2021.12.005
 

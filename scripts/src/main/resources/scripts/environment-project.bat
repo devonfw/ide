@@ -2,6 +2,9 @@ rem This batch is not supposed to be called manually
 @echo off
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
+Set _fBYellow=[93m
+Set _RESET=[0m
+
 call :load_properties "%DEVON_IDE_HOME%\scripts\devon.properties"
 call :load_properties "%USERPROFILE%\devon.properties"
 call :load_properties "%DEVON_IDE_HOME%\devon.properties"
@@ -15,7 +18,7 @@ if not exist "%WORKSPACE_PATH%" (
     echo Creating main workspace directory
     md "%WORKSPACE_PATH%"
   ) else (
-    echo WARNING: Worksapce %WORKSPACE% does not exist
+    echo %_fBYellow%WARNING: Worksapce %WORKSPACE% does not exist%_RESET%
   )
 )
 call :load_properties "%WORKSPACE_PATH%\devon.properties"
@@ -27,10 +30,10 @@ if not defined DEVON_OLD_PATH (
 set "SOFTWARE_PATH=%CD%\software"
 if not exist "%SETTINGS_PATH%" (
   echo:
-  echo *** ATTENTION ***
-  echo Your devonfw-ide is missing the settings at %SETTINGS_PATH%
-  echo Please run the following command to complete your IDE setup:
-  echo devon ide setup [^<settings-url^>]
+  echo %_fBYellow%*** ATTENTION ***%_RESET%
+  echo %_fBYellow%Your devonfw-ide is missing the settings at %SETTINGS_PATH%%_RESET%
+  echo %_fBYellow%Please run the following command to complete your IDE setup:%_RESET%
+  echo %_fBYellow%devon ide setup [^<settings-url^>]%_RESET%
 )
 setlocal EnableDelayedExpansion
 for /f "delims=" %%i in ('dir /a:d /b "%SOFTWARE_PATH%\*.*"') do (
