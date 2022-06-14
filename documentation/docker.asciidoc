@@ -39,8 +39,6 @@ This can be done by your projects ide-admin in the link:usage.asciidoc#developer
 
 === installation and customization of Rancher Desktop 
 
-==== installation
-
 The installation of Rancher Desktop will be handled with the help of a graphical user interface. After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
 
 image::images/RDInstallerInfoWindow.png[]
@@ -54,13 +52,9 @@ the installation process starts, which will look like this:
 image::images/RDInstallPic2.png[]
 
 
-==== important settings to set regarding container runtime
-
 After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings". Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
 
 image::images/EnablingDockerd.png[]
-
-==== Enabling the tools on different WSL-distributions
 
 If you use Windows, then make sure to go to the Settings named "WSL Integration".
 There you can choose the WSL Shells you want Rancher Desktop to work on. 
@@ -70,8 +64,6 @@ image::images/WSLdistrosRD.png[]
 Besides that the tools like docker or kubectl should 
 directly work with CMD or Powershell.
 
-
-==== Note for uninstalling Docker Desktop or Rancher Desktop
 
 Please note that besides the sandbox concept of devonfw-ide this is a global installation on your system.
 When uninstalling devonfw-ide, you may have to manually uninstall Docker and Kubernetes, or Rancher Desktop if you do not need it anymore. At least uninstalling Rancher Desktop should leave way less remains if you did not install one of the related software  Rancher Desktop offers separately.
@@ -93,7 +85,7 @@ In case you only use Docker rarely, you can save resources by stopping it when n
 === Windows and macOS
 For Windows 10 you can use the following https://www.dell.com/support/kbdoc/de-de/000124550/how-to-add-app-to-startup-in-windows-10[Instructions on how to set startup programs for Windows 10], so that Rancher Desktop starts with your OS.
 
-To enable or disable autostart, you can launch Docker Desktop on Windows or MacOS go to the `Preferences` (gear icon in the title bar). Then in the `General` tab you can check or uncheck the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]). When autostart is disabled and you launch Docker Desktop it will notice and ask your to start the service or do this automatically for you.
+To enable or disable autostart, you can launch Docker Desktop on Windows or MacOS go to the `Preferences` (gear icon in the title bar). Then in the `General` tab you can check or uncheck the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]). When autostart is disabled and you launch Docker Desktop it will notice and ask you to start the service or do this automatically for you.
 On Windows you can also manually tweak this:
 
 * Hit `[windows][r]`
