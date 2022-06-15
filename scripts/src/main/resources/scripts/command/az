@@ -15,50 +15,16 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  if command -v az &> /dev/null
+  if [ ! -f "${AZURE_HOME}" ]
   then
-    if [ "${1}" != "silent" ] && ! doIsQuiet
+    if command -v python &> /dev/null
     then
-      doEcho "Azure CLI is already installed at $(command -v az)"
-    fi
-  else
-    doRequireNotBatch
-    if doIsWindows
-    then
-      # Get leatest release
-      if [ -z "${AZ_VERSION}" ]
-      then
-        doEcho "Getting latest release..."
-        AZ_VERSION=$(curl -s https://api.github.com/repos/Azure/azure-cli/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | awk -F "-" '{print $3}')
-      fi
-
-      doInstall "-" "${AZ_HOME}" "az" "${AZ_VERSION}"
-      if [ "${?}" = 0 ]
-      then
-        doPackageInstall "${AZ_HOME}"
-      fi
-    fi
-  fi
-}
-
-function doPackageInstall() {
-  local path_to_package="${1}"
-  if doIsWindows
-  then 
-    local winPath
-    winPath=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${winPath}\az-${AZ_VERSION}-windows.msi /QB-!'" &> /dev/null
-    if [ "${?}" = 0 ]
-    then
-      setConfigDir
-      doSuccess "Azure CLI ist installed now. Great! \nTo get started you may need to restart your current shell."
+      doDevonCommand python pip install azure-cli
     else
-      doError "The setup was canceled or failed. Rerun the setup to install Azure CLI."
+      doDevonCommand python setup silent
+      doDevonCommand python pip install azure-cli
     fi
-  else
-    doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
   fi
-  doRunCommand "rm -rf ${path_to_package}"
 }
     
 # Set directory for azure cli configuration file
@@ -75,15 +41,16 @@ function setConfigDir() {
 
 function doRun() {
   doSetup silent
-  if command -v az &> /dev/null
+  if [ -f "${AZURE_HOME}" ]
   then
     doEcho "Running: Azure CLI ${*}"
     setConfigDir
-    az "${@}"
+    doDevonCommand python ${DEVON_IDE_HOME}/software/python/Scripts/az "${@}"
   fi
 }
 
-AZ_HOME="${DEVON_IDE_HOME}/updates/install/az"
+AZURE_HOME=${DEVON_IDE_HOME}/software/python/Scripts/az
+
 
 # CLI
 case ${1} in
