@@ -35,7 +35,7 @@ The function doIsIgnoredFolder checks whether the directory that is passed to it
 The doEcho function prints the arguments passed to it if the variable quiet is not set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
 
 = doInfo
-The doInfo function prints the message passed as a parameter in blue and appends an extra blank line, and allows backslash-escaped characters, for example \n for new line.
+The doInfo function prints the message passed as a parameter in blue and appends an extra blank line, and allows backslash-escaped characters, for example "\n" for new line.
 
 = doEchoStep
 The doEchoStep function prints the message passed as a parameter with three asterisks before and after the message in purple, and allows backslash-escaped characters, for example "\n" for new line.
@@ -56,6 +56,7 @@ The doWarning function outputs the text WARNING: with the message passed in the 
 The doConfirmWarning function calls the doWarning function with the message passed to it, and then calls the doAskToContinue function with no parameters.
 
 = doAskToContinue
+A message can be passed as the first parameter to the doAskToContinue function. If this is not done, the standard message "Do you want to continue?" used. If the variable force is set, the message is output and the function ends directly with the return value 0. If neither the variable force nor the variable batch is set, the message is output in a loop and the input of yes, no or no input at all is awaited. With "yes" or no specification at all, it ends the function with the return value 0, and with "no" it is checked whether return was passed as the second parameter. If this is the case, the function ends with the return value 255, otherwise the entire program ends with the return value 255.
 
 = doLogo
 The doLogo function returns the devon logo.
@@ -64,11 +65,19 @@ The doLogo function returns the devon logo.
 The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
 
 = doLicenseAgreement
+The doLicenseAgreement function checks whether the DEVON_HOME_DIR/.devon/.license.agreement file exists locally. If the file exists, the function exits with the return value 0. If the file does not exist, the function calls doLogo and then license information about devonfw-ide. Then the website with the license conditions is called up or an error is output if the variable batch is set. Now the question is asked in a loop until either "yes" or "no" is entered. If "no" is entered, the function ends with a return value of 255. If "yes" is entered, the license from the opened website is saved in the local file DEVON_HOME_DIR/.devon/.license.agreement stored and the function ends with return value 0.
+
 = doDevonCommand
+The doDevonCommand function calls the doDevonCommandAndReturn function and passes it all the parameters. If the return value of the doDevonCommandAndReturn function is not equal to 0, the script that called the doDevonCommand function is ended with the return value.
+
 = doDevonCommandAllWorkspaces
 = doDevonCommandAndReturn
+The doDevonCommandAndReturn function is passed a command from the devon environment with parameters as a parameter, i.e. a command that must be installed under DEVON_IDE_HOME/scripts/command. If no parameter is given, an error message is output using the doFail function. If the specified command does not exist, an error message is also output using doFail. If the command exists, it is checked whether it is executable and, if so, set to executable. Then the command is called with the options batch, force, debug and quiet, if set, and the specified parameters. If the command encounters an error, an error message is output with the return value passed by the command. Otherwise the function ends with the return value 0.
+
 = doDownload
 = doDownloadInternal
+The function doDownloadInternal is given the URL as the first parameter, a temporary name for the file to be downloaded as the second, and the target directory in which the file is to be stored as the third parameter. Optionally, the name of the downloaded file can be given as a fourth parameter. If this does not happen, the name is determined from the URL. If the file exists and the force option was not specified, the function ends with a corresponding message and the return value 255. Otherwise the file is downloaded and, if successful, moved to the target directory.
+
 = doGetExtension
 The doGetExtension function is given a file name as a parameter, including the path, and returns the file extension as the result.
 
