@@ -73,7 +73,7 @@ function doSetup() {
     fi
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then
-      doRunCommand "'${MVN}' -v" "verify installation of maven"
+      doRunCommand "'${MVN}' -v" "verified installation of maven"
     fi
   fi
 }

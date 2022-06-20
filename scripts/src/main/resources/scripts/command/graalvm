@@ -53,7 +53,7 @@ function doSetup() {
     then
       java_binary="${GRAALVM_HOME}/bin/java.exe"
     fi
-    doRunCommand "'${java_binary}' -version" "verify installation of GraalVM"
+    doRunCommand "'${java_binary}' -version" "verified installation of GraalVM"
   fi
 }
 

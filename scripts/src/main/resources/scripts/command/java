@@ -64,7 +64,7 @@ function doSetupJava() {
   fi
   if [ "${mode}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${java_path}/bin/java' -version" "verify installation of Java"
+    doRunCommand "'${java_path}/bin/java' -version" "verified installation of Java"
   fi
 }
 

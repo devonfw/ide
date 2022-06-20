@@ -36,7 +36,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verify installation of Jenkins"
+    doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verified installation of Jenkins"
   fi
 }
 

@@ -28,7 +28,7 @@ function doSetup() {
     then
       node_binary="${NODE_HOME}/bin/node"
     fi
-    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
+    doRunCommand "'${node_binary}' -v" "verified installation of node.js"
   fi
 }
 

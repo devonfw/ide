@@ -24,7 +24,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    echo doRunCommand "'${SONAR}' -v" "verify installation of sonarqube"
+    echo doRunCommand "'${SONAR}' -v" "verified installation of sonarqube"
   fi
 }
 

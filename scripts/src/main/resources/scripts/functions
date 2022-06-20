@@ -82,13 +82,13 @@ function doRunCommand() {
   local message
   if [ -z "${2}" ]
   then
-    message="run command ${1/ */}"
+    message="ran command ${1/ */}"
   else
     message="${2} (${1/ */})"
   fi
   if [ ${result} = 0 ]
   then
-    doSuccess "Succeeded to ${message}"
+    doSuccess "Successfully ${message}"
   else
     doError "Failed to run command: ${1}"
     doFail "Failed to ${message}" ${result}

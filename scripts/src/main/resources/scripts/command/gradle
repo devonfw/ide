@@ -24,7 +24,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${GRADLE}' -v" "verify installation of gradle"
+    doRunCommand "'${GRADLE}' -v" "verified installation of gradle"
   fi
 }
 
