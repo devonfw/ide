@@ -4,12 +4,13 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2022.04.003
 
-ATTENTION: This release is still WIP (work in progress) and not yet released.
-
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/781[#781]: Support for DotNet
+* https://github.com/devonfw/ide/issues/770[#770]: RancherDesktop can not be installed
 * https://github.com/devonfw/ide/issues/777[#777]: Support for colored output
 * https://github.com/devonfw/ide/issues/749[#749]: Prompt default value for Settings URL
+* https://github.com/devonfw/ide/pull/785[#785]: fix passing args to terraform and helm on proxy usage
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/30?closed=1[milestone 2022.04.003].
 

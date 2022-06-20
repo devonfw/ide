@@ -159,26 +159,21 @@ function doInstallVpnkit() {
   local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
   curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
 
-  #at first write a bash-script
-  {
-    echo '#!/bin/sh'
-    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
-  } > activate-vpnkit
-  #now write a pwsh-script which also executes the above bash-script in WSL
-  #go to needed path by using pushd to be able to get back easily with popd for running the above bash script
+  #write a powershell-script
+  #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
+  #execute command to start wsl-vpnkit
   # shellcheck disable=SC1083,SC2129,SC2016
   {
-    echo 'mv -f wsl-vpnkit.tar.gz $env:USERPROFILE' 
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz' 
     echo 'pushd $env:USERPROFILE'
     echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2'
-    echo 'wsl -d wsl-vpnkit'
     echo 'popd'
-    echo 'wsl.exe sh activate-vpnkit'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
   } > vpnkit-setup.ps1
 
-  #execute the powershell-script directly and the script for inside wsl indirectly
+  #execute the powershell-script 
   powershell.exe -Command ".\vpnkit-setup.ps1"
-  rm activate-vpnkit vpnkit-setup.ps1
+  rm vpnkit-setup.ps1
 }
 
 
