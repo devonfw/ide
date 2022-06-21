@@ -15,14 +15,18 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  if [ ! -f "${AZURE_HOME}" ]
+  if ! command -v az &> /dev/null
   then
     if command -v python &> /dev/null
     then
       doDevonCommand python pip install azure-cli
+      setPath
+      setConfigDir
     else
       doDevonCommand python setup silent
       doDevonCommand python pip install azure-cli
+      setPath
+      setConfigDir
     fi
   fi
 }
@@ -39,18 +43,26 @@ function setConfigDir() {
   fi
 }
 
-function doRun() {
-  doSetup silent
-  if [ -f "${AZURE_HOME}" ]
-  then
-    doEcho "Running: Azure CLI ${*}"
-    setConfigDir
-    doDevonCommand python ${DEVON_IDE_HOME}/software/python/Scripts/az "${@}"
+function setPath() {
+  az_dir="${DEVON_IDE_HOME}/software/python/Scripts"
+  path_bind='PATH=$PATH:'
+  set_path="${path_bind}${az_dir}"
+  if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
+    then
+      doRunCommand "${set_path}"
+      echo -e "\n${set_path}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      doEcho "Azure's Path is added to ${DEVON_IDE_HOME}/conf/devon.properties"
   fi
 }
 
-AZURE_HOME=${DEVON_IDE_HOME}/software/python/Scripts/az
-
+function doRun() {
+  doSetup silent
+  if command -v az &> /dev/null
+  then
+    doEcho "Running: Azure CLI ${*}"
+    az "${@}"
+  fi
+}
 
 # CLI
 case ${1} in
