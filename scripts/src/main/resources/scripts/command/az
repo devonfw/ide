@@ -15,9 +15,9 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  if ! command -v az &> /dev/null
+  if [ ! -f "${AZ_FILE}" ] 
   then
-    if command -v python &> /dev/null
+    if [ ! -f "${PYTHON_FILE}" ] 
     then
       doDevonCommand python pip install azure-cli
       setPath
@@ -57,12 +57,15 @@ function setPath() {
 
 function doRun() {
   doSetup silent
-  if command -v az &> /dev/null
+  if [ -f "${AZ_FILE}" ] 
   then
     doEcho "Running: Azure CLI ${*}"
     az "${@}"
   fi
 }
+
+AZ_FILE="${DEVON_IDE_HOME}/software/python/Scripts/az"
+PYTHON_FILE="${DEVON_IDE_HOME}/software/python/python"
 
 # CLI
 case ${1} in
