@@ -45,7 +45,7 @@ function setConfigDir() {
 
 function setPath() {
   az_dir="${DEVON_IDE_HOME}/software/python/Scripts"
-  path_bind='PATH=$PATH:'
+  path_bind="PATH=\$PATH:"
   set_path="${path_bind}${az_dir}"
   if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
     then
