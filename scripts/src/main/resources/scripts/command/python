@@ -183,6 +183,7 @@ fi
 if doIsMacOs
 then
   echo "Mac CLI"
+  doSetup
 elif doIsWindows
 then
   echo "Windows CLI"
