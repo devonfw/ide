@@ -97,18 +97,10 @@ In the configuration files many link:variables.asciidoc[variables] can be define
 The following sub-sections give you some tipps and tricks to boost your productivty when developing features for `devonfw-ide`.
 
 === Symbolic Links to ease testing and commiting in Windows
-
-With https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[symbolic links] you can use one file that is located inside one directory in multiple other directories, without copying the whole file the the other directories. The file is still only saved at the initial location, but can be accessed through the  created links in a much more comfortable way. So you are actually just linked to the original file and therefore don't have to worry about differing versions of the file in your directory. This is very helpful for testing our devon-ide, because e.g. the commandlets folder for testing is not the same as the commandlets folder for git-commits. 
-Follow https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[these] installation and usage instructions first. 
-Later on you can make symbolic links of files from your "git folder" and add them into the folder in which the testing is supposed to take place.
-E.g. make a symbolic link of ´${DEVON_IDE_HOME}/workspaces/ide/scripts/src/main/resources/scripts/command/docker´ and insert it into the folder ´${DEVON_IDE_HOME}/scripts/command´.
-Now changes you make in the first mentioned file  will directly be available in your testing environment through the created file-link in the testing environment.
+As the folder for the local repository for our commandlets isn't the same as the folder for testing the devon-ide, it is very helpfull to use  symbolic links when developing commandlets in windows. Read the section about symbolic links of the https://github.com/devonfw/ide/blob/master/documentation/advanced-tooling-generic.asciidoc[documentation] for more information.
 
 === developer tools
-
-* https://addons.mozilla.org/en-US/firefox/addon/simple-tab-groups/[Simple Tab Groups]: Firefox plugin that helps to separate tabs e.g. tabs for projekt A, projekt B, travelplanning or hobbies 
-* https:[//git-]fork.com/[git-fork]: Tool for Windows and Mac that makes working with git easier and gives a better overview compared to just using a shell 
-* https://www.heise.de/tipps-tricks/SSH-unter-Windows-10-nutzen-4224757.html[Windows Terminal]: A tool that enables the user to use CLIs of various kinds like git-bash, Powershell, CMD, WSL-Shells or Putty
+Have a look at https://github.com/devonfw/ide/blob/master/documentation/advanced-tooling-generic.asciidoc[advanced-tooling-generic.asciidoc] for some helpfull developer tools.
 
 === Bash (Linux's Borne Again Shell)
 **For beginners:**
@@ -124,12 +116,7 @@ Let's get to the practical part of the Bash-usage.
 
 **If you are using Windows**, make sure that you have git-bash installed, so you can execute the Bash commands mentioned in this intruduction. [Here you can find git for windows](https://git-scm.com/download/win). In some cases later on you may want or need to use WSL. Our project teams standard way is to install WSL via Rancher Desktop, which is easily installable with the devon-ide by using the command `devon docker setup`. If you don't have the devon-ide yet, then you can follow [this guide](https://github.com/devonfw/ide/blob/master/documentation/setup.asciidoc)
 
-Now I want to share a good and rather short video for Bash-beginners with you.
-In https://www.youtube.com/watch?v=oxuRxtrO2Ag[this robust introduction] , where you will be going through some of the most important commands and concepts in round about 70 Minutes (you can find a list of the commands introduced there at the videos description).
-There are some really usefull commands, that I would have liked to know back then when I started with Bash.  
-When you have learned the knowledge from this video, then you'll be a big step further on your journey with Bash. 
-It is really worth watching such a video while simultaneously directly playing around with those commands on your own Shell.
-This makes the learning process faster and also way more interesting than simply reading or listenning to such a tutorial.  
+The https://www.youtube.com/watch?v=oxuRxtrO2Ag[following video] gives you some important and helpful basics, still you don't need to know all of these commands directly by heart. Instead under the video you'll find a list with the commands mentioned in the video to make a command return to your mind. Also directly play around with those commands while watching the video to learn faster. 
 
 When you used to program in some other languages, you for sure know how helpful a google search in combination with the results on stackexchange can be.
 If not, then google your question regarding Bash as usual and mostly you'll find a way to get together the code you want. 
@@ -157,4 +144,4 @@ In case you want to get your hands dirty with code that is already in use and co
 There are also some basic exercises related to our project that are not official yet, but you can ask for if you want to try some of them out to learn and challenge yourself a bit.
 
 == Documentation
-https://devonfw.com/website/pages/docs/devonfw-guide_ide.wiki_devonfw-ide.asciidoc.html
+https://github.com/devonfw/ide/blob/master/documentation/devonfw-ide-doc.asciidoc
