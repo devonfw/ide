@@ -1080,7 +1080,7 @@ function doGitPullOrClone() {
     local message="Can not update git repository: ${dir}\n"
     if [ -n "${remotes}" ]
     then
-      git pull "${git_opts}"
+      git pull ${git_opts}
       local result="$?"
       popd > /dev/null || exit 255 
       if [ "${result}" = 0 ]
