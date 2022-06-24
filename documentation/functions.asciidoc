@@ -59,7 +59,7 @@ The doConfirmWarning function calls the doWarning function with the message pass
 A message can be passed as the first parameter to the doAskToContinue function. If this is not done, the standard message "Do you want to continue?" used. If the variable force is set, the message is output and the function ends directly with the return value 0. If neither the variable force nor the variable batch is set, the message is output in a loop and the input of yes, no or no input at all is awaited. With "yes" or no specification at all, it ends the function with the return value 0, and with "no" it is checked whether return was passed as the second parameter. If this is the case, the function ends with the return value 255, otherwise the entire program ends with the return value 255.
 
 = doLogo
-The doLogo function returns the devon logo.
+The doLogo function prints out the devon logo.
 
 = doOpen
 The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
@@ -82,7 +82,12 @@ The function doDownloadInternal is given the URL as the first parameter, a tempo
 The doGetExtension function is given a file name as a parameter, including the path, and returns the file extension as the result.
 
 = doGetFirstExistingPathOrFail
+The doGetFirstExistingPathOrFail function takes a list of directories as a parameter and then checks in the
+specified sequence until one of the specified directories exists. This directory is then output and the function ends with the return value 0. If none of the directories passed exist, the doFail function is called with a corresponding message.
+
 = doGetFirstExistingPath
+The doGetFirstExistingPath function takes a list of directories as a parameter and then checks in the specified order until one of the specified directories exists. This directory is then output and the function ends with the return value 0. If none of the passed directories exist, the function ends with the return value 1.
+
 = doExtract
 The doExtract function is given the file to be extracted and possibly a path to where it should be extracted. Then the right tool is selected based on the file extension and the file is unzipped.
 
@@ -104,15 +109,23 @@ The doReplaceExtracted function prepares to move an unpacked archive (specified 
 
 = doMavenGetLatestVersion
 = doIsDevVersion
+The doIsDevVersion function checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter. If this is the case, it ends with the return value 0 otherwise 1.
+
 = doArrayContainsItemWithPrefix
 = doMavenArchetype
 = doUpgradeMavenArtifact
 = doMoveGlobSafe
+The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
+
 = doGitPullOrClone
 = doInstall
 = doExtendPath
+A directory is passed to the doExtendPath function as a parameter. The function then checks whether the "bin" subdirectory exists in the transferred directory. If the directory exists, the PATH variable is extended by this "bin" directory. Otherwise the PATH variable is expanded with the passed directory.
+
 = doConfigureWorkspace
 = doRunConfigurator
+The doRunConfigurator function transfers all jar files in the DEVON_IDE_HOME/scripts/lib directory separated by ":" as a class path to the Java command and executes the Java program specified as a parameter.
+
 = doCreateIdeScript
 = doVersionCompare
 = doGetNextVersion
@@ -124,5 +137,7 @@ The doIsWindows function returns 0 if the operating system is detected as Window
 
 = doIsPackageJsonContainingScript
 = doRequireWsl
+The function doRequireWsl checks whether WSL for Windows is installed and whether it is activated and outputs a corresponding message if one of the two requirements is not met.
+
 = doParseOption
 
