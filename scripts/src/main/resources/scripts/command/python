@@ -95,12 +95,12 @@ function doSetup() {
   then
     if doIsMacOs
     then
-      echo "should run python version command"
+      doRunPythonLinuxMac --version
     elif doIsWindows
     then 
       doRunCommand "python --version"
     else 
-      doRunPythonLinux --version
+      doRunPythonLinuxMac --version
     fi
   fi 
 
@@ -117,7 +117,7 @@ function doRunPythonWindows() {
   fi
 }
 
-function doRunPythonLinux() {
+function doRunPythonLinuxMac() {
   doSetup silent
   doEcho "Running: python ${*}"
   if doIsQuiet
@@ -194,13 +194,13 @@ then
     doSetup
   ;;
   "version" | "-v" | "--version")
-     doRunPythonLinux --version
+     doRunPythonLinuxMac --version
   ;;
   "pip" | "pip3")
       doRunPipLinux "${@}"
   ;;
   *)
-      doRunPythonLinux "${@}"
+      doRunPythonLinuxMac "${@}"
   ;;
   esac
 elif doIsWindows
@@ -242,13 +242,13 @@ else
     doSetup
   ;;
   "version" | "-v" | "--version")
-     doRunPythonLinux --version
+     doRunPythonLinuxMac --version
   ;;
   "pip" | "pip3")
       doRunPipLinux "${@}"
   ;;
   *)
-      doRunPythonLinux "${@}"
+      doRunPythonLinuxMac "${@}"
   ;;
   esac
 fi
