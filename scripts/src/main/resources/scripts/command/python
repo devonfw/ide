@@ -29,17 +29,16 @@ function doSetup() {
 	  fi
 
     if doIsMacOs; then
-      echo "Mac Placeholder"
-      # Do something under Mac OS X platform   
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
-      ."${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
+      sh "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
-      # rename folder from bin to Scripts
-      # if [ -d "${PYTHON_HOME}/bin" ]
-      # then
-      #   mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
-      # fi
+      
+      #rename folder from bin to Scripts
+      if [ -d "${PYTHON_HOME}/bin" ]
+      then
+        mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
+      fi
       
     elif doIsWindows; then
       doEcho "Getting pip install file"
@@ -172,8 +171,8 @@ function doRunPipLinux() {
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
 PYTHON_SCRIPTS="${PYTHON_HOME}/Scripts"
 
-#in linux filenames might change their version numbers
-if ! doIsWindows && ! doIsMacOs
+#in linux and mac, filenames might change their version numbers
+if ! doIsWindows
 then
   PYTHON_BIN=$(find "${PYTHON_SCRIPTS}" -name "python3.*" | sort | head -1)
   PIP_BIN=$(find "${PYTHON_SCRIPTS}" -name "pip*" | sort | head -1)
@@ -182,8 +181,28 @@ fi
 # CLI
 if doIsMacOs
 then
-  echo "Mac CLI"
-  doSetup
+  case ${1} in 
+  "help" | "-h")
+    echo "Install Python."
+    echo
+    echo "Arguments:"
+    echo " setup                    setup Python."
+    echo
+  ;;
+  "setup" | "s" | "")
+    doEcho "Installating python..."
+    doSetup
+  ;;
+  "version" | "-v" | "--version")
+     doRunPythonLinux --version
+  ;;
+  "pip" | "pip3")
+      doRunPipLinux "${@}"
+  ;;
+  *)
+      doRunPythonLinux "${@}"
+  ;;
+  esac
 elif doIsWindows
 then
   echo "Windows CLI"
