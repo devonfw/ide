@@ -741,6 +741,42 @@ function doUnzip() {
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
 
+function doInstallWithPackageManager() {
+  pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
+  installString=${1}
+  
+  for t in "${pckmngers[@]}"; do
+    command -v "${t}" > /dev/null
+    if [ "${?}" -eq "0" ]
+    then
+      pckmnger=${t}
+    fi
+  done
+  
+  case ${pckmnger} in
+  apt-get) doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  yum)     doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  pacman)  doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} -S ${installString}";;
+  emerge)  doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  zypp)    doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  apk)     doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} add ${installString}";;
+  dnf)     doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  brew)    doEcho "installing ${installString}..."
+           doRunCommand "sudo ${pckmnger} install ${installString}";;
+  *)       doEcho "Error. Your package Manager is not supported. ${installString} could not be installed. "
+           exit;;
+  esac
+  
+
+}
+
 # $1: filename (e.g. ${filename})
 function doIsInstallerExtension()
 {
