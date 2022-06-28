@@ -24,18 +24,16 @@ function doSetup() {
       echo "It seems that you are running the setup from inside a WSL shell."
       echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
-      if doIsRancherInstalled 
+      if doIsRancherInstalled
       then
-        doIsWindows 
-        queryWin=$?
         if [ "${1}" != "silent" ] && ! doIsQuiet
         then
           #give the User the installation location when using linux or mac
-          if [ $queryWin != 0 ]
+          if doIsWindows
           then
-            doEcho "Rancher Desktop is already installed at $(command -v devon docker)"
-          else
             doEcho "Rancher Desktop is already installed"
+          else
+            doEcho "Rancher Desktop is already installed at $(command -v docker)"
           fi
         fi
       else
@@ -92,11 +90,11 @@ function doSetup() {
       doDownload "-" "" "docker" "${version}" "" "${code}"
       if doIsWindows
       then
-        doEcho "installing Docker Desktop for Windows..."
+        doEchoStep "Installing Docker Desktop for Windows..."
         doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
       elif doIsMacOs
       then
-        doEcho "installing Docker Desktop for MacOS..."
+        doEchoStep "Installing Docker Desktop for MacOS..."
         local mount_dir="${DEVON_IDE_HOME}/updates/volume"
         mkdir -p "${mount_dir}"
         doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
@@ -161,28 +159,21 @@ function doInstallVpnkit() {
   local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
   curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
 
-  #at first write a bash-script
-  touch activate-vpnkit
-  echo '#!/bin/bash' > activate-vpnkit
-  echo 'cd' >> activate-vpnkit
-  echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' >> activate-vpnkit
-  #now write a pwsh-script which also executes the above bash-script in WSL
-  touch vpnkit-setup.ps1
-  #go to needed path by using pushd to be able to get back easily with popd for running the above bash script
+  #write a powershell-script
+  #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
+  #execute command to start wsl-vpnkit
   # shellcheck disable=SC1083,SC2129,SC2016
-  echo 'mv wsl-vpnkit.tar.gz $env:USERPROFILE' >> vpnkit-setup.ps1
-  echo 'echo "between mv and pushd"' >> vpnkit-setup.ps1  
-  # shellcheck disable=SC1083,SC2016
-  echo 'pushd $env:USERPROFILE' >> vpnkit-setup.ps1
-  # shellcheck disable=SC1083,SC2016
-  echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2' >> vpnkit-setup.ps1
-  echo 'wsl -d wsl-vpnkit' >> vpnkit-setup.ps1
-  echo 'popd' >> vpnkit-setup.ps1
-  echo 'wsl.exe bash activate-vpnkit' >> vpnkit-setup.ps1
+  {
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz' 
+    echo 'pushd $env:USERPROFILE'
+    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2'
+    echo 'popd'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
+  } > vpnkit-setup.ps1
 
-  #execute the powershell-script directly and the script for inside wsl indirectly
+  #execute the powershell-script 
   powershell.exe -Command ".\vpnkit-setup.ps1"
-  rm activate-vpnkit vpnkit-setup.ps1
+  rm vpnkit-setup.ps1
 }
 
 

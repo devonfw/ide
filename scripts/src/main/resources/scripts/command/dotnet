@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+cd "${DEVON_IDE_HOME}" || exit 255
+
+function doExists() {
+  if [ -e "${1}" ]
+  then
+    return
+  else
+    return 255
+  fi
+}
+
+function doSetup() {
+  if [ "${1}" != "silent" ] || [ ! -d "${DOTNET_HOME}" ]
+  then
+    doInstall "-" "${DOTNET_HOME}" "dotnet" "${DOTNET_VERSION:-6.0.300}"
+    if doExists ~/.templateengine/packages/Devon4Net.WebAPI.Template*
+    then
+      doDebug "Devon4net template already installed."
+    else
+      doRun new -i devon4net.WebApi.Template
+    fi
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "'${DOTNET}' --version" "verify installation of dotnet"
+  fi
+}
+
+function doRun() {
+  doSetup silent
+  doEcho "Running: dotnet ${*}"
+  if doIsQuiet
+  then
+    "${DOTNET}" "${@}" > /dev/null
+  else
+    "${DOTNET}" "${@}"
+  fi
+}
+
+#CLI
+DOTNET_HOME="${DEVON_IDE_HOME}/software/dotnet"
+DOTNET="${DOTNET_HOME}/dotnet"
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run DotNet SDK."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup DotNet SDK (install and verify)"
+  echo " create «name» [«args»]   create a new devon4net application"
+  echo
+  exit
+;;
+"setup" | "s")
+  doSetup setup
+;;
+"create" | "c")
+  doRun new Devon4NetAPI
+;;
+*)
+  doRun "${*}"
+;;
+esac

@@ -24,6 +24,8 @@ include::docker.asciidoc[leveloffset=3]
 
 include::docker-desktop-alternative.asciidoc[leveloffset=3]
 
+include::dotnet.asciidoc[leveloffset=3]
+
 include::eclipse.asciidoc[leveloffset=3]
 
 include::gradle.asciidoc[leveloffset=3]

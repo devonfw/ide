@@ -55,6 +55,7 @@ The following commandlets are currently available:
 * link:build.asciidoc[build]
 * link:cobigen.asciidoc[cobigen]
 * link:docker.asciidoc[docker]
+* link:dotnet.asciidoc[dotnet]
 * link:eclipse.asciidoc[eclipse]
 * link:graalvm.asciidoc[graalvm]
 * link:gradle.asciidoc[gradle]
