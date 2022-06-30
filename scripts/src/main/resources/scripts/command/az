@@ -45,9 +45,11 @@ function doRun() {
   doEcho "Running: az ${*}" 
   if doIsQuiet
   then
-    az ${@} > /dev/null
+    # shellcheck disable=SC2059
+    az $@ > /dev/null
   else
-    az ${@}
+    # shellcheck disable=SC2059
+    az $@
   fi
 }
 
