@@ -108,7 +108,7 @@ function setPath() {
 
 function doRunPython() {
   doSetup silent
-  doEcho "Running: python ${*}"
+  doEcho "Running: ${*}"
   if doIsQuiet
   then
     "${PYTHON_BIN}" "${@}" > /dev/null
@@ -122,20 +122,21 @@ function doRunPip() {
   if [ "${1}" = "pip" ]
   then
     doEcho "Running: ${*}"
+    shift
     if doIsQuiet
     then
-      "${PIP_BIN}" "${@}" > /dev/null
+        doRunPython "${PIP_BIN}" "${@}"
     else
-      doRunPython "${PIP_BIN}" "${@}"
+        doRunPython "${PIP_BIN}" "${@}"
     fi
   elif [ "${1}" = "pip3" ] && doIsWindows
   then
     doEcho "Running: pip3 ${*}"
     if doIsQuiet
     then
-      "${PIP3_BIN}" "${2}" "${3}" > /dev/null
+      doRunPython "${PIP3_BIN}" "${@}" > /dev/null
     else
-      doRunPython "${PIP3_BIN}" "${2}" "${3}"
+      doRunPython "${PIP3_BIN}" "${@}"
    fi
 
   fi
