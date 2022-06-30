@@ -3,30 +3,20 @@
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
+  setLocation
   if [ "${1}" != "silent" ] || [ ! -f "${AZ_FILE}" ] 
   then
-    if [ ! -d "${PYTHON_HOME}" ] 
+    if [ -d "${PYTHON_HOME}" ] 
     then
-      if doIsWindows
-      then
-        doDevonCommand python pip install azure-cli
-      else
-        doDevonCommand sudo python pip install azure-cli
-      fi
+      doDevonCommand python pip install azure-cli
     else
-      if doIsWindows
-      then
-        doDevonCommand python setup silent
-        doDevonCommand python pip install azure-cli
-      else 
-        doDevonCommand sudo python setup silent
-        doDevonCommand sudo python pip install azure-cli
-      fi
+      doDevonCommand python setup silent
+      doDevonCommand python pip install azure-cli
     fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "'${AZ_FILE}' -v" "verify installation of azure cli"
+    doRunCommand "az -v" "verify installation of azure cli"
   fi
 }
 
@@ -41,19 +31,27 @@ function setConfig() {
   fi
 }
 
+function setLocation() {
+  if doIsWindows
+  then 
+    AZ_FILE="${DEVON_IDE_HOME}/software/python/Scripts/az"
+  else
+    AZ_FILE="${DEVON_IDE_HOME}/software/python/bin/az"
+  fi
+}
+
 function doRun() {
   doSetup silent
   doEcho "Running: az ${*}" 
   if doIsQuiet
   then
-    "${AZ_FILE}" "${@}" > /dev/null
+    az ${@} > /dev/null
   else
-    "${AZ_FILE}" "${@}"
+    az ${@}
   fi
 }
 
 # CLI
-AZ_FILE="${DEVON_IDE_HOME}/software/python/Scripts/az"
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
 case ${1} in
 "help" | "-h")
