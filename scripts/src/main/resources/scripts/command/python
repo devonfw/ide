@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup help version pip pip3 version -v --version"
   fi
   exit
 fi
@@ -21,31 +21,27 @@ function doSetup() {
     # Get leatest release
     if [ -z "${PYTHON_VERSION}" ]
     then
-      doEcho "Python Home: ${PYTHON_HOME}"
+      doDebug "Python Home: ${PYTHON_HOME}"
       doEcho "Getting latest release..."
       # curl returns content of page, grep returns only version numbers, sort is sorting by version numbers and removing duplicates
       # tail and head are returning the penultimate line, since it contains the latest stable version
       PYTHON_VERSION=$(curl -L https://www.python.org/ftp/python 2>&1 | grep -o '3\.[0-9]*\.[0-9]*' | sort -u -V | tail -n2 | head -n1)
 	  fi
 
-    if doIsMacOs; then
+    if doIsMacOs
+    then
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
       sh "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
       
-      #rename folder from bin to Scripts
-      if [ -d "${PYTHON_HOME}/bin" ]
-      then
-        mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
-      fi
-      
-    elif doIsWindows; then
+    elif doIsWindows
+    then
       doEcho "Getting pip install file"
       # https://github.com/pypa/get-pip
       curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "python"
-      doRunPythonWindows "get-pip.py"
+      doRunPython "get-pip.py"
       rm get-pip.py
       if [ -a "$(find "${PYTHON_HOME}" -name '*._pth')" ]
       then
@@ -59,13 +55,15 @@ function doSetup() {
       # install build prerequisites      
       pckmngers=("apt-get" "yum" "zypp")
 
-      for t in "${pckmngers[@]}"; do
+      for t in "${pckmngers[@]}"
+      do
         command -v "${t}" > /dev/null
         if [ "${?}" -eq "0" ]
         then
           pckmnger=${t}
         fi
       done
+      
       case ${pckmnger} in
         apt-get) doEcho "installing required dependencies..."
                  doRunCommand "sudo ${pckmnger} install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev";;
@@ -79,45 +77,39 @@ function doSetup() {
       esac
 
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
-      ."${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
+      "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
-      # rename folder from bin to Scripts
-      if [ -d "${PYTHON_HOME}/bin" ]
-      then
-        mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
-      fi
-      
+    fi
+    # rename folder from bin to Scripts
+    if [ -d "${PYTHON_HOME}/bin" ]
+    then
+      mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
     fi
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    if doIsMacOs
-    then
-      doRunPythonLinuxMac --version
-    elif doIsWindows
-    then 
-      doRunCommand "python --version"
-    else 
-      doRunPythonLinuxMac --version
-    fi
+    doRunPython "--version"
   fi 
+  
+  setPath
 
 }
 
-function doRunPythonWindows() {
-  doSetup silent
-  doEcho "Running: python ${*}"
-  if doIsQuiet
-  then
-    python "${@}" > /dev/null
-  else
-    python "${@}"
+function setPath() {
+  py_dir="${PYTHON_SCRIPTS}"
+  path_bind="PATH=\$PATH:"
+  set_path="${path_bind}${py_dir}"
+  if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
+    then
+      doRunCommand "${set_path}"
+      echo -e "\n${set_path}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+      doEcho "Python and pip path is added to ${DEVON_IDE_HOME}/conf/devon.properties"
   fi
 }
 
-function doRunPythonLinuxMac() {
+function doRunPython() {
   doSetup silent
   doEcho "Running: python ${*}"
   if doIsQuiet
@@ -128,42 +120,26 @@ function doRunPythonLinuxMac() {
   fi
 }
 
-function doRunPipWindows() {
+function doRunPip() {
   doSetup silent
   if [ "${1}" = "pip" ]
   then
     doEcho "Running: ${*}"
     if doIsQuiet
     then
-      "${PYTHON_SCRIPTS}"/pip "${2}" "${3}" > /dev/null
+      "${PIP_BIN}" "${2}" "${3}" > /dev/null
     else
-      "${PYTHON_SCRIPTS}"/pip "${2}" "${3}"
+      doRunPython "${PIP_BIN}" "${2}" "${3}"
     fi
-  elif [ "${1}" = "pip3" ]
+  elif [ "${1}" = "pip3" ] && doIsWindows
   then
     doEcho "Running: pip3 ${*}"
     if doIsQuiet
     then
-      "${PYTHON_SCRIPTS}"/pip3 "${2}" "${3}" > /dev/null
+      "${PIP3_BIN}" "${2}" "${3}" > /dev/null
     else
-      "${PYTHON_SCRIPTS}"/pip3 "${2}" "${3}"
-    fi
-
-  fi
-}
-
-function doRunPipLinux() {
-  doSetup silent
-  if [ "${1}" = "pip" ]
-  then
-    doEcho "Running: ${*}"
-    doEcho "${2} ${3}"
-    if doIsQuiet
-    then
-      "${PYTHON_BIN}" "${PIP_BIN}" "${2}" "${3}" > /dev/null
-    else
-      "${PYTHON_BIN}" "${PIP_BIN}" "${2}" "${3}"
-    fi
+      doRunPython "${PIP3_BIN}" "${2}" "${3}"
+   fi
 
   fi
 }
@@ -176,17 +152,22 @@ if ! doIsWindows
 then
   PYTHON_BIN=$(find "${PYTHON_SCRIPTS}" -name "python3.*" | sort | head -1)
   PIP_BIN=$(find "${PYTHON_SCRIPTS}" -name "pip*" | sort | head -1)
+else
+  PYTHON_BIN="${PYTHON_HOME}/python.exe"
+  PIP_BIN="${PYTHON_SCRIPTS}/pip.exe"
+  PIP3_BIN="${PYTHON_SCRIPTS}/pip3.exe"
 fi
 
 # CLI
-if doIsMacOs
-then
-  case ${1} in 
+case ${1} in 
   "help" | "-h")
     echo "Install Python."
     echo
     echo "Arguments:"
     echo " setup                    setup Python."
+    echo " version                  get Python version."
+    echo " pip                      call pip."
+    echo " pip3                     call pip3 (Windows only)."
     echo
   ;;
   "setup" | "s" | "")
@@ -194,61 +175,12 @@ then
     doSetup
   ;;
   "version" | "-v" | "--version")
-     doRunPythonLinuxMac --version
+     doRunPython --version
   ;;
   "pip" | "pip3")
-      doRunPipLinux "${@}"
+      doRunPip "${@}"
   ;;
   *)
-      doRunPythonLinuxMac "${@}"
+      doRunPython "${@}"
   ;;
-  esac
-elif doIsWindows
-then
-  echo "Windows CLI"
-  case ${1} in 
-  "help" | "-h")
-    echo "Install Python."
-    echo
-    echo "Arguments:"
-    echo " setup                    setup Python."
-    echo
-  ;;
-  "setup" | "s" | "")
-    doEcho "Installating python..."
-    doSetup
-  ;;
-  "version" | "-v" | "--version")
-     python --version
-  ;;
-  "pip" | "pip3")
-      doRunPipWindows "${@}"
-  ;;
-  *)
-      doRunPythonWindows "${@}"
-  ;;
-  esac
-else
-  case ${1} in 
-  "help" | "-h")
-    echo "Install Python."
-    echo
-    echo "Arguments:"
-    echo " setup                    setup Python."
-    echo
-  ;;
-  "setup" | "s" | "")
-    doEcho "Installating python..."
-    doSetup
-  ;;
-  "version" | "-v" | "--version")
-     doRunPythonLinuxMac --version
-  ;;
-  "pip" | "pip3")
-      doRunPipLinux "${@}"
-  ;;
-  *)
-      doRunPythonLinuxMac "${@}"
-  ;;
-  esac
-fi
+esac

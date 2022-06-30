@@ -7,12 +7,21 @@ function doSetup() {
   then
     if [ ! -d "${PYTHON_HOME}" ] 
     then
-      doDevonCommand python pip install azure-cli
-      setConfig
+      if doIsWindows
+      then
+        doDevonCommand python pip install azure-cli
+      else
+        doDevonCommand sudo python pip install azure-cli
+      fi
     else
-      doDevonCommand python setup silent
-      doDevonCommand python pip install azure-cli
-      setConfig
+      if doIsWindows
+      then
+        doDevonCommand python setup silent
+        doDevonCommand python pip install azure-cli
+      else 
+        doDevonCommand sudo python setup silent
+        doDevonCommand sudo python pip install azure-cli
+      fi
     fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
