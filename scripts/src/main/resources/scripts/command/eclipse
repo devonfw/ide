@@ -44,7 +44,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2021-12}"
+    local version="${ECLIPSE_VERSION:-2022-03}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then
