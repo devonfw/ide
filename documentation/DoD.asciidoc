@@ -1,0 +1,31 @@
+:toc:
+toc::[]
+
+= definition of done
+
+Before a pull request for a new commandlet to the devonfw/ide repository can be approved, there are several requirements that have to be satisfied.
+After completing an assignment and before starting a new pull request please check if the following acceptance criteria are complied with. 
+
+- A new Mirror is added and a pull request for devonfw/ide-mirrors made.
+  - The mirror repository is found under https://github.com/devonfw/ide-mirrors
+- There is a new commandlet that allows to install and launch the given software.
+- The given software can be installed automatically (during setup via settings) or via the commandlet call.
+- During the installation process reasonable progress and status information are displayed.
+- The software can be installed and used together with any of the devon IDE standard tools without any interference.
+  - This can be tested by installing the software and test-using the standard tools. 
+- The software is integrated in a way that complies with the multi-tenancy of the devon IDE.
+  - This can be tested by installing multiple instances of the devonfw IDE in different folders. 
+- The new commandlet is documented, the documentation is up to date and on the website.
+  - There are three files found under /documentation that have to be adjusted. They are /documentation/cli.asciidoc, /documentation/devonfw-ide-usage.asciidoc and /documentation/scripts.asciidoc.
+    Links and Includes have to be added in alphabetical order.
+- The new commandlet is tested on all plattforms it is availible for.
+  - Assuming you are using Windows, testing for Linux can be done with the Windows Subsystem for Linux. 
+  - Testing for Mac can be done on the virtual MacOS instance. Check the corresponding Teams channel for further information.
+
+There are more requirements that have to be satisfied ONLY if applicable 
+- The new commandlet is a wrapper for a given Software CLI.
+  - Meaning that when a CLI is availible, the "devon software" command enables the CLI.
+- Added licence documentation.
+  - This is done by adding the neccesary information to /documentation/LICENSE.asciidoc
+- Neccessary dependencies are installed.
+- Any components needed for a frictionless usage of the software are installed (for instance pip for python).
