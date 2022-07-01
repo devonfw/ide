@@ -23,6 +23,8 @@ Just right-click on the folder you would like to open in a terminal and choose f
 * Open devonfw PowerShell here
 * Open devonfw Cygwin Bash here (only if cygwin was installed during setup)
 * Open devonfw cmd shell in Windows Terminal here (only if Windows Terminal is installed on the system)
+* Open devonfw gitbash in Windows Terminal here (only if Windows Terminal is installed on the system)
+
 
 == Tabs everywhere
 Many people got used to _tabs_ that have been introduced by all major browsers:

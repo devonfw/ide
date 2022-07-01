@@ -335,7 +335,6 @@ function doUpdateSoftware() {
       then
         doEchoStep "Setting up ${tool}"
         doDevonCommand "${tool}" setup
-        doSuccess "Success"
       fi
     done
   fi
@@ -373,7 +372,6 @@ function doUpdateSoftware() {
           fi
         fi
         doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
-        doSuccess "Success"
       fi
     fi
   done
