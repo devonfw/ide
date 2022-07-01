@@ -31,6 +31,16 @@ function doSetup() {
           #give the User the installation location when using linux or mac
           if doIsWindows
           then
+            #check if vpnkit is already installed
+            if ! doIsVPNKitInstalled
+            then
+              doInstallVpnkit         
+              #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
+              if ! doIsVPNKitInstalled
+              then 
+                doSetVPNKitStartupInstaller
+              fi
+            fi
             doEcho "Rancher Desktop is already installed"
           else
             doEcho "Rancher Desktop is already installed at $(command -v docker)"
@@ -41,7 +51,7 @@ function doSetup() {
         local version="${RANCHER_VERSION}"
   	  	if [ -z "${version}" ]
         then 
-          version="1.3.0"
+          version="1.4.1"
           latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
           doVersionCompare "${latestversion}" "${version}"
           VersCompRes=${?}
@@ -54,9 +64,20 @@ function doSetup() {
         doInstall "-" "${rancher_install_dir}" "rancher" "${version}" 
         if doIsWindows
         then
+          doSetVPNKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
-          doInstallVpnkit
+          # ensures installation of vpnkit if user directly restarts computer for enabling wsl
           doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
+            #check if vpnkit is already installed
+            if ! doIsVPNKitInstalled
+            then
+              doInstallVpnkit
+              #if it couldn't be installed, e.g. wsl available after reboot, create a startup-batch
+              if ! doIsVPNKitInstalled
+              then 
+                doSetVPNKitStartupInstaller
+              fi
+            fi
         elif doIsMacOs
         then
           doRunCommand "cp -a '${rancher_install_dir}'/*.app /Applications/"
@@ -125,6 +146,7 @@ function doIsDockerInstalled() {
 }
 
 #OS independent check if Rancher Desktop is installed.
+#On Windows the user has to reboot the computer once after a RD installation for the function to work properly
 function doIsRancherInstalled() {
     if doIsWindows
     then
@@ -150,6 +172,44 @@ function doIsRancherInstalled() {
     fi
 }
 
+
+function doIsVPNKitInstalled() {
+  # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
+  result=$(powershell.exe -command "wsl -l | Where {\$_.Replace(\"\`0\",\"\") -match '^wsl-vpnkit'}" | tr -d '\0' )
+  regex="wsl-vpnkit"
+  if [[ "${result}" =~ "${regex}" ]]
+  then
+    return 0
+  else 
+    return 255
+  fi
+}
+
+
+#To make sure that as many windows users as possible are able to run this command, we use the %APPDATA% variable to get into the startup folder 
+function doSetVPNKitStartupInstaller() {
+  {
+    echo '@ECHO OFF'
+    echo "start \"\" \"${EXEPATH}\\git-bash.exe\\\" -c \"cd \"${DEVON_IDE_HOME}\" && devon docker setup  && /usr/bin/bash --login -i\""
+    # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
+    echo '(goto) 2>nul & del "%~f0"' 
+  } > VPNKitInstaller.bat
+  {
+    echo '@ECHO OFF'
+    echo 'move VPNKitInstaller.bat "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\VPNKitInstaller.bat" >nul'
+    echo '(goto) 2>nul & del "%~f0"'
+  } > moveKitInst.bat
+
+  cmd.exe "/c moveKitInst.bat"
+
+  if [ "${1}" = "installed" ]
+  then
+    echo "Please make sure to reboot your computer to enjoy the full functionality of Rancher Desktop. If Rancher Desktop is still installing, then please wait for it to finish. Press ENTER to continue."
+    read -r -p ""
+  fi
+}
+
+
 function doInstallVpnkit() {
   #get latest version of the vpnkit and download its tar.gz file
   local partialUrl
@@ -162,17 +222,18 @@ function doInstallVpnkit() {
   #write a powershell-script
   #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
   #execute command to start wsl-vpnkit
+  #redirect messages that won't be helpful for user
   # shellcheck disable=SC1083,SC2129,SC2016
   {
-    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz' 
-    echo 'pushd $env:USERPROFILE'
-    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2'
-    echo 'popd'
-    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz | Out-Null' 
+    echo 'pushd $env:USERPROFILE | Out-Null'
+    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2 | Out-Null'
+    echo 'popd | Out-Null'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start | Out-Null' 
   } > vpnkit-setup.ps1
 
   #execute the powershell-script 
-  powershell.exe -Command ".\vpnkit-setup.ps1"
+  $(powershell.exe -Command ".\vpnkit-setup.ps1")
   rm vpnkit-setup.ps1
 }
 
