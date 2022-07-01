@@ -21,8 +21,7 @@ function doSetup() {
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
     then 
-      echo "It seems that you are running the setup from inside a WSL shell."
-      echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+      doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
       if doIsRancherInstalled
       then
@@ -49,8 +48,8 @@ function doSetup() {
       else
         doRequireNotBatch
         local version="${RANCHER_VERSION}"
-  	  	if [ -z "${version}" ]
-        then 
+        if [ -z "${version}" ]
+        then
           version="1.4.1"
           latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
           doVersionCompare "${latestversion}" "${version}"
