@@ -176,8 +176,7 @@ function doIsRancherInstalled() {
 function doIsVPNKitInstalled() {
   # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
   result=$(powershell.exe -command "wsl -l | Where {\$_.Replace(\"\`0\",\"\") -match '^wsl-vpnkit'}" | tr -d '\0' )
-  regex="wsl-vpnkit"
-  if [[ "${result}" =~ "${regex}" ]]
+  if [[ "${result}" == *"wsl-vpnkit"* ]]
   then
     return 0
   else 
@@ -202,18 +201,14 @@ function doSetVPNKitStartupInstaller() {
 
   cmd.exe "/c moveKitInst.bat"
 
-  if [ "${1}" = "installed" ]
-  then
-    echo "Please make sure to reboot your computer to enjoy the full functionality of Rancher Desktop. If Rancher Desktop is still installing, then please wait for it to finish. Press ENTER to continue."
-    read -r -p ""
-  fi
+  #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
 }
 
 
 function doInstallVpnkit() {
   #get latest version of the vpnkit and download its tar.gz file
   local partialUrl
-  # shellcheck disable=SC1083  
+  # shellcheck disable=SC1083,2120  
   partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
   local VPNversion=${partialUrl##*/}
   local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
