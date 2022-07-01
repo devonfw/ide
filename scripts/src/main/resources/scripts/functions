@@ -47,7 +47,7 @@ function doEchoAttention() {
 function doResult() {
   if [ "${2}" = 0 ]
   then
-    doSuccess "Succeeded to ${1}"
+    doSuccess "Success: ${1}"
   else
     if [ -z "${2}" ]
     then
@@ -72,13 +72,6 @@ function doRunCommand() {
       doFail "Working directory ${3} does not exist."
     fi
   fi
-  doDebug "Running command: ${1}"
-  eval "${1}"
-  result=${?}
-  if [ -n "${3}" ]
-  then
-    cd "${cwd}" || exit 1
-  fi
   local message
   if [ -z "${2}" ]
   then
@@ -86,13 +79,14 @@ function doRunCommand() {
   else
     message="${2} (${1/ */})"
   fi
-  if [ ${result} = 0 ]
+  doDebug "Trying to ${message}"
+  eval "${1}"
+  result=${?}
+  if [ -n "${3}" ]
   then
-    doSuccess "Succeeded to ${message}"
-  else
-    doError "Failed to run command: ${1}"
-    doFail "Failed to ${message}" ${result}
+    cd "${cwd}" || exit 1
   fi
+  doResult "${message}" ${result}
 }
 
 function doIsForce() {
@@ -1080,22 +1074,25 @@ function doGitPullOrClone() {
     local message="Can not update git repository: ${dir}\n"
     if [ -n "${remotes}" ]
     then
-      git pull "${git_opts}"
+      git pull ${git_opts}
       local result="$?"
+      if [ "${result}" != 0 ]
+      then
+        local branch
+        branch="$(git branch --show-current)"
+        local branchRemoteRef
+        branchRemoteRef="$(git ls-remote --heads origin "${branch}" 2>&1)"
+        if [ -z "${branchRemoteRef}" ]
+        then
+          message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
+        else
+          doFail "${message}See above error for details - check your network connectivity and retry."
+        fi
+      fi
       popd > /dev/null || exit 255 
       if [ "${result}" = 0 ]
       then
         return
-      fi
-      local branch
-      branch="$(git branch --show-current)"
-      local branchRemoteRef
-      branchRemoteRef="$(git ls-remote --heads origin "${branch}" 2>&1)"
-      if [ -z "${branchRemoteRef}" ]
-      then
-        message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
-      else
-        doFail "${message}See above error for details - check your network connectivity and retry."
       fi
     else
       message="${message}This is a local git repo with no remote - if you did this for testing, you may continue...\n"
