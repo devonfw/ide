@@ -67,16 +67,16 @@ function doSetup() {
           doEcho "Installing Rancher Desktop for Windows..."
           # ensures installation of vpnkit if user directly restarts computer for enabling wsl
           doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
-            #check if vpnkit is already installed
+          #check if vpnkit is already installed
+          if ! doIsVPNKitInstalled
+          then
+            doInstallVpnkit
+            #if it couldn't be installed, e.g. wsl available after reboot, create a startup-batch
             if ! doIsVPNKitInstalled
-            then
-              doInstallVpnkit
-              #if it couldn't be installed, e.g. wsl available after reboot, create a startup-batch
-              if ! doIsVPNKitInstalled
-              then 
-                doSetVPNKitStartupInstaller
-              fi
+            then 
+              doSetVPNKitStartupInstaller
             fi
+          fi
         elif doIsMacOs
         then
           doRunCommand "cp -a '${rancher_install_dir}'/*.app /Applications/"
