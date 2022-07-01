@@ -208,7 +208,7 @@ function doSetVPNKitStartupInstaller() {
 function doInstallVpnkit() {
   #get latest version of the vpnkit and download its tar.gz file
   local partialUrl
-  # shellcheck disable=SC1083,2120  
+  # shellcheck disable=SC1083  
   partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
   local VPNversion=${partialUrl##*/}
   local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
@@ -228,6 +228,7 @@ function doInstallVpnkit() {
   } > vpnkit-setup.ps1
 
   #execute the powershell-script 
+  # shellcheck disable=2091
   $(powershell.exe -Command ".\vpnkit-setup.ps1")
   rm vpnkit-setup.ps1
 }
