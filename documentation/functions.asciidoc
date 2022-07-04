@@ -104,6 +104,8 @@ The doReplaceExtractedFile function is called with the three parameters path of 
 A file or directory is transferred to the doBackup function as the first parameter and the date after which the backup directory is named that is to be created in the /updates/backups subdirectory for the backup as the second parameter. If the second parameter is not specified, the current date is used. If a single file is specified in the first parameter and such a file already exists in the backup directory, then a time stamp is added to the backup directory as an additional subdirectory. Then the backup directory is created and the files to be backed up are moved there.
 
 = doReplaceExtractedSkipSingleFolder
+The parameters source directory, target directory, backup directory and possibly a list of files and directories via shell file name expansion (globbing) are passed to the doReplaceExtractedSkipSingleFolder function. The first three parameters are taken directly into variables and removed from the list of passed parameters with the shift so that the last specification can be viewed as a whole. If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory. Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
+
 = doReplaceExtracted
 The doReplaceExtracted function prepares to move an unpacked archive (specified in the first parameter). The current date is defined as the name for the backup directory of the currently installed software. Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME. If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed. If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory. Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
 
@@ -118,7 +120,23 @@ The doIsDevVersion function checks whether one of the two values "dev-SNAPSHOT" 
 The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
 
 = doGitPullOrClone
+The doGitPullOrClone function is given the target path and the URL or URL#branch as parameters. If the directory is a Git repository, it is tested whether remote repositories are configured and, if so, a git pull is performed. If not, a corresponding message is output and the function is ended with a return value of 1. If the directory is not a Git repository and no URL was specified, the function is aborted with a doFail message. However, if a URL was specified, the specified directory is created, changed to the directory and the repository of the specified URL is cloned in the specified directory. If the branch was also specified in the URL, a checkout is carried out on this branch.
+
 = doInstall
+The url of the software to be installed, the target directory in which the software is to be stored and the name of the software are given as parameters to the doInstall function. The function then downloads the software via doDownload into the download directory of the registered user, unpacks the software into the updates/extracted directory and then finally moves the software into the DEVON_IDE_HOME/software/"name of the software" directory.
+
+Additional parameters can also be passed to the function:
+
+* The version parameter ensures that a specific version of the software is installed.
+
+* If a "-" is passed to the function as the url, the settings from the Git repository ide-mirrors are used to download the correct software, e.g. depending on the operating system.
+
+* You can specify your own repository using the repository parameter or the DEVON_SOFTWARE_REPOSITORY variable. This ensures that the package to be installed is loaded from there.
+
+* If software is required that needs to be installed instead of just being unpacked and moved to the IDE_DEVON_HOME/software directory, you can set the directory for the installation software to DEVON_IDE_HOME/updates/install as the target directory. Following the doInstall call in the commandlet, the installation of the software can then be initiated.
+
+* If parameters five through nine (edition, code, os, arch, and ext) are specified, they are passed directly to the doDownload function.
+
 = doExtendPath
 A directory is passed to the doExtendPath function as a parameter. The function then checks whether the "bin" subdirectory exists in the transferred directory. If the directory exists, the PATH variable is extended by this "bin" directory. Otherwise the PATH variable is expanded with the passed directory.
 
@@ -140,4 +158,6 @@ The doIsWindows function returns 0 if the operating system is detected as Window
 The function doRequireWsl checks whether WSL for Windows is installed and whether it is activated and outputs a corresponding message if one of the two requirements is not met.
 
 = doParseOption
+The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
+
 
