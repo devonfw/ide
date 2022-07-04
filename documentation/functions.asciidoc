@@ -154,8 +154,10 @@ The doIsMacOs function returns 0 if the operating system is detected as MacOs. I
 The doIsWindows function returns 0 if the operating system is detected as Windows. If not, a 255 is returned.
 
 = doIsPackageJsonContainingScript
+The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If the function ends with the return value 0 otherwise with a message and the return value 255.
+
 = doRequireWsl
-The function doRequireWsl checks whether WSL for Windows is installed and whether it is activated and outputs a corresponding message if one of the two requirements is not met.
+The function doRequireWsl checks whether WSL for Windows is installed and whether it is activated and issues a corresponding message via doFail if one of the two requirements is not met.
 
 = doParseOption
 The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
