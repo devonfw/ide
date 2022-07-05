@@ -174,7 +174,7 @@ function doIsRancherInstalled() {
 
 function doIsVPNKitInstalled() {
   # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
-  result=$(wsl -l -v | tr -d '\0' | grep wsl-vpnkit)
+  result=$(wsl -l | tr -d '\0' | grep wsl-vpnkit)
   if [[ "${result}" == *"wsl-vpnkit"* ]]
   then
     return 0
@@ -184,7 +184,7 @@ function doIsVPNKitInstalled() {
 }
 
 
-#To make sure that as many windows users as possible are able to run this command, we use the %APPDATA% variable to get into the startup folder 
+#To make sure that as many windows users as possible are able to run this command, we use the ${APPDATA} variable to get into the startup folder 
 function doSetVPNKitStartupInstaller() {
   {
     echo '@ECHO OFF'
@@ -193,7 +193,7 @@ function doSetVPNKitStartupInstaller() {
     echo '(goto) 2>nul & del "%~f0"' 
   } > VPNKitInstaller.bat
 
-  mv VPNKitInstaller.bat $APPDATA/Microsoft/Windows/Start\ Menu/Programs/Startup/
+  mv VPNKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
 
   #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
 }
