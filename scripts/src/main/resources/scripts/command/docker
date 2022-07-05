@@ -175,7 +175,7 @@ function doIsRancherInstalled() {
 
 function doIsVPNKitInstalled() {
   # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
-  result=$(powershell.exe -command "wsl -l | Where {\$_.Replace(\"\`0\",\"\") -match '^wsl-vpnkit'}" | tr -d '\0' )
+  result=$(wsl -l -v | tr -d '\0' | grep wsl-vpnkit)
   if [[ "${result}" == *"wsl-vpnkit"* ]]
   then
     return 0
@@ -193,13 +193,8 @@ function doSetVPNKitStartupInstaller() {
     # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
     echo '(goto) 2>nul & del "%~f0"' 
   } > VPNKitInstaller.bat
-  {
-    echo '@ECHO OFF'
-    echo 'move VPNKitInstaller.bat "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\VPNKitInstaller.bat" >nul'
-    echo '(goto) 2>nul & del "%~f0"'
-  } > moveKitInst.bat
 
-  cmd.exe "/c moveKitInst.bat"
+  mv VPNKitInstaller.bat $APPDATA/Microsoft/Windows/Start\ Menu/Programs/Startup/
 
   #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
 }
@@ -229,7 +224,7 @@ function doInstallVpnkit() {
 
   #execute the powershell-script 
   # shellcheck disable=2091
-  $(powershell.exe -Command ".\vpnkit-setup.ps1")
+  powershell.exe -Command ".\vpnkit-setup.ps1"
   rm vpnkit-setup.ps1
 }
 
