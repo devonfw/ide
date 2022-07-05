@@ -146,7 +146,11 @@ The doRunConfigurator function transfers all jar files in the DEVON_IDE_HOME/scr
 
 = doCreateIdeScript
 = doVersionCompare
+Two version numbers are passed to the doVersionCompare function as parameters. If the versions are equal, the function returns 0, if the first version is higher than the second, returns 1, and if the second version is higher than the first, the function returns 2.
+
 = doGetNextVersion
+A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
+
 = doIsMacOs
 The doIsMacOs function returns 0 if the operating system is detected as MacOs. If not, a 255 is returned.
 
