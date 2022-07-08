@@ -4,11 +4,12 @@ toc::[]
 = Docker
 
 The Docker commandlet allows to install and use https://www.docker.com/[Docker].
-On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite.
-It also offers the installation of https://rancherdesktop.io/[Rancher Desktop], which works on Windows, Mac and Linux.
+On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite. In case of using Rancher Desktop the process of enabling WSL and installing a WSL distribution will be handled by Rancher Desktop.
+This commandlet also offers the installation of https://rancherdesktop.io/[Rancher Desktop], which works on Windows, Mac and Linux.
 To run the tools installed and managed by Rancher Desktop it is necessary to have Rancher Desktop up and running.  
 To assure that you are able to use these tools directly after startup, you can add Rancher Desktop to the startup programs
 of your Operating System. Such instructions will be given below inside the sections for Windows, Mac and Linux.
+
 *ATTENTION:*
 Currently this feature is new and therefore experimental.
 It may change in incompatible ways in the next releases until we reach a stable state.
@@ -27,17 +28,21 @@ The arguments (`devon docker «args»`) are explained by the following table:
 |`«args»`                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
 |=======================
 
-== setup
+== Setup
 
 The Docker commandlet will install Docker Desktop or Rancher Desktop automatically.
 This depends on how the variable DOCKER_EDITION was set. We chose to set Rancher Desktop as standard
-for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set (please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] motivating why we added Rancher Desktop to the docker commandlet).
-Docker Desktop can still be used as before, by setting the variable DOCKER_EDITION equal to "DOCKERDESKTOP". 
+for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set. Please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] motivating why we added Rancher Desktop to the docker commandlet or read the section 'Docker Desktop' if you want to use Docker Desktop instead.
+
+
+=== Docker Desktop
+
+Docker Desktop can still be used by setting the variable DOCKER_EDITION equal to "DOCKERDESKTOP". 
 This can be done by your projects ide-admin in the link:usage.asciidoc#developer[settings file]. If you want to switch from Rancher Desktop to Docker Desktop, then add a line with the following content 
 "DOCKER_EDITION=DOCKERDESKTOP" 
 (without the quotes around the allocation) to the file devon.properties located at the path ${DEVON_IDE_HOME}/conf/devon.properties.
 
-=== installation and customization of Rancher Desktop 
+=== Rancher Desktop 
 
 The installation of Rancher Desktop will be handled with the help of a graphical user interface. After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
 
@@ -67,6 +72,20 @@ directly work with CMD or Powershell.
 
 Please note that besides the sandbox concept of devonfw-ide this is a global installation on your system.
 When uninstalling devonfw-ide, you may have to manually uninstall Docker and Kubernetes, or Rancher Desktop if you do not need it anymore. At least uninstalling Rancher Desktop should leave way less remains if you did not install one of the related software  Rancher Desktop offers separately.
+
+If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows. E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
+
+image::images/RDWaitingForServices.png[]
+
+To fix this common issue related to WSL2, we included this https://github.com/sakai135/wsl-vpnkit[wsl-vpnkit] to the installation of Rancher Desktop. If you still run into problems, then please disconnect from your VPN, start Rancher Desktop and wait untill the progress bar disappears
+
+image::images/RDCompletedStartup.png[]
+
+or, when using Windows, untill you see a small blue Rancher Desktop icon in your Notification Area (in the following picture it is on the right bottom of the screen next to the taskbar). 
+
+image::images/RDCompletedIconNotificArea.png[]
+
+
 
 === requirements
 Running Docker and especially link:kubectl.asciidoc[Kubernetes] on your machine in the background will require quite some resources.
@@ -119,17 +138,4 @@ Run `docker help` to get started and use the online documentations and resources
 It is not our intention to repeat this here.
 
 Please note that the `docker` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
-
-=== start up failure of Rancher Desktop
-If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows. E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
-
-image::images/RDWaitingForServices.png[]
-
-To fix this common issue related to WSL2, we included this https://github.com/sakai135/wsl-vpnkit[wsl-vpnkit] to the installation of Rancher Desktop. If you still run into problems, then please disconnect from your VPN, start Rancher Desktop and wait untill the progress bar disappears
-
-image::images/RDCompletedStartup.png
-
-or, when using Windows, untill you see a small blue Rancher Desktop icon in your Notification Area (in the following picture it is on the right bottom of the screen next to the taskbar). 
-
-image::images/RDCompletedIconNotificArea.png[]
 
