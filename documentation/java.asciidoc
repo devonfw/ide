@@ -22,34 +22,34 @@ Since `2021.12.003` an extra version of Java can be configured via `EXTRA_JAVA_V
 
 Examples for create a new devon4j application:
 ```
-devon java create com.example.domain.myapp
+devon java create com.mycustomer.myapplication
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.mycustomer`, artifactId `myapplication`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
-devon java create -Dversion=0.0.1-alpha1 com.example.domain.myapp
+devon java create -Dversion=0.0.1-alpha1 com.mycustomer.myapplication
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.domain`, artifactId `myapp`, version `0.0.1-alpha1`, and h2 database.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.mycustomer`, artifactId `myapplication`, version `0.0.1-alpha1`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp com.example.group
+devon java create com.mycustomer.myapplication com.my-customer
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.my-customer`, artifactId `myapplication`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp com.example.group demo-app
+devon java create com.mycustomer.myapplication com.my-customer my-application
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and h2 database.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.my-customer`, artifactId `my-application`, version `1.0.0-SNAPSHOT`, and h2 database.
 
 ```
-devon java create com.example.domain.myapp -DartifactId=demo-app -DdbType=hana
+devon java create com.mycustomer.myapplication -DartifactId=my-app -DdbType=hana
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `demo-app`, version `1.0.0-SNAPSHOT`, and SAP hana database.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.mycustomer`, artifactId `my-app`, version `1.0.0-SNAPSHOT`, and SAP hana database.
 
 ```
-devon java create com.example.domain.myapp -DdbType=oracle -Dversion=0.0.1 com.example.group -Dbatch=batch
+devon java create com.mycustomer.myapplication -DdbType=oracle -Dversion=0.0.1 com.my-customer -Dbatch=batch
 ```
-Will create an app with package `com.example.domain.myapp`, groupId `com.example.group`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
+Will create an app with package `com.mycustomer.myapplication`, groupId `com.my-customer`, artifactId `myapp`, version `0.0.1`, oracle database, and with a batch module.
 
 == migrate
 Example for migrating a devon4j application:
