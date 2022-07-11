@@ -743,36 +743,37 @@ function doUnzip() {
 
 function doInstallWithPackageManager() {
   pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
-  installString=${1}
+  installStrings="${@}"
   
   for t in "${pckmngers[@]}"; do
     command -v "${t}" > /dev/null
     if [ "${?}" -eq "0" ]
     then
-      pckmnger=${t}
+      pckmnger="${t}"
     fi
   done
   
-  case ${pckmnger} in
-  apt-get) doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  yum)     doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  pacman)  doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} -S ${installString}";;
-  emerge)  doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  zypp)    doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  apk)     doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} add ${installString}";;
-  dnf)     doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  brew)    doEcho "installing ${installString}..."
-           doRunCommand "sudo ${pckmnger} install ${installString}";;
-  *)       doEcho "Error. Your package Manager is not supported. ${installString} could not be installed. "
-           exit;;
-  esac
+  
+  for installString in "${@}"
+  do
+   
+    first=$(echo ${installString} | awk '{print $1;}')
+    second=$(echo ${installString} | awk '{print $2;}')
+    echo "${pckmnger}"
+    echo "${first}"
+    echo "${second}"
+    
+    if [ ${pckmnger} = ${first} ] || [ ${pckmnger} = ${second} ]
+    then
+      echo "Running: ${installString}"
+      # doRunCommand "${installString}"
+    fi
+    
+  done
+  
+  
+  
+  
   
 
 }
