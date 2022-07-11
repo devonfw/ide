@@ -759,14 +759,13 @@ function doInstallWithPackageManager() {
    
     first=$(echo ${installString} | awk '{print $1;}')
     second=$(echo ${installString} | awk '{print $2;}')
-    echo "${pckmnger}"
-    echo "${first}"
-    echo "${second}"
     
     if [ ${pckmnger} = ${first} ] || [ ${pckmnger} = ${second} ]
     then
       echo "Running: ${installString}"
-      # doRunCommand "${installString}"
+      doRunCommand "${installString}"
+    else
+      echo "No install string for the current system found."
     fi
     
   done
