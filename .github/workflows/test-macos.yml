@@ -1,0 +1,20 @@
+name: CI Build MacOS
+on:
+  schedule:
+    -cron: "0 0 * * 0"
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Set up Shellcheck
+        run: brew install shellcheck
+      - name: Build project with Maven
+        run: mvn -B -ntp install
