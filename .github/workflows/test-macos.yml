@@ -1,7 +1,7 @@
 name: CI Build MacOS
-on:
-  schedule:
-    - cron: '0 0 * * *'
+on: workflow_dispatch
+ # schedule:
+ #   - cron: '0 0 * * *'
 jobs:
   check_edited:
     runs-on: ubuntu-latest
