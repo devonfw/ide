@@ -34,8 +34,7 @@ function doInstallEclipsePlugin() {
   if [ "${result}" != 0 ]
   then
     echo
-    echo "******** ATTENTION ********"
-    echo "WARNING: Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
+    doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
     echo
   fi
   return "${result}"
@@ -45,7 +44,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2021-12}"
+    local version="${ECLIPSE_VERSION:-2022-03}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then

@@ -17,7 +17,7 @@ echo
 doLogo
 echo
 # shellcheck disable=SC2007,SC2154
-echo "Current version of devon-scripts is $[devon_ide_version]"
+doSuccess "Current version of devon-scripts is $[devon_ide_version]"
 echo
 if [ -z "${1}" ]
 then
@@ -27,7 +27,7 @@ then
   echo "Commands:"
   for command in "${DEVON_IDE_HOME}/scripts/command/"*
   do
-    echo " $(basename "${command}")"
+    doEchoOption " $(basename "${command}")"
   done
   echo
   echo "For further details use:"

@@ -64,6 +64,7 @@ function doUpdateScripts() {
 }
 
 function doUpdateSettings() {
+  local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git"
   if [ ! -d "${SETTINGS_PATH}" ]
   then
     if [ -n "${1}" ]
@@ -82,7 +83,7 @@ function doUpdateSettings() {
         echo "Please contact the technical lead of your project to get the SETTINGS_URL for your project."
         echo "In case you just want to test devonfw-ide you may simply hit return to install default settings."
         echo
-        read -r -p "Settings URL: " answer
+        read -r -p "Settings URL [${defaultSettingsUrl}]: " answer
         if [ -z "${answer}" ]
         then
           SETTINGS_URL="-"
@@ -93,7 +94,7 @@ function doUpdateSettings() {
     fi
     if [ "${SETTINGS_URL}" == "-" ]
     then
-      SETTINGS_URL="https://github.com/devonfw/ide-settings.git"
+      SETTINGS_URL="${defaultSettingsUrl}"
     fi
     doInstall "${SETTINGS_URL}" "${SETTINGS_PATH}" "devonfw-ide-settings"
     if [ ${?} = 0 ]
@@ -306,7 +307,7 @@ function doSetup() {
   local ide
   for ide in "${DEVON_CREATE_START_SCRIPTS[@]}"
   do
-    doEcho "\n*** Creating start-scripts for IDE ${ide} ***"
+    doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
 }
@@ -332,7 +333,7 @@ function doUpdateSoftware() {
       fi
       if [ -d "${tool_path}" ] && [ -e "${DEVON_IDE_HOME}/scripts/command/${tool}" ]
       then
-        doEcho "\n*** Setting up ${tool} ***"
+        doEchoStep "Setting up ${tool}"
         doDevonCommand "${tool}" setup
       fi
     done
@@ -347,7 +348,7 @@ function doUpdateSoftware() {
       software_version="${tool%%:*}"
       if [ -n "${software_version}" ]
       then
-        doEcho "\n*** Setting up ${software} ***"
+        doEchoStep "Setting up ${software}"
         tool="${tool#*:}"
         local os=""
         if [ "${tool:0:4}" = "all:" ]
@@ -386,7 +387,7 @@ function doUpdateSoftware() {
     fi
     if [ ! -d "${tool_path}" ] && [ ! -d "${DEVON_IDE_HOME}/software/extra/graalvm" ]
     then
-      doEcho "\n*** Setting up ${tool} ***"
+      doEchoStep "Setting up ${tool}"
       doDevonCommand "${tool}" setup
     fi
   done
@@ -414,6 +415,7 @@ function doUninstallFromHome() {
     doRunCommand "rm '${1}/scripts/devon'"
   fi
   doRunCommand "rm -rf '${1}/.devon'"
+  doSuccess "Successfully uninstalled devonfw-ide from home directory"
 }
 
 function doUninstall() {
@@ -440,9 +442,10 @@ function doUninstall() {
     fi
     reg import "${DEVON_IDE_HOME}/system/windows/devon-uninstall.reg"
   fi
-  echo "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
-  echo "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
-  echo "Goodbye and have a nice day!"
+  doSuccess "Successfully uninstalled devonfw-ide"
+  doSuccess "So sad that you did not like devonfw-ide. It has been uninstalled from your system."
+  doSuccess "You can now manually delete ${DEVON_IDE_HOME} to remove it completely."
+  doSuccess "Goodbye and have a nice day!"
 }
 
 target_version="LATEST"
@@ -527,4 +530,4 @@ else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
 echo
-echo "Completed ${*}"
+doSuccess "Completed ${*}"
