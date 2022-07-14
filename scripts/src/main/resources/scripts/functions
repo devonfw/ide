@@ -742,38 +742,33 @@ function doUnzip() {
 }
 
 function doInstallWithPackageManager() {
-  pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
-  installStrings="${@}"
+  local pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
   
   for t in "${pckmngers[@]}"; do
-    command -v "${t}" > /dev/null
-    if [ "${?}" -eq "0" ]
+    if command -v "${t}" > /dev/null
     then
       pckmnger="${t}"
     fi
   done
   
-  
+  local runcheck=false
   for installString in "${@}"
   do
-   
-    first=$(echo ${installString} | awk '{print $1;}')
-    second=$(echo ${installString} | awk '{print $2;}')
+    first=$(echo "${installString}" | awk '{print $1;}')
+    second=$(echo "${installString}" | awk '{print $2;}')
     
-    if [ ${pckmnger} = ${first} ] || [ ${pckmnger} = ${second} ]
+    if [ "${pckmnger}" = "${first}" ] || [ "${pckmnger}" = "${second}" ]
     then
       echo "Running: ${installString}"
+      runcheck=true
       doRunCommand "${installString}"
-    else
-      echo "No install string for the current system found."
     fi
-    
   done
   
-  
-  
-  
-  
+  if [ ${runcheck} = false ]
+  then 
+    doError "Error. No supported package manager found on your system."
+  fi
 
 }
 
