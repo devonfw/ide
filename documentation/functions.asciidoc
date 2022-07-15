@@ -39,6 +39,9 @@ The doEchoOption function outputs the message passed as a parameter in light blu
 === doEchoStep ===
 The doEchoStep function prints the message passed as a parameter with three asterisks before and after the message in purple, and allows backslash-escaped characters, for example "\n" for new line.
 
+=== doError ===
+The doError function prints the message passed to it in bright red.
+
 === doFail ===
 The doFail function is called with an error message as the first parameter and an exit code as the second parameter. The function first calls the doEchoAttention function without parameter, followed by the specified error message and a message on how to proceed. If a 0 is specified as the exit code, the function ends with exit code 1, otherwise with the specified exit code. If no exit code is specified, the function terminates with exit code 255.
 
@@ -51,11 +54,17 @@ The doLicenseAgreement function checks whether the DEVON_HOME_DIR/.devon/.licens
 === doLogo ===
 The doLogo function prints out the devon logo.
 
+=== doQuestion ===
+The doQuestion function outputs the message passed to it in light blue.
+
 === doResult ===
 The function doResult outputs the message passed as the first parameter, depending on the second parameter as Succeeded for 0 or Failed for all other values. If the second parameter is not specified, Failed (internal error missing exit code) is output.
 
+=== doSuccess ===
+The doSuccess function outputs the message passed to it in green.
+
 === doWarning ===
-The doWarning function outputs the text WARNING: with the message passed in the parameter and allows backslash-escaped characters, for example "\n" for new line.
+The doWarning function outputs the text "WARNING:" with the message passed in the parameter and allows backslash-escaped characters, for example "\n" for new line.
 
 == Environment Checks ==
 
@@ -92,7 +101,7 @@ The doDevonCommand function calls the doDevonCommandAndReturn function and passe
 The doDevonCommandAllWorkspaces function is given a devon command as a parameter that is executed in all directories in the workspaces directory. If other directories or the readme.txt file are found in the workspaces directory, a corresponding message is output. If a directory change does not work, the function ends with the return value 1.
 
 = doDevonCommandAndReturn
-The doDevonCommandAndReturn function is passed a command from the devon environment with parameters as a parameter, i.e. a command that must be installed under DEVON_IDE_HOME/scripts/command. If no parameter is given, an error message is output using the doFail function. If the specified command does not exist, an error message is also output using doFail. If the command exists, it is checked whether it is executable and, if so, set to executable. Then the command is called with the options batch, force, debug and quiet, if set, and the specified parameters. If the command encounters an error, an error message is output with the return value passed by the command. Otherwise the function ends with the return value 0.
+The doDevonCommandAndReturn function is passed a command from the devon environment with parameters as a parameter, i.e. a command that must be installed under DEVON_IDE_HOME/scripts/command. If no parameter is given, an error message is output using the doFail function. If the specified command does not exist, an error message is also output using doFail. If the command exists, it is checked whether it is executable and, if not so, set to executable. Then the command is called with the options batch, force, debug and quiet, if set, and the specified parameters. If the command encounters an error, an error message is output with the return value passed by the command. Otherwise the function ends with the return value 0.
 
 = doDownload
 
@@ -119,7 +128,7 @@ specified sequence until one of the specified directories exists. This directory
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
 = doGitPullOrClone
-The doGitPullOrClone function is given the target path and the URL or URL#branch as parameters. If the directory is a Git repository, it is tested whether remote repositories are configured and, if so, a git pull is performed. If not, a corresponding message is output and the function is ended with a return value of 1. If the directory is not a Git repository and no URL was specified, the function is aborted with a doFail message. However, if a URL was specified, the specified directory is created, changed to the directory and the repository of the specified URL is cloned in the specified directory. If the branch was also specified in the URL, a checkout is carried out on this branch.
+The doGitPullOrClone function is given the target path and the URL or URL#branch as parameters. If the directory is a Git repository, it is tested whether remote repositories are configured and, if so, a git pull is performed. If not, a corresponding message is output and the function is ended with a return value of 1. If the directory is not a Git repository and no URL was specified, the function is aborted with a doFail message. However, if a URL was specified, the specified directory is created, changed to the directory and the repository of the specified URL is cloned into the specified directory. If the branch was also specified in the URL, a checkout is carried out on this branch.
 
 = doInstall
 The url of the software to be installed, the target directory in which the software is to be stored and the name of the software are given as parameters to the doInstall function. The function then downloads the software via doDownload into the download directory of the registered user, unpacks the software into the updates/extracted directory and then finally moves the software into the DEVON_IDE_HOME/software/"name of the software" directory.
@@ -146,7 +155,7 @@ The function doIsIgnoredFolder checks whether the directory that is passed to it
 The doIsInstallerExtension function checks whether the file extension of the file specified in the parameter is an executable file, i.e. .exe .msi .pkg or .bat. If so, the function returns 0, otherwise 255.
 
 = doIsPackageJsonContainingScript
-The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If the function ends with the return value 0 otherwise with a message and the return value 255.
+The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If so, then it ends with the return value 0 otherwise with a message and the return value 255.
 
 = doMoveGlobSafe
 The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
@@ -155,7 +164,7 @@ The doMoveGlobSafe function moves the file specified as the second parameter aft
 The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
 
 = doParseOption
-The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
+The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. If -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
 
 = doReplaceExtracted
 The doReplaceExtracted function prepares to move an unpacked archive (specified in the first parameter). The current date is defined as the name for the backup directory of the currently installed software. Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME. If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed. If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory. Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
