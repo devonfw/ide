@@ -2,11 +2,11 @@ name: Check Commit
 on:
   workflow_call:
     outputs:
-      check_commit:
+      should_run:
         description: "Check latest commit is less than a day" 
         value: ${{ jobs.check_commit.outputs.should_run }}
 jobs:
-  check_commit
+  check_commit:
     runs-on: ubuntu-latest
     name: Check latest commit
     outputs:
