@@ -18,15 +18,8 @@ To draw diagrams for your project or for blueprints in devonfw, we recommend the
 If you are looking for a git client that works cross-platform we recommend to use https://git-fork.com/[Fork].
 
 
-== Symbolic Links
-With https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[symbolic links] you can use one file that is located inside one directory in multiple other directories, without copying the whole file the the other directories. The file is still only saved at the initial location, but can be accessed through the  created links in a much more comfortable way. So you are actually just linked to the original file and therefore don't have to worry about differing versions of the file in your directory. This is very helpful for testing our devon-ide, because e.g. the commandlets folder for testing is not the same as the commandlets folder for git-commits. 
-Follow https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[these] installation and usage instructions first. 
-Later on you can make symbolic links of files from your "git folder" and add them into the folder in which the testing is supposed to take place.
-E.g. make a symbolic link of ´${DEVON_IDE_HOME}/workspaces/ide/scripts/src/main/resources/scripts/command/docker´ and insert it into the folder ´${DEVON_IDE_HOME}/scripts/command´.
-Now changes you make in the first mentioned file  will directly be available in your testing environment through the created file-link in the testing environment.
-
 == Tab Grouping For The Web Browser
 https://addons.mozilla.org/en-US/firefox/addon/simple-tab-groups/[Simple Tab Groups] is a Firefox plugin that helps to separate tabs e.g. tabs for projekt A, projekt B, travelplanning or hobbies 
 
 == Windows Terminal
-https://www.heise.de/tipps-tricks/SSH-unter-Windows-10-nutzen-4224757.html[Windows Terminal] is a tool that enables the user to use CLIs of various kinds like git-bash, Powershell, CMD, WSL-Shells or Putty
+https://github.com/microsoft/terminal[Windows Terminal] is a tool that enables the user to use CLIs of various kinds like git-bash, Powershell, CMD, WSL-Shells or Putty
