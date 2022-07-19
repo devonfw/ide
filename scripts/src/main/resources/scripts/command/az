@@ -51,9 +51,9 @@ function doPackageInstall() {
     if [ "${?}" = 0 ]
     then
       setConfigDir
-      doEcho "\nAzure CLI ist installed now. Great! \nTo get started you may need to restart your current shell."
+      doSuccess "Azure CLI ist installed now. Great! \nTo get started you may need to restart your current shell."
     else
-      doEcho "\nThe setup was canceled or failed. Rerun the setup to install Azure CLI."
+      doError "The setup was canceled or failed. Rerun the setup to install Azure CLI."
     fi
   else
     doFail "Sorry, Azure CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."

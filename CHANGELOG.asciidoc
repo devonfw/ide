@@ -2,6 +2,18 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.04.003
+
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/781[#781]: Support for DotNet
+* https://github.com/devonfw/ide/issues/770[#770]: RancherDesktop can not be installed
+* https://github.com/devonfw/ide/issues/777[#777]: Support for colored output
+* https://github.com/devonfw/ide/issues/749[#749]: Prompt default value for Settings URL
+* https://github.com/devonfw/ide/pull/785[#785]: fix passing args to terraform and helm on proxy usage
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/30?closed=1[milestone 2022.04.003].
+
 == 2022.04.002
 
 New release with improved cloud tool support and various improvements and bugfixes:
@@ -10,8 +22,10 @@ New release with improved cloud tool support and various improvements and bugfix
 * https://github.com/devonfw/ide/issues/712[#712]: Azure CLI integration
 * https://github.com/devonfw/ide/issues/713[#713]: Python integration
 * https://github.com/devonfw/ide/issues/632[#632]: fork detection buggy
+* https://github.com/devonfw/ide/issues/687[#687]: error on git pull
+* https://github.com/devonfw/ide/issues/770[#770]: first small fixes for VPNKit
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.001].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/29?closed=1[milestone 2022.04.002].
 
 == 2022.04.001
 
