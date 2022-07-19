@@ -5,6 +5,7 @@ on:
 jobs:
   check_commit:
     uses: devonfw/ide/.github/workflows/check-commit.yml@master
+    
   build:
     runs-on: macos-latest
     needs: check_commit
