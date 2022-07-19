@@ -4,21 +4,7 @@ on:
     - cron: '0 0 * * *'
 jobs:
   check_commit:
-    runs-on: ubuntu-latest
-    name: Check latest commit
-    outputs:
-      should_run: ${{ steps.edited.outputs.should_run }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: print latest_commit
-        run: echo ${{ github.sha }}
-
-      - id: edited
-        continue-on-error: true
-        name: check latest commit is less than a day
-        if: ${{ github.event_name == 'schedule' }}
-        run: test -z $(git rev-list  --after="24 hours"  ${{ github.sha }}) && echo "::set-output name=should_run::false"
-  
+    uses: devonfw/ide/.github/workflows/check-edition.yml@master
   build:
     runs-on: macos-latest
     needs: check_commit
