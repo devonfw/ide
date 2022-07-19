@@ -30,16 +30,7 @@ function doSetup() {
           #give the User the installation location when using linux or mac
           if doIsWindows
           then
-            #check if vpnkit is already installed
-            if ! doIsVPNKitInstalled
-            then
-              doInstallVpnkit         
-              #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
-              if ! doIsVPNKitInstalled
-              then 
-                doSetVPNKitStartupInstaller
-              fi
-            fi
+            doEnsureVpnKitInstallation
             doEcho "Rancher Desktop is already installed"
           else
             doEcho "Rancher Desktop is already installed at $(command -v docker)"
@@ -63,20 +54,12 @@ function doSetup() {
         doInstall "-" "${rancher_install_dir}" "rancher" "${version}" 
         if doIsWindows
         then
-          doSetVPNKitStartupInstaller
+          doSetVpnKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
           # ensures installation of vpnkit if user directly restarts computer for enabling wsl
           doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
           #check if vpnkit is already installed
-          if ! doIsVPNKitInstalled
-          then
-            doInstallVpnkit
-            #if it couldn't be installed, e.g. wsl available after reboot, create a startup-batch
-            if ! doIsVPNKitInstalled
-            then 
-              doSetVPNKitStartupInstaller
-            fi
-          fi
+          doEnsureVpnKitInstallation
         elif doIsMacOs
         then
           doRunCommand "cp -a '${rancher_install_dir}'/*.app /Applications/"
@@ -144,6 +127,19 @@ function doIsDockerInstalled() {
   fi
 }
 
+function doEnsureVpnKitInstallation {
+  #check if vpnkit is already installed
+  if ! doIsVpnKitInstalled
+  then
+    doInstallVpnKit         
+    #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
+    if ! doIsVpnKitInstalled
+    then 
+      doSetVpnKitStartupInstaller
+    fi
+  fi
+}
+
 #OS independent check if Rancher Desktop is installed.
 #On Windows the user has to reboot the computer once after a RD installation for the function to work properly
 function doIsRancherInstalled() {
@@ -172,7 +168,7 @@ function doIsRancherInstalled() {
 }
 
 
-function doIsVPNKitInstalled() {
+function doIsVpnKitInstalled() {
   # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
   result=$(wsl -l | tr -d '\0' | grep wsl-vpnkit)
   if [[ "${result}" == *"wsl-vpnkit"* ]]
@@ -185,27 +181,27 @@ function doIsVPNKitInstalled() {
 
 
 #To make sure that as many windows users as possible are able to run this command, we use the ${APPDATA} variable to get into the startup folder 
-function doSetVPNKitStartupInstaller() {
+function doSetVpnKitStartupInstaller() {
   {
     echo '@ECHO OFF'
     echo "start \"\" \"${EXEPATH}\\git-bash.exe\\\" -c \"cd \"${DEVON_IDE_HOME}\" && devon docker setup  && /usr/bin/bash --login -i\""
     # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
     echo '(goto) 2>nul & del "%~f0"' 
-  } > VPNKitInstaller.bat
+  } > VpnKitInstaller.bat
 
-  mv VPNKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
+  mv VpnKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
 
   #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
 }
 
 
-function doInstallVpnkit() {
+function doInstallVpnKit() {
   #get latest version of the vpnkit and download its tar.gz file
   local partialUrl
   # shellcheck disable=SC1083  
   partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
-  local VPNversion=${partialUrl##*/}
-  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
+  local VpnVersion=${partialUrl##*/}
+  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VpnVersion}/wsl-vpnkit.tar.gz"
   curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
 
   #write a powershell-script
