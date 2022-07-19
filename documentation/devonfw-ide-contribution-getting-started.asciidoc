@@ -148,4 +148,4 @@ In case you want to get your hands dirty with code that is already in use and co
 There are also some basic exercises related to our project that are not official yet, but you can ask for if you want to try some of them out to learn and challenge yourself a bit.
 
 == Documentation
-https://github.com/devonfw/ide/blob/master/documentation/devonfw-ide-doc.asciidoc
+Scroll down on https://github.com/devonfw/ide[this site] to get an overview of the documentation sections for the devonfw-ide, e.g. Home, Features, Download & Setup or have a look at https://github.com/devonfw/ide/tree/master/documentation[the documentation files folder].
