@@ -16,6 +16,7 @@ source "$(dirname "${0}")"/../functions
 
 
 function doSetup() {
+
   if [ ! -d "${PYTHON_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
@@ -28,10 +29,18 @@ function doSetup() {
 
     if doIsMacOs
     then
+      if doIsBrewInstalled
+      then
+        brew install openssl
+      else
+        doWarning "Warning. Brew is required to install python properly with pip. Installation will be attempted, but might fail or lead to unexpected errors."
+      fi
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
-      sh "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
+      sh "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
+      make clean
+      make distclean
       
     elif doIsWindows
     then
@@ -78,7 +87,16 @@ function doSetup() {
       "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
+      make clean
+      make distclean
+      
+      if [ -d "${DEVON_IDE_HOME}/Python" ]
+      then
+        rm -r "${DEVON_IDE_HOME}/Python"
+      fi
+ 
     fi
+    
     # rename folder from bin to Scripts
     if [ -d "${PYTHON_HOME}/bin" ]
     then
@@ -86,14 +104,28 @@ function doSetup() {
     fi
   fi
 
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunPython "--version"
-  fi 
-  
   setPath
 
+  # set bin locations
+  if ! doIsWindows
+  then
+    PYTHON_BIN=$(find "${PYTHON_SCRIPTS}" -name "python3.*" | sort | head -1)
+    PIP_BIN=$(find "${PYTHON_SCRIPTS}" -name "pip*" | sort | head -1)
+  else
+    PYTHON_BIN="${PYTHON_HOME}/python.exe"
+    PIP_BIN="${PYTHON_SCRIPTS}/pip.exe"
+    PIP3_BIN="${PYTHON_SCRIPTS}/pip3.exe"
+  fi
+ 
+  # check version
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    "${PYTHON_BIN}" "--version"
+  fi 
+  
+
 }
+
 
 function setPath() {
   local path_bind="PATH=\$PATH:"
@@ -108,7 +140,7 @@ function setPath() {
 
 function doRunPython() {
   doSetup silent
-  doEcho "Running: ${*}"
+  doEcho "Running: ${PYTHON_BIN} ${*}"
   if doIsQuiet
   then
     "${PYTHON_BIN}" "${@}" > /dev/null
@@ -125,7 +157,7 @@ function doRunPip() {
     shift
     if doIsQuiet
     then
-        doRunPython "${PIP_BIN}" "${@}"
+        doRunPython "${PIP_BIN}" "${@}" > /dev/null
     else
         doRunPython "${PIP_BIN}" "${@}"
     fi
@@ -142,6 +174,7 @@ function doRunPip() {
   fi
 }
 
+
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
 PYTHON_SCRIPTS="${PYTHON_HOME}/Scripts"
 
@@ -156,8 +189,8 @@ else
   PIP3_BIN="${PYTHON_SCRIPTS}/pip3.exe"
 fi
 
-# CLI
-case ${1} in 
+
+ case ${1} in 
   "help" | "-h")
     echo "Install Python."
     echo
@@ -169,16 +202,16 @@ case ${1} in
     echo
   ;;
   "setup" | "s" | "")
-    doEcho "Installating python..."
+    doEcho "Installing python..."
     doSetup
   ;;
   "version" | "-v" | "--version")
      doRunPython --version
   ;;
   "pip" | "pip3")
-      doRunPip "${@}"
+     doRunPip "${@}"
   ;;
   *)
-      doRunPython "${@}"
+     doRunPython "${@}"
   ;;
 esac

@@ -1514,7 +1514,15 @@ function doIsPackageJsonContainingScript() {
   fi
 }
 
-# Ensurese that Windows WSL is properly available.
+function doIsBrewInstalled() {
+  which -s brew
+  if which brew
+  then
+    return 255
+  fi
+}
+
+# Ensures that Windows WSL is properly available.
 function doRequireWsl() {
   local error
   if ! command -v wsl &> /dev/null
