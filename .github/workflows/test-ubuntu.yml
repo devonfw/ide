@@ -5,6 +5,7 @@ on:
 jobs:
   check_commit:
     uses: devonfw/ide/.github/workflows/check-commit.yml@master
+    
   build:
     needs: check_commit
     if: ${{ needs.check_commit.outputs.should_run != 'false' }}
