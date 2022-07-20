@@ -1,7 +1,7 @@
 :toc:
 toc::[]
 
-= Features
+== Why do you need devonfw-ide?
 
 Every developer needs great tools to work efficiently. Setting up these tools manually can be tedious and error-prone. Furthermore, some projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
 
@@ -29,21 +29,21 @@ It supports working with different link:workspaces.asciidoc[workspaces] on diffe
 * *Free* +
 The `devonfw-ide` is free just like everything from https://devonfw.com[devonfw]. See link:license.asciidoc[LICENSE] for details.
 
-== IDEs
+=== IDEs
 We support the following IDEs:
 
 * link:eclipse.asciidoc[Eclipse]
 * link:vscode.asciidoc[Visual Studio Code]
 * link:intellij.asciidoc[IntelliJ]
 
-== Platforms
+=== Platforms
 We support the following platforms:
 
 * link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
 * link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
 * link:node.asciidoc[node], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
 
-== Build-Systems
+=== Build-Systems
 We support the following build-systems:
 
 * link:mvn.asciidoc[mvn] (maven)
@@ -52,52 +52,4 @@ We support the following build-systems:
 
 However, also other IDEs, platforms, or tools can be easily integrated as link:cli.asciidoc#commandlet[commandlet].
 
-== Motivation
-
-`TL;DR`? Lets talk to developers a correct language. Here are some examples with `devonfw-ide`:
-
-[source,bash]
---------
-[/]$ devon
-You are not inside a devonfw-ide installation: /
-[/]$ cd /projects/devonfw
-[devonfw]$ mvn
-zsh: command not found: mvn
-[devonfw]$ devon
-devonfw-ide environment variables have been set for /projects/devonfw in workspace main
-[devonfw]$ mvn -v
-Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
-Maven home: /projects/devonfw/software/maven
-Java version: 1.8.0_191, vendor: Oracle Corporation, runtime: /projects/devonfw/software/java
-Default locale: en_DE, platform encoding: UTF-8
-OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
-[devonfw]$ cd /projects/ide-test/workspaces/test/my-project
-[my-project]$ devon
-devonfw-ide environment variables have been set for /projects/ide-test in workspace test
-[my-project]$ mvn -v
-Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T20:41:47+02:00)
-Maven home: /projects/ide-test/software/maven
-Java version: 11.0.2, vendor: Oracle Corporation, runtime: /projects/ide-test/software/jdk/Contents/Home
-Default locale: en_DE, platform encoding: UTF-8
-OS name: "mac os x", version: "10.14.3", arch: "x86_64", family: "mac"
-[ide-test]$ devon eclipse
-launching Eclipse for workspace test...
-[my-project]$ devon build
-[INFO] Scanning for projects...
-...
-[INFO] BUILD SUCCESS
---------
-
-This was just a very simple demo of what `devonfw-ide` can do. For further details have a look at our link:cli.asciidoc[CLI documentation].
-
-Now you might ask:
-
-* But I use Windows/Linux/MacOS/… - it works on all platforms!
-* But how about Windows CMD or Power-Shell? - it works!
-* But what if I use cygwin or git-bash on windows? - it works!
-* But I love to use ConEmu or Commander - it works with full integration!
-* How about macOS Terminal or iTerm2? - it works with full integration!
-* But I use Zsh  - it works!
-* ...? - it works!
-
-Wow! So let's get started with link:setup.asciidoc[download & setup].
+Excited to get started? Quick start here.
