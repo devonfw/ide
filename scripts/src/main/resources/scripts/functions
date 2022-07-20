@@ -742,34 +742,20 @@ function doUnzip() {
 }
 
 function doInstallWithPackageManager() {
-  local pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
   
-  for t in "${pckmngers[@]}"; do
-    if command -v "${t}" > /dev/null
-    then
-      pckmnger="${t}"
-    fi
-  done
-  
-  local runcheck=false
   for installString in "${@}"
   do
-    first=$(echo "${installString}" | awk '{print $1;}')
-    second=$(echo "${installString}" | awk '{print $2;}')
+    first="${installString/ */}"
     
-    if [ "${pckmnger}" = "${first}" ] || [ "${pckmnger}" = "${second}" ]
+    if command -v "${first}" > /dev/null
     then
-      echo "Running: ${installString}"
-      runcheck=true
-      doRunCommand "${installString}"
+      doEcho "Installing: ${installString}"
+      doRunCommand sudo "${installString}"
+      return
     fi
+    
   done
-  
-  if [ ${runcheck} = false ]
-  then 
-    doError "Error. No supported package manager found on your system."
-  fi
-
+    doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
 }
 
 # $1: filename (e.g. ${filename})
@@ -1524,6 +1510,7 @@ function doIsMacOs() {
     return
   fi
   return 255
+}
 }
 
 function doIsWindows() {
