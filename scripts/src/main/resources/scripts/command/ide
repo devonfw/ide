@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup update uninstall help"
+    echo "setup update create uninstall help"
   elif [ "${2}" = "update" ]
   then
     shortlist3="scripts settings software projects all"
@@ -335,6 +335,7 @@ function doUpdateSoftware() {
       then
         doEchoStep "Setting up ${tool}"
         doDevonCommand "${tool}" setup
+        doSuccess "Success"
       fi
     done
   fi
@@ -372,6 +373,7 @@ function doUpdateSoftware() {
           fi
         fi
         doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
+        doSuccess "Success"
       fi
     fi
   done
@@ -448,6 +450,33 @@ function doUninstall() {
   doSuccess "Goodbye and have a nice day!"
 }
 
+function doCreate() {
+    local create_path="${1}"
+    if [ -z "${create_path}" ]
+    then
+      create_path="$(pwd)"
+    fi
+
+    if [ ! -d "${create_path}" ]
+    then
+      mkdir -p ${create_path}
+    fi
+
+    count_lines="$(ls -alF ${create_path} | wc -l)"
+    if [ ${count_lines} -gt 3 ]
+    then
+      doAskToContinue "Directory is not empty, continue?"
+    fi
+  
+    SETTINGS_PATH="${create_path}/settings"
+    doUpdateSettings
+    
+    doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
+
+    cd ${create_path}
+    ${create_path}/setup
+}
+
 target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
@@ -479,6 +508,11 @@ then
     shift
   done
   doSetup "${@}"
+elif [ "${1}" = "create" ]
+then
+  shift
+  echo "##### doCreate ${@}"
+  doCreate "${@}"
 elif [ "${1}" = "uninstall" ]
 then
   doUninstall
