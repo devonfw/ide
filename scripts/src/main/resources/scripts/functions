@@ -1515,10 +1515,9 @@ function doIsPackageJsonContainingScript() {
 }
 
 function doIsBrewInstalled() {
-  which -s brew
   if which brew
   then
-    return 255
+    return 0
   fi
 }
 

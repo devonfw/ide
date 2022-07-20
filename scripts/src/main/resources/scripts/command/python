@@ -89,14 +89,14 @@ function doSetup() {
       make altinstall
       make clean
       make distclean
-      
-      if [ -d "${DEVON_IDE_HOME}/Python" ]
-      then
-        rm -r "${DEVON_IDE_HOME}/Python"
-      fi
  
     fi
     
+    if [ -d "${DEVON_IDE_HOME}/Python" ]
+    then
+      rm -r "${DEVON_IDE_HOME}/Python"
+    fi
+      
     # rename folder from bin to Scripts
     if [ -d "${PYTHON_HOME}/bin" ]
     then
@@ -120,7 +120,7 @@ function doSetup() {
   # check version
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    "${PYTHON_BIN}" "--version"
+    doRunCommand "${PYTHON_BIN} --version"
   fi 
   
 
