@@ -144,7 +144,6 @@
         <configuration>
           <executable>bash</executable>
           <commandlineArgs>${project.basedir}/src/test/bash/all-tests</commandlineArgs>
-          <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
     </plugins>
