@@ -13,6 +13,7 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 |`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
 |`update [«package»]`            |update devonfw-ide
 |`update scripts [to «version»]` |update devonfw-ide
+|`update create [<<path>>]`      |create a new devonfw-ide installation
 |`uninstall`                     |uninstall devonfw-ide (if you want remote it entirely from your system)
 |=======================
 
@@ -43,6 +44,13 @@ devon ide update scripts to 3.1.99
 ```
 The above example will update to the exact version `3.1.99` no matter if this is an upgrade or a downgrade of your current installed version.
 If you just use `devon ide update scripts` then the latest available version will be installed. In larger teams it is recommended to communicate exact version updates to avoid that a new release can interfere and break anything. Therefore, some pilot user will test a new version for the entire team and, only after a successful test, they will communicate to the team to update to that exact version by providing the complete command as in the above example.
+
+== create
+Run `devon ide create` to create a new devonfw-ide installation at the current directory or at the directory specified.
+
+``` 
+devon ide create /path/to/install
+``` 
 
 == uninstall
 We hope you love `devonfw-ide`. However, if you don't and want to get rid of it entirely and completely remove all integration, you can use this command:

@@ -335,7 +335,6 @@ function doUpdateSoftware() {
       then
         doEchoStep "Setting up ${tool}"
         doDevonCommand "${tool}" setup
-        doSuccess "Success"
       fi
     done
   fi
@@ -373,7 +372,6 @@ function doUpdateSoftware() {
           fi
         fi
         doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
-        doSuccess "Success"
       fi
     fi
   done
@@ -454,27 +452,25 @@ function doCreate() {
     local create_path="${1}"
     if [ -z "${create_path}" ]
     then
-      create_path="$(pwd)"
+      create_path="${PWD}"
     fi
 
     if [ ! -d "${create_path}" ]
     then
       mkdir -p ${create_path}
     fi
-
+    
     count_lines="$(ls -alF ${create_path} | wc -l)"
     if [ ${count_lines} -gt 3 ]
     then
       doAskToContinue "Directory is not empty, continue?"
     fi
   
-    SETTINGS_PATH="${create_path}/settings"
-    doUpdateSettings
-    
     doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
 
-    cd ${create_path}
-    ${create_path}/setup
+    cd "${create_path}"
+    "${create_path}"/setup
+    [ -f "${create_path}/.devon.software.version" ] && rm "${create_path}/.devon.software.version"
 }
 
 target_version="LATEST"
@@ -498,6 +494,7 @@ then
   echo "update projects                  checkout and import projects"
   echo "update all                       update scripts, settings and software"
   echo "update                           update settings and software"
+  echo "create [«path»]                  create a new devonfw-ide installation at the specified or current path"
   echo "uninstall                        uninstall devonfw-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
@@ -511,7 +508,6 @@ then
 elif [ "${1}" = "create" ]
 then
   shift
-  echo "##### doCreate ${@}"
   doCreate "${@}"
 elif [ "${1}" = "uninstall" ]
 then
