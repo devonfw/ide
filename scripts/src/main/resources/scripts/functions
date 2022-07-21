@@ -746,20 +746,18 @@ function doUnzip() {
 }
 
 function doInstallWithPackageManager() {
-  
+  local first  
   for installString in "${@}"
   do
     first="${installString/ */}"
-    
     if command -v "${first}" > /dev/null
     then
       doEcho "Installing: ${installString}"
-      doRunCommand sudo "${installString}"
+      doRunCommand "sudo ${installString}"
       return
     fi
-    
   done
-    doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
+  doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
 }
 
 # $1: filename (e.g. ${filename})
