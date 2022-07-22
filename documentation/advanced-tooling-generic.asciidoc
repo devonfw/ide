@@ -21,5 +21,3 @@ If you are looking for a git client that works cross-platform we recommend to us
 == Tab Grouping For The Web Browser
 https://addons.mozilla.org/en-US/firefox/addon/simple-tab-groups/[Simple Tab Groups] is a Firefox plugin that helps to separate tabs e.g. tabs for projekt A, projekt B, travelplanning or hobbies 
 
-== Windows Terminal
-https://github.com/microsoft/terminal[Windows Terminal] is a tool that enables the user to use CLIs of various kinds like git-bash, Powershell, CMD, WSL-Shells or Putty
