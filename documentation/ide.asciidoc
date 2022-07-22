@@ -49,7 +49,7 @@ If you just use `devon ide update scripts` then the latest available version wil
 Run `devon ide create` to create a new devonfw-ide installation at the current directory or at the directory specified.
 
 ``` 
-devon ide create /path/to/install
+devon ide create /path/to/install [«SETTINGS_URL»]
 ``` 
 
 == uninstall
