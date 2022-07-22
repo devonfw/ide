@@ -10,12 +10,9 @@ That is not all. `devonfw-ide` gives you its own command shell where you can exe
 
 [youtube video link]
 
-Or you can also try out `devonfw-ide` in our interactive Katacoda scenario without having to download it at all:
+Or you can also try out `devonfw-ide` in our interactive Killercoda scenario without having to download it at all:
 
 [katacoda tutorial link]
-
-http://devonfw.com[devonfw] provides a solution to building applications which combine best-in-class frameworks and libraries as well as industry proven practices and code conventions.
-It massively speeds up development, reduces risks and helps deliver better results.
 
 == Why do you need devonfw-ide?
 
