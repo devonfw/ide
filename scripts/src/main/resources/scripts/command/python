@@ -58,31 +58,19 @@ function doSetup() {
       else
         doEcho "Error. Couldn't find _pth file."
       fi
-    else
-      # install build prerequisites      
-      pckmngers=("apt-get" "yum" "zypp")
-
-      for t in "${pckmngers[@]}"
-      do
-        command -v "${t}" > /dev/null
-        if [ "${?}" -eq "0" ]
-        then
-          pckmnger=${t}
-        fi
-      done
       
-      case ${pckmnger} in
-        apt-get) doEcho "installing required dependencies..."
-                 doRunCommand "sudo ${pckmnger} install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev";;
-        yum)     doEcho "installing required dependencies..."
-                 doRunCommand "sudo ${pckmnger} -y groupinstall \"Development Tools\""
-                 doRunCommand "sudo ${pckmnger} -y install gcc openssl-devel bzip2-devel libffi-devel";;
-        zypp)    doEcho "installing required dependencies..."
-                 doRunCommand "sudo ${pckmnger} install automake fdupes gcc gcc-c++ gcc-fortran gdbm-devel gettext-tools gmp-devel intltool libbz2-devel libexpat-devel libffi-devel libnsl-devel lzma-devel make ncurses-devel netcfg openssl-devel pkgconfig readline-devel sqlite-devel xz zlib-devel";;
-        *)       doEcho "Sorry, your package manager is not supported."
-                 exit;;
-      esac
-
+      # rename folder from Scripts to bin
+      if [ -d "${PYTHON_HOME}/Scripts" ]
+      then
+        mv "${PYTHON_HOME}"/Scripts "${PYTHON_HOME}"/bin
+      fi
+      
+    else
+      doInstallWithPackageManager "apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev" \
+                                  "yum -y groupinstall \"Development Tools\"" \
+                                  "zypp install automake fdupes gcc gcc-c++ gcc-fortran gdbm-devel gettext-tools gmp-devel intltool libbz2-devel libexpat-devel libffi-devel libnsl-devel lzma-devel make ncurses-devel netcfg openssl-devel pkgconfig readline-devel sqlite-devel xz zlib-devel"
+      
+      
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
       "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
@@ -96,15 +84,8 @@ function doSetup() {
     then
       rm -r "${DEVON_IDE_HOME}/Python"
     fi
-      
-    # rename folder from bin to Scripts
-    if [ -d "${PYTHON_HOME}/bin" ]
-    then
-      mv "${PYTHON_HOME}"/bin "${PYTHON_HOME}"/Scripts
-    fi
+    
   fi
-
-  setPath
 
   # set bin locations
   if ! doIsWindows
@@ -126,13 +107,12 @@ function doSetup() {
 
 }
 
-
 function setPath() {
   local path_bind="PATH=\$PATH:"
   local set_path="${path_bind}${PYTHON_SCRIPTS}"
   if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
     then
-      export ${set_path}
+      export "${set_path}"
       echo -e "\n${set_path}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
       doEcho "Python and pip path is added to ${DEVON_IDE_HOME}/conf/devon.properties"
   fi
@@ -176,7 +156,7 @@ function doRunPip() {
 
 
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-PYTHON_SCRIPTS="${PYTHON_HOME}/Scripts"
+PYTHON_SCRIPTS="${PYTHON_HOME}/bin"
 
 #in linux and mac, filenames might change their version numbers
 if ! doIsWindows
@@ -198,7 +178,7 @@ fi
     echo " setup                    setup Python."
     echo " version                  get Python version."
     echo " pip                      call pip."
-    echo " pip3                     call pip3 (Windows only)."
+    echo " pip3                     call pip3 (Windows only)"
     echo
   ;;
   "setup" | "s" | "")
