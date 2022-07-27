@@ -129,24 +129,38 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>integration-testing</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <executable>bash</executable>
-          <commandlineArgs>${project.basedir}/src/test/bash/all-tests</commandlineArgs>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
+   <profiles>
+    <profile>
+      <id>integration-test</id>
+      <activation>
+        <property>
+          <name>!skipTests</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integration-testing</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <executable>bash</executable>
+              <commandlineArgs>${project.basedir}/src/test/bash/all-tests</commandlineArgs>
+              <workingDirectory>${project.build.directory}</workingDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
