@@ -14,7 +14,7 @@ Here is a small video which showcases what you can do with `devonfw-ide`:
 
 == Why do you need devonfw-ide?
 
-Every developer needs great tools to work efficiently. Setting up these tools manually can be tedious and error-prone. Furthermore, some projects may require different versions and configurations of such tools. Especially configurations like code-formatters should be consistent within a project to avoid diff-wars.
+Every developer needs great tools to work efficiently. Usually the team members follows wiki/confluence articles at least once to setup the environment. Most of the times, these articles might have outdated 2 weeks after writing it. Also there are chances that the team members in the team might have downloaded different versions of tools. Setting up the tools manually are tedious and error prone. Use of different configuration by teamm members can cause diff-wars. It should be consistent within a project to avoid diff-wars.
 
 The `devonfw-ide` will solve these issues. Here are the features you will find through `devonfw-ide`:
 
