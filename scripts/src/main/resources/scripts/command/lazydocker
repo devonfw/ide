@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# Call lazydocker with specified arguments.
+function doRun() {
+  doSetup silent
+  cd ${LAZYDOCKER_HOME}
+  if doIsWindows
+  then
+    read -r -p "inside if condition of doRun"
+    powershell.exe -command 'start powershell {.\lazydocker.exe}'
+  else
+    ./lazydocker 
+  fi
+}
+
+function doSetup() {
+  if [ ! -d "${LAZYDOCKER_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    local version="${LAZYDOCKER_VERSION}"
+    # Get latest release
+    if [ -z "${version}" ]
+    then 
+      version="0.18.1"
+      doEcho "Getting latest release..." 
+      latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/jesseduffield/lazydocker/releases/latest | sed 's/^.*\///' | sed 's/^v//')
+      doVersionCompare "${latestversion}" "${version}"
+      VersCompRes=${?}
+      if [ "${VersCompRes}" = 1 ]
+      then
+        version=${latestversion}
+      fi
+    fi
+    doInstall "-" "${LAZYDOCKER_HOME}" "lazydocker" "${version}"
+  fi
+}
+
+LAZYDOCKER_HOME="${DEVON_IDE_HOME}/software/lazydocker"
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Install lazydocker."
+  echo
+  echo "Arguments:"
+  echo " setup                    install lazydocker on your machine."
+  echo "                          call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
+  echo
+;;
+"setup" | "s" )
+  doEcho "Installing lazydocker..."
+  doSetup
+;;
+*)
+  echo "running lazydocker-binary"
+  doRun 
+;;
+esac
+  
