@@ -180,6 +180,8 @@ function doError() {
   echo -e "\033[91m${1}\033[39m"
 }
 
+
+
 # $@: success message
 function doSuccess() {
   echo -e "\033[92m${*}\033[39m"
@@ -739,6 +741,23 @@ function doUnzip() {
   fi
   doEcho "unzip archive..."
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+}
+
+
+
+function doInstallWithPackageManager() {
+  local first  
+  for installString in "${@}"
+  do
+    first="${installString/ */}"
+    if command -v "${first}" > /dev/null
+    then
+      doEcho "Installing: ${installString}"
+      doRunCommand "sudo ${installString}"
+      return
+    fi
+  done
+  doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
 }
 
 # $1: filename (e.g. ${filename})

@@ -36,7 +36,7 @@ function doSetup() {
         doWarning "Warning. Brew is required to install python properly with pip. Installation will be attempted, but might fail or lead to unexpected errors."
       fi
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
-      sh "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
+      sh "${PYTHON_HOME}"/configure MACOSX_DEPLOYMENT_TARGET=12 --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
       make clean
