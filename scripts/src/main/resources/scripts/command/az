@@ -1,20 +1,23 @@
 #!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  setLocation
-  if [ "${1}" != "silent" ] || [ ! -f "${AZ_FILE}" ] 
+  if [ "${1}" != "silent" ] || [[ ! $(command -v az) =~ "${DEVON_IDE_HOME}/software/" ]]
   then
-    if [ -d "${PYTHON_HOME}" ] 
-    then
       doDevonCommand python pip install azure-cli
       setConfig
-    else
-      doDevonCommand python setup silent
-      doDevonCommand python pip install azure-cli
-      setConfig
-    fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
@@ -33,30 +36,12 @@ function setConfig() {
   fi
 }
 
-function setLocation() {
-  if doIsWindows
-  then 
-    AZ_FILE="${DEVON_IDE_HOME}/software/python/Scripts/az"
-  else
-    AZ_FILE="${DEVON_IDE_HOME}/software/python/bin/az"
-  fi
-}
-
 function doRun() {
   doSetup silent
   doEcho "Running: az ${*}" 
-  if doIsQuiet
-  then
-    # shellcheck disable=SC2068
-    az $@ > /dev/null
-  else
-    # shellcheck disable=SC2068
-    az $@
-  fi
+  az "$@"
 }
 
-# CLI
-PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
 case ${1} in
 "help" | "-h")
   echo "Setup or run Azure CLI."
@@ -68,10 +53,10 @@ case ${1} in
 ;;
 
 "setup" | "s")
-  doSetup setup
+  doSetup "${2}"
 ;;
 
 *)
-  doRun "${*}"
+  doRun "${@}"
 ;;
 esac
