@@ -22,6 +22,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
+      - name: Set up Shellcheck
+        run: choco install shellcheck
       - name: Build project with Maven
         run: mvn -B -ntp install
         

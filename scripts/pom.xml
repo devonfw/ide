@@ -135,9 +135,6 @@
     <profile>
       <id>integration-test</id>
       <activation>
-        <os>
-          <family>!Windows</family>
-        </os>
         <property>
           <name>!skipTests</name>
         </property>
@@ -157,7 +154,8 @@
               </execution>
             </executions>
             <configuration>
-              <executable>${project.basedir}/src/test/bash/all-tests</executable>
+              <executable>bash</executable>
+              <commandlineArgs>${project.basedir}/src/test/bash/all-tests</commandlineArgs>
               <workingDirectory>${project.build.directory}</workingDirectory>
             </configuration>
           </plugin>
