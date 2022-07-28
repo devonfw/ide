@@ -184,8 +184,6 @@ function doError() {
   echo -e "\033[91m${1}\033[39m"
 }
 
-
-
 # $@: success message
 function doSuccess() {
   echo -e "\033[92m${*}\033[39m"
