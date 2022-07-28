@@ -90,11 +90,13 @@ function doRunCommand() {
 }
 
 function doIsForce() {
+  # shellcheck disable=SC2154
   [ -n "${force}" ]
   return
 }
 
 function doIsBatch() {
+  # shellcheck disable=SC2154
   [ -n "${batch}" ]
   return
 }
@@ -107,11 +109,13 @@ function doRequireNotBatch() {
 }
 
 function doIsQuiet() {
+  # shellcheck disable=SC2154
   [ -n "${quiet}" ]
   return
 }
 
 function doIsDebug() {
+  # shellcheck disable=SC2154
   [ -n "${debug}" ] && [ -z "${quiet}" ]
   return
 }
@@ -742,8 +746,6 @@ function doUnzip() {
   doEcho "unzip archive..."
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
-
-
 
 function doInstallWithPackageManager() {
   local first  
