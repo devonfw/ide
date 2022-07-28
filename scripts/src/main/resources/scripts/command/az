@@ -39,16 +39,16 @@ function setConfig() {
 function doRun() {
   doSetup silent
   doEcho "Running: az ${*}" 
-  az "$@"
+  az "${@}"
 }
 
 case ${1} in
 "help" | "-h")
-  echo "Setup or run Azure CLI."
+  echo "Install Azure CLI."
   echo
   echo "Arguments:"
-  echo " setup                    setup Azure CLI (install and verify)"
-  echo 
+  echo " setup                    install Azure CLI on your machine."
+  echo " <<args>>                 call Azure CLI with the specified arguments. Call az --help for details or use Azure CLI directly as preferred."
   echo
 ;;
 
