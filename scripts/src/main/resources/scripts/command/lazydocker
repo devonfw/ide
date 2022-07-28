@@ -35,11 +35,11 @@ function doSetup() {
     if [ -z "${version}" ]
     then 
       version="0.18.1"
-      doEcho "Getting latest release..." 
+      doEcho "Getting latest release..."
+      local latestversion
       latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/jesseduffield/lazydocker/releases/latest | sed 's/^.*\///' | sed 's/^v//')
       doVersionCompare "${latestversion}" "${version}"
-      VersCompRes=${?}
-      if [ "${VersCompRes}" = 1 ]
+      if [ "${?}" = 1 ]
       then
         version=${latestversion}
       fi
