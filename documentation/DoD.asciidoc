@@ -12,7 +12,7 @@ However, chances to get your change merged quickly are higher if you address all
 ** [ ] The contributors license agreement (CLA) is signed by all contributors of the PR.
 ** [ ] Git-Gardian did not report any security issue
 * [ ] The feature branch of the PR is up-to-date with the `master` branch. If you see `This branch is out-of-date with the base branch` in the PR click the `Update branch` button to fix (or manually merge with the `master` from upstream locally and push your changes). In case you see `This branch has conflicts that must be resolved` instead, you need to resolve conflicts. Very simple conficts may be resolved in the browser on github but as a general recommendation you should resolve the conflicts locally with proper merge tool support and rerun tests before you push the merged changes.
-* [ ] You followed all coding conventions (indent with 2 spaces, no tabs, functions start with `do` prefix, variables are enclosed with curly braces, etc.)
+* [ ] You followed all coding conventions (indent with 2 spaces, no tabs, functions start with `do` prefix, variables are enclosed with curly braces, variables in functions are declared with `local`, etc.)
 * [ ] You have already added the issue implemented by your PR in https://github.com/devonfw/ide/blob/master/CHANGELOG.asciidoc[CHANGELOG.asciidoc] to the next open release (see milestones or https://github.com/devonfw/ide/blob/master/.mvn/maven.config[maven.config]). If there is no issue for your PR consider creating it or directly link the PR itself.
 * [ ] In case your PR adds a new tool `«tool»` as commandlet there are the following additional checks:
 ** [ ] The tool is already available as folder `«tool»` in https://github.com/devonfw/ide-mirrors[ide-mirrors]
