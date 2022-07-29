@@ -38,10 +38,10 @@ function doSetup() {
     elif doIsWindows
     then
       doEcho "Getting pip install file"
-      # https://github.com/pypa/get-pip
-      curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "python"
-      doRunPython "get-pip.py"
+      
+      curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+      doRunPython get-pip.py --no-warn-script-location
       rm get-pip.py
       if [ -a "$(find "${PYTHON_HOME}" -name '*._pth')" ]
       then
@@ -49,13 +49,12 @@ function doSetup() {
         doEcho "Freeing Python from embedded Mode..."
         sed -i -e 's/#import site/import site/g' "${PTH_FILE}"
       else
-        doEcho "Error. Couldn't find _pth file."
+        doWarning "Couldn't find *._pth file."
       fi
-      
-      # rename folder from Scripts to bin
       if [ -d "${PYTHON_HOME}/Scripts" ]
       then
-        mv "${PYTHON_HOME}"/Scripts "${PYTHON_HOME}"/bin
+        echo mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
+        mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
       fi
     else
       doInstallWithPackageManager "apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev" \
@@ -77,32 +76,10 @@ function doSetup() {
     fi
   fi
 
-  # set bin locations
-  if ! doIsWindows
-  then
-    PYTHON_EXE=$(find "${PYTHON_BIN}" -name "python3.*" | sort | head -1)
-    PIP_EXE=$(find "${PYTHON_BIN}" -name "pip*" | sort | head -1)
-  else
-    PYTHON_EXE="${PYTHON_HOME}/python.exe"
-    PIP_EXE="${PYTHON_BIN}/pip.exe"
-    PIP3_EXE="${PYTHON_BIN}/pip3.exe"
-  fi
- 
   # check version
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "${PYTHON_EXE} --version"
-  fi
-}
-
-function setPath() {
-  local path_bind="PATH=\$PATH:"
-  local set_path="${path_bind}${PYTHON_BIN}"
-  if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
-    then
-      export "${set_path?}"
-      echo -e "\n${set_path}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
-      doEcho "Python and pip path is added to ${DEVON_IDE_HOME}/conf/devon.properties"
+    doRunCommand "python --version"
   fi
 }
 
@@ -110,50 +87,13 @@ function doRunPython() {
   doSetup silent
   if doIsQuiet
   then
-    doRunCommand "${PYTHON_EXE} ${*}" > /dev/null
+    doRunCommand "python ${*}" > /dev/null
   else
-    doRunCommand "${PYTHON_EXE} ${*}"
+    doRunCommand "python ${*}"
   fi
 }
-
-function doRunPip() {
-  doSetup silent
-  if [ "${1}" = "pip" ]
-  then
-    doEcho "Running: ${*}"
-    shift
-    if doIsQuiet
-    then
-      doRunPython "${PIP_EXE}" "${@}" > /dev/null
-    else
-      doRunPython "${PIP_EXE}" "${@}"
-    fi
-  elif [ "${1}" = "pip3" ] && doIsWindows
-  then
-    doEcho "Running: pip3 ${*}"
-    if doIsQuiet
-    then
-      doRunPython "${PIP3_EXE}" "${@}" > /dev/null
-    else
-      doRunPython "${PIP3_EXE}" "${@}"
-    fi
-  fi
-}
-
 
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-PYTHON_BIN="${PYTHON_HOME}/bin"
-
-#in linux and mac, filenames might change their version numbers
-if ! doIsWindows
-then
-  PYTHON_EXE=$(find "${PYTHON_BIN}" -name "python3.*" | sort | head -1)
-  PIP_EXE=$(find "${PYTHON_BIN}" -name "pip*" | sort | head -1)
-else
-  PYTHON_EXE="${PYTHON_HOME}/python.exe"
-  PIP_EXE="${PYTHON_BIN}/pip.exe"
-  PIP3_EXE="${PYTHON_BIN}/pip3.exe"
-fi
 
 case ${1} in 
   "help" | "-h")
@@ -172,9 +112,6 @@ case ${1} in
   ;;
   "version" | "-v" | "--version")
      doRunPython --version
-  ;;
-  "pip" | "pip3")
-     doRunPip "${@}"
   ;;
   *)
      doRunPython "${@}"
