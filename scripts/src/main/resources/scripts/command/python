@@ -14,9 +14,7 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-
 function doSetup() {
-
   if [ ! -d "${PYTHON_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
@@ -25,7 +23,7 @@ function doSetup() {
       doDebug "Python Home: ${PYTHON_HOME}"
       doEcho "Getting latest release..."
       PYTHON_VERSION="3.10.5"
-	  fi
+    fi
 
     if doIsMacOs
     then
@@ -64,7 +62,6 @@ function doSetup() {
       then
         mv "${PYTHON_HOME}"/Scripts "${PYTHON_HOME}"/bin
       fi
-      
     else
       doInstallWithPackageManager "apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev" \
                                   "yum -y groupinstall \"Development Tools\"" \
@@ -77,14 +74,12 @@ function doSetup() {
       make altinstall
       make clean
       make distclean
- 
     fi
     
     if [ -d "${DEVON_IDE_HOME}/Python" ]
     then
       rm -r "${DEVON_IDE_HOME}/Python"
     fi
-    
   fi
 
   # set bin locations
@@ -102,9 +97,7 @@ function doSetup() {
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
     doRunCommand "${PYTHON_EXE} --version"
-  fi 
-  
-
+  fi
 }
 
 function setPath() {
@@ -112,7 +105,7 @@ function setPath() {
   local set_path="${path_bind}${PYTHON_BIN}"
   if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
     then
-      export "${set_path}"
+      export "${set_path?}"
       echo -e "\n${set_path}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
       doEcho "Python and pip path is added to ${DEVON_IDE_HOME}/conf/devon.properties"
   fi
@@ -122,9 +115,9 @@ function doRunPython() {
   doSetup silent
   if doIsQuiet
   then
-    doRunCommand "${PYTHON_EXE} ${@}" > /dev/null
+    doRunCommand "${PYTHON_EXE} ${*}" > /dev/null
   else
-    doRunCommand "${PYTHON_EXE} ${@}"
+    doRunCommand "${PYTHON_EXE} ${*}"
   fi
 }
 
@@ -136,9 +129,9 @@ function doRunPip() {
     shift
     if doIsQuiet
     then
-        doRunPython "${PIP_EXE}" "${@}" > /dev/null
+      doRunPython "${PIP_EXE}" "${@}" > /dev/null
     else
-        doRunPython "${PIP_EXE}" "${@}"
+      doRunPython "${PIP_EXE}" "${@}"
     fi
   elif [ "${1}" = "pip3" ] && doIsWindows
   then
@@ -148,8 +141,7 @@ function doRunPip() {
       doRunPython "${PIP3_EXE}" "${@}" > /dev/null
     else
       doRunPython "${PIP3_EXE}" "${@}"
-   fi
-
+    fi
   fi
 }
 
@@ -168,8 +160,7 @@ else
   PIP3_EXE="${PYTHON_BIN}/pip3.exe"
 fi
 
-
- case ${1} in 
+case ${1} in 
   "help" | "-h")
     echo "Install Python."
     echo
