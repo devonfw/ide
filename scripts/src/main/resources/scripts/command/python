@@ -20,8 +20,6 @@ function doSetup() {
     # Get leatest release
     if [ -z "${PYTHON_VERSION}" ]
     then
-      doDebug "Python Home: ${PYTHON_HOME}"
-      doEcho "Getting latest release..."
       PYTHON_VERSION="3.10.5"
     fi
 
