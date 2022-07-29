@@ -16,7 +16,8 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ "${1}" != "silent" ] || [[ ! $(command -v az) =~ ${DEVON_IDE_HOME}/software/ ]]
   then
-    doDevonCommand python pip install azure-cli
+    doDevonCommand python
+    doRunCommand "pip3 install azure-cli"
     setConfig
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
