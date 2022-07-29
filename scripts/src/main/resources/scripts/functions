@@ -1533,10 +1533,13 @@ function doIsPackageJsonContainingScript() {
   fi
 }
 
-function doIsBrewInstalled() {
-  if which brew
+# use homebrew (MacOS) to install software
+function doBrewInstall() {
+  if command -v brew &> /dev/null
   then
-    return 0
+    doRunCommand "brew install ${*}"
+  else
+    doFail "Homebrew is required to install ${*}. Please install it manually from https://brew.sh/ and rerun your command."
   fi
 }
 
