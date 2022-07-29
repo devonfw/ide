@@ -1080,6 +1080,7 @@ function doMoveGlobSafe() {
 function doGitPullOrClone() {
   local dir="${1}"
   local url="${2}"
+  
   local git_opts=""
   if ! doIsDebug
   then
@@ -1134,6 +1135,13 @@ function doGitPullOrClone() {
       popd > /dev/null || exit 255 
     fi
   fi
+  
+  if [ "${url/.git/}" != "${url}" ]
+  then
+    doGitPullOrClone "${target_path}" "${url}"
+    return
+  fi
+  
 }
 
 # $1: download URL
