@@ -90,18 +90,18 @@ function doSetup() {
   # set bin locations
   if ! doIsWindows
   then
-    PYTHON_BIN=$(find "${PYTHON_SCRIPTS}" -name "python3.*" | sort | head -1)
-    PIP_BIN=$(find "${PYTHON_SCRIPTS}" -name "pip*" | sort | head -1)
+    PYTHON_EXE=$(find "${PYTHON_BIN}" -name "python3.*" | sort | head -1)
+    PIP_EXE=$(find "${PYTHON_BIN}" -name "pip*" | sort | head -1)
   else
-    PYTHON_BIN="${PYTHON_HOME}/python.exe"
-    PIP_BIN="${PYTHON_SCRIPTS}/pip.exe"
-    PIP3_BIN="${PYTHON_SCRIPTS}/pip3.exe"
+    PYTHON_EXE="${PYTHON_HOME}/python.exe"
+    PIP_EXE="${PYTHON_BIN}/pip.exe"
+    PIP3_EXE="${PYTHON_BIN}/pip3.exe"
   fi
  
   # check version
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "${PYTHON_BIN} --version"
+    doRunCommand "${PYTHON_EXE} --version"
   fi 
   
 
@@ -109,7 +109,7 @@ function doSetup() {
 
 function setPath() {
   local path_bind="PATH=\$PATH:"
-  local set_path="${path_bind}${PYTHON_SCRIPTS}"
+  local set_path="${path_bind}${PYTHON_BIN}"
   if ! grep -q "${set_path}" "${DEVON_IDE_HOME}/conf/devon.properties"
     then
       export "${set_path}"
@@ -120,12 +120,11 @@ function setPath() {
 
 function doRunPython() {
   doSetup silent
-  doEcho "Running: ${PYTHON_BIN} ${*}"
   if doIsQuiet
   then
-    "${PYTHON_BIN}" "${@}" > /dev/null
+    doRunCommand "${PYTHON_EXE} ${@}" > /dev/null
   else
-    "${PYTHON_BIN}" "${@}"
+    doRunCommand "${PYTHON_EXE} ${@}"
   fi
 }
 
@@ -137,18 +136,18 @@ function doRunPip() {
     shift
     if doIsQuiet
     then
-        doRunPython "${PIP_BIN}" "${@}" > /dev/null
+        doRunPython "${PIP_EXE}" "${@}" > /dev/null
     else
-        doRunPython "${PIP_BIN}" "${@}"
+        doRunPython "${PIP_EXE}" "${@}"
     fi
   elif [ "${1}" = "pip3" ] && doIsWindows
   then
     doEcho "Running: pip3 ${*}"
     if doIsQuiet
     then
-      doRunPython "${PIP3_BIN}" "${@}" > /dev/null
+      doRunPython "${PIP3_EXE}" "${@}" > /dev/null
     else
-      doRunPython "${PIP3_BIN}" "${@}"
+      doRunPython "${PIP3_EXE}" "${@}"
    fi
 
   fi
@@ -156,17 +155,17 @@ function doRunPip() {
 
 
 PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-PYTHON_SCRIPTS="${PYTHON_HOME}/bin"
+PYTHON_BIN="${PYTHON_HOME}/bin"
 
 #in linux and mac, filenames might change their version numbers
 if ! doIsWindows
 then
-  PYTHON_BIN=$(find "${PYTHON_SCRIPTS}" -name "python3.*" | sort | head -1)
-  PIP_BIN=$(find "${PYTHON_SCRIPTS}" -name "pip*" | sort | head -1)
+  PYTHON_EXE=$(find "${PYTHON_BIN}" -name "python3.*" | sort | head -1)
+  PIP_EXE=$(find "${PYTHON_BIN}" -name "pip*" | sort | head -1)
 else
-  PYTHON_BIN="${PYTHON_HOME}/python.exe"
-  PIP_BIN="${PYTHON_SCRIPTS}/pip.exe"
-  PIP3_BIN="${PYTHON_SCRIPTS}/pip3.exe"
+  PYTHON_EXE="${PYTHON_HOME}/python.exe"
+  PIP_EXE="${PYTHON_BIN}/pip.exe"
+  PIP3_EXE="${PYTHON_BIN}/pip3.exe"
 fi
 
 
