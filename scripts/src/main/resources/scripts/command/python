@@ -27,12 +27,7 @@ function doSetup() {
 
     if doIsMacOs
     then
-      if doIsBrewInstalled
-      then
-        brew install openssl
-      else
-        doWarning "Warning. Brew is required to install python properly with pip. Installation will be attempted, but might fail or lead to unexpected errors."
-      fi
+      doBrewInstall openssl
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
       sh "${PYTHON_HOME}"/configure MACOSX_DEPLOYMENT_TARGET=12 --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
       make -j 8
