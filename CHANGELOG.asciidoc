@@ -2,6 +2,22 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.04.004
+
+New release with various improvements and bugfixes:
+
+https://github.com/devonfw/ide/issues/713[#713]: Python integration
+https://github.com/devonfw/ide/issues/706[#706]: Folder ${M2_REPO} gets created
+https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03 
+https://github.com/devonfw/ide/pull/796[#796]: update sonarqube to 9.4.0.54424
+https://github.com/devonfw/ide/issues/794[#794]: Improve installation process of Rancher Desktop and VPNKit
+https://github.com/devonfw/ide/pull/829[#829]: #701: fix registry import paths for Windows Terminal
+https://github.com/devonfw/ide/pull/802[#802]: #798: English grammar fix for success message
+https://github.com/devonfw/ide/issues/803[#8ß3]: git pull not working on debug
+https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.04.004].
+
 == 2022.04.003
 
 New release with various improvements and bugfixes:
