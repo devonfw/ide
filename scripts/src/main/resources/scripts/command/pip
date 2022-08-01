@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help version pip pip3 version -v --version"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  doDevonCommand python setup silent
+  local PIP_CMD
+  PIP_CMD="$(command -v pip)"
+  local software="${DEVON_IDE_HOME}/software/"
+  if [ "$?" == 0 ] && [ "${PIP_CMD::${#software}}" = "${software}" ]
+  then
+    if [ "${1}" = "silent" ]
+    then
+      doEcho "Pip is already installed at ${PIP_CMD}"
+    fi
+  else
+    if doIsWindows
+    then
+      doInstall "-" "${PIP_HOME}" "pip" "latest" "" "pip"
+      cd "${PIP_HOME}"
+      PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+      #doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${DEVON_IDE_HOME}/software/python"
+      doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${PIP_HOME}"
+      #rm "${PYTHON_HOME}/pip-latest-windows.py"
+      #PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+      #if [ -d "${PYTHON_HOME}/Scripts" ]
+      #then
+      #  echo mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
+      #  mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
+      #fi
+    else
+      doEcho "unsupported!"
+    fi
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "pip --version"
+  fi
+}
+
+function doRunPip() {
+  doSetup silent
+  if doIsQuiet
+  then
+    doRunCommand "pip ${*}" > /dev/null
+  else
+    doRunCommand "pip ${*}"
+  fi
+}
+
+PIP_HOME="${DEVON_IDE_HOME}/software/pip"
+
+case ${1} in 
+  "help" | "-h")
+    echo "Install Pip (Python Package Installer)."
+    echo
+    echo "Arguments:"
+    echo " setup                    setup pip."
+    echo " «args»                   call pip with the specified arguments (call 'pip --help' for details)."
+    echo
+  ;;
+  "setup" | "s" | "")
+    doSetup "${2}"
+  ;;
+  "version" | "-v" | "--version")
+     doRunPip --version
+  ;;
+  *)
+     doRunPip "${@}"
+  ;;
+esac
