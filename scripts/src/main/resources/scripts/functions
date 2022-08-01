@@ -1533,7 +1533,17 @@ function doIsPackageJsonContainingScript() {
   fi
 }
 
-# Ensurese that Windows WSL is properly available.
+# use homebrew (MacOS) to install software
+function doBrewInstall() {
+  if command -v brew &> /dev/null
+  then
+    doRunCommand "brew install ${*}"
+  else
+    doFail "Homebrew is required to install ${*}. Please install it manually from https://brew.sh/ and rerun your command."
+  fi
+}
+
+# Ensures that Windows WSL is properly available.
 function doRequireWsl() {
   local error
   if ! command -v wsl &> /dev/null
