@@ -47,19 +47,27 @@ BTW: Windows 10 has already an SSH client included.
 .Tabs for SSH
 image::images/tools-tabs-ssh.png["tabs for SSH sessions"]
 
-=== Tabs for CMD
+=== Tabs for Shells
+If you want to use different shells like CMD, Powershell, git-bash, WSL, SSH, etc. via tabs inside one window, then use https://github.com/microsoft/terminal[Windows-Terminal] that can simply be installed for free via `Microsoft Store`.
+
+.Tabs for multiple shells inside one window
+image::images/WindowsTerminal.png["Shells inside Windows-Terminal"]
+
+
+For perfect integration, you should (re-)insall `git` after Windows-Terminal has been installed and check the option `Add a Git Bash Profile to Windows Terminal` or follow the https://www.timschaeps.be/post/adding-git-bash-to-windows-terminal/[manual integration].
+
+.Integration of git-bash into Windows-Terminal
+image::https://i.stack.imgur.com/96Blo.png["Intergate git-bash into Windows-Terminal"]
+
+==== ConEmu
+We recommend to use Windows Terminal now, but for the record here is still the suggestion hint we provided earlier:
+
 If you want to have tabs for your windows command-line you simply install https://conemu.github.io/[ConEmu]. Here you can also add other shells like Putty.
 
 .Tabs for CMD
 image::images/tools-tabs-cmd.png["tabs for windows shells"]
 
 See link:integration.asciidoc[integration] to make ConEmu work flawless with `devonfw-ide`.
-
-=== Tabs for CMD, git-bash, WSL, Powershell and more inside one window 
-If you want to use different shells like CMD, Powershell, git-bash, WSL, SSH or Azure via tabs inside one window, then use https://github.com/microsoft/terminal[Windows Terminal].
-
-.Tabs for multiple shells inside one window
-image::images/WindowsTerminal.png["Shells inside Windows Terminal"]
 
 == Windows Helpers
 
