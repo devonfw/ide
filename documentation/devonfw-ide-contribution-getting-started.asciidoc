@@ -11,8 +11,9 @@ Therefore simply follow the link:setup.asciidoc[setup] guide.
 To begin, read through the https://github.com/devonfw/.github/blob/master/CONTRIBUTING.asciidoc[Contribution Guidelines], which you should be sure to follow.
 First steps regarding forks or cloning of repos and creating branches, as well as some git commands, https://github.com/firstcontributions/first-contributions[can be found here].
 Clone the https://github.com/devonfw/ide[project IDE] at the beginning.
-For further development and testing, it is recommended to copy the modified scripts into your devonfw-ide installation.
+For further development and testing, it is recommended to xref:symbolic-links[symlink] the modified scripts into your devonfw-ide installation.
 Alternatively, the scripts can be adapted in the installation folder and then committed to the project.
+For creating a contribution also check the link:DoD.asciidoc[Definition of Done] (DoD).
 
 === ShellCheck
 
