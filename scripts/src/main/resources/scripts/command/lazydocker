@@ -20,7 +20,6 @@ function doRun() {
   cd "${LAZYDOCKER_HOME}" || exit 1
   if doIsWindows
   then
-    read -r -p "inside if condition of doRun"
     powershell.exe -command 'start powershell {.\lazydocker.exe}'
   else
     ./lazydocker 
@@ -44,7 +43,40 @@ function doSetup() {
         version=${latestversion}
       fi
     fi
+    doCheckDockerVersions
     doInstall "-" "${LAZYDOCKER_HOME}" "lazydocker" "${version}"
+  fi
+}
+
+function doCheckDockerVersions() {
+  local DOCKERENGVERSION
+  DOCKERENGVERSION=$(docker version | grep "Version" | head -1 | sed -ne 's/.*\([0-9][0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
+  local DOCKERAPIVERSION
+  DOCKERAPIVERSION=$(docker version | grep "API version" | head -1 | sed -ne 's/.*\([0-9]\+\.[0-9]\+\).*/\1/p')
+  doVersionCompare "1.3.0" "${DOCKERENGVERSION}"
+  local res1=$?
+  doVersionCompare "1.25" "${DOCKERAPIVERSION}"
+  local res2=$?
+  local ressum=$((res1 + res2))
+  doWarning "Please be aware, that if you want to use docker-compose with lazydocker, then you'll need at least version 1.23.2 of docker-compose"
+  if [ "${res1}" == "1" ] || [ "${res2}" == "1" ]
+  then
+    if [ "${res1}" == "1" ]
+    then
+      doWarning "\nIt seems as if your docker-engine version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.3.0"
+      read -r -p "Continue by pressing enter"
+    fi
+    if [ "${res2}" == "1" ]
+    then
+      doWarning "\nIt seems as if your docker-API version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.25.0"
+      read -r -p "Continue by pressing enter"
+    fi
+  elif [ "${ressum}" == "4" ] || [ "${ressum}" == "0" ] || [ "${ressum}" == "2" ]
+  then
+    doSuccess "\nDocker-Engine and Docker-API versions are sufficient"
+  else
+    doWarning "\nSomething went wrong, is your docker-daemon running or did you forget to start Rancher Desktop?"
+    read -r -p "Continue by pressing enter"
   fi
 }
 
@@ -63,6 +95,10 @@ case ${1} in
 "setup" | "s" )
   doEcho "Installing lazydocker..."
   doSetup
+;;
+"version" | "v" )
+  lazydversion=$(cat "${LAZYDOCKER_HOME}"/.devon.software.version)
+  doInfo "Current version of lazydocker is ${lazydversion}"
 ;;
 *)
   echo "running lazydocker-binary"
