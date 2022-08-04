@@ -8,9 +8,9 @@ It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs,
 
 That is not all. `devonfw-ide` extends the existing shell with helpful commands to automate the provisioning of the development environment.
 
-Here is a small video which showcases what you can do with `devonfw-ide`:
+//Here is a small video which showcases what you can do with `devonfw-ide`:
 
-[youtube video link]
+//[youtube video link]
 
 == Why do you need devonfw-ide?
 
@@ -48,14 +48,19 @@ We support the following IDEs:
 * link:intellij.asciidoc[IntelliJ]
 
 === Platforms
-We support the following platforms:
+Some of the major platforms supported by `devon` are:
 
 * link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
 * link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
 * link:node.asciidoc[node], link:ng.asciidoc[angular] and link:ionic.asciidoc[ionic] (see https://github.com/devonfw/devon4ng/wiki[devon4ng])
 
+Here are the list of platforms which `devon` supprts currently.
+
+https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/command
+
+
 === Build-Systems
-We support the following build-systems:
+We support the following build-systems out of the box. Any other build system can be supported by putting some manual effort.
 
 * link:mvn.asciidoc[mvn] (maven)
 * link:npm.asciidoc[npm]
