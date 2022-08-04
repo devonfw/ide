@@ -32,7 +32,12 @@ function doSetup() {
       cd "${PIP_HOME}"
       PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
       #doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${DEVON_IDE_HOME}/software/python"
-      doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${PIP_HOME}"
+      doDevonCommand python pip-latest-windows.py --no-warn-script-location
+      mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}"
+      export PATH="${PYTHON_HOME}:${PATH}"
+      pip install virtualenv
+      mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}"
+      #"--target=${PIP_HOME}"
       #rm "${PYTHON_HOME}/pip-latest-windows.py"
       #PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
       #if [ -d "${PYTHON_HOME}/Scripts" ]
