@@ -6,12 +6,9 @@ total=0
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
 cd scripts/command
-rm node
-rm az
-rm eclipse
 for command in *
 do
-  "${CLI}" "${command}"
+  "${CLI}" "${command}" &> /dev/null
   result=${?}
   if [ "${result}" == 0 ]
   then
