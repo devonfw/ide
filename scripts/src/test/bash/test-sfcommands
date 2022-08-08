@@ -8,7 +8,7 @@ CLI="${PWD}/scripts/devon"
 cd scripts/command
 for command in *
 do
-  "${CLI}" "${command}" &> /dev/null
+  "${CLI}" "${command}"
   result=${?}
   if [ "${result}" == 0 ]
   then
