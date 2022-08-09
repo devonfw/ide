@@ -459,7 +459,7 @@ function doCreate() {
     then
       mkdir -p "${create_path}"
     fi
-    
+    # shellcheck disable=SC2012
     count_lines="$(ls -alF "${create_path}" | wc -l)"
     if [ "${count_lines}" -gt 3 ]
     then
