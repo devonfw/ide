@@ -20,7 +20,7 @@ function doRun() {
   cd "${LAZYDOCKER_HOME}" || exit 1
   if doIsWindows
   then
-    ldInPathRes=$(echo $PATH | tr ":" "\n" | grep lazydocker)
+    ldInPathRes=$(echo "$PATH" | tr ":" "\n" | grep lazydocker)
     if [ -z "${ldInPathRes}" ]
     then
       export PATH=${PATH}:"${LAZYDOCKER_HOME}"
@@ -78,7 +78,8 @@ function doCheckDockerVersions() {
   else 
     doSuccess "\nDocker-Engine and Docker-API versions are sufficient"
   fi
-  local DOCKERCOMPOSEVERSION=$(docker-compose version --short)
+  local DOCKERCOMPOSEVERSION
+  DOCKERCOMPOSEVERSION=$(docker-compose version --short)
   doVersionCompare "${DOCKERCOMPOSEVERSION}" "1.23.2"
   res3=$?
   if [ "${res3}" == "2" ] 
