@@ -20,15 +20,21 @@ function doRun() {
   cd "${LAZYDOCKER_HOME}" || exit 1
   if doIsWindows
   then
-    powershell.exe -command 'start powershell {.\lazydocker.exe}'
+    ldInPathRes=$(echo $PATH | tr ":" "\n" | grep lazydocker)
+    if [ -z "${ldInPathRes}" ]
+    then
+      export PATH=${PATH}:"${LAZYDOCKER_HOME}"
+    fi
+    powershell.exe -command 'start powershell {lazydocker}'
   else
-    ./lazydocker 
+    ./lazydocker
   fi
 }
 
 function doSetup() {
   if [ ! -d "${LAZYDOCKER_HOME}" ] || [ "${1}" != "silent" ]
   then
+    doDevonCommand docker setup silent
     local version="${LAZYDOCKER_VERSION}"
     # Get latest release
     if [ -z "${version}" ]
@@ -50,33 +56,34 @@ function doSetup() {
 
 function doCheckDockerVersions() {
   local DOCKERENGVERSION
-  DOCKERENGVERSION=$(docker version | grep "Version" | head -1 | sed -ne 's/.*\([0-9][0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
+  DOCKERENGVERSION=$(docker version --format '{{.Client.Version}}' | sed -ne 's/.*\([0-9][0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
   local DOCKERAPIVERSION
-  DOCKERAPIVERSION=$(docker version | grep "API version" | head -1 | sed -ne 's/.*\([0-9]\+\.[0-9]\+\).*/\1/p')
-  doVersionCompare "1.3.0" "${DOCKERENGVERSION}"
+  DOCKERAPIVERSION=$(docker version --format '{{.Client.APIVersion}}' | sed -ne 's/.*\([0-9]\+\.[0-9]\+\).*/\1/p')
+  doVersionCompare "${DOCKERENGVERSION}" "1.3.0"
   local res1=$?
-  doVersionCompare "1.25" "${DOCKERAPIVERSION}"
+  doVersionCompare "${DOCKERAPIVERSION}" "1.25"
   local res2=$?
-  local ressum=$((res1 + res2))
-  doWarning "Please be aware, that if you want to use docker-compose with lazydocker, then you'll need at least version 1.23.2 of docker-compose"
-  if [ "${res1}" == "1" ] || [ "${res2}" == "1" ]
+  if [ "${res1}" == "2" ] || [ "${res2}" == "2" ]
   then
-    if [ "${res1}" == "1" ]
+    if [ "${res1}" == "2" ]
     then
       doWarning "\nIt seems as if your docker-engine version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.3.0"
       read -r -p "Continue by pressing enter"
     fi
-    if [ "${res2}" == "1" ]
+    if [ "${res2}" == "2" ]
     then
       doWarning "\nIt seems as if your docker-API version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.25.0"
       read -r -p "Continue by pressing enter"
     fi
-  elif [ "${ressum}" == "4" ] || [ "${ressum}" == "0" ] || [ "${ressum}" == "2" ]
-  then
+  else 
     doSuccess "\nDocker-Engine and Docker-API versions are sufficient"
-  else
-    doWarning "\nSomething went wrong, is your docker-daemon running or did you forget to start Rancher Desktop?"
-    read -r -p "Continue by pressing enter"
+  fi
+  local DOCKERCOMPOSEVERSION=$(docker-compose version --short)
+  doVersionCompare "${DOCKERCOMPOSEVERSION}" "1.23.2"
+  res3=$?
+  if [ "${res3}" == "2" ] 
+  then
+    doWarning "Please be aware, that if you want to use docker-compose with lazydocker, then you'll need at least version 1.23.2 of docker-compose"
   fi
 }
 
