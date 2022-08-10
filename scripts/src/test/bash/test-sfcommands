@@ -6,6 +6,7 @@ total=0
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
 cd scripts/command
+rm node
 for command in *
 do
   "${CLI}" "${command}"
