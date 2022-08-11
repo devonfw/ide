@@ -714,8 +714,7 @@ function doUnzip() {
     pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
 
     for t in "${pckmngers[@]}"; do
-      command -v "${t}" > /dev/null
-      if [ "${?}" -eq "0" ]
+      if command -v "${t}" > /dev/null 
       then
         pckmnger=${t}
       fi
@@ -741,7 +740,8 @@ function doUnzip() {
              exit;;
     esac
   fi
-  doEcho "unzip archive..."
+  local target_dir
+  target_dir=${2}
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
 
