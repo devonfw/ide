@@ -1,39 +1,68 @@
 #!/bin/bash
-success=0
-failure=0
-failures=()
-total=0
+
+function doCommands() {
+  success=0
+  failure=0
+  failures=()
+  total=0
+  for command in *
+  do
+    echo "Running command ${command}"
+    "${CLI}" "${command}" setup &> /dev/null
+    result=${?}
+    if [ "${result}" == 0 ]
+    then
+      echo "[SUCCESS] Succeeded running command #${total}: ${command}"
+      let "success++"
+    else
+      echo "[ERROR] Failed running command #${total}: ${command} - exit code ${result}"
+      failures+=("${command}")
+      let "failure++"
+    fi
+    let "total++"
+  done
+  echo
+  echo "*****************************************************"
+  echo "Executed #${total} commands(s), #${success} succeeded and #${failure} failed"
+  if [ "${failure}" == 0 ]
+  then
+    echo "All commands succeeded. Fine!"
+  else
+    echo "There are commands failures! Please check and fix the following commands."
+    for i in "${failures[@]}"
+    do
+      echo "${i}"
+    done
+    exit 1
+  fi
+  }
+
+function doActivatePlugins () {
+  for plugin in ${1}/* 
+  do
+    sed '/plugin_active/ s/false/true/' ${plugin}
+  done
+}
+
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
+rm -r software
+doActivatePlugins setting/eclipse/plugins
+doActivatePlugins setting/intellij/plugins
+doActivatePlugins setting/vscode/plugins
 cd scripts/command
-for command in *
-do
-  echo "Running command ${command}(#${total})"
-  "${CLI}" "${command}" setup &> /dev/null
-  result=${?}
-  if [ "${result}" == 0 ]
-  then
-    echo "[SUCCESS] Succeeded running command #${total}: ${command}"
-    let "success++"
-  else
-    echo "[ERROR] Failed running command #${total}: ${command} - exit code ${result}"
-    failures+=("${command}")
-    let "failure++"
-  fi
-  let "total++"
-done
-echo
-echo "*****************************************************"
-echo "Executed #${total} commands(s), #${success} succeeded and #${failure} failed"
-if [ "${failure}" == 0 ]
-then
-  echo "All commands succeeded. Fine!"
-else
-  echo "There are commands failures! Please check and fix the following commands."
-  for i in "${failures[@]}"
-  do
-    echo "${i}"
-  done
-  exit 1
-fi
+rm build
+rm help
+doCommands
+rm -r ../../software
+export EXTRA_JAVA_VERSION=8u342b07
+echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
+"${CLI}" java setup
+doCommands
+rm -r ../../software
+export EXTRA_JAVA_VERSION=18.0.2_9
+echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
+"${CLI}" java setup
+doCommands
+
 
