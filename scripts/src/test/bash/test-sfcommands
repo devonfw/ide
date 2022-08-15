@@ -33,7 +33,6 @@ function doCommands() {
     do
       echo "${i}"
     done
-    exit 1
   fi
   }
 
@@ -64,5 +63,5 @@ export EXTRA_JAVA_VERSION=18.0.2_9
 echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
 "${CLI}" java setup
 doCommands
-
+exit 1
 
