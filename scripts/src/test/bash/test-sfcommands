@@ -46,9 +46,9 @@ function doActivatePlugins () {
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
 rm -r software
-doActivatePlugins setting/eclipse/plugins
-doActivatePlugins setting/intellij/plugins
-doActivatePlugins setting/vscode/plugins
+doActivatePlugins "settings/eclipse/plugins"
+doActivatePlugins "settings/intellij/plugins"
+doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
 rm help
