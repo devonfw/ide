@@ -1,95 +1,101 @@
 :toc:
 toc::[]
 
-== Functions for testing flags ==
+== Functions for testing flags
 The functions for testing flags return a 0 if the corresponding flag is set in the form of a variable. The name of the flag is part of the function name.
 
-=== doIsBatch ===
+=== doIsBatch
 This function returns a 0 if the variable "batch" is set.
 
-=== doIsDebug ===
+=== doIsDebug
 This function returns a 0 if the variable "debug" is set and the -q option is not specified.
 
-=== doIsForce ===
+=== doIsForce
 This function returns a 0 if the variable "force" is set.
 
-=== doIsQuiet ===
+=== doIsQuiet
 This function returns a 0 if the variable "quiet" is set.
 
-== Functions for input and output ==
+== Functions for input and output
 
-=== doAskToContinue ===
+=== doAskToContinue
 A message can be passed as the first parameter to the doAskToContinue function. If this is not done, the standard message "Do you want to continue?" used. If the variable force is set, the message is output and the function ends directly with the return value 0. If neither the variable force nor the variable batch is set, the message is output in a loop and the input of yes, no or no input at all is awaited. With "yes" or no specification at all, it ends the function with the return value 0, and with "no" it is checked whether return was passed as the second parameter. If this is the case, the function ends with the return value 255, otherwise the entire program ends with the return value 255.
 
-=== doConfirmWarning ===
+=== doConfirmWarning
 The doConfirmWarning function calls the doWarning function with the message passed to it, and then calls the doAskToContinue function with no parameters.
 
-=== doEcho ===
+=== doEcho
 The doEcho function prints the arguments passed to it if the variable quiet is not set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
 
-=== doEchoAttention ===
+=== doEchoAttention
 The doEchoAttention function returns the header ******** ATTENTION ******** followed by the message specified as a parameter. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
 
-=== doEchoInteraction ===
+=== doEchoInteraction
 The doEchoInteraction function outputs the message passed as a parameter in light blue and appends a blank line, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== doEchoOption ===
+=== doEchoOption
 The doEchoOption function outputs the message passed as a parameter in light blue, and allows backslash-escaped characters, e.g. "\n" for new line.
 
-=== doEchoStep ===
+=== doEchoStep
 The doEchoStep function prints the message passed as a parameter with three asterisks before and after the message in purple, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== doError ===
+=== doError
 The doError function prints the message passed to it in bright red.
 
-=== doFail ===
+=== doFail
 The doFail function is called with an error message as the first parameter and an exit code as the second parameter. The function first calls the doEchoAttention function without parameter, followed by the specified error message and a message on how to proceed. If a 0 is specified as the exit code, the function ends with exit code 1, otherwise with the specified exit code. If no exit code is specified, the function terminates with exit code 255.
 
-=== doInfo ===
+=== doInfo
 The doInfo function prints the message passed as a parameter in blue and appends an extra blank line, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== doLicenseAgreement ===
+=== doLicenseAgreement
 The doLicenseAgreement function checks whether the DEVON_HOME_DIR/.devon/.license.agreement file exists locally. If the file exists, the function exits with the return value 0. If the file does not exist, the function calls doLogo and then license information about devonfw-ide. Then the website with the license conditions is called up or an error is output if the variable batch is set. Now the question is asked in a loop until either "yes" or "no" is entered. If "no" is entered, the function ends with a return value of 255. If "yes" is entered, the license from the opened website is saved in the local file DEVON_HOME_DIR/.devon/.license.agreement stored and the function ends with return value 0.
 
-=== doLogo ===
+=== doLogo
 The doLogo function prints out the devon logo.
 
-=== doQuestion ===
+=== doQuestion
 The doQuestion function outputs the message passed to it in light blue.
 
-=== doResult ===
+=== doResult
 The function doResult outputs the message passed as the first parameter, depending on the second parameter as Succeeded for 0 or Failed for all other values. If the second parameter is not specified, Failed (internal error missing exit code) is output.
 
-=== doSuccess ===
+=== doSuccess
 The doSuccess function outputs the message passed to it in green.
 
-=== doWarning ===
+=== doWarning
 The doWarning function outputs the text "WARNING:" with the message passed in the parameter and allows backslash-escaped characters, for example "\n" for new line.
 
-== Environment Checks ==
+== Environment Checks
 
-=== doIsMacOs ===
+=== doIsMacOs
 The doIsMacOs function returns 0 if the operating system is detected as MacOs. If not, a 255 is returned.
 
-=== doIsWindows ===
+=== doIsWindows
 The doIsWindows function returns 0 if the operating system is detected as Windows. If not, a 255 is returned.
 
-== Functions for Maven ==
+== Functions for Maven
 
-=== doArrayContainsItemWithPrefix ===
+=== doArrayContainsItemWithPrefix
+to do
 
-=== doMavenArchetype ===
+=== doMavenArchetype
+to do
 
-=== doMavenGetLatestVersion ===
+=== doMavenGetLatestVersion
+to do
 
-=== doUpgradeMavenArtifact ===
+=== doUpgradeMavenArtifact
+to do 
 
 = doBackup
 A file or directory is transferred to the doBackup function as the first parameter and the date after which the backup directory is named that is to be created in the /updates/backups subdirectory for the backup as the second parameter. If the second parameter is not specified, the current date is used. If a single file is specified in the first parameter and such a file already exists in the backup directory, then a time stamp is added to the backup directory as an additional subdirectory. Then the backup directory is created and the files to be backed up are moved there.
 
 = doConfigureWorkspace
+to do
 
 = doCreateIdeScript
+to do
 
 = doDebug
 The doDebug function is called with arguments that are printed if the variable debug is set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the arguments.
@@ -104,6 +110,7 @@ The doDevonCommandAllWorkspaces function is given a devon command as a parameter
 The doDevonCommandAndReturn function is passed a command from the devon environment with parameters as a parameter, i.e. a command that must be installed under DEVON_IDE_HOME/scripts/command. If no parameter is given, an error message is output using the doFail function. If the specified command does not exist, an error message is also output using doFail. If the command exists, it is checked whether it is executable and, if not so, set to executable. Then the command is called with the options batch, force, debug and quiet, if set, and the specified parameters. If the command encounters an error, an error message is output with the return value passed by the command. Otherwise the function ends with the return value 0.
 
 = doDownload
+to do
 
 = doDownloadInternal
 The function doDownloadInternal is given the URL as the first parameter, a temporary name for the file to be downloaded as the second, and the target directory in which the file is to be stored as the third parameter. Optionally, the name of the downloaded file can be given as a fourth parameter. If this does not happen, the name is determined from the URL. If the file exists and the force option was not specified, the function ends with a corresponding message and the return value 255. Otherwise the file is downloaded and, if successful, moved to the target directory.
