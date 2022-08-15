@@ -8,7 +8,8 @@ CLI="${PWD}/scripts/devon"
 cd scripts/command
 for command in *
 do
-  "${CLI}" "${command}"
+  echo "Running command ${command}(#${total})"
+  "${CLI}" "${command}" setup &> /dev/null
   result=${?}
   if [ "${result}" == 0 ]
   then
