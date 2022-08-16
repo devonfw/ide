@@ -1,12 +1,5 @@
 #!/bin/bash
 
-function doCommands2() {
-  echo "doCommands2"
-  command -v java
-  where java
-  "${CLI}" intellij setup &> /dev/null
-}
-
 function doCommands() {
   success=0
   failure=0
@@ -60,11 +53,11 @@ doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
 rm help
-doCommands2
+doCommands
 rm -f -r "../../software"
 export EXTRA_JAVA_VERSION=18.0.2_9
 echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
 "${CLI}" java setup
-doCommands2
+doCommands
 exit 1
 
