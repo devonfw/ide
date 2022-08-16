@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function doCommands2() {
+  echo "doCommands2"
+  command -v java
+  where java
+  "${CLI}" intellij setup &> /dev/null
+}
+
 function doCommands() {
   success=0
   failure=0
@@ -39,29 +46,25 @@ function doCommands() {
 function doActivatePlugins () {
   for plugin in ${1}/* 
   do
-    sed '/plugin_active/ s/false/true/' ${plugin}
+    sed '/plugin_active/ s/false/true/' ${plugin} &> /dev/null
   done
 }
 
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
-rm -r software
+SOFTWARE="${PWD}/software"
+rm -f -r software
 doActivatePlugins "settings/eclipse/plugins"
 doActivatePlugins "settings/intellij/plugins"
 doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
 rm help
-doCommands
-rm -r ../../software
-export EXTRA_JAVA_VERSION=8u342b07
-echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
-"${CLI}" java setup
-doCommands
-rm -r ../../software
+doCommands2
+rm -f -r "../../software"
 export EXTRA_JAVA_VERSION=18.0.2_9
 echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
 "${CLI}" java setup
-doCommands
+doCommands2
 exit 1
 
