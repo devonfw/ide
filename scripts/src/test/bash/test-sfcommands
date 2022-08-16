@@ -1,41 +1,5 @@
 #!/bin/bash
 
-function doCommands() {
-  success=0
-  failure=0
-  failures=()
-  total=0
-  for command in *
-  do
-    echo "Running command ${command}"
-    "${CLI}" "${command}" setup &> /dev/null
-    result=${?}
-    if [ "${result}" == 0 ]
-    then
-      echo "[SUCCESS] Succeeded running command #${total}: ${command}"
-      let "success++"
-    else
-      echo "[ERROR] Failed running command #${total}: ${command} - exit code ${result}"
-      failures+=("${command}")
-      let "failure++"
-    fi
-    let "total++"
-  done
-  echo
-  echo "*****************************************************"
-  echo "Executed #${total} commands(s), #${success} succeeded and #${failure} failed"
-  if [ "${failure}" == 0 ]
-  then
-    echo "All commands succeeded. Fine!"
-  else
-    echo "There are commands failures! Please check and fix the following commands."
-    for i in "${failures[@]}"
-    do
-      echo "${i}"
-    done
-  fi
-  }
-
 function doActivatePlugins () {
   for plugin in ${1}/* 
   do
@@ -43,9 +7,12 @@ function doActivatePlugins () {
   done
 }
 
+success=0
+failure=0
+failures=()
+total=0
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
-SOFTWARE="${PWD}/software"
 rm -f -r software
 doActivatePlugins "settings/eclipse/plugins"
 doActivatePlugins "settings/intellij/plugins"
@@ -53,11 +20,57 @@ doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
 rm help
-doCommands
-rm -f -r "../../software"
-export EXTRA_JAVA_VERSION=18.0.2_9
-echo "Running test with Java-Version: ${EXTRA_JAVA_VERSION}"
+rm release
+for command in *
+do
+  echo "Running command ${command}"
+  "${CLI}" "${command}" setup &> /dev/null
+  result=${?}
+  if [ "${result}" == 0 ]
+  then
+    echo "[SUCCESS] Succeeded running command #${total}: ${command}"
+    let "success++"
+  else
+    echo "[ERROR] Failed running command #${total}: ${command} - exit code ${result}"
+    failures+=("${command}")
+    let "failure++"
+  fi
+  let "total++"
+done
+echo
+echo "*****************************************************"
+echo "Executed #${total} commands(s), #${success} succeeded and #${failure} failed"
+if [ "${failure}" == 0 ]
+then
+  echo "All commands succeeded. Fine!"
+else
+  echo "There are commands failures! Please check and fix the following commands."
+  for i in "${failures[@]}"
+  do
+    echo "${i}"
+  done
+fi
+
+echo "Running test for EXTRA_JAVA_VERSION"
+export EXTRA_JAVA_VERSION=8u292b10
 "${CLI}" java setup
-doCommands
-exit 1
+if [[ -d "../../software/extra/java" ]] 
+then
+  echo "[SUCCESS] EXTRA_JAVA_VERSION."
+else
+  echo "[FAILURE] EXTRA_JAVA_VERSION."
+fi
+
+echo "Running test for JAVA_VERSION"
+export JAVA_VERSION=18.0.2_9
+"${CLI}" java setup
+CURRENT_JAVA_VERSION=$(cat "../../software/java/.devon.software.version")
+if [[ "${JAVA_VERSION}" == "${CURRENT_JAVA_VERSION}" ]]
+then
+  echo "[SUCCESS] JAVA_VERSION."
+else
+  echo "[FAILURE] JAVA_VERSION."
+fi
+
+
 
