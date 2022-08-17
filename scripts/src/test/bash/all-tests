@@ -11,6 +11,10 @@ export DEVON_SKIP_PROJECT_SETUP=true
 for testpath in "$(dirname $0)"/test-*
 do
   testcase="${testpath/*\//}"
+  if [[ "${COMMAND_TEST}" && "${testcase}" == "test-sfcommands" ]]
+  then
+    continue
+  fi
   echo "Running test #${total}: ${testcase}"
   mkdir -p "${testcase}/conf"
   cd "${testcase}"
