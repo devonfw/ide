@@ -1,0 +1,27 @@
+name: CI Build MacOS
+on: push
+  #schedule:
+   # - cron: '0 0 * * *'
+jobs:
+  check_commit:
+    uses: devonfw/ide/.github/workflows/check-commit.yml@master
+    
+  build:
+    runs-on: macos-latest
+    needs: check_commit
+    if: ${{ needs.check_commit.outputs.should_run != 'false' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Set up Shellcheck
+        run: brew install shellcheck
+      - name: Set Command Test
+        run: export COMMAND_TEST=true
+      - name: Build project with Maven
+        run: mvn -B -ntp install
