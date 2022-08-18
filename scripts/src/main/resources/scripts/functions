@@ -740,7 +740,6 @@ function doUnzip() {
              exit;;
     esac
   fi
-  local target_dir
   target_dir=${2}
   doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
 }
