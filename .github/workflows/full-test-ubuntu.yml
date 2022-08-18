@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-      - name: Set Command Test
-        run: export COMMAND_TEST=true
       - name: Build project with Maven
-        run: mvn -B -ntp install
+        run: |
+          export COMMAND_TEST=false 
+          mvn -B -ntp install
