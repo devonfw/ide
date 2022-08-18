@@ -21,7 +21,7 @@ jobs:
           java-version: '11'
       - name: Set up Shellcheck
         run: brew install shellcheck
-      - name: Set Command Test
-        run: export COMMAND_TEST=true
       - name: Build project with Maven
-        run: mvn -B -ntp install
+        run: |
+          export COMMAND_TEST=true
+          mvn -B -ntp install
