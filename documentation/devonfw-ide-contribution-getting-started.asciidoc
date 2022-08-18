@@ -10,7 +10,7 @@ Therefore simply follow the link:setup.asciidoc[setup] guide. It is important to
 == Contribution
 To begin, read through the https://github.com/devonfw/.github/blob/master/CONTRIBUTING.asciidoc[Contribution Guidelines], which you should be sure to follow.
 First steps regarding forks or cloning of repos and creating branches, as well as some git commands, can be found inside https://github.com/firstcontributions/first-contributions[ this first contributions guideline].
- To contribute code or text regarding the devon-ide at first you need to fork the https://github.com/devonfw/ide[project IDE] and can then clone your fork into your devon ide installations workspaces-folder (just make sure to execute 'git init' inside 'workspaces' before cloning). Here the https://github.com/firstcontributions/first-contributions[first contributions guideline] can be very helpful.
+ To contribute code or text regarding the devon-ide at first you need to fork the https://github.com/devonfw/ide[project IDE] and can then clone your fork into your devon ide installations workspaces-folder. For this the https://github.com/firstcontributions/first-contributions[first contributions guideline] can be very helpful.
 For further development and testing, it is recommended to xref:symbolic-links[symlink] the modified scripts into your devonfw-ide installation.
 Alternatively, the scripts can be adapted in the installation folder and then committed to the project.
 For creating a contribution also check the link:DoD.asciidoc[Definition of Done] (DoD).
