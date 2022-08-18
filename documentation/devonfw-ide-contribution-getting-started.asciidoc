@@ -5,19 +5,19 @@ toc::[]
 
 == Installation
 To start developing devonfw-ide, you must first install it on your computer.
-Therefore simply follow the link:setup.asciidoc[setup] guide. It is important to notice that this installation gives you the latest published version of the devon-ide with which you can execute commands like eclipse or docker whose scripts are located inside the "${DEVON_IDE_HOME}$/scripts/command, but for commiting code we use a differing folder structure. This will be addressed under xref:Contribution[Contribution].
+Therefore simply follow the link:setup.asciidoc[setup] guide. It is important to notice that this installation gives you the latest published version of the devonfw-ide with which you can execute commands like eclipse or docker whose scripts are located inside the "${DEVON_IDE_HOME}$/scripts/command, but for commiting code we use a differing folder structure. This will be addressed under xref:Contribution[Contribution].
 
 == Contribution
 To begin, read through the https://github.com/devonfw/.github/blob/master/CONTRIBUTING.asciidoc[Contribution Guidelines], which you should be sure to follow.
 First steps regarding forks or cloning of repos and creating branches, as well as some git commands, can be found inside https://github.com/firstcontributions/first-contributions[ this first contributions guideline].
- To contribute code or text regarding the devon-ide at first you need to fork the https://github.com/devonfw/ide[project IDE] and can then clone your fork into your devon ide installations workspaces-folder. For this the https://github.com/firstcontributions/first-contributions[first contributions guideline] can be very helpful.
+ To contribute code or text regarding the devonfw-ide at first you need to fork the https://github.com/devonfw/ide[project IDE] and then you can clone your fork into the folder `workspaces` in your devonfw-ide installation. For this the https://github.com/firstcontributions/first-contributions[first contributions guideline] can be very helpful.
 For further development and testing, it is recommended to xref:symbolic-links[symlink] the modified scripts into your devonfw-ide installation.
 Alternatively, the scripts can be adapted in the installation folder and then committed to the project.
 For creating a contribution also check the link:DoD.asciidoc[Definition of Done] (DoD).
 
 === ShellCheck
 
-To improve the code quality the https://github.com/koalaman/shellcheck/[ShellCheck] is used for devon-ide.
+To improve the code quality the https://github.com/koalaman/shellcheck/[ShellCheck] is used for devonfw-ide.
 There is a GitHub action _CI build PR_ for this. If this fails at the PR, you can find the error messages in the big logfile under _Build project with Maven_.
 For example, these look like this:
 
@@ -101,7 +101,7 @@ The following sub-sections give you some tipps and tricks to boost your producti
 With link:advanced-tooling-windows.asciidoc##create-symbolic-links[symbolic links] you can use one file or folder that is located inside one directory in one or multiple other directories, without copying the whole file or folder into the other directories.
 The file is still only saved at the initial location, but can be accessed through the  created links in a much more comfortable way.
 So you are actually just linked to the original file and therefore don't have to worry about differing versions of the file in your directories.
-This is very helpful for testing our devon-ide, because e.g. the commandlets folder for testing is not the same as the commandlets folder for git-commits. 
+This is very helpful for testing our devonfw-ide, because e.g. the commandlets folder for testing is not the same as the commandlets folder for git-commits. 
 Install https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[link shell extension] and follow the instructions for installation and  usage first. 
 Later on you can make symbolic links of files or folder from your "git folder" and add them into the folder in which the testing is supposed to take place:
 
@@ -124,7 +124,7 @@ That's why it is often enough to implement code for Mac or Linux (at least to so
 
 Let's get to the practical part of the Bash-usage. 
 
-**If you are using Windows**, make sure that you have git-bash installed, so you can execute the Bash commands mentioned in this intruduction. [Here you can find git for windows](https://git-scm.com/download/win). In some cases later on you may want or need to use WSL. Our project teams standard way is to install WSL via Rancher Desktop, which is easily installable with the devon-ide by using the command `devon docker setup`. If you don't have the devon-ide yet, then you can follow [this guide](https://github.com/devonfw/ide/blob/master/documentation/setup.asciidoc)
+**If you are using Windows**, make sure that you have git-bash installed, so you can execute the Bash commands mentioned in this intruduction. [Here you can find git for windows](https://git-scm.com/download/win). In some cases later on you may want or need to use WSL. Our project teams standard way is to install WSL via Rancher Desktop, which is easily installable with the devonfw-ide by using the command `devon docker setup`. If you don't have the devonfw-ide yet, then you can follow [this guide](https://github.com/devonfw/ide/blob/master/documentation/setup.asciidoc)
 
 The https://www.youtube.com/watch?v=oxuRxtrO2Ag[following video] gives you some important and helpful basics, still you don't need to know all of these commands directly by heart. Instead under the video you'll find a list with the commands mentioned in the video to make a command return to your mind. Also directly play around with those commands while watching the video to learn faster. 
 
