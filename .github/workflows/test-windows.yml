@@ -1,7 +1,7 @@
 name: CI Build Windows
-on: push
-  #schedule:
-    #- cron: '0 0 * * *'
+on:
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   check_commit:
     uses: devonfw/ide/.github/workflows/check-commit.yml@master
