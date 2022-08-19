@@ -14,7 +14,7 @@ total=0
 failedTest=false
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
-rm -f -r software
+#rm -f -r software
 doActivatePlugins "settings/eclipse/plugins"
 doActivatePlugins "settings/intellij/plugins"
 doActivatePlugins "settings/vscode/plugins"
