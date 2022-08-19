@@ -25,7 +25,7 @@ rm release
 for command in *
 do
   echo "Running command ${command}"
-  yes | "${CLI}" "${command}" setup &> /dev/null
+  echo "yes" | "${CLI}" "${command}" setup &> /dev/null
   result=${?}
   if [ "${result}" == 0 ]
   then
