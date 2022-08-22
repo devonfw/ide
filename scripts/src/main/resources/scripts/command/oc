@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+OPENSHIFT_HOME="${DEVON_IDE_HOME}/software/oc/"
+
+# openshift installation
+function doSetup(){
+if [ ! -d "${OPENSHIFT_HOME}" ] || [ ${1} != "silent" ]
+  then
+    doEcho "Getting latest release..."
+    local LATEST_VERSION=$(curl "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/" | awk -F "openshift-client-windows-" '/openshift-client-windows-/ {print $2}' | head -1 | awk -F'.zip' '{print $1}')
+    doInstall "-" "${OPENSHIFT_HOME}" "oc" "${LATEST_VERSION}"
+  else
+    oc
+  fi
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run Openshift CLI (command-line interface for Openshift)."
+  echo
+  echo "Arguments:"
+  echo " setup                    install Openshift on your machine."
+  echo " <<args>>                 call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
+  echo
+;;
+"setup" | "s" | "")
+  doSetup
+;;
+esac
