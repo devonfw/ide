@@ -1,7 +1,7 @@
 name: CI Build Windows
-on:
-  schedule:
-    - cron: '0 0 * * *'
+on: push
+  #schedule:
+   # - cron: '0 0 * * *'
 jobs:
   check_commit:
     uses: devonfw/ide/.github/workflows/check-commit.yml@master
@@ -25,9 +25,7 @@ jobs:
       - name: Set up Shellcheck
         run: choco install shellcheck
       - name: Build project with Maven
-        run: |
-          export COMMAND_TEST=false
-          mvn -B -ntp install
+        run: mvn -B -ntp install
           
         
         
