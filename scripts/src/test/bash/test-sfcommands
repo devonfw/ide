@@ -22,6 +22,7 @@ cd scripts/command
 rm build
 rm docker
 rm help
+rm kubectl
 rm release
 for command in *
 do
