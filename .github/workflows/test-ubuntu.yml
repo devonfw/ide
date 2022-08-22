@@ -20,6 +20,4 @@ jobs:
         with:
           java-version: '11'
       - name: Build project with Maven
-        run: |
-          export COMMAND_TEST=false
-          mvn -B -ntp install
+        run: mvn -B -ntp install
