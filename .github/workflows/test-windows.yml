@@ -26,6 +26,3 @@ jobs:
         run: choco install shellcheck
       - name: Build project with Maven
         run: mvn -B -ntp install
-          
-        
-        
