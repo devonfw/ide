@@ -20,13 +20,14 @@ doActivatePlugins "settings/intellij/plugins"
 doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
+rm docker
 rm help
 rm kubectl
 rm release
 for command in *
 do
   echo "Running command ${command}"
-  "${CLI}" "${command}" setup
+  "${CLI}" "${command}" setup &> /dev/null
   result=${?}
   if [ "${result}" == 0 ]
   then
