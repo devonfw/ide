@@ -20,7 +20,6 @@ doActivatePlugins "settings/intellij/plugins"
 doActivatePlugins "settings/vscode/plugins"
 cd scripts/command
 rm build
-rm docker
 rm help
 rm kubectl
 rm release
