@@ -1,0 +1,17 @@
+:toc:
+toc::[]
+
+= OpenShift CLI
+
+The oc commandlet is used to install OpenShift CLI. The instructions on how to use it can be found https://docs.openshift.com/container-platform/4.7/cli_reference/openshift_cli/getting-started-cli.html[here].
+
+
+The arguments (`devon oc «args»`) are explained in the following table:
+
+.Usage of `devon oc`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install OpenShift on your machine.
+|`«args»`         |call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
+|=======================
