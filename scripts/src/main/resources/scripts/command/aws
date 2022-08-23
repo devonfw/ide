@@ -17,7 +17,7 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${AWS_HOME}/aws" "${@}"
+  doRunCommand "${AWS_HOME}/aws ${*}"
 }
 
 # $1: path_to_package
