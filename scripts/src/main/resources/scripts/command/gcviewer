@@ -26,6 +26,7 @@ function doSetup(){
   
   if doIsMacOs
   then
+    doRunCommand "cd ${GCVIEWER_HOME}gcviewer"
     doRunCommand "unzip ${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}-mac.zip"
   fi
 }
