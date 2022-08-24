@@ -16,7 +16,6 @@ source "$(dirname "${0}")"/../functions
 
 GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer/"
 doEcho "Checking if the latest realease of GCViewer is installed..."
-LATEST_VERSION
 LATEST_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
 
 # gcviewer installation
@@ -26,7 +25,7 @@ function doSetup(){
   
   if doIsMacOs
   then
-    doRunCommand "cd ${GCVIEWER_HOME}gcviewer"
+    doRunCommand "cd ${GCVIEWER_HOME}"
     doRunCommand "unzip ${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}-mac.zip"
   fi
 }
@@ -50,6 +49,7 @@ function doStart(){
     then
       doSetup
     else
+      doEcho "Checking if Java is installed..."
       doDevonCommand "java"
       doEcho "Starting GCViewer..."
       doRunCommand "java -jar ${GCVIEWER_HOME}GCViewer.app/Contents/Java/gcviewer-${LATEST_VERSION}.jar"
