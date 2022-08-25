@@ -77,16 +77,16 @@ The doIsWindows function returns 0 if the operating system is detected as Window
 == Functions for Maven
 
 === doArrayContainsItemWithPrefix
-to do
+An array is defined from a number of elements, with the last element being defined as a prefix. The function doArrayContainsItemWithPrefix now checks the array if it contains elements that start with this prefix. If this is the case, the function ends with the return value 0, otherwise with 1.
 
 === doMavenArchetype
 to do
 
 === doMavenGetLatestVersion
-to do
+The doMavenGetLatestVersion function looks in the artifact repository specified in the (url) parameter for the latest version of the software stored there.
 
 === doUpgradeMavenArtifact
-to do 
+The function doUpgradeMavenArtifact first looks in the target directory to see if it is a git repository and then carries out a doGitPullOrClone if necessary and then terminates the function. If the target directory is not a git repository and LATEST was specified as the fourth parameter for the target version, then the latest target version of the Maven artifact (parameter 3) is determined under the url (parameter 2). Now the current version (parameter 6) is compared with the desired target version, and if it is the same or if the current version is greater than the target version, the function aborts with a corresponding message. If the target version is larger than the current version, the software is installed in the target version in the target directory (parameter 1).
 
 = doBackup
 A file or directory is transferred to the doBackup function as the first parameter and the date after which the backup directory is named that is to be created in the /updates/backups subdirectory for the backup as the second parameter. If the second parameter is not specified, the current date is used. If a single file is specified in the first parameter and such a file already exists in the backup directory, then a time stamp is added to the backup directory as an additional subdirectory. Then the backup directory is created and the files to be backed up are moved there.
