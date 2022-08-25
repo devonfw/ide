@@ -14,20 +14,28 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-doEcho "Checking if the latest realease of GCViewer is installed..."
-LATEST_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
-
-GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer/${LATEST_VERSION}/"
+GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer/"
 
 # gcviewer installation
 function doSetup(){
 
-    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${LATEST_VERSION}"
+  local GCVIEWER_VERSION="${1}"
+
+  if [ ! -z "${GCVIEWER_VERSION}" ]
+  then
+    doEcho "Getting GCviewer in version ${GCVIEWER_VERSION}..."
+    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}"
+  else
+    doEcho "Getting the latest release of GCViewer..."
+    GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
+    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}"
+  fi
 
   if doIsMacOs
   then
     cd ${GCVIEWER_HOME}
-    doRunCommand "unzip ${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}-mac.zip"
+    rm -r GCViewer.app
+    doRunCommand "unzip ${GCVIEWER_HOME}gcviewer-${GCVIEWER_VERSION}-mac.zip"
   fi
 
   doSuccess "GCViewer has been installed successfully!"
@@ -37,7 +45,7 @@ function doStart(){
 
   if doIsWindows
   then
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}/gcviewer-${LATEST_VERSION}-windows.jar" ]
+    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}/gcviewer*.jar" > /dev/null! ]
     then
       doSetup
     else
@@ -45,11 +53,12 @@ function doStart(){
       doDevonCommand "java"
       cd ${GCVIEWER_HOME}
       doEcho "Starting GCViewer..."
-      doRunCommand "java -jar gcviewer-${LATEST_VERSION}-windows.jar&"
+      local gcviewer_jar_file=$(ls -t | head -1)
+      doRunCommand "java -jar ${gcviewer_jar_file}&"
     fi
   elif doIsMacOs
   then
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}GCViewer.app/Contents/Java/gcviewer-${LATEST_VERSION}.jar" ]
+    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}GCViewer.app/Contents/Java/gcviewer*.jar" > /dev/null! ]
     then
       doSetup
     else
@@ -57,10 +66,11 @@ function doStart(){
       doDevonCommand "java"
       cd ${GCVIEWER_HOME}GCViewer.app/Contents/Java/
       doEcho "Starting GCViewer..."
-      doRunCommand "java -jar gcviewer-${LATEST_VERSION}.jar&"
+      local gcviewer_jar_file=$(ls -t | head -1)
+      doRunCommand "java -jar ${gcviewer_jar_file}&"
     fi
   else
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}-linux-gnu.jar" ]
+    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}gcviewer*.jar" > /dev/null! ]
     then
       doSetup
     else
@@ -68,7 +78,8 @@ function doStart(){
       doDevonCommand "java"
       cd ${GCVIEWER_HOME}
       doEcho "Starting GCViewer..."
-      doRunCommand "java -jar gcviewer-${LATEST_VERSION}-linux-gnu.jar&"
+      local gcviewer_jar_file=$(ls -t | head -1)
+      doRunCommand "java -jar ${gcviewer_jar_file}&"
     fi
   fi
 
@@ -81,12 +92,13 @@ case ${1} in
   echo "Setup or run gcviewer"
   echo
   echo "Arguments:"
-  echo " setup                    setup gcviewer on your machine."
+  echo " setup                    setup the latest version gcviewer on your machine."
+  echo " setup <version>          setup the gcviewer specified version on your machine."
   echo " start                    start gcviewer UI."
   echo
 ;;
 "setup" | "s")
-  doSetup
+  doSetup ${2}
 ;;
 "start" | "")
   doStart
