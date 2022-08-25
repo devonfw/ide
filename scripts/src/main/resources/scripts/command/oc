@@ -16,28 +16,37 @@ source "$(dirname "${0}")"/../functions
 
 OPENSHIFT_HOME="${DEVON_IDE_HOME}/software/oc/"
 
+# Call oc with specified arguments.
+function doRun() {
+  doSetup silent
+  doRunCommand "${OPENSHIFT_HOME}oc ${*}"
+}
+
 # openshift installation
 function doSetup(){
 
   if [ ! -d "${OPENSHIFT_HOME}" ] || [ "${1}" != "silent" ]
   then
-    # Getting leatest release
-    doEcho "Getting latest release..."
-    local MAJOR_VERSION
-    local LATEST_VERSION
-    MAJOR_VERSION=$(curl "https://mirror.openshift.com/pub/" | awk -F "openshift-v" '/openshift-v/ {print $2}' | sort -r | grep -o -E "[0-9]+" | uniq | head -1)
-    LATEST_VERSION=$(curl "https://mirror.openshift.com/pub/openshift-v${MAJOR_VERSION}/clients/ocp/latest/" | awk -F "openshift-client-windows-" '/openshift-client-windows-/ {print $2}' | head -1 | awk -F'.zip' '{print $1}')
-    doInstall "-" "${OPENSHIFT_HOME}" "oc" "${LATEST_VERSION}" "" "${MAJOR_VERSION}"
-  else
-    oc
+    # Getting latest release
+    if [ -z "${OC_VERSION}" ]
+    then
+      doEcho "Getting latest release..."
+      OC_VERSION=$(curl "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/" | awk -F "openshift-client-windows-" '/openshift-client-windows-/ {print $2}' | head -1 | awk -F'.zip' '{print $1}')
+    fi
+    doInstall "-" "${OPENSHIFT_HOME}" "oc" "${OC_VERSION}"
   fi
+
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "oc version"
+  fi 
 
 }
 
 # CLI
 case ${1} in 
 "help" | "-h")
-  echo "Setup or run Openshift CLI (command-line interface for Openshift)."
+  echo "Setup or run Openshift CLI."
   echo
   echo "Arguments:"
   echo " setup                    install Openshift CLI on your machine."
@@ -45,8 +54,10 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
+  doEcho "Installating oc..."
   doSetup
 ;;
 *)
-  doSetup silent
+  doRun "${@}"
+;;
 esac

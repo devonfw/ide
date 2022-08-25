@@ -3,15 +3,21 @@ toc::[]
 
 = OpenShift CLI
 
-The oc commandlet is used to install OpenShift CLI. The instructions on how to use it can be found https://docs.openshift.com/container-platform/4.7/cli_reference/openshift_cli/getting-started-cli.html[here].
+The `oc` commandlet is used to install OpenShift CLI. The instructions on how to use it can be found on https://docs.openshift.com/container-platform/4.7/cli_reference/openshift_cli/getting-started-cli.html[here].
+Call `devon oc «args»` with the arguments described in https://docs.openshift.com/container-platform/latest/cli_reference/openshift_cli/getting-started-cli.html#cli-using-cli_cli-developer-commands[here].
 
-
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
 The arguments (`devon oc «args»`) are explained in the following table:
 
 .Usage of `devon oc`
 [options="header"]
 |=======================
 |*Argument(s)*    |*Meaning*
-|`setup`          |install OpenShift on your machine.
-|`«args»`         |call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
+|`setup`          |install OpenShift CLI on your machine.
+|`«args»`         |call oc with the specified arguments. Call `oc --help` for details or use `oc` directly as preferred."
 |=======================
