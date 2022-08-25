@@ -22,8 +22,8 @@ GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer/${LATEST_VERSION}/"
 # gcviewer installation
 function doSetup(){
 
-  doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${LATEST_VERSION}"
-  
+    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${LATEST_VERSION}"
+
   if doIsMacOs
   then
     cd ${GCVIEWER_HOME}
@@ -56,6 +56,17 @@ function doStart(){
       doEcho "Checking if Java is installed..."
       doDevonCommand "java"
       cd ${GCVIEWER_HOME}GCViewer.app/Contents/Java/
+      doEcho "Starting GCViewer..."
+      doRunCommand "java -jar gcviewer-${LATEST_VERSION}.jar&"
+    fi
+  else
+    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}.jar" ]
+    then
+      doSetup
+    else
+      doEcho "Checking if Java is installed..."
+      doDevonCommand "java"
+      cd ${GCVIEWER_HOME}
       doEcho "Starting GCViewer..."
       doRunCommand "java -jar gcviewer-${LATEST_VERSION}.jar&"
     fi
