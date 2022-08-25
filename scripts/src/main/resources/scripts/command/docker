@@ -62,6 +62,7 @@ function doSetup() {
           doEnsureVpnKitInstallation
         elif doIsMacOs
         then
+          # shellcheck disable=SC2016
           doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
         else
           doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
