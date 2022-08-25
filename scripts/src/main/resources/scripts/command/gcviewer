@@ -60,7 +60,7 @@ function doStart(){
       doRunCommand "java -jar gcviewer-${LATEST_VERSION}.jar&"
     fi
   else
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}.jar" ]
+    if [ ! -d "${GCVIEWER_HOME}" ] || [ ! -f "${GCVIEWER_HOME}gcviewer-${LATEST_VERSION}-linux-gnu.jar" ]
     then
       doSetup
     else
@@ -68,7 +68,7 @@ function doStart(){
       doDevonCommand "java"
       cd ${GCVIEWER_HOME}
       doEcho "Starting GCViewer..."
-      doRunCommand "java -jar gcviewer-${LATEST_VERSION}.jar&"
+      doRunCommand "java -jar gcviewer-${LATEST_VERSION}-linux-gnu.jar&"
     fi
   fi
 
