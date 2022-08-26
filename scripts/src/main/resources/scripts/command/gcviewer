@@ -104,6 +104,6 @@ case ${1} in
   doStart
 ;;
 *)
-  doError "Unkown command. Call devon gcviewer to setup or start GCViewer OR devon gcviewer help for available commands"
+  doError "Unkown command. Call `devon gcviewer` to setup or start GCViewer OR devon gcviewer help for available commands"
 ;;
 esac
