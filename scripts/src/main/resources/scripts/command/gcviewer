@@ -19,67 +19,37 @@ GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer/"
 # gcviewer installation
 function doSetup(){
 
-  local GCVIEWER_VERSION="${1}"
-
-  if [ ! -z "${GCVIEWER_VERSION}" ]
+  if [ -z "${GCVIEWER_VERSION}" ]
   then
-    doEcho "Getting GCviewer in version ${GCVIEWER_VERSION}..."
-    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}"
-  else
     doEcho "Getting the latest release of GCViewer..."
     GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
-    doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}"
   fi
+
+  doDownload "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}"
 
   if doIsMacOs
   then
-    cd ${GCVIEWER_HOME}
-    rm -r GCViewer.app
+    cd "${GCVIEWER_HOME}"
     doRunCommand "unzip ${GCVIEWER_HOME}gcviewer-${GCVIEWER_VERSION}-mac.zip"
   fi
-
-  doSuccess "GCViewer has been installed successfully!"
+  
 }
 
 function doStart(){
 
-  if doIsWindows
+  if [ ! -d "${GCVIEWER_HOME}" ] 
   then
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}/gcviewer*.jar" > /dev/null! ]
-    then
-      doSetup
-    else
-      doEcho "Checking if Java is installed..."
-      doDevonCommand "java"
-      cd ${GCVIEWER_HOME}
-      doEcho "Starting GCViewer..."
-      local gcviewer_jar_file=$(ls -t | head -1)
-      doRunCommand "java -jar ${gcviewer_jar_file}&"
-    fi
-  elif doIsMacOs
-  then
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}GCViewer.app/Contents/Java/gcviewer*.jar" > /dev/null! ]
-    then
-      doSetup
-    else
-      doEcho "Checking if Java is installed..."
-      doDevonCommand "java"
-      cd ${GCVIEWER_HOME}GCViewer.app/Contents/Java/
-      doEcho "Starting GCViewer..."
-      local gcviewer_jar_file=$(ls -t | head -1)
-      doRunCommand "java -jar ${gcviewer_jar_file}&"
-    fi
+    doSetup
   else
-    if [ ! -d "${GCVIEWER_HOME}" ] || [ compgen -G "${GCVIEWER_HOME}gcviewer*.jar" > /dev/null! ]
+    cd "${GCVIEWER_HOME}"
+    doEcho "Checking if Java is installed..."
+    doDevonCommand "java"
+    doEcho "Starting GCViewer..."
+    if doIsMacOs
     then
-      doSetup
+      doRunCommand "open GCViewer.app"
     else
-      doEcho "Checking if Java is installed..."
-      doDevonCommand "java"
-      cd ${GCVIEWER_HOME}
-      doEcho "Starting GCViewer..."
-      local gcviewer_jar_file=$(ls -t | head -1)
-      doRunCommand "java -jar ${gcviewer_jar_file}&"
+      doRunCommand "java -jar ${GCVIEWER_HOME}gcviewer*.jar&"
     fi
   fi
 
@@ -92,18 +62,17 @@ case ${1} in
   echo "Setup or run gcviewer"
   echo
   echo "Arguments:"
-  echo " setup                    setup the latest version gcviewer on your machine."
-  echo " setup <version>          setup the gcviewer specified version on your machine."
-  echo " start                    start gcviewer UI."
+  echo " setup                    install the latest version GCViewer on your machine."
+  echo " start                    launch GCViewer App."
   echo
 ;;
 "setup" | "s")
-  doSetup ${2}
+  doSetup
 ;;
 "start" | "")
   doStart
 ;;
 *)
-  doError "Unkown command. Call `devon gcviewer` to setup or start GCViewer OR devon gcviewer help for available commands"
+  doError "Unkown command. Call `devon gcviewer` to setup or start GCViewer OR `devon gcviewer help` for available commands"
 ;;
 esac
