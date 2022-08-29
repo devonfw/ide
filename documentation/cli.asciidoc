@@ -68,6 +68,7 @@ The following commandlets are currently available:
 * link:java.asciidoc[java]
 * link:jenkins.asciidoc[jenkins]
 * link:kubernetes.asciidoc[kubernetes]
+* link:lazydocker.asciidoc[lazydocker]
 * link:mvn.asciidoc[mvn]
 * link:ng.asciidoc[ng]
 * link:node.asciidoc[node]
