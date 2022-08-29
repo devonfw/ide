@@ -14,17 +14,16 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
-OPENSHIFT_HOME="${DEVON_IDE_HOME}/software/oc/"
+OPENSHIFT_HOME="${DEVON_IDE_HOME}/software/oc"
 
 # Call oc with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${OPENSHIFT_HOME}oc ${*}"
+  doRunCommand "${OPENSHIFT_HOME}/oc ${*}"
 }
 
 # openshift installation
-function doSetup(){
-
+function doSetup() {
   if [ ! -d "${OPENSHIFT_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Getting latest release
@@ -40,7 +39,6 @@ function doSetup(){
   then
     doRunCommand "oc version"
   fi 
-
 }
 
 # CLI
@@ -53,9 +51,8 @@ case ${1} in
   echo " <<args>>                 call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
   echo
 ;;
-"setup" | "s" | "")
-  doEcho "Installating oc..."
-  doSetup
+"setup" | "s")
+  doSetup "${2}"
 ;;
 *)
   doRun "${@}"
