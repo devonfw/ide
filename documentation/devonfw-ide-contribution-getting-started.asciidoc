@@ -12,7 +12,7 @@ This will be addressed under xref:Contribution[Contribution].
 == Contribution
 To begin, read through the https://github.com/devonfw/.github/blob/master/CONTRIBUTING.asciidoc[Contribution Guidelines], which you should be sure to follow.
 First steps regarding forks or cloning of repos and creating branches, as well as some git commands, can be found in the https://github.com/firstcontributions/first-contributions[first contributions guideline].
-To contribute code or text regarding the devonfw-ide at first you need to fork the https://github.com/devonfw/ide[devonfw-ide] repository and then you can clone your fork into the folder `workspaces/main` in your devonfw-ide installation.
+To contribute code or documentation regarding the devonfw-ide at first you need to fork the https://github.com/devonfw/ide[devonfw-ide] repository and then you can clone your fork into the folder `workspaces/main` in your devonfw-ide installation.
 Open git-bash in the cloned fork at `workspaces/main/ide` and run the following command:
 ```
 git remote add upstream https://github.com/devonfw/ide.git
