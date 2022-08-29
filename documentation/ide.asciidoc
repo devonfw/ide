@@ -9,12 +9,12 @@ You need to supply additional arguments as `devon ide «args»`. These are expla
 .Usage of `devon ide`
 [options="header"]
 |=======================
-|*Argument(s)*                   |*Meaning*
-|`setup [«SETTINGS_URL»]`        |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
-|`update [«package»]`            |update devonfw-ide
-|`update scripts [to «version»]` |update devonfw-ide
-|`create [«path»]`               |create a new devonfw-ide installation in the specified `«path»` or in the current workind directory if omitted.
-|`uninstall`                     |uninstall devonfw-ide (if you want remote it entirely from your system)
+|*Argument(s)*                      |*Meaning*
+|`setup [«SETTINGS_URL»]`           |setup devonfw-ide (cloning the settings from the given URL, optionally from specific branch URL#branch)
+|`update [«package»]`               |update devonfw-ide
+|`update scripts [to «version»]`    |update devonfw-ide
+|`create [«path»] [«SETTINGS_URL»]` |create a new devonfw-ide installation in the specified `«path»` or in the current workind directory if omitted.
+|`uninstall`                        |uninstall devonfw-ide (if you want remote it entirely from your system)
 |=======================
 
 == setup
