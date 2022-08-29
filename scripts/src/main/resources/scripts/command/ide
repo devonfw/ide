@@ -468,10 +468,10 @@ function doCreate() {
   
     doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
 
-    cd "${create_path}" || exit
+    cd "${create_path}" || exit 255
     [ -f "${create_path}/.devon.software.version" ] && rm "${create_path}/.devon.software.version"
     shift
-    "${create_path}"/setup "${@}"
+    ./setup "${@}"
 }
 
 target_version="LATEST"
