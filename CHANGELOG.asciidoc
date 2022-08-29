@@ -2,7 +2,7 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.04.004
+== 2022.08.001
 
 New release with various improvements and bugfixes:
 
