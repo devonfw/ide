@@ -25,7 +25,7 @@ git pull upstream/master
 git checkout -b feature/«issue-id»-«brief-feature-description»
 ```
 Now you can do the changes, improvements, and fixes.
-Once they are tested and seem to work, you can commit them (`git commit -m "#«issue-id»: «description»").
+Once they are tested and seem to work, you can commit them (`git commit -m "#«issue-id»: «description»"`).
 If some days have passed meanwhile you should upstream merge changes that meanwhile happened on the offical `ide` repo:
 ```
 git pull upstream/master
