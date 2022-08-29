@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# Call lazydocker with specified arguments.
+function doRun() {
+  doSetup silent
+  if doIsWindows
+  then
+    powershell.exe -command 'start powershell {lazydocker}'
+  else
+    lazydocker
+  fi
+}
+
+function doSetup() {
+  if [ ! -d "${LAZYDOCKER_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    doDevonCommand docker setup silent
+    local version="${LAZYDOCKER_VERSION}"
+    # Get latest release
+    if [ -z "${version}" ]
+    then 
+      version="0.18.1"
+      doEcho "Getting latest release..."
+      local latestversion
+      latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/jesseduffield/lazydocker/releases/latest | sed 's/^.*\///' | sed 's/^v//')
+      doVersionCompare "${latestversion}" "${version}"
+      if [ "${?}" = 1 ]
+      then
+        version=${latestversion}
+      fi
+    fi
+    doCheckDockerVersions
+    doInstall "-" "${LAZYDOCKER_HOME}" "lazydocker" "${version}"
+  fi
+}
+
+function doCheckDockerVersions() {
+  local DOCKERENGVERSION
+  DOCKERENGVERSION=$(docker version --format '{{.Client.Version}}')
+  local DOCKERAPIVERSION
+  DOCKERAPIVERSION=$(docker version --format '{{.Client.APIVersion}}')
+  doVersionCompare "${DOCKERENGVERSION}" "1.3.0"
+  local res1=$?
+  doVersionCompare "${DOCKERAPIVERSION}" "1.25"
+  local res2=$?
+  if [ "${res1}" == "2" ] || [ "${res2}" == "2" ]
+  then
+    if [ "${res1}" == "2" ]
+    then
+      doWarning "\nIt seems as if your docker-engine version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.3.0"
+      read -r -p "Continue by pressing enter"
+    fi
+    if [ "${res2}" == "2" ]
+    then
+      doWarning "\nIt seems as if your docker-API version is too old for a proper usage of lazydocker.\nPlease upgrade it at least to version 1.25.0"
+      read -r -p "Continue by pressing enter"
+    fi
+  else 
+    doSuccess "\nDocker-Engine and Docker-API versions are sufficient"
+  fi
+  local DOCKERCOMPOSEVERSION
+  DOCKERCOMPOSEVERSION=$(docker-compose version --short)
+  doVersionCompare "${DOCKERCOMPOSEVERSION}" "1.23.2"
+  res3=$?
+  if [ "${res3}" == "2" ] 
+  then
+    doWarning "Please be aware, that if you want to use docker-compose with lazydocker, then you'll need at least version 1.23.2 of docker-compose"
+  fi
+}
+
+LAZYDOCKER_HOME="${DEVON_IDE_HOME}/software/lazydocker"
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Install lazydocker."
+  echo
+  echo "Arguments:"
+  echo " setup                    install lazydocker on your machine."
+  echo "                          call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
+  echo
+;;
+"setup" | "s" )
+  doEcho "Installing lazydocker..."
+  doSetup
+;;
+"version" | "v" )
+  lazydversion=$(cat "${LAZYDOCKER_HOME}"/.devon.software.version)
+  doInfo "Current version of lazydocker is ${lazydversion}"
+;;
+*)
+  echo "running lazydocker-binary"
+  doRun 
+;;
+esac
+  

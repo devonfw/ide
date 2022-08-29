@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup update uninstall help"
+    echo "setup update create uninstall help"
   elif [ "${2}" = "update" ]
   then
     shortlist3="scripts settings software projects all"
@@ -448,6 +448,32 @@ function doUninstall() {
   doSuccess "Goodbye and have a nice day!"
 }
 
+function doCreate() {
+    local create_path="${1}"
+    if [ -z "${create_path}" ]
+    then
+      create_path="${PWD}"
+    fi
+
+    if [ ! -d "${create_path}" ]
+    then
+      mkdir -p "${create_path}"
+    fi
+    # shellcheck disable=SC2012
+    count_lines="$(ls -alF "${create_path}" | wc -l)"
+    if [ "${count_lines}" -gt 3 ]
+    then
+      doAskToContinue "Directory is not empty, continue?"
+    fi
+  
+    doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
+
+    cd "${create_path}" || exit 255
+    [ -f "${create_path}/.devon.software.version" ] && rm "${create_path}/.devon.software.version"
+    shift
+    ./setup "${@}"
+}
+
 target_version="LATEST"
 
 case "${DEVON_IDE_HOME}" in
@@ -469,6 +495,7 @@ then
   echo "update projects                  checkout and import projects"
   echo "update all                       update scripts, settings and software"
   echo "update                           update settings and software"
+  echo "create [«path»] [«SETTINGS_URL»] create a new devonfw-ide installation at the specified or current path"
   echo "uninstall                        uninstall devonfw-ide and remove all OS hooks (revert devon ide setup)"
   exit
 elif [ "${1}" = "setup" ]
@@ -479,6 +506,10 @@ then
     shift
   done
   doSetup "${@}"
+elif [ "${1}" = "create" ]
+then
+  shift
+  doCreate "${@}"
 elif [ "${1}" = "uninstall" ]
 then
   doUninstall
