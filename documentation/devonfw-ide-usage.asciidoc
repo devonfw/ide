@@ -50,6 +50,8 @@ include::jenkins.asciidoc[leveloffset=3]
 
 include::kubectl.asciidoc[leveloffset=3]
 
+include::lazydocker.asciidoc[leveloffset=3]
+
 include::mvn.asciidoc[leveloffset=3]
 
 include::ng.asciidoc[leveloffset=3]
