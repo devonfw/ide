@@ -26,11 +26,11 @@ git checkout -b feature/«issue-id»-«brief-feature-description»
 ```
 Now you can do the changes, improvements, and fixes.
 Once they are tested and seem to work, you can commit them (`git commit -m "#«issue-id»: «description»"`).
-If some days have passed meanwhile you should upstream merge changes that meanwhile happened on the offical `ide` repo:
+If some days have passed meanwhile you should merge changes that meanwhile happened on the offical `ide` repo:
 ```
 git pull upstream/master
 ```
-Once you have commited them you can push your local feature branch and make it a remote branch of your fork on github:
+Once you are complete and everything is merged and comitted, you can push your local feature branch and make it a remote branch of your fork on github:
 ```
 git push -u origin feature/«issue-id»-«brief-feature-description»
 ```
@@ -38,6 +38,7 @@ Now you can go to https://github.com/devonfw/ide/pulls and create the pull-reque
 Therefore, please click on the right down arrow of the green button and choose `Create draft pull request` and then click on `Draft pull request`.
 When the checks have completed you can check the link:DoD.asciidoc[Definition-of-Done] (DoD).
 Once, all checks of the DoD are addressed, you can go the the very bottom of the PR and click on `Ready for review` what will take the PR out of the draft mode.
+FYI: If you forgot the upstream merge (`git pull upstream/master`) or the upstream changed again while your PR is still open, you will see `This branch is out-of-date with the base branch` at the bottom of your PR and can click on `Update branch`.
 
 For further development and testing, it is recommended to xref:symbolic-links[symlink] the modified scripts into your devonfw-ide installation.
 Alternatively, the scripts can be adapted in the installation folder and then committed to the project.
