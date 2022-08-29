@@ -16,6 +16,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/803[#8ß3]: git pull not working on debug
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
+* https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.04.004].
 

@@ -65,6 +65,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://aws.amazon.com/cli/[AWS cli] |Optional|https://github.com/aws/aws-cli/blob/develop/LICENSE.txt[ASL 2.0]
 |https://github.com/jesseduffield/lazydocker/releases/tag/v0.18.1/[lazydocker] |Optional|https://github.com/jesseduffield/lazydocker/blob/master/LICENSE[MIT]
 |https://dotnet.microsoft.com/[Dotnet] |https://github.com/dotnet/core/blob/master/LICENSE.TXT[MIT] (https://www.microsoft.com/en-us/legal/intellectualproperty/copyright/default.aspx[Terms])
+|https://github.com/openshift/oc[OpenShiftCLI]|Optional|https://github.com/openshift/oc/blob/master/LICENSE[ASL 2.0]
 |=======================
 
 == Apache Software License - Version 2.0
