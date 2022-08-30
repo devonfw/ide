@@ -14,6 +14,7 @@ dir %USERPROFILE%\AppData\Local\Microsoft\WindowsApps\wt.exe >NUL 2>NUL
 if "%ERRORLEVEL%" == "0" (
   reg import system/windows/windows-terminal/devon-wt-cmd.reg
   reg import system/windows/windows-terminal/devon-wt-gitbash.reg
+  reg import system/windows/windows-terminal/devon-wt-ps.reg
 )
 
 for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P

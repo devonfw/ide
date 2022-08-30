@@ -28,8 +28,6 @@ include::dotnet.asciidoc[leveloffset=3]
 
 include::eclipse.asciidoc[leveloffset=3]
 
-include::gcviewer.asciidoc[leveloffset=3]
-
 include::graalvm.asciidoc[leveloffset=3]
 
 include::gradle.asciidoc[leveloffset=3]
@@ -52,17 +50,19 @@ include::jenkins.asciidoc[leveloffset=3]
 
 include::kubectl.asciidoc[leveloffset=3]
 
+include::lazydocker.asciidoc[leveloffset=3]
+
 include::mvn.asciidoc[leveloffset=3]
 
 include::ng.asciidoc[leveloffset=3]
 
 include::node.asciidoc[leveloffset=3]
 
+include::npm.asciidoc[leveloffset=3]
+
 include::oc.asciidoc[leveloffset=3]
 
 include::python.asciidoc[leveloffset=3]
-
-include::npm.asciidoc[leveloffset=3]
 
 include::release.asciidoc[leveloffset=3]
 
