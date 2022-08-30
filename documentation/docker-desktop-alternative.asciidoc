@@ -1,12 +1,12 @@
 :toc:
 toc::[]
 
-= Introduction
+== Introduction
 
 As https://www.docker.com/blog/updating-product-subscriptions/[Docker Desktop has changed its licensing] we have been looking for a license-free alternative.
 This document gives a rationale why we have choosen https://rancherdesktop.io/[Rancher Desktop] as alternative to setup and manage https://www.docker.com/[docker] and https://kubernetes.io/[kubernetes].
 
-= Why we chose Rancher Desktop as Docker-Desktop alternative 
+== Why we chose Rancher Desktop as Docker-Desktop alternative 
 
 Our main criteria for tool comparision were:
 
