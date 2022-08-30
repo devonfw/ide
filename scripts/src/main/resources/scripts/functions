@@ -1525,7 +1525,7 @@ function doIsWindows() {
 # $1: dirctory
 function doIsEmptyDirectory() {
   local dir="${1}"
-  if [ -d "${dir}" ] && [ -z "$(find "${dir}" -maxdepth 0 -empty)" ]
+  if [ ! -d "${dir}" ] || [ -z "$(find "${dir}" -maxdepth 0 -empty)" ]
   then
     return 1
   fi
