@@ -37,7 +37,7 @@ function doStart(){
   then
     doSetup
   else
-    cd "${GCVIEWER_HOME}"
+    cd "${GCVIEWER_HOME}" || exit
     doDevonCommand java setup silent
     doEcho "Starting GCViewer..."
     doRunGCViewer
@@ -47,7 +47,7 @@ function doStart(){
 
 doCreateGCViewerScript(){
 
-  cd "${GCVIEWER_HOME}"
+  cd "${GCVIEWER_HOME}" || exit
   touch gcviewer-script
   echo -e "#!/usr/bin/env bash\n\njava -jar gcviewer*.jar&" >> gcviewer-script
   chmod +x gcviewer-script
@@ -56,7 +56,7 @@ doCreateGCViewerScript(){
 
 doRunGCViewer(){
 
-  cd "${GCVIEWER_HOME}"
+  cd "${GCVIEWER_HOME}" || exit
   gcviewer-script
 
 }
