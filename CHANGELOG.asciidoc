@@ -17,7 +17,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/692[#692]: Improve Windows Terminal with gitbash
 * https://github.com/devonfw/ide/issues/786[#786]: Improve Windows Terminal with powershell
 * https://github.com/devonfw/ide/pull/829[#829]: #701: fix registry import paths for Windows Terminal
-* https://github.com/devonfw/ide/pull/802[#802]: #798: English grammar fix for success message
+* https://github.com/devonfw/ide/pull/860[#786]: #786 add readme to windows terminal with Powershell, cmd and GitBashEnglish grammar fix for success message
 * https://github.com/devonfw/ide/issues/803[#803]: git pull not working on debug
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
