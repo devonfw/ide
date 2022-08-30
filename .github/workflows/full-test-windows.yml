@@ -28,5 +28,3 @@ jobs:
         run: |
           export COMMAND_TEST=true
           mvn -B -ntp install
-        
-        
