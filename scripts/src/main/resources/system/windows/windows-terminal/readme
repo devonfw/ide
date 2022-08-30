@@ -1,0 +1,17 @@
+When you create a new key in the Windows registry, a value named "default" with data type of "String Value" (REG_SZ)
+is automatically created. If you want to use a variable in the value, e.g. "%USERPROFILE%" then the REG_SZ data type 
+is not *suitable for this. In this case you have to use the data type "Expandable String Value" (REG_EXPAND_SZ).
+
+However, if you add another value with the data type "Expandable String Value" (REG_EXPAND_SZ), this cannot be named
+as default (name of the value). The already automatically created value default with the data type REG_SZ cannot be 
+deleted.
+
+To fix this problem, you have to create a second value with any name e.g. "Test" and the data type REG_EXPAND_SZ. 
+This entry is able to be used with a variable. The next step is to export the key and edit the export file.
+The export file contains two entries:
+- the default Value, starting with "@=" and 
+- the second entry named Test, starting with "Test=". 
+
+Now the default Entry has to be deleted and in the second entry has to be renamed from "Test=" to "@=". 
+After that the changed export file has to be imported again into the Windows registry.
+The result is, you get the key with a value "default" and the data type REG_EXPAND_SZ, which is able to handle variables.
