@@ -96,7 +96,7 @@ function doUpdateSettings() {
     then
       SETTINGS_URL="${defaultSettingsUrl}"
     fi
-    doInstall "${SETTINGS_URL}" "${SETTINGS_PATH}" "devonfw-ide-settings"
+    doGitPullOrClone "${SETTINGS_PATH}" "${SETTINGS_URL}"
     if [ ${?} = 0 ]
     then
       # shellcheck source=scripts/environment-project
