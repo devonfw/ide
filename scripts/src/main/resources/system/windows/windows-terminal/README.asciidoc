@@ -9,6 +9,7 @@ deleted.
 To fix this problem, you have to create a second value with any name e.g. "Test" and the data type REG_EXPAND_SZ. 
 This entry is able to be used with a variable. The next step is to export the key and edit the export file.
 The export file contains two entries:
+
 - the default Value, starting with "@=" and 
 - the second entry named Test, starting with "Test=". 
 
