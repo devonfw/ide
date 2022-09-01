@@ -25,7 +25,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
 * https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.04.004].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.08.001].
 
 == 2022.04.003
 
