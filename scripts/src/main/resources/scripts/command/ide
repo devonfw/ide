@@ -459,7 +459,6 @@ function doCreate() {
     then
       mkdir -p "${create_path}"
     fi
-    # shellcheck disable=SC2012
     if ! doIsEmptyDirectory "${create_path}"
     then
       doAskToContinue "Directory is not empty, continue?"
