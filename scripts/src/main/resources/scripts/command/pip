@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help version pip pip3 version -v --version"
+    echo "setup help version pip pip3 remove install version -v --version"
   fi
   exit
 fi
@@ -15,48 +15,198 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  doDevonCommand python setup silent
+  # If no python is isntalled in directory, install it
+  if [ ! -d "${DEVON_IDE_HOME}/software/python" ]
+  then
+    doEcho "Installing python..."
+    doDevonCommand python setup silent
+  fi
   local PIP_CMD
   PIP_CMD="$(command -v pip)"
-  local software="${DEVON_IDE_HOME}/software/"
+  local software="${DEVON_IDE_HOME}/software"
   if [ "$?" == 0 ] && [ "${PIP_CMD::${#software}}" = "${software}" ]
   then
-    if [ "${1}" = "silent" ]
+    if [ "${1}" != "silent" ]
     then
-      doEcho "Pip is already installed at ${PIP_CMD}"
+      doEcho "Pip is already installed at ${PIP_CMD}. Use 'devon pip remove' if you want to remove it."
     fi
   else
     if doIsWindows
     then
-      doInstall "-" "${PIP_HOME}" "pip" "latest" "" "pip"
+      # https://docs.python.org/3/using/windows.html#windows-embeddable
+
+      # If modules.pth doesn't exist in python directory, create it
+      if [ ! -f "${software}/python/modules.pth" ]
+      then
+        doEcho "Creating modules.pth..."
+        echo "../pip" > "${software}/python/modules.pth"
+        echo "../setuptools" >> "${software}/python/modules.pth"
+        echo "../wheel" >> "${software}/python/modules.pth"
+        echo "../pkg_resources" >> "${software}/python/modules.pth"
+      fi
+      
+      # Install pip via python
+      doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
       cd "${PIP_HOME}" || exit 255
       PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-      #doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${DEVON_IDE_HOME}/software/python"
-      doDevonCommand python pip-latest-windows.py --no-warn-script-location
-      mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}"
+      doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${PIP_HOME}" 
+      
+      rm -rf "${PIP_HOME}/pip-latest-windows.py"
       export PATH="${PYTHON_HOME}:${PATH}"
-      pip install virtualenv
-      mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}"
-      #"--target=${PIP_HOME}"
-      #rm "${PYTHON_HOME}/pip-latest-windows.py"
-      #PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-      #if [ -d "${PYTHON_HOME}/Scripts" ]
-      #then
-      #  echo mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
-      #  mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
-      #fi
+
     else
       doEcho "unsupported!"
     fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "pip --version"
+    doEcho "If you get an error like 'Failed to run command: pip3', run 'devon' and then try running that command again manually."
+    doRunCommand "pip3 --version"
+  fi
+}
+function doInstallPackage(){
+  # pip3 install --prefix=azure azure-cli
+  # https://docs.python.org/3/install/
+  # https://www.activestate.com/resources/quick-reads/how-to-manually-install-python-packages/
+  # https://pypi.org/project/azure-cli/
+  # https://docs.python.org/3/install/
+  # Install pip package
+  local package="${1}"
+  # Package version
+  local version="${2}"
+  # doRunPip "install ${package}"
+  # Create new package folder in software directory
+  local software="${DEVON_IDE_HOME}/software/"
+  local package_path="${software}${package}"
+  if [ ! -d "${package_path}" ]
+  then
+    mkdir -p "${package_path}"
+  fi
+
+
+  # Get the tar.gz link with specified version for download from the html file
+  if [ ! -z "${version}" ]
+  then
+    DOWNLOAD_LINK=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
+    doDownload "${DOWNLOAD_LINK}" "${package_path}" "${package}" "latest" "" "zip"
+
+    # Get .zip file name
+    local zip_file_name=$(ls "${package_path}" | grep "${package}-.*.zip")
+    doEcho $package_path
+    # Unzip the zip file to the package folder
+    doUnzip "${package_path}/${zip_file_name}" "${package_path}"
+    # Remove the zip file
+    rm -rf "${package_path}/${zip_file_name}"
+
+  else
+    DOWNLOAD_LINK=$(curl -Ls "https://pypi.org/pypi/${package}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
+    doDownload "${DOWNLOAD_LINK}" "${package_path}" "${package}" "latest" "" "tar.gz"
+
+    # Get tar.gz file name
+    local tar_file=$(ls "${package_path}" | grep -Eo "${package}-.*tar.gz")
+    # Unzip the tar.gz file
+    tar -xzf "${package_path}/${tar_file}" -C "${package_path}"
+    # Move contents of the new folder to the package folder
+    #mv "${package_path}/${tar_file::-7}"/* "${package_path}"
+    local unpacked_package_dir=${package_path}/${tar_file::-7}
+  fi
+
+
+  # Write a new line to the modules.pth if the line doesn't exist
+  if ! grep -q "../${package}" "${software}/python/modules.pth"
+  then
+    echo "../${package}" >> "${software}/python/modules.pth"
+  fi
+
+  # Get the line number of the install_requires= line from package setup.py
+  local install_requires_line=$(grep -n -Eo "install_requires=\[" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
+  # Get the line number of the ] line from package setup.py
+  local install_requires_end_lines=$(grep -n -Eo "]" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
+  # Loop through all install_requires_end_lines and print it
+  for install_requires_end_line in ${install_requires_end_lines}
+  do
+    if [ ${install_requires_end_line} -gt ${install_requires_line} ]
+    then
+      # Get the install_requires packages from the setup.py file
+      local install_requires=$(sed -n "${install_requires_line},${install_requires_end_line}p" "${unpacked_package_dir}/setup.py")
+      # Remove the install_requires= line
+      install_requires=${install_requires:22}
+      # Remove the ] line
+      install_requires=${install_requires::-5}
+      # Remove the ' and " characters
+      install_requires=${install_requires//\'/}
+      install_requires=${install_requires//\"/}
+      # Remove the , characters
+      install_requires=${install_requires//,/ }
+      # Remove the spaces
+      install_requires=${install_requires// /}
+      # Remove version numbers and froch each line
+      install_requires=$(echo "${install_requires}" | grep -Eo "^[a-zA-Z0-9-]+")
+      
+      # Loop through all install_requires packages and install them
+      for install_require in ${install_requires}
+      do
+        doEcho "Installing ${install_require}..."
+        doInstallPackage "${install_require}"
+      done
+      break
+    fi
+  done
+
+  # Install package with pip
+  doRunPip "install ${unpacked_package_dir} --target=${package_path}"
+  #doRunPip "install ${unpacked_package_dir} "
+  # Remove the new folder
+  rm -rf "${package_path}/${tar_file::-7}"
+  # Remove the tar.gz file
+  rm -rf "${package_path}/${tar_file}"
+  # Move exe from Scripts to package directory
+  if [ -d "${package_path}/Scripts" ]
+  then
+    mv "${package_path}/Scripts"/* "${package_path}"
+    rm -rf "${package_path}/Scripts"
+  fi
+
+}
+
+function doRemove(){
+  # Remove pip package and the argument is not empty
+  local package="${1}"
+  if [ -n "${package}" ]
+  then
+    if [ -d "${DEVON_IDE_HOME}/software/${package}" ]
+    then
+      # If not silent
+      if [ "${1}" != "silent" ]
+      then
+        doEcho "Removing ${package}..."
+      fi
+      
+      rm -rf "${DEVON_IDE_HOME}/software/${package}"
+      doRunPip "uninstall ${package}"
+      doEcho "Package ${package} removed."
+    else
+      doEcho "Package ${package} not found."
+    fi
+  else
+    # Ask if you want to remove pip
+    read -r -p "Do you want to remove pip? [y/N] " response
+    if [[ "${response}" =~ ^([yY][eE][sS]|[yY])$ ]]
+    then
+      # Remove pip
+      doEcho "Removing pip..."
+      rm -rf "${DEVON_IDE_HOME}/software/pip"
+      doEcho "Pip removed."
+    fi
   fi
 }
 
 function doRunPip() {
-  doSetup silent
+  # If pip is not installed
+  if [ ! -d "${DEVON_IDE_HOME}/software/python/pip" ]
+  then
+    doSetup silent
+  fi
   if doIsQuiet
   then
     doRunCommand "pip ${*}" > /dev/null
@@ -81,6 +231,12 @@ case ${1} in
   ;;
   "version" | "-v" | "--version")
      doRunPip --version
+  ;;
+  "remove" | "r")
+    doRemove ${2}
+  ;;
+  "install" | "i")
+    doInstallPackage "${2}" "${3}"
   ;;
   *)
      doRunPip "${@}"
