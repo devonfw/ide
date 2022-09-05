@@ -75,35 +75,43 @@ function doInstallPackage(){
   # Package version
   local version="${2}"
   # doRunPip "install ${package}"
-  # Create new package folder in software directory
+  
   local software="${DEVON_IDE_HOME}/software/"
   local package_path="${software}${package}"
+
+  DOWNLOAD_LINK_ZIP=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
+  DOWNLOAD_LINK_TAR_GZ=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
+  if [ -z "${DOWNLOAD_LINK_ZIP}" ] && [ -z "${DOWNLOAD_LINK_TAR_GZ}" ]
+  then
+    doEcho "Package ${package} not found!"
+    exit 255
+  fi
+
+  # Create new package folder in software directory
   if [ ! -d "${package_path}" ]
   then
     mkdir -p "${package_path}"
   fi
 
-
-  # Get the tar.gz link with specified version for download from the html file
-  if [ ! -z "${version}" ]
+  # Check if ZIP or TAR.GZ is empty, then download and unpack it
+  if [ ! -z "${DOWNLOAD_LINK_ZIP}" ]
   then
-    DOWNLOAD_LINK=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
-    doDownload "${DOWNLOAD_LINK}" "${package_path}" "${package}" "latest" "" "zip"
-
+    doDownload "${DOWNLOAD_LINK_ZIP}" "${package_path}" "${package}" "latest" "" "zip"
     # Get .zip file name
-    local zip_file_name=$(ls "${package_path}" | grep "${package}-.*.zip")
-    doEcho $package_path
+    local zip_file_name=$(ls "${package_path}" | grep -Eio "${package}-.*.zip")
     # Unzip the zip file to the package folder
     doUnzip "${package_path}/${zip_file_name}" "${package_path}"
     # Remove the zip file
     rm -rf "${package_path}/${zip_file_name}"
-
-  else
-    DOWNLOAD_LINK=$(curl -Ls "https://pypi.org/pypi/${package}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
-    doDownload "${DOWNLOAD_LINK}" "${package_path}" "${package}" "latest" "" "tar.gz"
-
+    local unpacked_package_dir="${software}${package}"
+    # # Move files from the unzipped folder to the package folder
+    # mv "${software}${package}-"*/* "${package_path}"
+    rm -rf "${software}${package}-"*
+  elif [ ! -z "${DOWNLOAD_LINK_TAR_GZ}" ]
+  then
+    doDownload "${DOWNLOAD_LINK_TAR_GZ}" "${package_path}" "${package}" "latest" "" "tar.gz"
     # Get tar.gz file name
-    local tar_file=$(ls "${package_path}" | grep -Eo "${package}-.*tar.gz")
+    local tar_file=$(ls "${package_path}" | grep -Eio "${package}-.*tar.gz")
     # Unzip the tar.gz file
     tar -xzf "${package_path}/${tar_file}" -C "${package_path}"
     # Move contents of the new folder to the package folder
@@ -166,6 +174,8 @@ function doInstallPackage(){
     mv "${package_path}/Scripts"/* "${package_path}"
     rm -rf "${package_path}/Scripts"
   fi
+
+  doEcho "Package ${package} installed successfully!"
 
 }
 
