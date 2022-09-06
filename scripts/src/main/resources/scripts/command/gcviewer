@@ -19,16 +19,18 @@ GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
 # gcviewer installation
 function doSetup(){
 
-  if [ -z "${GCVIEWER_VERSION}" ]
+  if [ "${1}" != "silent" ]
   then
-    doEcho "Getting the latest release of GCViewer..."
-    GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
-  fi 
-
-  do_not_extract="Not Empty"
-  doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
-  doCreateGCViewerScript
-
+    if [ -z "${GCVIEWER_VERSION}" ]
+    then
+      doEcho "Getting the latest release of GCViewer..."
+      GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
+    fi 
+    do_not_extract="Not Empty"
+    doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
+    doCreateGCViewerScript
+  fi
+  
 }
 
 function doStart(){
@@ -73,12 +75,17 @@ case ${1} in
   echo
 ;;
 "setup" | "s")
-  doSetup
+  if [ "${2}" == "silent" ]
+  then
+    doSetup silent
+  else
+    doSetup
+  fi
 ;;
 "start" | "")
   doStart
 ;;
 *)
-  doError "Unkown command. Call devon gcviewer to setup or start GCViewer OR devon gcviewer help for available commands"
+  doError "Unkown command!"
 ;;
 esac
