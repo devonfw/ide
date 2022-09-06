@@ -73,19 +73,19 @@ function doInstallPackage(){
   # Install pip package
   local package="${1}"
   # Package version
-  local version="${2}"
+  # local version="${2}"
   # doRunPip "install ${package}"
   
   local software="${DEVON_IDE_HOME}/software/"
   local package_path="${software}${package}"
 
-  DOWNLOAD_LINK_ZIP=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
-  DOWNLOAD_LINK_TAR_GZ=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
-  if [ -z "${DOWNLOAD_LINK_ZIP}" ] && [ -z "${DOWNLOAD_LINK_TAR_GZ}" ]
-  then
-    doEcho "Package ${package} not found!"
-    exit 255
-  fi
+  # DOWNLOAD_LINK_ZIP=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
+  # DOWNLOAD_LINK_TAR_GZ=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
+  # if [ -z "${DOWNLOAD_LINK_ZIP}" ] && [ -z "${DOWNLOAD_LINK_TAR_GZ}" ]
+  # then
+  #   doEcho "Package ${package} not found!"
+  #   exit 255
+  # fi
 
   # Create new package folder in software directory
   if [ ! -d "${package_path}" ]
@@ -93,31 +93,31 @@ function doInstallPackage(){
     mkdir -p "${package_path}"
   fi
 
-  # Check if ZIP or TAR.GZ is empty, then download and unpack it
-  if [ ! -z "${DOWNLOAD_LINK_ZIP}" ]
-  then
-    doDownload "${DOWNLOAD_LINK_ZIP}" "${package_path}" "${package}" "latest" "" "zip"
-    # Get .zip file name
-    local zip_file_name=$(ls "${package_path}" | grep -Eio "${package}-.*.zip")
-    # Unzip the zip file to the package folder
-    doUnzip "${package_path}/${zip_file_name}" "${package_path}"
-    # Remove the zip file
-    rm -rf "${package_path}/${zip_file_name}"
-    local unpacked_package_dir="${software}${package}"
-    # # Move files from the unzipped folder to the package folder
-    # mv "${software}${package}-"*/* "${package_path}"
-    rm -rf "${software}${package}-"*
-  elif [ ! -z "${DOWNLOAD_LINK_TAR_GZ}" ]
-  then
-    doDownload "${DOWNLOAD_LINK_TAR_GZ}" "${package_path}" "${package}" "latest" "" "tar.gz"
-    # Get tar.gz file name
-    local tar_file=$(ls "${package_path}" | grep -Eio "${package}-.*tar.gz")
-    # Unzip the tar.gz file
-    tar -xzf "${package_path}/${tar_file}" -C "${package_path}"
-    # Move contents of the new folder to the package folder
-    #mv "${package_path}/${tar_file::-7}"/* "${package_path}"
-    local unpacked_package_dir=${package_path}/${tar_file::-7}
-  fi
+  # # Check if ZIP or TAR.GZ is empty, then download and unpack it
+  # if [ ! -z "${DOWNLOAD_LINK_ZIP}" ]
+  # then
+  #   doDownload "${DOWNLOAD_LINK_ZIP}" "${package_path}" "${package}" "latest" "" "zip"
+  #   # Get .zip file name
+  #   local zip_file_name=$(ls "${package_path}" | grep -Eio "${package}-.*.zip")
+  #   # Unzip the zip file to the package folder
+  #   doUnzip "${package_path}/${zip_file_name}" "${package_path}"
+  #   # Remove the zip file
+  #   rm -rf "${package_path}/${zip_file_name}"
+  #   local unpacked_package_dir="${software}${package}"
+  #   # # Move files from the unzipped folder to the package folder
+  #   # mv "${software}${package}-"*/* "${package_path}"
+  #   rm -rf "${software}${package}-"*
+  # elif [ ! -z "${DOWNLOAD_LINK_TAR_GZ}" ]
+  # then
+  #   doDownload "${DOWNLOAD_LINK_TAR_GZ}" "${package_path}" "${package}" "latest" "" "tar.gz"
+  #   # Get tar.gz file name
+  #   local tar_file=$(ls "${package_path}" | grep -Eio "${package}-.*tar.gz")
+  #   # Unzip the tar.gz file
+  #   tar -xzf "${package_path}/${tar_file}" -C "${package_path}"
+  #   # Move contents of the new folder to the package folder
+  #   #mv "${package_path}/${tar_file::-7}"/* "${package_path}"
+  #   local unpacked_package_dir=${package_path}/${tar_file::-7}
+  # fi
 
 
   # Write a new line to the modules.pth if the line doesn't exist
@@ -126,54 +126,55 @@ function doInstallPackage(){
     echo "../${package}" >> "${software}/python/modules.pth"
   fi
 
-  # Get the line number of the install_requires= line from package setup.py
-  local install_requires_line=$(grep -n -Eo "install_requires=\[" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
-  # Get the line number of the ] line from package setup.py
-  local install_requires_end_lines=$(grep -n -Eo "]" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
-  # Loop through all install_requires_end_lines and print it
-  for install_requires_end_line in ${install_requires_end_lines}
-  do
-    if [ ${install_requires_end_line} -gt ${install_requires_line} ]
-    then
-      # Get the install_requires packages from the setup.py file
-      local install_requires=$(sed -n "${install_requires_line},${install_requires_end_line}p" "${unpacked_package_dir}/setup.py")
-      # Remove the install_requires= line
-      install_requires=${install_requires:22}
-      # Remove the ] line
-      install_requires=${install_requires::-5}
-      # Remove the ' and " characters
-      install_requires=${install_requires//\'/}
-      install_requires=${install_requires//\"/}
-      # Remove the , characters
-      install_requires=${install_requires//,/ }
-      # Remove the spaces
-      install_requires=${install_requires// /}
-      # Remove version numbers and froch each line
-      install_requires=$(echo "${install_requires}" | grep -Eo "^[a-zA-Z0-9-]+")
+  # # Get the line number of the install_requires= line from package setup.py
+  # local install_requires_line=$(grep -n -Eo "install_requires=\[" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
+  # # Get the line number of the ] line from package setup.py
+  # local install_requires_end_lines=$(grep -n -Eo "]" "${unpacked_package_dir}/setup.py" | grep -Eo "^[0-9]+")
+  # # Loop through all install_requires_end_lines and print it
+  # for install_requires_end_line in ${install_requires_end_lines}
+  # do
+  #   if [ ${install_requires_end_line} -gt ${install_requires_line} ]
+  #   then
+  #     # Get the install_requires packages from the setup.py file
+  #     local install_requires=$(sed -n "${install_requires_line},${install_requires_end_line}p" "${unpacked_package_dir}/setup.py")
+  #     # Remove the install_requires= line
+  #     install_requires=${install_requires:22}
+  #     # Remove the ] line
+  #     install_requires=${install_requires::-5}
+  #     # Remove the ' and " characters
+  #     install_requires=${install_requires//\'/}
+  #     install_requires=${install_requires//\"/}
+  #     # Remove the , characters
+  #     install_requires=${install_requires//,/ }
+  #     # Remove the spaces
+  #     install_requires=${install_requires// /}
+  #     # Remove version numbers and froch each line
+  #     install_requires=$(echo "${install_requires}" | grep -Eo "^[a-zA-Z0-9-]+")
       
-      # Loop through all install_requires packages and install them
-      for install_require in ${install_requires}
-      do
-        doEcho "Installing ${install_require}..."
-        doInstallPackage "${install_require}"
-      done
-      break
-    fi
-  done
+  #     # Loop through all install_requires packages and install them
+  #     for install_require in ${install_requires}
+  #     do
+  #       doEcho "Installing ${install_require}..."
+  #       doRunPip "install ${install_require}"
+  #       #doInstallPackage "${install_require}"
+  #     done
+  #     break
+  #   fi
+  # done
 
-  # Install package with pip
-  doRunPip "install ${unpacked_package_dir} --target=${package_path}"
-  #doRunPip "install ${unpacked_package_dir} "
-  # Remove the new folder
-  rm -rf "${package_path}/${tar_file::-7}"
-  # Remove the tar.gz file
-  rm -rf "${package_path}/${tar_file}"
-  # Move exe from Scripts to package directory
-  if [ -d "${package_path}/Scripts" ]
-  then
-    mv "${package_path}/Scripts"/* "${package_path}"
-    rm -rf "${package_path}/Scripts"
-  fi
+  # # Install package with pip
+  # doRunPip "install ${unpacked_package_dir} --target=${package_path}"
+  doRunPip "install ${package} --target=${package_path}"
+  # # Remove the new folder
+  # rm -rf "${package_path}/${tar_file::-7}"
+  # # Remove the tar.gz file
+  # rm -rf "${package_path}/${tar_file}"
+  # # Move exe from Scripts to package directory
+  # if [ -d "${package_path}/Scripts" ]
+  # then
+  #   mv "${package_path}/Scripts"/* "${package_path}"
+  #   rm -rf "${package_path}/Scripts"
+  # fi
 
   doEcho "Package ${package} installed successfully!"
 
@@ -192,8 +193,8 @@ function doRemove(){
         doEcho "Removing ${package}..."
       fi
       
-      rm -rf "${DEVON_IDE_HOME}/software/${package}"
       doRunPip "uninstall ${package}"
+      rm -rf "${DEVON_IDE_HOME}/software/${package}"
       doEcho "Package ${package} removed."
     else
       doEcho "Package ${package} not found."
@@ -234,6 +235,8 @@ case ${1} in
     echo "Arguments:"
     echo " setup                    setup pip."
     echo " «args»                   call pip with the specified arguments (call 'pip --help' for details)."
+    echo " install «package»        install the specified Pip package."
+    echo " remove «package»         remove the specified Pip package."
     echo
   ;;
   "setup" | "s" | "")
@@ -242,11 +245,11 @@ case ${1} in
   "version" | "-v" | "--version")
      doRunPip --version
   ;;
+  "install" | "i")
+    doInstallPackage "${2}"
+  ;;
   "remove" | "r")
     doRemove ${2}
-  ;;
-  "install" | "i")
-    doInstallPackage "${2}" "${3}"
   ;;
   *)
      doRunPip "${@}"
