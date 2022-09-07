@@ -1,20 +1,13 @@
 #!/bin/bash
+
 success=0
 failure=0
 total=0
-mkdir -p ~/.devon
-touch ~/.devon/.license.agreement
-rm -rf integration-test
-mkdir -p integration-test
-cd integration-test
-export DEVON_SKIP_PROJECT_SETUP=true
-for testpath in "$(dirname $0)"/test-*
+
+function doTests() {
+for testpath in "$(dirname $0)"/"${1}"-*
 do
   testcase="${testpath/*\//}"
-  if [[ ! "${COMMAND_TEST}" && "${testcase}" == "test-sfcommands" ]]
-  then
-    continue
-  fi
   echo "Running test #${total}: ${testcase}"
   mkdir -p "${testcase}/conf"
   cd "${testcase}"
@@ -28,10 +21,21 @@ do
   else
     echo "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
     let "failure++"
+    errors="${errors}/n${testcase}:${result}"
   fi
   let "total++"
   cd ..
 done
+}
+
+mkdir -p ~/.devon
+touch ~/.devon/.license.agreement
+rm -rf integration-test
+mkdir -p integration-test
+cd integration-test
+export DEVON_SKIP_PROJECT_SETUP=true
+doTests "test"
+doTests "integration-test"
 echo
 echo "*****************************************************"
 echo "Executed #${total} test(s), #${success} succeeded and #${failure} failed"
@@ -42,3 +46,4 @@ else
   echo "There are test failures! Please check the logs and fix errors."
   exit 1
 fi
+
