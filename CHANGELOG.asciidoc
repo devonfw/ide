@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/840[#840]: Pip Integration and fixing package installation
 * https://github.com/devonfw/ide/issues/713[#713]: Python integration
 * https://github.com/devonfw/ide/issues/706[#706]: Folder ${M2_REPO} gets created
 * https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03 

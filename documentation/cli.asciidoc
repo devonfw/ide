@@ -73,6 +73,7 @@ The following commandlets are currently available:
 * link:node.asciidoc[node]
 * link:npm.asciidoc[npm]
 * link:python.asciidoc[python]
+* link:pip.asciidoc[pip]
 * link:release.asciidoc[release]
 * link:sonar.asciidoc[sonar]
 * link:terraform.asciidoc[terraform]
