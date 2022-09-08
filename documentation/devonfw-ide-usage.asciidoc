@@ -58,15 +58,13 @@ include::ng.asciidoc[leveloffset=3]
 
 include::node.asciidoc[leveloffset=3]
 
-include::python.asciidoc[leveloffset=3]
-
-include::pip.asciidoc[leveloffset=3]
-
 include::npm.asciidoc[leveloffset=3]
 
 include::oc.asciidoc[leveloffset=3]
 
 include::python.asciidoc[leveloffset=3]
+
+include::pip.asciidoc[leveloffset=3]
 
 include::release.asciidoc[leveloffset=3]
 
