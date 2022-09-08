@@ -3,16 +3,16 @@ toc::[]
 
 = Pip
 
-The Pip Commandlet allows you to install and use pip packages locally.
+The Pip Commandlet allows you to install and use https://packaging.python.org/en/latest/key_projects/#pip[pip] (python installer of pacakges).
 
 Usage:
 
-* `devon pip` to install pip
-* `devon pip install <package>` to install a pip package where <package> is replaced with the package you want to install
+* `devon pip setup` to install pip
+* `devon pip install «package»` to install a pip package where <package> is replaced with the package you want to install
 * `devon pip remove` to remove pip
-* `devon pip remove <package>` to remove/uninstall a given pip package
+* `devon pip remove «package»` to remove/uninstall a given pip package
 
-After each installation of a new package, write `devon` for changes to take place. Not doing so might result in command being not found by the devon IDE.
+After each installation of a new package, write `devon` for changes to take place. Not doing so might result in command being not found by devonfw-ide.
 
 .Usage of `pip`
 [options="header"]
