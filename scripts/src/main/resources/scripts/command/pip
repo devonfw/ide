@@ -60,7 +60,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doEcho "If you get an error like 'Failed to run command: pip3', run 'devon' and then try running that command again manually."
+    doWarning "If you get an error like 'Failed to run command: pip3', run 'devon' and then try running that command again manually."
     doRunCommand "pip3 --version"
   fi
 }
@@ -78,6 +78,13 @@ function doInstallPackage(){
   
   local software="${DEVON_IDE_HOME}/software/"
   local package_path="${software}${package}"
+
+  # If pywin32 is not installed in the python Lib directory, install it. This is required for the azure cli to work.
+  if [ ! -d "${software}/python/lib/site-packages/win32" ]
+  then
+    doRunPip "install pypiwin32"
+  fi
+
 
   # DOWNLOAD_LINK_ZIP=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*zip")
   # DOWNLOAD_LINK_TAR_GZ=$(curl -Ls "https://pypi.org/pypi/${package}/${version}" | grep -Eo "(http|https)://files.pythonhosted.org/packages/.*tar.gz")
@@ -183,8 +190,11 @@ function doInstallPackage(){
 function doRemove(){
   # Remove pip package and the argument is not empty
   local package="${1}"
+
   if [ -n "${package}" ]
   then
+    doRunPip "uninstall ${package}"
+    
     if [ -d "${DEVON_IDE_HOME}/software/${package}" ]
     then
       # If not silent
@@ -193,12 +203,9 @@ function doRemove(){
         doEcho "Removing ${package}..."
       fi
       
-      doRunPip "uninstall ${package}"
       rm -rf "${DEVON_IDE_HOME}/software/${package}"
-      doEcho "Package ${package} removed."
-    else
-      doEcho "Package ${package} not found."
     fi
+    doEcho "Package ${package} removed."
   else
     # Ask if you want to remove pip
     read -r -p "Do you want to remove pip? [y/N] " response
