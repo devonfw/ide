@@ -2,7 +2,7 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.04.004
+== 2022.08.001
 
 New release with various improvements and bugfixes:
 
@@ -12,13 +12,22 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03 
 * https://github.com/devonfw/ide/pull/796[#796]: update sonarqube to 9.4.0.54424
 * https://github.com/devonfw/ide/issues/794[#794]: Improve installation process of Rancher Desktop and VPNKit
+* https://github.com/devonfw/ide/issues/738[#738]: CLI Lazy Docker integration
+* https://github.com/devonfw/ide/issues/819[#819]: add option to create new devonfw-ide installation
+* https://github.com/devonfw/ide/issues/810[#810]: Add OpenShift CLI
+* https://github.com/devonfw/ide/issues/692[#692]: Improve Windows Terminal with gitbash
+* https://github.com/devonfw/ide/issues/786[#786]: Improve Windows Terminal with powershell
+* https://github.com/devonfw/ide/issues/867[#867]: ERROR: Error opening the file. There may be a disk or file system error.
 * https://github.com/devonfw/ide/pull/829[#829]: #701: fix registry import paths for Windows Terminal
 * https://github.com/devonfw/ide/pull/802[#802]: #798: English grammar fix for success message
-* https://github.com/devonfw/ide/issues/803[#8ß3]: git pull not working on debug
+* https://github.com/devonfw/ide/issues/803[#803]: git pull not working on debug
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
+* https://github.com/devonfw/ide/issues/800[#800]: Nightly test with additional tests
+* https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
+* https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.04.004].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.08.001].
 
 == 2022.04.003
 
