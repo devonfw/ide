@@ -140,7 +140,7 @@ do
     # Load custom configuration of software
     if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
     then
-      # shellcheck disable=SC1090
+      # shellcheck disable=SC1090,SC1091
       source "${SOFTWARE_FOLDER}/ide-config"
     fi
   fi

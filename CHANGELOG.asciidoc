@@ -22,6 +22,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/803[#803]: git pull not working on debug
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
+* https://github.com/devonfw/ide/issues/800[#800]: Nightly test with additional tests
 * https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
 * https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
 
