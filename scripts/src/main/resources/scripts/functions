@@ -1521,6 +1521,15 @@ function doIsWindows() {
   return 255
 }
 
+# $1: dirctory
+function doIsEmptyDirectory() {
+  local dir="${1}"
+  if [ ! -d "${dir}" ] || [ -z "$(find "${dir}" -maxdepth 0 -empty)" ]
+  then
+    return 1
+  fi
+}
+
 function doIsPackageJsonContainingScript() {
   doDebug "Checking if package.json contains script section named $1"
   if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
