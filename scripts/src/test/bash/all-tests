@@ -21,7 +21,6 @@ do
   else
     echo "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
     let "failure++"
-    errors="${errors}/n${testcase}:${result}"
   fi
   let "total++"
   cd ..
@@ -35,7 +34,7 @@ mkdir -p integration-test
 cd integration-test
 export DEVON_SKIP_PROJECT_SETUP=true
 doTests "test"
-doTests "integration-test"
+[[ "${INTEGRATION_TEST}" == true ]] && doTests "integration-test"
 echo
 echo "*****************************************************"
 echo "Executed #${total} test(s), #${success} succeeded and #${failure} failed"
@@ -46,4 +45,3 @@ else
   echo "There are test failures! Please check the logs and fix errors."
   exit 1
 fi
-

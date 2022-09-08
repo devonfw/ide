@@ -22,4 +22,6 @@ jobs:
       - name: Set up Shellcheck
         run: brew install shellcheck
       - name: Build project with Maven
-        run: mvn -B -ntp install
+        run: |
+          export INTEGRATION_TEST=true
+          mvn -B -ntp install
