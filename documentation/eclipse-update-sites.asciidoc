@@ -7,19 +7,15 @@ A common problem with eclipse plugins is that they are provided decentralized as
 
 All famous IDEs do not have a clear versioning concept: While the plugin artifact itself is typically versioned, the request to install a plugin can not specify a version but always downloads the "latest" version. If at all some kind of versioning for stability is in place it happens via the URL itself so for different major versions different URLs are provided.
 
-A possible solution is to mirror the update sites and store them either locally or on your own webspace. This way you always have access to the plugin version you need as a developer without being dependent on the plugin providers.
-
-Below is the process to mirror a plugin update site. 
+A possible solution is to mirror the update sites and store them either locally or on your own webspace. This way you always have access to the plugin version you need as a developer without being dependent on the plugin providers. Below is the process to mirror a plugin update-site. 
 
 == Mirroring Eclipse Update Sites
 
-For mirroring you need to things: 
+For mirroring you need the URL of the update-site (e.g. http://download.jboss.org/jbosstools/updates/webtools/photon/). Open any CLI in your IDE folder and execute the following command. `<NAME>` stands for the name of the plugin or update-sites. It can be chosen arbitrarily.
 
-1. URL of the update-site (e.g. http://download.jboss.org/jbosstools/updates/webtools/photon/)
-2. Plugin-ID (e.g org.eclipse.core.runtime)
+`devon eclipse mirror <URL> <NAME> <DIR>`
 
-Open any CLI in your IDE folder and execute the following command.
+This command will automatically mirror the content of the update-site to a specific `<DIR>` folder. If `<DIR>` is not specified, the folder is created by default in `software/eclipse/update-sites`. Afterwards the folder can be uploaded to your webspace and used for previous projects. 
 
-`devon eclipse download-plugin <Plugin-ID> <URL>`
+== Upload Mirrored Update Site
 
-This command will automatically download all important files to a folder.
