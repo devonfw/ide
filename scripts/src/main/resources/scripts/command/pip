@@ -73,7 +73,7 @@ function doPipInstall() {
     then
       echo -e "../${package}\n" >> "${PYTHON_HOME}/modules.pth"
     fi
-    doEcho "Package ${package} installed successfully!\nYou need to run 'devon' or restart your terminal to update your PATH so the newly installed software will be found."
+    doExtendPath "${package_path}"
   done
 }
 
