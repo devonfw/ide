@@ -1,90 +1,91 @@
 :toc:
+:sectnums:
 toc::[]
 
-= 1. Documentations of functions
+= Documentations of functions
 
-== 1.1 Functions for testing flags
+== Functions for testing flags
 The functions for testing flags return a 0 if the corresponding flag is set in the form of a variable. The name of the flag is part of the function name.
 
-=== 1.1.1 doIsBatch
+=== doIsBatch
 This function returns a 0 if the variable "batch" is set.
 
-=== 1.1.2 doIsDebug
+=== doIsDebug
 This function returns a 0 if the variable "debug" is set and the -q option is not specified.
 
-=== 1.1.3 doIsForce
+=== doIsForce
 This function returns a 0 if the variable "force" is set.
 
-=== 1.1.4 doIsQuiet
+=== doIsQuiet
 This function returns a 0 if the variable "quiet" is set.
 
-== 1.2 Functions for input and output
+== Functions for input and output
 
-=== 1.2.1 doAskToContinue
+=== doAskToContinue
 A message can be passed as the first parameter to the doAskToContinue function. If this is not done, the standard message "Do you want to continue?" used. If the variable force is set, the message is output and the function ends directly with the return value 0. If neither the variable force nor the variable batch is set, the message is output in a loop and the input of yes, no or no input at all is awaited. With "yes" or no specification at all, it ends the function with the return value 0, and with "no" it is checked whether return was passed as the second parameter. If this is the case, the function ends with the return value 255, otherwise the entire program ends with the return value 255.
 
-=== 1.2.2 doConfirmWarning
+=== doConfirmWarning
 The doConfirmWarning function calls the doWarning function with the message passed to it, and then calls the doAskToContinue function with no parameters.
 
-=== 1.2.3 doEcho
+=== doEcho
 The doEcho function prints the arguments passed to it if the variable quiet is not set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
 
-=== 1.2.4 doEchoAttention
+=== doEchoAttention
 The doEchoAttention function returns the header ******** ATTENTION ******** followed by the message specified as a parameter. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
 
-=== 1.2.5 doEchoInteraction
+=== doEchoInteraction
 The doEchoInteraction function outputs the message passed as a parameter in light blue and appends a blank line, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== 1.2.6 doEchoOption
+=== doEchoOption
 The doEchoOption function outputs the message passed as a parameter in light blue, and allows backslash-escaped characters, e.g. "\n" for new line.
 
-=== 1.2.7 doEchoStep
+=== doEchoStep
 The doEchoStep function prints the message passed as a parameter with three asterisks before and after the message in purple, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== 1.2.7 doError
+=== doError
 The doError function prints the message passed to it in bright red.
 
-=== 1.2.8 doFail
+=== doFail
 The doFail function is called with an error message as the first parameter and an exit code as the second parameter. The function first calls the doEchoAttention function without parameter, followed by the specified error message and a message on how to proceed. If a 0 is specified as the exit code, the function ends with exit code 1, otherwise with the specified exit code. If no exit code is specified, the function terminates with exit code 255.
 
-=== 1.2.9 doInfo
+=== doInfo
 The doInfo function prints the message passed as a parameter in blue and appends an extra blank line, and allows backslash-escaped characters, for example "\n" for new line.
 
-=== 1.2.10 doLicenseAgreement
+=== doLicenseAgreement
 The doLicenseAgreement function checks whether the DEVON_HOME_DIR/.devon/.license.agreement file exists locally. If the file exists, the function exits with the return value 0. If the file does not exist, the function calls doLogo and then license information about devonfw-ide. Then the website with the license conditions is called up or an error is output if the variable batch is set. Now the question is asked in a loop until either "yes" or "no" is entered. If "no" is entered, the function ends with a return value of 255. If "yes" is entered, the license from the opened website is saved in the local file DEVON_HOME_DIR/.devon/.license.agreement stored and the function ends with return value 0.
 
-=== 1.2.11 doLogo
+=== doLogo
 The doLogo function prints out the devon logo.
 
-=== 1.2.12 doQuestion
+=== doQuestion
 The doQuestion function outputs the message passed to it in light blue.
 
-=== 1.2.13 doResult
+=== doResult
 The function doResult outputs the message passed as the first parameter, depending on the second parameter as Succeeded for 0 or Failed for all other values. If the second parameter is not specified, Failed (internal error missing exit code) is output.
 
-=== 1.2.14 doSuccess
+=== doSuccess
 The doSuccess function outputs the message passed to it in green.
 
-=== 1.2.15 doWarning
+=== doWarning
 The doWarning function outputs the text "WARNING:" with the message passed in the parameter and allows backslash-escaped characters, for example "\n" for new line.
 
-== 1.3 Environment Checks
+== Environment Checks
 
-=== 1.3.1 doIsMacOs
+=== doIsMacOs
 The doIsMacOs function returns 0 if the operating system is detected as MacOs. If not, a 255 is returned.
 
-=== 1.3.2 doIsWindows
+=== doIsWindows
 The doIsWindows function returns 0 if the operating system is detected as Windows. If not, a 255 is returned.
 
-== 1.4 Functions for Maven
+== Functions for Maven
 
-=== 1.4.1 doArrayContainsItemWithPrefix
+=== doArrayContainsItemWithPrefix
 An array is defined from a number of elements, with the last element being defined as a prefix. The function doArrayContainsItemWithPrefix now checks the array if it contains elements that start with this prefix. If this is the case, the function ends with the return value 0, otherwise with 1.
 
-=== 1.4.2 doMavenGetLatestVersion
+=== doMavenGetLatestVersion
 The doMavenGetLatestVersion function looks in the artifact repository specified in the (url) parameter for the latest version of the software stored there.
 
-=== 1.4.3 doUpgradeMavenArtifact
+=== doUpgradeMavenArtifact
 The function doUpgradeMavenArtifact first looks in the target directory to see if it is a git repository and then carries out a doGitPullOrClone if necessary and then terminates the function. If the target directory is not a git repository and LATEST was specified as the fourth parameter for the target version, then the latest target version of the Maven artifact (parameter 3) is determined under the url (parameter 2). Now the current version (parameter 6) is compared with the desired target version, and if it is the same or if the current version is greater than the target version, the function aborts with a corresponding message. If the target version is larger than the current version, the software is installed in the target version in the target directory (parameter 1).
 
 == to categorize
