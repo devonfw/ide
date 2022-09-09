@@ -52,58 +52,54 @@ function doSetup() {
 }
 
 function doPipInstall() {
+  local package="${1}"
+  local package_folder="${2}"
+  if [ -z "${package_folder}" ]
+  then
+    package_folder="${package}"
+  fi
+  local package_path="${DEVON_IDE_HOME}/software/${package_folder}"
   # If pywin32 is not installed in the python Lib directory, install it. (e.g. required for azure cli to work)
   if doIsWindows && [ ! -d "${PYTHON_HOME}/lib/site-packages/win32" ]
   then
     doRunPip "install pypiwin32"
   fi
-  while [ -n "${1}" ]
-  do
-    local package="${1}"
-    shift
-    local package_path="${DEVON_IDE_HOME}/software/${package}"
-    if [ ! -d "${package_path}" ]
-    then
-      mkdir -p "${package_path}"
-    fi
-    # Install package with pip
-    doRunPip "install ${package}" "--target=${package_path}"
-    # Write a new line to the modules.pth if the line doesn't exist
-    if ! grep -q "../${package}" "${PYTHON_HOME}/modules.pth"
-    then
-      echo -e "../${package}\n" >> "${PYTHON_HOME}/modules.pth"
-    fi
-    doExtendPath "${package_path}"
-  done
+  if [ ! -d "${package_path}" ]
+  then
+    mkdir -p "${package_path}"
+  fi
+  # Install package with pip
+  doRunPip "install ${package}" "--target=${package_path}"
+  # Write a new line to the modules.pth if the line doesn't exist
+  if ! grep -q "../${package_folder}" "${PYTHON_HOME}/modules.pth"
+  then
+    echo -e "../${package_folder}\n" >> "${PYTHON_HOME}/modules.pth"
+  fi
+  doExtendPath "${package_path}"
 }
 
 function doPipRemove() {
-  if [ -z "${1}" ]
+  local package="${1}"
+  local package_folder="${2}"
+  if [ -z "${package}" ]
   then
     doAskToContinue "Do you want to remove pip?"
     rm -rf "${PIP_HOME}"
     doEcho "Pip removed."
     return
   fi
-  
   # Remove pip packages given as arguments
-  while [ -n "${1}" ]
-  do
-    local package="${1}"
-    shift
-    doRunPip "uninstall ${package}"
-    if [ -d "${DEVON_IDE_HOME}/software/${package}" ]
-    then
-      # If not silent
-      if [ "${1}" != "silent" ]
-      then
-        doEcho "Removing ${package}..."
-      fi
-      
-      rm -rf "${DEVON_IDE_HOME}/software/${package}"
-    fi
-    doEcho "Package ${package} removed."
-  done
+  if [ -z "${package_folder}" ]
+  then
+    package_folder="${package}"
+  fi
+  local package_path="${DEVON_IDE_HOME}/software/${package_folder}"
+  doRunPip "uninstall ${package}"
+  if [ -d "${package_path}" ]
+  then
+    rm -rf "${package_path}"
+  fi
+  doEcho "Package ${package} removed."
 }
 
 function doRunPip() {
