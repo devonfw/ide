@@ -35,12 +35,7 @@ function doSetup() {
       
     elif doIsWindows
     then
-      #local path="${PATH}"
       doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
-      #mkdir "${PYTHON_HOME}/bin"
-      #mv "${PYTHON_HOME}/"*.exe "${PYTHON_HOME}/"*.dll "${PYTHON_HOME}/bin"
-      #PATH="${PYTHON_HOME}/bin:${path}"
-      #export PATH
       if [ -a "$(find "${PYTHON_HOME}" -name '*._pth')" ]
       then
         PTH_FILE="$(find "${PYTHON_HOME}" -name '*._pth')"
