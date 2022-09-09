@@ -11,11 +11,8 @@ A possible solution is to mirror the update sites and store them either locally 
 
 == Mirroring Eclipse Update Sites
 
-For mirroring you need the URL of the update-site (e.g. http://download.jboss.org/jbosstools/updates/webtools/photon/). Open any CLI in your IDE folder and run the following command. `<NAME>` stands for the name of the plugin or update-site. It can be chosen arbitrarily.
+For mirroring you need the URL of the update-site (e.g. http://download.jboss.org/jbosstools/updates/webtools/photon/). Open any CLI in `devonfw-ide` folder and run the following command. `<NAME>` stands for the name of the plugin or update-site. It can be chosen arbitrarily.
 
 `devon eclipse mirror <URL> <NAME> <DIR>`
 
-This command will automatically mirror the content of the update-site to a specific `<DIR>` folder. If `<DIR>` is not specified, the folder is created by default in `software/eclipse/update-sites`. Afterwards the folder can be uploaded to your webspace and used for previous projects. 
-
-== Upload Mirrored Update Site
-
+This command will automatically mirror the content of an update-site to a specific `<DIR>` folder. If `<DIR>` is not specified, the folder is created by default in `software/eclipse/update-sites/<NAME>-<DATE>`. Afterwards the folder can be uploaded to your webspace and used for previous projects.
