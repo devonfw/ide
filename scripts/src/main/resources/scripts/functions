@@ -329,6 +329,9 @@ function doDevonCommand() {
     else
       exit ${result}
     fi
+  elif [ "${2}" = "setup" ]
+  then
+    doUpdatePath
   fi
 }
 
