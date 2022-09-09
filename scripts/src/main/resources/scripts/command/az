@@ -16,8 +16,7 @@ source "$(dirname "${0}")"/../functions
 function doSetup() {
   if [ "${1}" != "silent" ] || [[ ! $(command -v az) =~ ${DEVON_IDE_HOME}/software/ ]]
   then
-    doDevonCommand python setup silent
-    doRunCommand "${DEVON_IDE_HOME}/software/python/pip.exe install --target=${DEVON_IDE_HOME}/software/az azure-cli"
+    doDevonCommand pip install azure-cli
     setConfig
     setPth
     doRunCommand "pip uninstall pywin32"
@@ -33,10 +32,10 @@ function setConfig() {
   local az_config_dir="${DEVON_IDE_HOME}/conf/.azure"
   local az_config_export="export AZURE_CONFIG_DIR=${az_config_dir}"
   if ! grep -q "${az_config_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
-    then
-      doRunCommand "${az_config_export}"
-      echo -e "\n${az_config_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
-      doEcho "Location of Azure's configuration file is set to ${az_config_dir}"
+  then
+    doRunCommand "${az_config_export}"
+    echo -e "\n${az_config_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+    doEcho "Location of Azure's configuration file is set to ${az_config_dir}"
   fi
 }
 
