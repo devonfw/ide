@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup start help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
+
+# gcviewer installation
+function doSetup() {
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
+  then
+    if [ -z "${GCVIEWER_VERSION}" ]
+    then
+      doEcho "Getting the latest release of GCViewer..."
+      GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
+    fi 
+    do_not_extract="Not Empty"
+    doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
+    doCreateGCViewerScript
+  fi
+}
+
+function doStart() {
+  doSetup silent
+  doEcho "Starting GCViewer..."
+  "${GCVIEWER_HOME}/gcviewer"
+}
+
+doCreateGCViewerScript() {
+  cd "${GCVIEWER_HOME}" || exit
+  touch gcviewer
+  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" >> gcviewer
+  chmod +x gcviewer
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run gcviewer"
+  echo
+  echo "Arguments:"
+  echo " setup                    install the latest version GCViewer on your machine."
+  echo " start                    launch GCViewer App."
+  echo
+;;
+"setup" | "s")
+  if [ "${2}" == "silent" ]
+  then
+    doSetup silent
+  else
+    doSetup
+  fi
+;;
+"start" | "")
+  doStart
+;;
+*)
+  doError "Unkown command!"
+;;
+esac

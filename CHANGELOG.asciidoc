@@ -26,6 +26,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/800[#800]: Nightly test with additional tests
 * https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
 * https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
+* https://github.com/devonfw/ide/issues/849[#849]: Integration of GCViewer
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.08.001].
 
