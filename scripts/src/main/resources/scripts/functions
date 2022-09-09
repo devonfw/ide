@@ -764,7 +764,7 @@ function doInstallWithPackageManager() {
 function doIsInstallerExtension()
 {
   local myext="${1/*\./.}"
-  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ]
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
     return
   fi
@@ -1258,7 +1258,6 @@ function doInstall() {
   if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
     doExtendPath "${target_path}"
-    doQuestion "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
   if [ "${install_path}" != "${target_path}" ]
   then
@@ -1297,12 +1296,14 @@ function doInstall() {
 
 # $1: software folder to add to path
 function doExtendPath() {
-  if [ -d "${1}/bin" ]
+  local software_path="${1}"
+  if [ -d "${software_path}/bin" ]
   then
-    export PATH="${1}/bin:${PATH}"
+    export PATH="${software_path}/bin:${PATH}"
   else
-    export PATH="${1}:${PATH}"
-  fi    
+    export PATH="${software_path}:${PATH}"
+  fi
+  doQuestion "The software ${software_path/*\//} has been added. You need to rerun 'devon' command without arguments or restart your terminal to update your PATH so the newly installed software will be found."
 }
 
 # $1: templates path
