@@ -55,10 +55,6 @@ function doSetupJava() {
       code="jdk-${version/_/%2B}"
     fi
     doInstall "-" "${java_path}" "java" "${version}" "" "${code}"
-    if [ "${java_path}" = "${JAVA_HOME}" ]
-    then
-      doExtendPath "${JAVA_HOME}"
-    fi
     # delete not used jdk for old installations
     rm -rf "${DEVON_IDE_HOME}/software/jdk"
   fi
