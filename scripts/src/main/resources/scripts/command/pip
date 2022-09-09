@@ -15,15 +15,11 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  # If no python is isntalled in directory, install it
-  if [ ! -d "${DEVON_IDE_HOME}/software/python" ]
-  then
-    doEcho "Installing python..."
-    doDevonCommand python setup silent
-  fi
-  local PIP_CMD="$(command -v pip)"
-  local software="${DEVON_IDE_HOME}/software"
-  if [ "$?" == 0 ] && [ "${PIP_CMD::${#software}}" = "${software}" ]
+  # If no python is installed in directory, install it
+  doDevonCommand python setup silent
+  local PIP_CMD
+  PIP_CMD="$(command -v pip)"
+  if [ "$?" == 0 ] && [ "${PIP_CMD::${#PIP_HOME}}" = "${PIP_HOME}" ]
   then
     if [ "${1}" != "silent" ]
     then
@@ -33,74 +29,69 @@ function doSetup() {
     if doIsWindows
     then
       # If modules.pth doesn't exist in python directory, create it
-      if [ ! -f "${software}/python/modules.pth" ]
+      if [ ! -f "${PYTHON_HOME}/modules.pth" ]
       then
         doEcho "Creating modules.pth..."
-        echo "../pip" > "${software}/python/modules.pth"
-        echo "../setuptools" >> "${software}/python/modules.pth"
-        echo "../wheel" >> "${software}/python/modules.pth"
-        echo "../pkg_resources" >> "${software}/python/modules.pth"
+        echo -e "../pip\n../setuptools\n../wheel\n../pkg_resources\n" > "${PYTHON_HOME}/modules.pth"
       fi
       
       # Install pip via python
       doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
       cd "${PIP_HOME}" || exit 255
-      PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
       doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${PIP_HOME}" 
-      
       rm -rf "${PIP_HOME}/pip-latest-windows.py"
-      export PATH="${PYTHON_HOME}:${PATH}"
-
+      doExtendPath "${PIP_HOME}"
     else
       doEcho "Your operating system is unsupported!"
     fi
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doEcho "Pip was installed successfully!"
-    doWarning "If you get an error like 'Failed to run command: pip3', run 'devon' or restarting your terminal window and try running that command again manually."
-    doRunCommand "pip3 --version"
+    doRunCommand "pip --version"
   fi
 }
-function doInstallPackage(){
-  # Install pip package
-  local package="${1}"
-  local software="${DEVON_IDE_HOME}/software/"
-  local package_path="${software}${package}"
 
-  # If pywin32 is not installed in the python Lib directory, install it. This is required for the azure cli to work.
-  if [ ! -d "${software}/python/lib/site-packages/win32" ]
+function doPipInstall() {
+  # If pywin32 is not installed in the python Lib directory, install it. (e.g. required for azure cli to work)
+  if doIsWindows && [ ! -d "${PYTHON_HOME}/lib/site-packages/win32" ]
   then
     doRunPip "install pypiwin32"
   fi
-
-  # Create new package folder in software directory
-  if [ ! -d "${package_path}" ]
-  then
-    mkdir -p "${package_path}"
-  fi
-
-  # Write a new line to the modules.pth if the line doesn't exist
-  if ! grep -q "../${package}" "${software}/python/modules.pth"
-  then
-    echo "../${package}" >> "${software}/python/modules.pth"
-  fi
-
-  # Install package with pip
-  doRunPip "install ${package} --target=${package_path}"
-
-  doEcho "Package ${package} installed successfully! If you get an error, that the command was not found, run 'devon' or restart your terminal window and try running that command again."
-
+  while [ -n "${1}" ]
+  do
+    local package="${1}"
+    shift
+    local package_path="${DEVON_IDE_HOME}/software/${package}"
+    if [ ! -d "${package_path}" ]
+    then
+      mkdir -p "${package_path}"
+    fi
+    # Install package with pip
+    doRunPip "install ${package}" "--target=${package_path}"
+    # Write a new line to the modules.pth if the line doesn't exist
+    if ! grep -q "../${package}" "${PYTHON_HOME}/modules.pth"
+    then
+      echo -e "../${package}\n" >> "${PYTHON_HOME}/modules.pth"
+    fi
+    doEcho "Package ${package} installed successfully!\nYou need to run 'devon' or restart your terminal to update your PATH so the newly installed software will be found."
+  done
 }
 
-function doRemove(){
-  # Remove pip package and the argument is not empty
-  local package="${1}"
-
-  if [ -n "${package}" ]
+function doPipRemove() {
+  if [ -z "${1}" ]
   then
+    doAskToContinue "Do you want to remove pip?"
+    rm -rf "${PIP_HOME}"
+    doEcho "Pip removed."
+    return
+  fi
+  
+  # Remove pip packages given as arguments
+  while [ -n "${1}" ]
+  do
+    local package="${1}"
+    shift
     doRunPip "uninstall ${package}"
-    
     if [ -d "${DEVON_IDE_HOME}/software/${package}" ]
     then
       # If not silent
@@ -112,33 +103,22 @@ function doRemove(){
       rm -rf "${DEVON_IDE_HOME}/software/${package}"
     fi
     doEcho "Package ${package} removed."
-  else
-    # Ask if you want to remove pip
-    read -r -p "Do you want to remove pip? [y/N] " response
-    if [[ "${response}" =~ ^([yY][eE][sS]|[yY])$ ]]
-    then
-      # Remove pip folder
-      rm -rf "${DEVON_IDE_HOME}/software/pip"
-      doEcho "Pip removed."
-    fi
-  fi
+  done
 }
 
 function doRunPip() {
   # If pip is not installed
-  if [ ! -d "${DEVON_IDE_HOME}/software/python/pip" ]
-  then
-    doSetup silent
-  fi
+  doSetup silent
   if doIsQuiet
   then
-    doRunCommand "pip ${*}" > /dev/null
+    doRunCommand "pip ${*}" "pip ${1}" > /dev/null
   else
-    doRunCommand "pip ${*}"
+    doRunCommand "pip ${*}" "pip ${1}"
   fi
 }
 
 PIP_HOME="${DEVON_IDE_HOME}/software/pip"
+PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
 
 case ${1} in 
   "help" | "-h")
@@ -159,10 +139,12 @@ case ${1} in
      doRunPip --version
   ;;
   "install" | "-i")
-    doInstallPackage "${2}"
+    shift
+    doPipInstall "${@}"
   ;;
   "remove" | "-r")
-    doRemove ${2}
+    shift
+    doPipRemove "${@}"
   ;;
   *)
      doRunPip "${@}"
