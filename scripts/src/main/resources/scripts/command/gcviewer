@@ -17,8 +17,8 @@ source "$(dirname "${0}")"/../functions
 GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
 
 # gcviewer installation
-function doSetup(){
-
+function doSetup() {
+  doDevonCommand java setup silent
   if [ "${1}" != "silent" ]
   then
     if [ -z "${GCVIEWER_VERSION}" ]
@@ -30,39 +30,20 @@ function doSetup(){
     doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
     doCreateGCViewerScript
   fi
-  
 }
 
-function doStart(){
-
-  if [ ! -d "${GCVIEWER_HOME}" ]
-  then
-    doSetup
-  else
-    cd "${GCVIEWER_HOME}" || exit
-    doDevonCommand java setup silent
-    doEcho "Starting GCViewer..."
-    doRunGCViewer
-  fi
-
+function doStart() {
+  doSetup silent
+  doEcho "Starting GCViewer..."
+  "${GCVIEWER_HOME}/gcviewer"
 }
 
-doCreateGCViewerScript(){
-
+doCreateGCViewerScript() {
   cd "${GCVIEWER_HOME}" || exit
-  touch gcviewer-script
-  echo -e "#!/usr/bin/env bash\n\njava -jar gcviewer*.jar&" >> gcviewer-script
-  chmod +x gcviewer-script
-
+  touch gcviewer
+  echo -e "#!/usr/bin/env bash\n\njava -jar gcviewer*.jar&" >> gcviewer
+  chmod +x gcviewer
 }
-
-doRunGCViewer(){
-
-  cd "${GCVIEWER_HOME}" || exit
-  gcviewer-script
-
-}
-
 
 # CLI
 case ${1} in 
