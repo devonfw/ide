@@ -19,7 +19,7 @@ GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ]
+  if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
   then
     if [ -z "${GCVIEWER_VERSION}" ]
     then
