@@ -17,16 +17,17 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/810[#810]: Add OpenShift CLI
 * https://github.com/devonfw/ide/issues/692[#692]: Improve Windows Terminal with gitbash
 * https://github.com/devonfw/ide/issues/786[#786]: Improve Windows Terminal with powershell
+* https://github.com/devonfw/ide/issues/849[#849]: Integration of GCViewer
 * https://github.com/devonfw/ide/issues/867[#867]: ERROR: Error opening the file. There may be a disk or file system error.
 * https://github.com/devonfw/ide/pull/829[#829]: #701: fix registry import paths for Windows Terminal
 * https://github.com/devonfw/ide/pull/802[#802]: #798: English grammar fix for success message
 * https://github.com/devonfw/ide/issues/803[#803]: git pull not working on debug
+* https://github.com/devonfw/ide/issues/848[#848]: Update PATH automatically on doDevonCommand
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
 * https://github.com/devonfw/ide/issues/800[#800]: Nightly test with additional tests
 * https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
 * https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
-* https://github.com/devonfw/ide/issues/849[#849]: Integration of GCViewer
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.08.001].
 
