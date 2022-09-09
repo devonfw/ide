@@ -38,7 +38,7 @@ function doInstallEclipsePlugin() {
     echo
   else
     echo
-    doSuccess "Installation of plugin ${plugin} succeeded."
+    doSuccess "Installation of plugin ${plugin} was successful."
     echo
   fi
   return "${result}"
@@ -48,7 +48,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2022-03}"
+    local version="${ECLIPSE_VERSION:-2022-06}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then
@@ -258,6 +258,34 @@ function doImportEclipse() {
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
+function doMirrorUpdateSite() {
+  local dest="${ECLIPSE_HOME}/update-sites/"
+  local timestamp=$(date +'%m-%d-%Y')
+  local eclipsec="${ECLIPSE_HOME}/eclipse"
+  if [ -n "${3}" ]
+  then
+    dest="${3}"
+  fi
+  if doIsWindows
+  then
+    eclipsec="${ECLIPSE_HOME}/eclipsec.exe"
+  fi
+  "${eclipsec}" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  "${eclipsec}" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  result=${?}
+  if [ "${result}" != 0 ]
+  then
+    echo
+    doFail "Mirroring of update-site ${1} failed. Please check the URL and try again."
+    echo
+  else
+    echo
+    doSuccess "Mirroring of update-site ${1} was successful and can be found at ${dest}."
+    echo
+  fi
+  return "${result}"
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -321,6 +349,11 @@ do
   elif [ "${1}" = "import" ] 
   then
     doImportEclipse "${2}" "${3}"
+    exit ${?}
+  elif [ "${1}" = "mirror" ]
+  then
+    shift
+    doMirrorUpdateSite "${@}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"
