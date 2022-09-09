@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup version pip install remove version -v --version help -h --help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  # If no python is installed in directory, install it
+  doDevonCommand python setup silent
+  local PIP_CMD
+  PIP_CMD="$(command -v pip)"
+  if [ "$?" == 0 ] && [ "${PIP_CMD::${#PIP_HOME}}" = "${PIP_HOME}" ]
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Pip is already installed at ${PIP_CMD}. Use 'devon pip remove' if you want to remove it."
+    fi
+  else
+    if doIsWindows
+    then
+      # If modules.pth doesn't exist in python directory, create it
+      if [ ! -f "${PYTHON_HOME}/modules.pth" ]
+      then
+        doEcho "Creating modules.pth..."
+        echo -e "../pip\n../setuptools\n../wheel\n../pkg_resources\n" > "${PYTHON_HOME}/modules.pth"
+      fi
+      
+      # Install pip via python
+      doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
+      cd "${PIP_HOME}" || exit 255
+      doDevonCommand python pip-latest-windows.py --no-warn-script-location "--target=${PIP_HOME}" 
+      rm -rf "${PIP_HOME}/pip-latest-windows.py"
+      doExtendPath "${PIP_HOME}"
+    else
+      doEcho "Your operating system is unsupported!"
+    fi
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "pip --version"
+  fi
+}
+
+function doPipInstall() {
+  local package="${1}"
+  local package_folder="${2}"
+  if [ -z "${package_folder}" ]
+  then
+    package_folder="${package}"
+  fi
+  local package_path="${DEVON_IDE_HOME}/software/${package_folder}"
+  # If pywin32 is not installed in the python Lib directory, install it. (e.g. required for azure cli to work)
+  if doIsWindows && [ ! -d "${PYTHON_HOME}/lib/site-packages/win32" ]
+  then
+    doRunPip "install pypiwin32"
+  fi
+  if [ ! -d "${package_path}" ]
+  then
+    mkdir -p "${package_path}"
+  fi
+  # Install package with pip
+  doRunPip "install ${package}" "--target=${package_path}"
+  # Write a new line to the modules.pth if the line doesn't exist
+  if ! grep -q "../${package_folder}" "${PYTHON_HOME}/modules.pth"
+  then
+    echo -e "../${package_folder}\n" >> "${PYTHON_HOME}/modules.pth"
+  fi
+  doExtendPath "${package_path}"
+}
+
+function doPipRemove() {
+  local package="${1}"
+  local package_folder="${2}"
+  if [ -z "${package}" ]
+  then
+    doAskToContinue "Do you want to remove pip?"
+    rm -rf "${PIP_HOME}"
+    doEcho "Pip removed."
+    return
+  fi
+  # Remove pip packages given as arguments
+  if [ -z "${package_folder}" ]
+  then
+    package_folder="${package}"
+  fi
+  local package_path="${DEVON_IDE_HOME}/software/${package_folder}"
+  doRunPip "uninstall ${package}"
+  if [ -d "${package_path}" ]
+  then
+    rm -rf "${package_path}"
+  fi
+  doEcho "Package ${package} removed."
+}
+
+function doRunPip() {
+  # If pip is not installed
+  doSetup silent
+  if doIsQuiet
+  then
+    doRunCommand "pip ${*}" "pip ${1}" > /dev/null
+  else
+    doRunCommand "pip ${*}" "pip ${1}"
+  fi
+}
+
+PIP_HOME="${DEVON_IDE_HOME}/software/pip"
+PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+
+case ${1} in 
+  "help" | "-h")
+    echo "Install Pip (Python Package Installer)."
+    echo
+    echo "Arguments:"
+    echo " setup                    install pip on your machine."
+    echo " «args»                   call pip with the specified arguments (call 'pip --help' for details)."
+    echo " install «package»        install the specified Pip package."
+    echo " remove «package»         remove the specified Pip package. If no package is specified, pip will be removed."
+    echo " version                  show the version of pip installed."
+    echo
+  ;;
+  "setup" | "-s" | "")
+    doSetup "${2}"
+  ;;
+  "version" | "-v" | "--version")
+     doRunPip --version
+  ;;
+  "install" | "-i")
+    shift
+    doPipInstall "${@}"
+  ;;
+  "remove" | "-r")
+    shift
+    doPipRemove "${@}"
+  ;;
+  *)
+     doRunPip "${@}"
+  ;;
+esac

@@ -329,6 +329,8 @@ function doDevonCommand() {
     else
       exit ${result}
     fi
+  else
+    doUpdatePath
   fi
 }
 
@@ -709,40 +711,13 @@ function doExtract() {
 # $1: the file to unzip
 # $2: target_dir
 function doUnzip() {
+  local zipfile="${1}"
+  local target_dir="${2}"
   if ! command -v unzip &> /dev/null
   then
-    pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
-
-    for t in "${pckmngers[@]}"; do
-      command -v "${t}" > /dev/null
-      if [ "${?}" -eq "0" ]
-      then
-        pckmnger=${t}
-      fi
-    done
-    case ${pckmnger} in
-    apt-get) doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    yum)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    pacman)  doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} -S unzip";;
-    emerge)  doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    zypp)    doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    apk)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} add unzip";;
-    dnf)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    brew)    doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    *)       doEcho "please install unzip manually and start again"
-             exit;;
-    esac
+    doInstallWithPackageManager "apt-get install unzip" "yum install unzip" "pacman -S unzip" "emerge install unzip" "zypp install unzip" "apk add unzip" "brew install unzip"
   fi
-  doEcho "unzip archive..."
-  doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+  doRunCommand "unzip -qn '${zipfile}' -d '${target_dir}'"
 }
 
 function doInstallWithPackageManager() {
@@ -757,14 +732,14 @@ function doInstallWithPackageManager() {
       return
     fi
   done
-  doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
+  doError "No supported package manager found on your system.\nInstallation failed: ${1}"
 }
 
 # $1: filename (e.g. ${filename})
 function doIsInstallerExtension()
 {
   local myext="${1/*\./.}"
-  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ]
+  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
     return
   fi
@@ -1146,6 +1121,7 @@ function doGitPullOrClone() {
 # $8: optional architecture (e.g. x86_64)
 # $9: optional extension (e.g. 'tar.gz' or 'zip')
 # $10: optional software repo
+# $11: optional to ignore extracting downloaded files (must not be empty to ignore extracting!)
 function doInstall() {
   local url="${1}"
   local target_path="${2}"
@@ -1157,6 +1133,7 @@ function doInstall() {
   local arch="${8}"
   local ext="${9}"
   local repository="${10}"
+  local ignore_extract="${11}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
   then
@@ -1233,10 +1210,16 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-    doDebug "Received download file ${DOWNLOAD_FILENAME}"
-    doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
-    doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
+    if [ -n "${ignore_extract}" ]
+    then
+      doDownload "${url}" "${target_path}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+      doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    else
+      doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+      doDebug "Received download file ${DOWNLOAD_FILENAME}"
+      doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
+      doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
+    fi
     if [ "${install_path}" != "${DEVON_IDE_HOME}" ]
     then
       echo "${version}" > "${version_file}"
@@ -1258,7 +1241,6 @@ function doInstall() {
   if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
   then
     doExtendPath "${target_path}"
-    doQuestion "To be fully functional please rerun 'devon' command to update your PATH properly."
   fi
   if [ "${install_path}" != "${target_path}" ]
   then
@@ -1297,12 +1279,14 @@ function doInstall() {
 
 # $1: software folder to add to path
 function doExtendPath() {
-  if [ -d "${1}/bin" ]
+  local software_path="${1}"
+  if [ -d "${software_path}/bin" ]
   then
-    export PATH="${1}/bin:${PATH}"
+    export PATH="${software_path}/bin:${PATH}"
   else
-    export PATH="${1}:${PATH}"
-  fi    
+    export PATH="${software_path}:${PATH}"
+  fi
+  doQuestion "The software ${software_path/*\//} has been added. You need to rerun 'devon' command without arguments or restart your terminal to update your PATH so the newly installed software will be found."
 }
 
 # $1: templates path
@@ -1520,6 +1504,15 @@ function doIsWindows() {
     return
   fi
   return 255
+}
+
+# $1: dirctory
+function doIsEmptyDirectory() {
+  local dir="${1}"
+  if [ ! -d "${dir}" ] || [ -z "$(find "${dir}" -maxdepth 0 -empty)" ]
+  then
+    return 1
+  fi
 }
 
 function doIsPackageJsonContainingScript() {

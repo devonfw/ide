@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function doCommandTest()  {
+  cd ../test-setup
+  CLI="${PWD}/scripts/devon"
+  "${CLI}" "${1}" setup
+  exit "${?}"
+}
