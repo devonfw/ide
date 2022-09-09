@@ -36,6 +36,10 @@ function doInstallEclipsePlugin() {
     echo
     doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
     echo
+  else
+    echo
+    doSuccess "Installation of plugin ${plugin} succeeded."
+    echo
   fi
   return "${result}"
 }
