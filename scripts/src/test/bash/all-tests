@@ -1,14 +1,11 @@
 #!/bin/bash
+
 success=0
 failure=0
 total=0
-mkdir -p ~/.devon
-touch ~/.devon/.license.agreement
-rm -rf integration-test
-mkdir -p integration-test
-cd integration-test
-export DEVON_SKIP_PROJECT_SETUP=true
-for testpath in "$(dirname $0)"/test-*
+
+function doTests() {
+for testpath in "$(dirname $0)"/"${1}"-*
 do
   testcase="${testpath/*\//}"
   echo "Running test #${total}: ${testcase}"
@@ -28,6 +25,16 @@ do
   let "total++"
   cd ..
 done
+}
+
+mkdir -p ~/.devon
+touch ~/.devon/.license.agreement
+rm -rf integration-test
+mkdir -p integration-test
+cd integration-test
+export DEVON_SKIP_PROJECT_SETUP=true
+doTests "test"
+[[ "${INTEGRATION_TEST}" == true ]] && doTests "integration-test"
 echo
 echo "*****************************************************"
 echo "Executed #${total} test(s), #${success} succeeded and #${failure} failed"

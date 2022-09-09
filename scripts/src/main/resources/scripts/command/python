@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help version pip pip3 version -v --version"
+    echo "setup help version version -v --version"
   fi
   exit
 fi
@@ -26,7 +26,7 @@ function doSetup() {
     if doIsMacOs
     then
       doBrewInstall openssl
-      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
       sh "${PYTHON_HOME}"/configure MACOSX_DEPLOYMENT_TARGET=12 --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
@@ -35,12 +35,7 @@ function doSetup() {
       
     elif doIsWindows
     then
-      doEcho "Getting pip install file"
-      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "python"
-      
-      curl -sSL https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-      doRunPython get-pip.py --no-warn-script-location
-      rm get-pip.py
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
       if [ -a "$(find "${PYTHON_HOME}" -name '*._pth')" ]
       then
         PTH_FILE="$(find "${PYTHON_HOME}" -name '*._pth')"
@@ -49,28 +44,18 @@ function doSetup() {
       else
         doWarning "Couldn't find *._pth file."
       fi
-      if [ -d "${PYTHON_HOME}/Scripts" ]
-      then
-        echo mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
-        mv "${PYTHON_HOME}/Scripts/"* "${PYTHON_HOME}/"
-      fi
     else
       doInstallWithPackageManager "apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev" \
                                   "yum -y groupinstall \"Development Tools\"" \
                                   "zypp install automake fdupes gcc gcc-c++ gcc-fortran gdbm-devel gettext-tools gmp-devel intltool libbz2-devel libexpat-devel libffi-devel libnsl-devel lzma-devel make ncurses-devel netcfg openssl-devel pkgconfig readline-devel sqlite-devel xz zlib-devel"
       
       
-      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}" "" "Python"
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
       "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
       make -j 8
       make altinstall
       make clean
       make distclean
-    fi
-    
-    if [ -d "${DEVON_IDE_HOME}/Python" ]
-    then
-      rm -r "${DEVON_IDE_HOME}/Python"
     fi
   fi
 
@@ -100,13 +85,11 @@ case ${1} in
     echo "Arguments:"
     echo " setup                    setup Python."
     echo " version                  get Python version."
-    echo " pip                      call pip."
-    echo " pip3                     call pip3 (Windows only)"
+    echo " «args»                   call Python with the specified arguments."
     echo
   ;;
   "setup" | "s" | "")
-    doEcho "Installing python..."
-    doSetup
+    doSetup "${2}"
   ;;
   "version" | "-v" | "--version")
      doRunPython --version
