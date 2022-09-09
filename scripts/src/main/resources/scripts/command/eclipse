@@ -270,17 +270,17 @@ function doMirrorUpdateSite() {
   then
     eclipsec="${ECLIPSE_HOME}/eclipsec.exe"
   fi
-  "${eclipsec}" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
-  "${eclipsec}" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
-  result=${?}
+  "${eclipsec}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  "${eclipsec}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  local result="${?}"
   if [ "${result}" != 0 ]
   then
     echo
-    doFail "Mirroring of update-site ${1} failed. Please check the URL and try again."
+    doFail "Mirroring of the update-site ${1} failed. Please check the URL and try again."
     echo
   else
     echo
-    doSuccess "Mirroring of update-site ${1} was successful and can be found at ${dest}."
+    doSuccess "Mirroring of the update-site ${1} was successful and can be found at ${dest}"
     echo
   fi
   return "${result}"
@@ -301,6 +301,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
+  echo " mirror «url» «name» [«dest»]    mirror plugin update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
