@@ -712,40 +712,13 @@ function doExtract() {
 # $1: the file to unzip
 # $2: target_dir
 function doUnzip() {
+  local zipfile="${1}"
+  local target_dir="${2}"
   if ! command -v unzip &> /dev/null
   then
-    pckmngers=("apt-get" "yum" "pacman" "emerge" "zypp" "apk" "dnf" "brew")
-
-    for t in "${pckmngers[@]}"; do
-      command -v "${t}" > /dev/null
-      if [ "${?}" -eq "0" ]
-      then
-        pckmnger=${t}
-      fi
-    done
-    case ${pckmnger} in
-    apt-get) doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    yum)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    pacman)  doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} -S unzip";;
-    emerge)  doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    zypp)    doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    apk)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} add unzip";;
-    dnf)     doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    brew)    doEcho "installing unzip..."
-             doRunCommand "sudo ${pckmnger} install unzip";;
-    *)       doEcho "please install unzip manually and start again"
-             exit;;
-    esac
+    doInstallWithPackageManager "apt-get install unzip" "yum install unzip" "pacman -S unzip" "emerge install unzip" "zypp install unzip" "apk add unzip" "brew install unzip"
   fi
-  doEcho "unzip archive..."
-  doRunCommand "unzip -qn '${1}' -d '${target_dir}'"
+  doRunCommand "unzip -qn '${zipfile}' -d '${target_dir}'"
 }
 
 function doInstallWithPackageManager() {
@@ -760,7 +733,7 @@ function doInstallWithPackageManager() {
       return
     fi
   done
-  doError "No supported package manager found on your system.\nInstallation failed: ${1}"  
+  doError "No supported package manager found on your system.\nInstallation failed: ${1}"
 }
 
 # $1: filename (e.g. ${filename})
