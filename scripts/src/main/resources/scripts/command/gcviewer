@@ -41,7 +41,7 @@ function doStart() {
 doCreateGCViewerScript() {
   cd "${GCVIEWER_HOME}" || exit
   touch gcviewer
-  echo -e "#!/usr/bin/env bash\n\njava -jar gcviewer*.jar&" >> gcviewer
+  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" >> gcviewer
   chmod +x gcviewer
 }
 
