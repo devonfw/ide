@@ -331,8 +331,7 @@ function doDevonCommand() {
     fi
   elif [ "${2}" = "setup" ]
   then
-    # shellcheck source=scripts/environment-project
-    source "${DEVON_IDE_HOME}/scripts/environment-project" export
+    doUpdatePath
   fi
 }
 
