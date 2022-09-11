@@ -260,7 +260,8 @@ function doImportEclipse() {
 
 function doMirrorUpdateSite() {
   local dest="${ECLIPSE_HOME}/update-sites/"
-  local timestamp=$(date +'%m-%d-%Y')
+  local timestamp
+  timestamp=$(date +'%m-%d-%Y')
   local eclipsecli="${ECLIPSE_HOME}/eclipse"
   if [ -n "${3}" ]
   then
