@@ -2,6 +2,12 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.08.002
+
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites
+
 == 2022.08.001
 
 New release with various improvements and bugfixes:
