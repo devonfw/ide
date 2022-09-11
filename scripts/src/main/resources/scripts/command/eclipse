@@ -48,7 +48,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2022-06}"
+    local version="${ECLIPSE_VERSION:-2022-03}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then
@@ -302,7 +302,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
-  echo " mirror «url» «name» [«dest»]    mirror plugin update-site"
+  echo " mirror «url» «name» [«dest»]    mirror the content of an update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
