@@ -261,17 +261,17 @@ function doImportEclipse() {
 function doMirrorUpdateSite() {
   local dest="${ECLIPSE_HOME}/update-sites/"
   local timestamp=$(date +'%m-%d-%Y')
-  local eclipsec="${ECLIPSE_HOME}/eclipse"
+  local eclipsecli="${ECLIPSE_HOME}/eclipse"
   if [ -n "${3}" ]
   then
     dest="${3}"
   fi
   if doIsWindows
   then
-    eclipsec="${ECLIPSE_HOME}/eclipsec.exe"
+    eclipsecli="${ECLIPSE_HOME}/eclipsec.exe"
   fi
-  "${eclipsec}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
-  "${eclipsec}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
+  "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
   local result="${?}"
   if [ "${result}" != 0 ]
   then
@@ -280,7 +280,7 @@ function doMirrorUpdateSite() {
     echo
   else
     echo
-    doSuccess "Mirroring of the update-site ${1} was successful and can be found at ${dest}"
+    doSuccess "Mirroring of the update-site ${1} was successful."
     echo
   fi
   return "${result}"
