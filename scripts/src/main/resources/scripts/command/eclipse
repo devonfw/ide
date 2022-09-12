@@ -283,13 +283,9 @@ function doMirrorUpdateSite() {
   local result="${?}"
   if [ "${result}" != 0 ]
   then
-    echo
     doEchoAttention "Mirroring of the update-site ${1} failed. Please check the URL or rerun setup (devon eclipse setup)."
-    echo
   else
-    echo
     doSuccess "Mirroring of the update-site ${1} was successful."
-    echo
   fi
   return "${result}"
 }
