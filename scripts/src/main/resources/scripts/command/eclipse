@@ -258,7 +258,14 @@ function doImportEclipse() {
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
+# $1: URL
+# $2: name
+# $3: optional dest
 function doMirrorUpdateSite() {
+  if [ -z "${2}" ]
+  then
+    doFail "Parameter <name> is missing."
+  fi
   local dest="${ECLIPSE_HOME}/update-sites/"
   local timestamp
   timestamp=$(date +'%m-%d-%Y')
@@ -277,7 +284,7 @@ function doMirrorUpdateSite() {
   if [ "${result}" != 0 ]
   then
     echo
-    doFail "Mirroring of the update-site ${1} failed. Please check the URL and try again."
+    doEchoAttention ""Mirroring of the update-site ${1} failed. Please check the URL or rerun setup (devon eclipse setup)."
     echo
   else
     echo
