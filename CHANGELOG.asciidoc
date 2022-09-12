@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.08.002
+
+Release in process:
+
+* https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/32?closed=1[milestone 2022.08.002].
+
 == 2022.08.001
 
 New release with various improvements and bugfixes:
