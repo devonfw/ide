@@ -284,7 +284,7 @@ function doMirrorUpdateSite() {
   if [ "${result}" != 0 ]
   then
     echo
-    doEchoAttention ""Mirroring of the update-site ${1} failed. Please check the URL or rerun setup (devon eclipse setup)."
+    doEchoAttention "Mirroring of the update-site ${1} failed. Please check the URL or rerun setup (devon eclipse setup)."
     echo
   else
     echo
