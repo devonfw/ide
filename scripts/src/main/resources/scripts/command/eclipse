@@ -264,7 +264,7 @@ function doImportEclipse() {
 function doMirrorUpdateSite() {
   if [ -z "${2}" ]
   then
-    doFail "Parameter <name> is missing."
+    doFail "Parameter <URL> or <name> is missing."
   fi
   local dest="${ECLIPSE_HOME}/update-sites/"
   local timestamp
