@@ -33,13 +33,7 @@ function doInstallEclipsePlugin() {
   result=${?}
   if [ "${result}" != 0 ]
   then
-    echo
     doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
-    echo
-  else
-    echo
-    doSuccess "Installation of plugin ${plugin} was successful."
-    echo
   fi
   return "${result}"
 }
@@ -259,41 +253,40 @@ function doImportEclipse() {
 }
 
 # $1: plugin-name
+# $2: optional URL
 function doMirrorUpdateSite() {
   if [ -z "${1}" ]
   then
     doFail "Parameter <plugin-name> is missing."
   fi
-  local file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
-  if [ -f  "${file}" ]
+  local url
+  if [ -n "${2}" ]
   then
-    doLoadProperties "${file}"
-    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
-      then
-        doWarning "Invalid eclipse plugin config: ${file}"
-    fi
-    local timestamp
-    timestamp=$(date +'%m-%d-%Y')
-    local eclipsecli
-    if doIsWindows
-    then
-      eclipsecli="${ECLIPSE_HOME}/eclipsec.exe"
-    else
-      eclipsecli="${ECLIPSE_HOME}/eclipse"
-    fi
-    "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
-    "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
-    local result="${?}"
-    if [ "${result}" != 0 ]
-    then
-      doEchoAttention "Mirroring of the update-site ${plugin_url} failed. Please check the URL or rerun setup (devon eclipse setup)."
-    else
-      doSuccess "Mirroring of the update-site ${plugin_url} was successful."
-    fi
-    return "${result}"
+    url="${2}"
   else
-    doWarning "There is no plugin with name '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
+    local file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
+    if [ -f  "${file}" ]
+    then
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+      then
+        doFail "Invalid eclipse plugin config: ${file}"
+      fi
+      url="${plugin_url}"
+    else
+      doFail "There is no plugin '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
+    fi  
   fi
+  local timestamp
+  timestamp=$(date +'%m-%d-%Y')
+  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
+  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
+  local result="${?}"
+  if [ "${result}" != 0 ]
+  then
+    doEchoAttention "Mirroring of the update-site ${url} failed. Please check the URL or rerun setup (devon eclipse setup)."
+  fi
+  return "${result}"
 }
 
 # CLI
@@ -311,7 +304,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
-  echo " mirror «plugin-name»            mirror the content of an update-site"
+  echo " mirror «plugin-name» [«url»]    mirror the content of an update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
