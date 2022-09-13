@@ -77,11 +77,11 @@ A common problem with eclipse plugins is that they are provided decentralized as
 
 All famous IDEs do not have a clear versioning concept: While the plugin artifact itself is typically versioned, the request to install a plugin can not specify a version but always downloads the "latest" version. If at all some kind of versioning for stability is in place it happens via the URL itself so for different major versions different URLs are provided. A possible solution is to mirror the update sites and store them either locally or on your own webspace. This way you always have access to the plugin version you need as a developer without being dependent on the plugin providers. Below is the process to mirror a plugin update-site.
 
-For mirroring you need the `«url»` of an update-site (e.g. http://download.jboss.org/jbosstools/updates/webtools/photon/). Open any CLI in `devonfw-ide` and run the following command. `«name»` stands for the name of the plugin or update-site. It can be chosen arbitrarily.
+For mirroring you need the `«plugin-name»` of an existing plugin in `${DEVON_IDE_HOME}/settings/eclipse/plugins` (e.g. checkstyle). Open any CLI in `${DEVON_IDE_HOME}` and run the following command.
 
-`devon eclipse mirror «url» «name» [«dest»]`
+`devon eclipse mirror «plugin-name»`
 
-This command will automatically mirror the content of an update-site to a specific directory named by «name» and the date of the mirroring. If `«dest»` is not specified, the folder is created by default in `software/eclipse/update-sites/«name»-«date»`. The download time may vary and depends on the size of the update-site. Afterwards, the folder can be uploaded to your webspace and used as a new «plugin_url» e.g for link:#plugins[properties] or `add-plugin «id» [«url»]` command.
+This command will automatically mirror the content of an update-site to a specific directory named by `«plugin-name»` and the current date of the mirroring in `${DEVON_DOWNLOAD_DIR}/update-sites/`. Afterwards, the folder can be uploaded to your webspace and the URL can be used as new value for `«plugin_mirror_url»` in `«plugin-name».properties` file.
 
 == dictionary
 
