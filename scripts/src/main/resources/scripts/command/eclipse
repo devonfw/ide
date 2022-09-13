@@ -292,7 +292,7 @@ function doMirrorUpdateSite() {
     fi
     return "${result}"
   else
-    doWarning "There is no plugin with name ${1}."
+    doWarning "There is no plugin with name ${1} in ${SETTINGS_PATH}/eclipse/plugins."
   fi
 }
 
@@ -311,7 +311,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
-  echo " mirror «url» «name» [«dest»]    mirror the content of an update-site"
+  echo " mirror «plugin-name»            mirror the content of an update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
