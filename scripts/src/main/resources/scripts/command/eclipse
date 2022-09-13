@@ -292,7 +292,7 @@ function doMirrorUpdateSite() {
     fi
     return "${result}"
   else
-    doWarning "There is no plugin with name ${1} in ${SETTINGS_PATH}/eclipse/plugins."
+    doWarning "There is no plugin with name '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
   fi
 }
 
