@@ -22,7 +22,7 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |`ws-re[verse]`           |reverse merge changes from workspace into settings
 |`ws-reverse-add`         |reverse merge adding new properties
 |`create-script`          |create launch script for this IDE, your current workspace and your OS
-|`mirror «plugin-name»    |mirror the content of an update-site
+|`mirror «plugin-name» `  |mirror the content of an update-site
 |=======================
 
 There are link:variables.asciidoc[variables] that can be used for Eclipse. These are explained by the following table:
