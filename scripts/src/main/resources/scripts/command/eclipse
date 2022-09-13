@@ -258,36 +258,42 @@ function doImportEclipse() {
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
-# $1: URL
-# $2: name
-# $3: optional dest
+# $1: plugin-name
 function doMirrorUpdateSite() {
-  if [ -z "${2}" ]
+  if [ -z "${1}" ]
   then
-    doFail "Parameter <URL> or <name> is missing."
+    doFail "Parameter <plugin-name> is missing."
   fi
-  local dest="${ECLIPSE_HOME}/update-sites/"
-  local timestamp
-  timestamp=$(date +'%m-%d-%Y')
-  local eclipsecli="${ECLIPSE_HOME}/eclipse"
-  if [ -n "${3}" ]
+  local file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
+  if [ -f  "${file}" ]
   then
-    dest="${3}"
-  fi
-  if doIsWindows
-  then
-    eclipsecli="${ECLIPSE_HOME}/eclipsec.exe"
-  fi
-  "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
-  "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${1}" -destination "${dest}/${2}_${timestamp}"
-  local result="${?}"
-  if [ "${result}" != 0 ]
-  then
-    doEchoAttention "Mirroring of the update-site ${1} failed. Please check the URL or rerun setup (devon eclipse setup)."
+    doLoadProperties "${file}"
+    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+      then
+        doWarning "Invalid eclipse plugin config: ${file}"
+    fi
+    local timestamp
+    timestamp=$(date +'%m-%d-%Y')
+    local eclipsecli
+    if doIsWindows
+    then
+      eclipsecli="${ECLIPSE_HOME}/eclipsec.exe"
+    else
+      eclipsecli="${ECLIPSE_HOME}/eclipse"
+    fi
+    "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
+    "${eclipsecli}" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
+    local result="${?}"
+    if [ "${result}" != 0 ]
+    then
+      doEchoAttention "Mirroring of the update-site ${plugin_url} failed. Please check the URL or rerun setup (devon eclipse setup)."
+    else
+      doSuccess "Mirroring of the update-site ${plugin_url} was successful."
+    fi
+    return "${result}"
   else
-    doSuccess "Mirroring of the update-site ${1} was successful."
+    doWarning "There is no plugin with name ${1}."
   fi
-  return "${result}"
 }
 
 # CLI
