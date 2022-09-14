@@ -265,7 +265,7 @@ function doImportEclipse() {
 function doMirrorUpdateSite() {
   if [ -z "${1}" ]
   then
-    doFail "Parameter <plugin-id> is missing."
+    doFail "Parameter \"id\" is missing."
   fi
   local url
   if [ -n "${2}" ]
@@ -284,7 +284,7 @@ function doMirrorUpdateSite() {
       fi
       url="${plugin_url}"
     else
-      doFail "There is no plugin with ID '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
+      doFail "There is no plugin with id '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
     fi  
   fi
   local timestamp
