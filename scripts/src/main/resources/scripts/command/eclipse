@@ -288,9 +288,9 @@ function doMirrorUpdateSite() {
     fi  
   fi
   local timestamp
-  timestamp=$(date +'%m-%d-%Y')
-  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
-  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}_${timestamp}"
+  timestamp=$(date +'%Y-%m-%d')
+  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}"
+  "${ECLIPSE_HOME}/eclipse" -nosplash -verbose -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}"
   local result="${?}"
   if [ "${result}" != 0 ]
   then
