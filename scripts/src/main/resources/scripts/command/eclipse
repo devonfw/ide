@@ -275,6 +275,8 @@ function doMirrorUpdateSite() {
     local file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
     if [ -f  "${file}" ]
     then
+      plugin_id=""
+      plugin_url=""
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
       then
