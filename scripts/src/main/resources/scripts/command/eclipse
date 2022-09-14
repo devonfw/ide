@@ -96,6 +96,7 @@ function doAddPluginFromConfig() {
     plugin_id=""
     plugin_active="true"
     plugin_url=""
+    plugin_mirror_url=""
     doLoadProperties "${1}"
     local url
     if [ -n "${plugin_mirror_url}" ]
