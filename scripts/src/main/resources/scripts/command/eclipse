@@ -97,7 +97,14 @@ function doAddPluginFromConfig() {
     plugin_active="true"
     plugin_url=""
     doLoadProperties "${1}"
-    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+    local url
+    if [ -n "${plugin_mirror_url}" ]
+    then
+      url="${plugin_mirror_url}"
+    else
+      url="${plugin_url}"
+    fi
+    if [ -z "${plugin_id}" ] || [ -z "${url}" ]
     then
       doWarning "Invalid eclipse plugin config: ${file}"
     elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
@@ -108,7 +115,7 @@ function doAddPluginFromConfig() {
       local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
       if [ ! -e "${install_file}" ]
       then
-        doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+        doInstallEclipsePlugin "${plugin_id}" "${url}"
         result_rc=$?
         if [ "${result_rc}" = 0 ]
         then
@@ -252,12 +259,12 @@ function doImportEclipse() {
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
-# $1: plugin-name
-# $2: optional URL
+# $1: id
+# $2: optional plugin URL (update site)
 function doMirrorUpdateSite() {
   if [ -z "${1}" ]
   then
-    doFail "Parameter <plugin-name> is missing."
+    doFail "Parameter <plugin-id> is missing."
   fi
   local url
   if [ -n "${2}" ]
@@ -274,7 +281,7 @@ function doMirrorUpdateSite() {
       fi
       url="${plugin_url}"
     else
-      doFail "There is no plugin '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
+      doFail "There is no plugin with ID '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
     fi  
   fi
   local timestamp
@@ -304,7 +311,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
-  echo " mirror «plugin-name» [«url»]    mirror the content of an update-site"
+  echo " mirror «id» [«url»]             mirror the content of an update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
