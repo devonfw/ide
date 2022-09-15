@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Verify Latest Commit
     outputs:
-      RUN_BUILD: ${{ steps.check_date.outputs.should_run }}
+      RUN_BUILD: ${{ steps.verify_commit.outputs.should_run }}
     steps:
       - uses: actions/checkout@v3
       - id: verify_commit
