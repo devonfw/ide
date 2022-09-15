@@ -1,15 +1,24 @@
-name: CI Build MacOS
-on:
-  schedule:
-    - cron: '0 2 * * *'
+name: Integration Test MacOS
+on: push
+  #schedule:
+   # - cron: '0 2 * * *'
 jobs:
-  check_commit:
-    uses: devonfw/ide/.github/workflows/check-commit.yml@master
+  verify_commit:
+    runs-on: ubuntu-latest
+    name: Verify Latest Commit
+    outputs:
+      RUN_BUILD: ${{ steps.check_date.outputs.should_run }}
+    steps:
+      - uses: actions/checkout@v3
+      - id: verify_commit
+        name: Verify Latest Commit Is Less Than 24 Hours
+        if: ${{ github.event_name == 'push' }}
+        run: echo '::set-output name=RUN_BUILD::'$(test -n "$(git log --format=%H --since='24 hours ago')" && echo 'true' || echo 'false')
     
   build:
     runs-on: macos-latest
-    needs: check_commit
-    if: ${{ needs.check_commit.outputs.should_run != 'false' }}
+    needs: verify_commit
+    if: ${{ needs.verify_commit.outputs.RUN_BUILD == 'true' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
