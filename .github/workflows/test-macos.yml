@@ -1,5 +1,5 @@
 name: Integration Test MacOS
-on: 
+on: push
   #schedule:
    # - cron: '0 2 * * *'
 jobs:
