@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: verify_commit
-        name: Verify Latest Commit Is Less Than 24 Hours
+        name: Verify latest commit is less than 24 hours
         if: ${{ github.event_name == 'schedule' }}
         run: echo '::set-output name=RUN_BUILD::'$(test -n "$(git log --format=%H --since='24 hours ago')" && echo 'true' || echo 'false')
     
