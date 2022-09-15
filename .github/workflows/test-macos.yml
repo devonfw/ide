@@ -1,7 +1,7 @@
 name: Integration Test MacOS
 on: 
   schedule:
-   - cron: '25 0 * * *'
+   - cron: '32 0 * * *'
 jobs:
   verify_commit:
     runs-on: ubuntu-latest
