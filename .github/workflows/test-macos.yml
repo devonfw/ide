@@ -5,7 +5,7 @@ on:
 jobs:
   verify_commit:
     runs-on: ubuntu-latest
-    name: Verify Latest Commit
+    name: Verify latest commit
     outputs:
       RUN_BUILD: ${{ steps.verify_commit.outputs.RUN_BUILD }}
     steps:
@@ -16,20 +16,20 @@ jobs:
         run: echo '::set-output name=RUN_BUILD::'$(test -n "$(git log --format=%H --since='24 hours ago')" && echo 'true' || echo 'false')
     
   test:
-    name: Integration Test MacOS
+    name: Integration test MacOS
     runs-on: macos-latest
     needs: verify_commit
     if: ${{ needs.verify_commit.outputs.RUN_BUILD == 'true' }}
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Set Up JDK
+      - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: '11'
-      - name: Set Up Shellcheck
+      - name: Set up shellcheck
         run: brew install shellcheck
       - name: Build project with Maven
         run: |
@@ -37,7 +37,7 @@ jobs:
           mvn -B -ntp install
   
   cancel:
-    name: Cancel This Workflow 
+    name: Cancel this workflow 
     runs-on: ubuntu-latest
     needs: verify_commit
     if: ${{ needs.verify_commit.outputs.RUN_BUILD == 'false' }}
