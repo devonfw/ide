@@ -13,7 +13,7 @@ jobs:
       - id: verify_commit
         name: Verify Latest Commit Is Less Than 24 Hours
         if: ${{ github.event_name == 'push' }}
-        run: echo '::set-output name=RUN_BUILD::'$(test -n "$(git log --format=%H --since='24 hours ago')" && echo 'true' || echo 'false')
+        run: echo '::set-output name=RUN_BUILD::'$(test -n "$(git log --format=%H --since='94 hours ago')" && echo 'true' || echo 'false')
     
   build:
     runs-on: macos-latest
