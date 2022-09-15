@@ -1,4 +1,4 @@
-name: CI Build MacOS
+name: Integration Test MacOS
 on:
   schedule:
     - cron: '0 2 * * *'
