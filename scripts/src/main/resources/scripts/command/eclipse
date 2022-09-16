@@ -93,11 +93,7 @@ function doSetup() {
 function doAddPluginFromConfig() {
   if [ -f "${1}" ]
   then
-    plugin_id=""
-    plugin_active="true"
-    plugin_url=""
-    plugin_mirror_url=""
-    doLoadProperties "${1}"
+    doCheckProperties "${1}"
     local url
     if [ -n "${plugin_mirror_url}" ]
     then
@@ -105,10 +101,7 @@ function doAddPluginFromConfig() {
     else
       url="${plugin_url}"
     fi
-    if [ -z "${plugin_id}" ] || [ -z "${url}" ]
-    then
-      doWarning "Invalid eclipse plugin config: ${file}"
-    elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
+    if [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
       # check if plugin successfully installed
       local plugin_fileprefix="${1/*\//}"
@@ -272,20 +265,8 @@ function doMirrorUpdateSite() {
   then
     url="${2}"
   else
-    local file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
-    if [ -f  "${file}" ]
-    then
-      plugin_id=""
-      plugin_url=""
-      doLoadProperties "${file}"
-      if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
-      then
-        doFail "Invalid eclipse plugin config: ${file}"
-      fi
-      url="${plugin_url}"
-    else
-      doFail "There is no plugin with id '${1}' in ${SETTINGS_PATH}/eclipse/plugins"
-    fi  
+    doCheckProperties "${1}"
+    url="${plugin_url}"
   fi
   local timestamp
   timestamp=$(date +'%Y-%m-%d')
@@ -297,6 +278,26 @@ function doMirrorUpdateSite() {
     doEchoAttention "Mirroring of the update-site ${url} failed. Please check the URL or rerun setup (devon eclipse setup)."
   fi
   return "${result}"
+}
+
+function doCheckProperties() {
+  local file="${1}"
+  if [ ! -f "${1}" ]
+  then
+    file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
+  fi
+  if [ -f  "${file}" ]
+  then
+    plugin_id=""
+    plugin_active="true"
+    plugin_url=""
+    plugin_mirror_url=""
+    doLoadProperties "${file}"
+    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+    then
+      doFail "Invalid eclipse plugin config: ${file}"
+    fi
+  fi
 }
 
 # CLI
