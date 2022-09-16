@@ -93,7 +93,7 @@ function doSetup() {
 function doAddPluginFromConfig() {
   if [ -f "${1}" ]
   then
-    doCheckProperties "${1}"
+    doLoadPluginProperties "${1}"
     local url
     if [ -n "${plugin_mirror_url}" ]
     then
@@ -265,7 +265,7 @@ function doMirrorUpdateSite() {
   then
     url="${2}"
   else
-    doCheckProperties "${1}"
+    doLoadPluginProperties "${1}"
     url="${plugin_url}"
   fi
   local timestamp
@@ -280,7 +280,7 @@ function doMirrorUpdateSite() {
   return "${result}"
 }
 
-function doCheckProperties() {
+function doLoadPluginProperties() {
   local file="${1}"
   if [ ! -f "${1}" ]
   then
