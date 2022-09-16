@@ -25,9 +25,7 @@ function doSetup(){
     if [ -z "${GH_VERSION}" ] || [ "${1}"!="silent" ]
     then
       doEcho "Getting latest release..."
-      local GH_VERSION=$( curl -LsH "Accept: application/vnd.github.v3+json" https://api.github.com/repos/cli/cli/releases/latest | awk -F':' '/tag_name/ {print $2}' | awk -F'"' '{print $2}' )
-      # Remove v from version
-      GH_VERSION="${GH_VERSION:1}"
+      local GH_VERSION=$( curl -LsH "Accept: application/vnd.github.v3+json" https://api.github.com/repos/cli/cli/releases/latest | awk -F':' '/tag_name/ {print $2}' | awk -F'"' '{print $2}' | tr -d 'v' )
 
       doEcho "Installing GitHub CLI..."
       doInstall "-" "${GH_HOME}" "gh" "${GH_VERSION}"
