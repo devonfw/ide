@@ -75,15 +75,26 @@ Of course you may also mix plugin IDs with fully qualified plugins.
 
 === mirroring update sites
 
-A common problem with eclipse plugins is that they are provided decentralized as so-called update sites via URLs. The maintainer of that URL is in full control of the availability and the content behind that URL. If the service gets broken, obviously the plugin can not be downloaded. Even worse if existing content gets updated, the result is not reproducible anymore.
+A common problem with eclipse plugins is that they are provided decentralized as so-called update sites via URLs.
+The maintainer of that URL is in full control of the availability and the content behind that URL.
+If the service gets broken, obviously the plugin can not be downloaded.
+Even worse, if existing content gets updated, the result is not reproducible anymore.
 
-All famous IDEs do not have a clear versioning concept: While the plugin artifact itself is typically versioned, the request to install a plugin can not specify a version but always downloads the "latest" version. If at all some kind of versioning for stability is in place it happens via the URL itself so for different major versions different URLs are provided. A possible solution is to mirror the update sites and store them either locally or on your own webspace. This way you always have access to the plugin version you need as a developer without being dependent on the plugin providers. Below is the process to mirror a plugin update-site.
+While the plugin artifact itself is versioned, the request to install a plugin can not specify a version but always downloads the "latest" version from the update site.
+If at all some kind of versioning for stability is in place it happens via the URL itself so for different major versions different URLs are provided.
+A possible solution is to mirror the update site locally and then make it available on your own webserver.
+This way you always have access to the plugin version you need as a developer without being dependent on the plugin provider.
+Below is the process to mirror a plugin update-site.
 
-To mirror with only one paramter, you just need the `«plugin-id»` of an existing plugin in `${DEVON_IDE_HOME}/settings/eclipse/plugins` (e.g. checkstyle). Open any CLI in `${DEVON_IDE_HOME}` and run the following command.
+To mirror with only one paramter, you just need the `«plugin-id»` of an existing plugin in `${DEVON_IDE_HOME}/settings/eclipse/plugins` (e.g. checkstyle).
+Open any CLI in `${DEVON_IDE_HOME}` and run the following command.
 
 `devon eclipse mirror «plugin-id» [«url»]`
 
-This command will automatically mirror the content of an update site to a specific directory named by `«plugin-id»` linked with the current date in `${DEVON_DOWNLOAD_DIR}/update-sites/` (e.g. checkstyle-2022-09-14). Afterwards, the folder can be uploaded to your own webspace and the URL can be put manually in `«plugin_mirror_url»` in the `«plugin-id».properties` file. This only works if a valid `plugin_url` is already set in the properties for the given `plugin_id` (see xref:plugins[plugins]). If you want to mirror an update site independently of `«plugin-id».properties`, you can enter an update site URL for the optional `«url»` parameter (e.g. https://checkstyle.org/eclipse-cs-update-site).
+This command will automatically mirror the content of an update site to a specific directory named by `«plugin-id»` together with the current date in `${DEVON_DOWNLOAD_DIR}/update-sites/` (e.g. checkstyle-2022-09-14).
+Afterwards, the folder can be uploaded to your own webserver and the URL can be put manually in `«plugin_mirror_url»` in the `«plugin-id».properties` file.
+This only works if a valid `plugin_url` is already set in the properties for the given `plugin_id` (see xref:plugins[plugins]).
+If you want to mirror an update site independently of `«plugin-id».properties`, you can enter an update site URL for the optional `«url»` parameter (e.g. https://checkstyle.org/eclipse-cs-update-site).
 
 == dictionary
 
