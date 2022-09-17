@@ -1,4 +1,4 @@
-name: CI Build Windows
+name: Integration Test Windows
 on:
   schedule:
     - cron: '0 1 * * *'

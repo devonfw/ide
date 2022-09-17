@@ -22,6 +22,7 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |`ws-re[verse]`           |reverse merge changes from workspace into settings
 |`ws-reverse-add`         |reverse merge adding new properties
 |`create-script`          |create launch script for this IDE, your current workspace and your OS
+|`mirror «id» [«url»]`    |mirror the content of an update-site
 |=======================
 
 There are link:variables.asciidoc[variables] that can be used for Eclipse. These are explained by the following table:
@@ -41,6 +42,7 @@ In your link:settings.asciidoc[settings] git repository create a folder https://
 Here you can create a properties file for each plugin. This is an example https://github.com/devonfw/ide-settings/blob/master/eclipse/plugins/tmterminal.properties[tmterminal.properties]:
 ```
 plugin_url=http://download.eclipse.org/tm/terminal/marketplace
+plugin_mirror_url=https://my-server.com/terminal-2022-09-13
 plugin_id=org.eclipse.tm.terminal.feature.feature.group,org.eclipse.tm.terminal.view.feature.feature.group,org.eclipse.tm.terminal.control.feature.feature.group,org.eclipse.tm.terminal.connector.ssh.feature.feature.group,org.eclipse.tm.terminal.connector.telnet.feature.feature.group
 plugin_active=true
 ```
@@ -48,6 +50,7 @@ plugin_active=true
 The variables are defined as follows:
 
 * `plugin_url` defines the URL of the Eclipse update site of the plugin
+* `plugin_mirror_url` defines the URL of the Eclipse mirrored update site of the plugin. See xref:mirroring update sites[Mirroring Eclipse Update Site] 
 * `plugin_id` defines the feature group ID(s) to install. To install multiple features/plugins provide a coma-separated list of IDs. If you want to customize `devonfw-ide` with new plugins you can first install them manually and then go to `About Eclipse > Installation Details` then you can filter for your newly installed plugin and find the values in the `Id` column. Copy & paste them from here to make up your own custom config.
 * `plugin_active` is an optional parameter. If it is `true` (default) the plugin will be installed automatically during the project link:setup.asciidoc[setup] for all developers in your team. Otherwise, developers can still install the plugin manually via `devon eclipse add-plugin «plugin-name»` from the config file `settings/eclipse/plugins/«plugin-name».properties`. See the `settings/eclipse/plugins` folder for possible values of «plugin-name».
 
@@ -69,6 +72,29 @@ For the above listed plugins you can also use the short form:
 ECLIPSE_PLUGINS=("anyedit" "" "regexutil" "")
 ```
 Of course you may also mix plugin IDs with fully qualified plugins.
+
+=== mirroring update sites
+
+A common problem with eclipse plugins is that they are provided decentralized as so-called update sites via URLs.
+The maintainer of that URL is in full control of the availability and the content behind that URL.
+If the service gets broken, obviously the plugin can not be downloaded.
+Even worse, if existing content gets updated, the result is not reproducible anymore.
+
+While the plugin artifact itself is versioned, the request to install a plugin can not specify a version but always downloads the "latest" version from the update site.
+If at all some kind of versioning for stability is in place it happens via the URL itself so for different major versions different URLs are provided.
+A possible solution is to mirror the update site locally and then make it available on your own webserver.
+This way you always have access to the plugin version you need as a developer without being dependent on the plugin provider.
+Below is the process to mirror a plugin update-site.
+
+To mirror with only one paramter, you just need the `«plugin-id»` of an existing plugin in `${DEVON_IDE_HOME}/settings/eclipse/plugins` (e.g. checkstyle).
+Open any CLI in `${DEVON_IDE_HOME}` and run the following command.
+
+`devon eclipse mirror «plugin-id» [«url»]`
+
+This command will automatically mirror the content of an update site to a specific directory named by `«plugin-id»` together with the current date in `${DEVON_DOWNLOAD_DIR}/update-sites/` (e.g. checkstyle-2022-09-14).
+Afterwards, the folder can be uploaded to your own webserver and the URL can be put manually in `«plugin_mirror_url»` in the `«plugin-id».properties` file.
+This only works if a valid `plugin_url` is already set in the properties for the given `plugin_id` (see xref:plugins[plugins]).
+If you want to mirror an update site independently of `«plugin-id».properties`, you can enter an update site URL for the optional `«url»` parameter (e.g. https://checkstyle.org/eclipse-cs-update-site).
 
 == dictionary
 
