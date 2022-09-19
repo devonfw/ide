@@ -17,7 +17,7 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${AWS_HOME}/aws ${*}"
+  doRunCommand "aws ${*}"
 }
 
 # $1: path_to_package
@@ -29,7 +29,7 @@ function doPackageInstall()
   then
     doEcho "Installing AWS for Windows..."
     windows_path_to_package=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${current_version}-AWSCLIV2.msi /quiet'"
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${AWS_VERSION}-windows.msi /quiet'"
   elif doIsMacOs
   then
     doFail "Sorry, AWS CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -37,7 +37,7 @@ function doPackageInstall()
     doEcho "Installating AWS for Linux..."
     doRunCommand "sudo ${path_to_package}/install"
   fi
-  doRunCommand "rm -rf ${path_to_package}"
+  doRunCommand "rm -rf ${path_to_package}/aws-${AWS_VERSION}-windows.msi"
 }
 
 function doSetup() {
