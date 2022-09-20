@@ -16,8 +16,22 @@ source "$(dirname "${0}")"/../functions
 
 # Call aws with specified arguments.
 function doRun() {
-  doSetup silent
+  if ! doIsAwsInstalled
+  then
+    doSetup silent
+  fi
   doRunCommand "aws ${*}"
+}
+
+
+# OS independent check if aws is installed.
+function doIsAwsInstalled() {
+  if command -v aws &> /dev/null
+  then 
+    return
+  else
+    return 255
+  fi
 }
 
 # $1: path_to_package
@@ -37,35 +51,38 @@ function doPackageInstall()
     doEcho "Installating AWS for Linux..."
     doRunCommand "sudo ${path_to_package}/install"
   fi
-  doRunCommand "rm -rf ${path_to_package}/aws-${AWS_VERSION}-windows.msi"
+  doRunCommand "rm -rf ${path_to_package}"  
 }
 
 function doSetup() {
-
-  if [ ! -d "${AWS_HOME}" ] || [ "${1}" != "silent" ]
+  if ! doIsAwsInstalled
   then
-    # Get leatest release
-    if [ -z "${AWS_VERSION}" ]
+    if [ ! -d "${AWS_HOME}" ] || [ "${1}" != "silent" ]
     then
-      doEcho "Getting latest release..."
-      AWS_VERSION=$(curl "https://github.com/aws/aws-cli/tags" | awk -F'tags/' '/archive/ { print $2}' | sort -r | head -1 | awk -F'.zip' '{print $1}')
-    fi
+      # Get leatest release
+      if [ -z "${AWS_VERSION}" ]
+      then
+        doEcho "Getting latest release..."
+        AWS_VERSION=$(curl "https://github.com/aws/aws-cli/tags" | awk -F'tags/' '/archive/ { print $2}' | sort -r | head -1 | awk -F'.zip' '{print $1}')
+      fi
 
-    doInstall "-" "${AWS_HOME}" "aws" "${AWS_VERSION}" 
-    if [ "${?}" = 0 ]
-    then
-      doPackageInstall "${AWS_HOME}"
+      doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}" 
+      if [ "${?}" = 0 ]
+      then
+        doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
+      fi
+
+      if [ "${1}" != "silent" ] && ! doIsQuiet
+      then
+        doEcho "logon again to test aws with \"aws --version\""
+      fi 
     fi
+  else
+    echo "aws is already installed"
+    doRunCommand "aws --version"
   fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doEcho "logon again to test aws with \"aws --version\""
-  fi 
-
 }
 
-AWS_HOME="${DEVON_IDE_HOME}/updates/install/aws"
 
 # CLI
 case ${1} in 
