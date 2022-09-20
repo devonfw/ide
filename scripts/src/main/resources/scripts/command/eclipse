@@ -33,9 +33,7 @@ function doInstallEclipsePlugin() {
   result=${?}
   if [ "${result}" != 0 ]
   then
-    echo
     doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
-    echo
   fi
   return "${result}"
 }
@@ -95,14 +93,15 @@ function doSetup() {
 function doAddPluginFromConfig() {
   if [ -f "${1}" ]
   then
-    plugin_id=""
-    plugin_active="true"
-    plugin_url=""
-    doLoadProperties "${1}"
-    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+    doLoadPluginProperties "${1}"
+    local url
+    if [ -n "${plugin_mirror_url}" ]
     then
-      doWarning "Invalid eclipse plugin config: ${file}"
-    elif [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
+      url="${plugin_mirror_url}"
+    else
+      url="${plugin_url}"
+    fi
+    if [ "${plugin_active}" = "true" ] || [ -n "${2}" ]
     then
       # check if plugin successfully installed
       local plugin_fileprefix="${1/*\//}"
@@ -110,7 +109,7 @@ function doAddPluginFromConfig() {
       local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
       if [ ! -e "${install_file}" ]
       then
-        doInstallEclipsePlugin "${plugin_id}" "${plugin_url}"
+        doInstallEclipsePlugin "${plugin_id}" "${url}"
         result_rc=$?
         if [ "${result_rc}" = 0 ]
         then
@@ -254,6 +253,53 @@ function doImportEclipse() {
   "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
+# $1: id
+# $2: optional plugin URL (update site)
+function doMirrorUpdateSite() {
+  if [ -z "${1}" ]
+  then
+    doFail "Parameter \"id\" is missing."
+  fi
+  local url
+  if [ -n "${2}" ]
+  then
+    url="${2}"
+  else
+    doLoadPluginProperties "${1}"
+    url="${plugin_url}"
+  fi
+  local timestamp
+  timestamp=$(date +'%Y-%m-%d')
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  local result="${?}"
+  if [ "${result}" != 0 ]
+  then
+    doEchoAttention "Mirroring of the update-site ${url} failed. Please check the URL or rerun setup (devon eclipse setup)."
+  fi
+  return "${result}"
+}
+
+function doLoadPluginProperties() {
+  local file="${1}"
+  if [ ! -f "${1}" ]
+  then
+    file="${SETTINGS_PATH}/eclipse/plugins/${1}.properties"
+  fi
+  if [ -f  "${file}" ]
+  then
+    plugin_id=""
+    plugin_active="true"
+    plugin_url=""
+    plugin_mirror_url=""
+    doLoadProperties "${file}"
+    if [ -z "${plugin_id}" ] || [ -z "${plugin_url}" ]
+    then
+      doFail "Invalid eclipse plugin config: ${file}"
+    fi
+  fi
+}
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -269,6 +315,7 @@ then
   echo " ws-reverse-add                  reverse merge adding new properties"
   echo " create-script                   create eclipse-${WORKSPACE} script if not already exists"
   echo " import «path» [«workingsets»]   import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
+  echo " mirror «id» [«url»]             mirror the content of an update-site"
   exit
 fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
@@ -317,6 +364,11 @@ do
   elif [ "${1}" = "import" ] 
   then
     doImportEclipse "${2}" "${3}"
+    exit ${?}
+  elif [ "${1}" = "mirror" ]
+  then
+    shift
+    doMirrorUpdateSite "${@}"
     exit ${?}
   else
     doFail "Unknown argument: ${1}"

@@ -1,4 +1,4 @@
-name: CI Build Ubuntu
+name: Integration Test Ubuntu
 on:
   schedule:
    - cron: '0 3 * * *'
