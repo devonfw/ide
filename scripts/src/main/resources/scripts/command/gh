@@ -40,7 +40,7 @@ function doSetup(){
 
 function doRun(){
   doSetup silent
-  doRunCommand "${GH_HOME}/bin/gh ${@}"
+  doRunCommand "${GH_HOME}/bin/gh ${*}"
 }
 
 case ${1} in
