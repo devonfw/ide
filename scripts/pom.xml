@@ -57,6 +57,8 @@
             <configuration>
               <nonFilteredFileExtensions>
                 <nonFilteredFileExtension>reg</nonFilteredFileExtension>
+                <nonFilteredFileExtension>strings</nonFilteredFileExtension>
+                <nonFilteredFileExtension>icns</nonFilteredFileExtension>
               </nonFilteredFileExtensions>
               <includeEmptyDirs>true</includeEmptyDirs>
               <delimiters>
