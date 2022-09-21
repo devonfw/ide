@@ -1,0 +1,57 @@
+name: Release
+
+# Runs manually
+on:
+  workflow_dispatch:
+      
+jobs:
+  release:
+    name: Release on Sonatype OSS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Apache Maven Central
+        uses: actions/setup-java@v3
+        with:
+          java-version: 11
+          distribution: 'temurin'
+          cache: 'maven'
+          server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: SONATYPE_USERNAME # env variable for username in deploy
+          server-password: SONATYPE_PASSWORD # env variable for password in deploy
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+          gpg-passphrase: GPG_PASSPHRASE # env variable for GPG private key passphrase
+
+      - name: Publish to Apache Maven Central
+        run: |
+          mvn -DskipTests deploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+  # Create github release & tag
+  gitHub_release:
+    name: create github release
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: create gitHub release
+        run: |
+          maven_config="$(cat /home/runner/work/devonfw-ide/devonfw-ide/.mvn/maven.config)"
+          prefix="-Drevision="
+          version=${maven_config#"$prefix"}
+          noDotVersion="${version//.}"
+          gh release create ${version} --notes "# Download
+          https://repo1.maven.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/${version}/devonfw-ide-scripts-${version}.tar.gz
+          # Changes
+          https://github.com/devonfw/ide/blob/master/CHANGELOG.asciidoc#${noDotVersion}"
+          git tag Release/"${version}"
+          git push origin test Release/"${version}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
