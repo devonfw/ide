@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+GH_HOME="${DEVON_IDE_HOME}/software/gh"
+
+function doSetup(){
+  # Install GitHub CLI in the software folder
+
+  if [ ! -d "${GH_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    # Get leatest release
+    if [ -z "${GH_VERSION}" ]
+    then
+      doEcho "Getting latest release..."
+      local GH_VERSION
+      GH_VERSION=$( curl -LsH "Accept: application/vnd.github.v3+json" https://api.github.com/repos/cli/cli/releases/latest | awk -F':' '/tag_name/ {print $2}' | awk -F'"' '{print $2}' | tr -d 'v' )
+
+      doInstall "-" "${GH_HOME}" "gh" "${GH_VERSION}"
+    fi
+  fi
+
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "gh --version"
+  fi
+}
+
+function doRun(){
+  doSetup silent
+  doRunCommand "${GH_HOME}/bin/gh ${*}"
+}
+
+case ${1} in
+"help" | "-h")
+  echo "Install Github CLI."
+  echo
+  echo "Arguments:"
+  echo " setup                    install GitHub CLI on your machine."
+  echo " <<args>>                 call GitHub CLI with the specified arguments."
+  echo
+;;
+"setup" | "s")
+  doEcho "Installing GitHub CLI..."
+  doSetup "${2}"
+;;
+*)
+  doRun "${@}"
+;;
+esac

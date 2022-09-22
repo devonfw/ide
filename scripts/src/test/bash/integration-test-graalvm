@@ -1,4 +1,4 @@
 #!/bin/bash
 
 source "$(dirname "${0}")"/test-functions
-doCommandTest vscode
+doCommandTest graalvm
