@@ -1,0 +1,16 @@
+:toc:
+toc::[]
+
+= GitHub CLI
+
+The GitHub CLI commandlet allows to install and use https://cli.github.com/[GitHub CLI].
+
+The arguments (`devon gh «args»`) are explained in the following table:
+
+.Usage of `devon gh`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install GitHub CLI on your machine.
+|`«args»`         |call GitHub CLI with the specified arguments. Call `gh --help` for details or use helm directly as preferred.
+|=======================

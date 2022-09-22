@@ -58,6 +58,7 @@ The following commandlets are currently available:
 * link:dotnet.asciidoc[dotnet]
 * link:eclipse.asciidoc[eclipse]
 * link:gcviewer.asciidoc[gcviewer]
+* link:gh.asciidoc[gh]
 * link:graalvm.asciidoc[graalvm]
 * link:gradle.asciidoc[gradle]
 * link:helm.asciidoc[helm]
