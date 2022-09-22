@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release in process:
 
+* https://github.com/devonfw/ide/issues/833[#833]: Implementing GitHub CLI
 * https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
 * https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites
 * https://github.com/devonfw/ide/issues/877[#877]: Update version of vscode to 1.71.0+
