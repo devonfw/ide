@@ -39,6 +39,7 @@ do
     then
       source scripts/environment-project
       unset -f doLoadProperties
+      unset -f doUpdatePath
     fi
     if [ -z "${1}" ]
     then

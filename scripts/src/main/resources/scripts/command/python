@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help version version -v --version"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  if [ ! -d "${PYTHON_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    # Get leatest release
+    if [ -z "${PYTHON_VERSION}" ]
+    then
+      PYTHON_VERSION="3.10.5"
+    fi
+
+    if doIsMacOs
+    then
+      doBrewInstall openssl
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
+      sh "${PYTHON_HOME}"/configure MACOSX_DEPLOYMENT_TARGET=12 --enable-optimizations --with-ensurepip=install --with-openssl=/opt/homebrew/opt/openssl@3 --prefix="${PYTHON_HOME}"
+      make -j 8
+      make altinstall
+      make clean
+      make distclean
+      
+    elif doIsWindows
+    then
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
+      if [ -a "$(find "${PYTHON_HOME}" -name '*._pth')" ]
+      then
+        PTH_FILE="$(find "${PYTHON_HOME}" -name '*._pth')"
+        doEcho "Freeing Python from embedded Mode..."
+        sed -i -e 's/#import site/import site/g' "${PTH_FILE}"
+      else
+        doWarning "Couldn't find *._pth file."
+      fi
+    else
+      doInstallWithPackageManager "apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev" \
+                                  "yum -y groupinstall \"Development Tools\"" \
+                                  "zypp install automake fdupes gcc gcc-c++ gcc-fortran gdbm-devel gettext-tools gmp-devel intltool libbz2-devel libexpat-devel libffi-devel libnsl-devel lzma-devel make ncurses-devel netcfg openssl-devel pkgconfig readline-devel sqlite-devel xz zlib-devel"
+      
+      
+      doInstall "-" "${PYTHON_HOME}" "python" "${PYTHON_VERSION}"
+      "${PYTHON_HOME}"/configure --enable-optimizations --with-ensurepip=install --prefix="${PYTHON_HOME}"
+      make -j 8
+      make altinstall
+      make clean
+      make distclean
+    fi
+  fi
+
+  # check version
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "python --version"
+  fi
+}
+
+function doRunPython() {
+  doSetup silent
+  if doIsQuiet
+  then
+    doRunCommand "python ${*}" > /dev/null
+  else
+    doRunCommand "python ${*}"
+  fi
+}
+
+PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+
+case ${1} in 
+  "help" | "-h")
+    echo "Install Python."
+    echo
+    echo "Arguments:"
+    echo " setup                    setup Python."
+    echo " version                  get Python version."
+    echo " «args»                   call Python with the specified arguments."
+    echo
+  ;;
+  "setup" | "s" | "")
+    doSetup "${2}"
+  ;;
+  "version" | "-v" | "--version")
+     doRunPython --version
+  ;;
+  *)
+     doRunPython "${@}"
+  ;;
+esac
