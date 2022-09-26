@@ -1515,7 +1515,7 @@ function doIsEmptyDirectory() {
   fi
 }
 
-function actual_version() {
+function doGetActualVersion() {
   local mytool="${1}"
   local mycommand="${2}"
   "${HOME}"/.devon/devon "${mytool}" "${mycommand}"
