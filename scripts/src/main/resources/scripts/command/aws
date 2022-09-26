@@ -44,7 +44,8 @@ function doPackageInstall()
     powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${version}-windows.msi /quiet'"
   elif doIsMacOs
   then
-    doFail "Sorry, AWS CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+    doEcho "Installing AWS for MacOS..."
+    sudo installer -pkg "${path_to_package}"/aws-"${version}"-mac.pkg -target /
   else
     doEcho "Installating AWS for Linux..."
     doRunCommand "sudo ${path_to_package}/install"
