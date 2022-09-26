@@ -1515,6 +1515,12 @@ function doIsEmptyDirectory() {
   fi
 }
 
+function actual_version() {
+  local mytool="${1}"
+  local mycommand="${2}"
+  ${HOME}/.devon/devon "${mytool}" "${mycommand}"
+}
+
 function doIsPackageJsonContainingScript() {
   doDebug "Checking if package.json contains script section named $1"
   if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
