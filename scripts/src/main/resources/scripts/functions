@@ -1518,7 +1518,7 @@ function doIsEmptyDirectory() {
 function actual_version() {
   local mytool="${1}"
   local mycommand="${2}"
-  ${HOME}/.devon/devon "${mytool}" "${mycommand}"
+  "${HOME}"/.devon/devon "${mytool}" "${mycommand}"
 }
 
 function doIsPackageJsonContainingScript() {
