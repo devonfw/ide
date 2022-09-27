@@ -43,8 +43,6 @@ then
   echo "create                create a new devon4ng project"
   echo "cicd «args»           generate cicd files for the current devon4ng project: $PWD"
   echo "«args»                call ng with the specified arguments"
-  echo
-  echo "Options:"
   exit
 fi
 NG_CMD="${DEVON_IDE_HOME}/software/node/ng"

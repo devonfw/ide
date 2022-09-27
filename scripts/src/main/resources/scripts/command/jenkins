@@ -82,13 +82,11 @@ then
   echo "Setup or run Jenkins CI build server on local machine."
   echo
   echo "Arguments:"
-  echo " start                    start local Jenkins server"
-  echo " stop                     stop local Jenkins server"
-  echo " setup                    setup Jenkins (install, verify, configure)"
-  echo " add                      add CI job for current project to Jenkins"
-  echo " remove                   remove CI job for current project from Jenkins"
-  echo
-  echo "Options:"
+  echo " start                          start local Jenkins server"
+  echo " stop                           stop local Jenkins server"
+  echo " setup                          setup Jenkins (install, verify, configure)"
+  echo " add                            add CI job for current project to Jenkins"
+  echo " remove                         remove CI job for current project from Jenkins"
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
