@@ -29,7 +29,7 @@ jobs:
           suffix="-SNAPSHOT"
           release_version=${snapshot_version%"$suffix"}
           sed -i "s/${snapshot_version}/${release_version}/" .mvn/maven.config
-          mvn --settings .mvn/settings.xml -DskipTests=true deploy -Pdeploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+          mvn --settings .mvn/settings.xml deploy -Pdeploy,release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
