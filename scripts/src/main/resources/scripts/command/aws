@@ -17,19 +17,31 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${AWS_HOME}/aws ${*}"
+  doRunCommand "aws ${*}"
+}
+
+
+# OS independent check if aws is installed.
+function doIsAwsInstalled() {
+  if command -v aws &> /dev/null
+  then 
+    return
+  else
+    return 255
+  fi
 }
 
 # $1: path_to_package
+# $2: software version
 function doPackageInstall()
 {
   local path_to_package="${1}"
-
+  local version="${2}"
   if doIsWindows
   then
     doEcho "Installing AWS for Windows..."
     windows_path_to_package=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${current_version}-AWSCLIV2.msi /quiet'"
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${version}-windows.msi /quiet'"
   elif doIsMacOs
   then
     doFail "Sorry, AWS CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -42,7 +54,7 @@ function doPackageInstall()
 
 function doSetup() {
 
-  if [ ! -d "${AWS_HOME}" ] || [ "${1}" != "silent" ]
+  if [[ $(command -v aws) != "/c/Program Files/Amazon/AWSCLIV2/aws" ]] || [ "${1}" != "silent" ] 
   then
     # Get leatest release
     if [ -z "${AWS_VERSION}" ]
@@ -51,21 +63,19 @@ function doSetup() {
       AWS_VERSION=$(curl "https://github.com/aws/aws-cli/tags" | awk -F'tags/' '/archive/ { print $2}' | sort -r | head -1 | awk -F'.zip' '{print $1}')
     fi
 
-    doInstall "-" "${AWS_HOME}" "aws" "${AWS_VERSION}" 
+    doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}" 
     if [ "${?}" = 0 ]
     then
-      doPackageInstall "${AWS_HOME}"
+      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws" "${AWS_VERSION}" 
     fi
+
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doEcho "logon again to test aws with \"aws --version\""
+    fi 
   fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doEcho "logon again to test aws with \"aws --version\""
-  fi 
-
 }
 
-AWS_HOME="${DEVON_IDE_HOME}/updates/install/aws"
 
 # CLI
 case ${1} in 

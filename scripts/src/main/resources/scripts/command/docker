@@ -21,8 +21,7 @@ function doSetup() {
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
     then 
-      echo "It seems that you are running the setup from inside a WSL shell."
-      echo "Please use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+      doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
       if doIsRancherInstalled
       then
@@ -31,6 +30,7 @@ function doSetup() {
           #give the User the installation location when using linux or mac
           if doIsWindows
           then
+            doEnsureVpnKitInstallation
             doEcho "Rancher Desktop is already installed"
           else
             doEcho "Rancher Desktop is already installed at $(command -v docker)"
@@ -39,9 +39,9 @@ function doSetup() {
       else
         doRequireNotBatch
         local version="${RANCHER_VERSION}"
-  	  	if [ -z "${version}" ]
-        then 
-          version="1.3.0"
+        if [ -z "${version}" ]
+        then
+          version="1.4.1"
           latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
           doVersionCompare "${latestversion}" "${version}"
           VersCompRes=${?}
@@ -54,14 +54,19 @@ function doSetup() {
         doInstall "-" "${rancher_install_dir}" "rancher" "${version}" 
         if doIsWindows
         then
+          doSetVpnKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
-          doInstallVpnkit
+          # ensures installation of vpnkit if user directly restarts computer for enabling wsl
           doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
+          #check if vpnkit is already installed
+          doEnsureVpnKitInstallation
         elif doIsMacOs
         then
-          doRunCommand "cp -a '${rancher_install_dir}'/*.app /Applications/"
+          # shellcheck disable=SC2016
+          doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
         else
-          doFail "Your OS is not supported currently"
+          doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
+          doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
         fi
         read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
       fi
@@ -124,7 +129,21 @@ function doIsDockerInstalled() {
   fi
 }
 
+function doEnsureVpnKitInstallation {
+  #check if vpnkit is already installed
+  if ! doIsVpnKitInstalled
+  then
+    doInstallVpnKit         
+    #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
+    if ! doIsVpnKitInstalled
+    then 
+      doSetVpnKitStartupInstaller
+    fi
+  fi
+}
+
 #OS independent check if Rancher Desktop is installed.
+#On Windows the user has to reboot the computer once after a RD installation for the function to work properly
 function doIsRancherInstalled() {
     if doIsWindows
     then
@@ -150,28 +169,58 @@ function doIsRancherInstalled() {
     fi
 }
 
-function doInstallVpnkit() {
+
+function doIsVpnKitInstalled() {
+  # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
+  result=$(wsl -l | tr -d '\0' | grep wsl-vpnkit)
+  if [[ "${result}" == *"wsl-vpnkit"* ]]
+  then
+    return 0
+  else 
+    return 255
+  fi
+}
+
+
+#To make sure that as many windows users as possible are able to run this command, we use the ${APPDATA} variable to get into the startup folder 
+function doSetVpnKitStartupInstaller() {
+  {
+    echo '@ECHO OFF'
+    echo "start \"\" \"${EXEPATH}\\git-bash.exe\\\" -c \"cd \"${DEVON_IDE_HOME}\" && devon docker setup  && /usr/bin/bash --login -i\""
+    # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
+    echo '(goto) 2>nul & del "%~f0"' 
+  } > VpnKitInstaller.bat
+
+  mv VpnKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
+
+  #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
+}
+
+
+function doInstallVpnKit() {
   #get latest version of the vpnkit and download its tar.gz file
   local partialUrl
   # shellcheck disable=SC1083  
   partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
-  local VPNversion=${partialUrl##*/}
-  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VPNversion}/wsl-vpnkit.tar.gz"
+  local VpnVersion=${partialUrl##*/}
+  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VpnVersion}/wsl-vpnkit.tar.gz"
   curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
 
   #write a powershell-script
   #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
   #execute command to start wsl-vpnkit
+  #redirect messages that won't be helpful for user
   # shellcheck disable=SC1083,SC2129,SC2016
   {
-    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz' 
-    echo 'pushd $env:USERPROFILE'
-    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2'
-    echo 'popd'
-    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start' 
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz | Out-Null' 
+    echo 'pushd $env:USERPROFILE | Out-Null'
+    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2 | Out-Null'
+    echo 'popd | Out-Null'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start | Out-Null' 
   } > vpnkit-setup.ps1
 
   #execute the powershell-script 
+  # shellcheck disable=2091
   powershell.exe -Command ".\vpnkit-setup.ps1"
   rm vpnkit-setup.ps1
 }

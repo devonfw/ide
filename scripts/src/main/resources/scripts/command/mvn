@@ -15,7 +15,7 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 source "$(dirname "${0}")"/../functions
 
 function doGetMavenVersion() {
-  echo "${MAVEN_VERSION:-3.8.1}"
+  echo "${MAVEN_VERSION:-3.8.4}"
 }
 
 # $1: optional setup
