@@ -24,7 +24,8 @@ jobs:
 
       - name: Publish to Apache Maven Central
         run: |
-          snapshot_version="$(cat .mvn/maven.config)"
+          maven_config="$(cat .mvn/maven.config)"
+          snapshot_version="${maven_config%% *}"
           suffix="-SNAPSHOT"
           release_version=${snapshot_version%"$suffix"}
           sed -i "s/${snapshot_version}/${release_version}/" .mvn/maven.config
@@ -38,9 +39,10 @@ jobs:
       - name: create gitHub release
         run: |
           maven_config="$(cat .mvn/maven.config)"
+          version="${maven_config%% *}"
           prefix="-Drevision="
-          version=${maven_config#"$prefix"}
-          noDotVersion="${version//.}"
+          release_version=${version#"$prefix"}
+          noDotVersion="${release_version//.}"
           gh release create ${version} --notes "# Download
           https://repo1.maven.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/${version}/devonfw-ide-scripts-${version}.tar.gz
           # Changes
