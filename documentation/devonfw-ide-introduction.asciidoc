@@ -8,9 +8,6 @@ It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs,
 
 That is not all. `devonfw-ide` extends the existing shell with helpful commands to automate the provisioning of the development environment.
 
-//Here is a small video which showcases what you can do with `devonfw-ide`:
-
-//[youtube video link]
 
 == Why do you need devonfw-ide?
 
