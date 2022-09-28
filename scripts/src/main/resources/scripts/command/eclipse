@@ -23,19 +23,77 @@ source "$(dirname "${0}")"/../functions
 L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
 
+# Install Eclipse plugins by feature group id
 # $1: plugin feature group ID
 # $2: plugin URL (update site)
 function doInstallEclipsePlugin() {
-  local plugin="${1/\.feature\.group*/}"
-  echo "Installing eclipse plugin ${plugin} from ${2}"
-  # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
-  result=${?}
-  if [ "${result}" != 0 ]
+  # Remove feature.group from each plugin id
+  local plugins="${1//.feature.group/}"
+  echo "Installing Eclipse plugin '${plugin_name}' from URL ${2}"
+
+  if [ -z "${plugins}" ]
   then
-    doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
+    doEcho "No plugins to install."
+    return
   fi
-  return "${result}"
+
+  doCheckPluginsInstalled "${plugins}"
+
+  # Install plugins and write debug info into temp file
+  local debug_info_file=$(mktemp)
+  "${ECLIPSE_HOME}/eclipsec" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}" > "${debug_info_file}" 2>&1
+  exit_code=$?
+  # Write only lines with !MESSAGE into debug info
+  debug_info=$(grep -E "!MESSAGE" "${debug_info_file}")
+  
+
+  if [[ "${debug_info}" == *"Overall install request is satisfiable"* ]] && [ "${exit_code}" == 0 ]; then
+    rm "${debug_info_file}"
+    return 0
+  elif [[ "${debug_info}" == *"Unable to load repositories"* ]] || [[ "${debug_info}" == *"No repository found at"* ]]; then
+    doError "The given repository ${2} is not a correct update site."
+    rm "${debug_info_file}"
+    return 1
+  else
+    echo
+    doError "Installation of plugin '${plugin_name}' failed: \n${debug_info}"
+    rm "${debug_info_file}"
+    if [ -n "${plugin_dependencies}" ]
+    then
+      plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
+      doWarning "Plugin '${plugin_name}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
+    fi
+    return ${exit_code}
+  fi
+}
+
+# Check if the plugins are already installed by looking at the eclipse/plugins folder
+# $1: plugin feature group ID
+# return: dependencies that are already installed
+function doCheckPluginsInstalled() {
+  local plugin_dir="${DEVON_IDE_HOME}/software/eclipse/plugins"
+
+  # Remove spaces from plugin variable
+  plugins="${1// /}"
+  # Iterate each plugin via comma seperation
+  IFS=',' read -ra plugins_arr <<< "${plugins}"
+  for plugin in "${plugins_arr[@]}"; do
+    # Remove feature from plugin variable
+    plugin=${plugin/\.feature*/}
+    plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
+    # Remove last word after dot
+    while [[ "${plugin}" == *.* ]]; do
+      if [ ${plugin} == "org.eclipse" ] || [ ${plugin} == "org.apache" ] || [ ${plugin} == "com" ] || [ ${plugin} == "org" ] || [ ${plugin} == "net" ]; then
+        break
+      fi
+      new_plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
+      if [ -n "${new_plugin_dependencies}" ] 
+      then
+        plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
+      fi
+      plugin=${plugin%.*}
+    done
+  done 
 }
 
 function doSetup() {
@@ -114,7 +172,10 @@ function doAddPluginFromConfig() {
         if [ "${result_rc}" = 0 ]
         then
           touch "${install_file}"
+          doSuccess "Plugin ${plugin_name} installed successfully."
         fi
+      else
+        doEcho "Plugin ${plugin_name} is already installed. Use 'devon eclipse remove-plugin ${plugin_name}' if you want to remove it."
       fi
     fi
   elif [ -n "${2}" ]
@@ -129,6 +190,9 @@ function doAddPlugins() {
     local file
     for file in "${SETTINGS_PATH}"/eclipse/plugins/*.properties
     do
+      # Get plugin name from file name
+      plugin_name="${file/*\//}"
+      plugin_name="${plugin_name/.properties/}"
       doAddPluginFromConfig "${file}"
     done
   else
@@ -172,6 +236,7 @@ function doConfigureEclipse() {
 # $1: id
 # $2: optional URL
 function doAddPlugin() {
+  plugin_name="${1}"
   if [ -z "${2}" ]
   then
     if [ "${1}" = "startexplorer" ]
