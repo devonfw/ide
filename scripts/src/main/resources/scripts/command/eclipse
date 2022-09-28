@@ -81,14 +81,14 @@ function doCheckPluginsInstalled() {
   for plugin in "${plugins_arr[@]}"; do
     # Remove feature from plugin variable
     plugin=${plugin/\.feature*/}
-    # Shellcheck disable=SC2010
+    # shellcheck disable=SC2010
     plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
       if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]; then
         break
       fi
-      # Shellcheck disable=SC2010
+      # shellcheck disable=SC2010
       new_plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
       if [ -n "${new_plugin_dependencies}" ] 
       then
