@@ -50,8 +50,8 @@ jobs:
           release_version=${version#"$prefix"}
           next_version="${{ github.event.inputs.next-version }}-SNAPSHOT"
           sed -i "s/${release_version}/${next_version}/" .mvn/maven.config
-          git config --global user.email ${{ secrets.username }}
-          git config --global user.name ${{ secrets.email }}
+          git config --global user.email ${{ secrets.BUILD_USER_EMAIL }}
+          git config --global user.name ${{ secrets.BUILD_USER }}
           git add -f .mvn/maven.config
           git commit -m "set next version to ${next_version}"
           git push
