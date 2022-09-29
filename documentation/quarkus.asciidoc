@@ -1,0 +1,22 @@
+:toc:
+toc::[]
+
+= quarkus
+
+The `quarkus` commandlet allows to install and launch https://quarkus.io/[quarkus] (quarkus-cli). Calling `devon quarkus «args»` is more or less the same as calling `quarkus «args»`.
+
+*ATTENTION:*
+Currently this feature is new and therefore experimental.
+It may change in incompatible ways in the next releases until we reach a stable state.
+We hope that all is working fine for you.
+However, do not expect everything to work out of the box.
+
+The arguments (`devon quarkus «args»`) are explained in the following table:
+
+.Usage of `devon quarkus`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install Quarkus CLI on your machine.
+|`«args»`         |call Quarkus CLI with the specified arguments. Call `quarkus --help` for details or use quarkus directly as preferred.
+|=======================
