@@ -6,7 +6,7 @@
   <parent>
     <groupId>com.devonfw</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>10</version>
+    <version>11</version>
   </parent>
   <groupId>com.devonfw.tools.ide.dev</groupId>
   <artifactId>devonfw-ide</artifactId>
@@ -48,7 +48,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
-        <version>1.3.0</version>
         <configuration>
           <updatePomFile>true</updatePomFile>
         </configuration>
@@ -58,7 +57,7 @@
 
   <profiles>
     <profile>
-      <id>release</id>
+      <id>deploy</id>
       <build>
         <plugins>
           <plugin>
@@ -68,7 +67,7 @@
             <extensions>true</extensions>
             <configuration>
               <serverId>repository</serverId>
-              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+              <nexusUrl>${maven.release.repository}</nexusUrl>
               <autoReleaseAfterClose>true</autoReleaseAfterClose>
             </configuration>
           </plugin>
