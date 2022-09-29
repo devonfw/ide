@@ -57,7 +57,7 @@ jobs:
           git push
 
           noDotVersion="${release_version//.}"
-          release_tag="Release/${release_version}"
+          release_tag="release/${release_version}"
           git tag "${release_tag}"
           git push --tags
           gh release create "${release_tag}" --notes "# Download
