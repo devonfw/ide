@@ -34,6 +34,7 @@ jobs:
           snapshot_version="${maven_config%% *}"
           suffix="-SNAPSHOT"
           version=${snapshot_version%"$suffix"}
+          echo "${version}" > version
           sed -i "s/${snapshot_version}/${version}/" .mvn/maven.config
           mvn --settings .mvn/settings.xml deploy -Pdeploy -Dgpg.pin.entry.mode=loopback -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
         env:
@@ -41,30 +42,27 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-      # Create github release with the specified tag, name and body
-      - name: create gitHub release
+      # Set next version & create github release
+      - name: set next version & create gitHub release
         run: |
+          version="$(cat version)"
           prefix="-Drevision="
           release_version=${version#"$prefix"}
+          next_version="${{ github.event.inputs.next-version }}-SNAPSHOT"
+          sed -i "s/${release_version}/${next_version}/" .mvn/maven.config
+          git config --global user.email ${{ secrets.username }}
+          git config --global user.name ${{ secrets.email }}
+          git add -f .mvn/maven.config
+          git commit -m "set next version to ${next_version}"
+          git push
+
           noDotVersion="${release_version//.}"
           release_tag="Release/${release_version}"
           git tag "${release_tag}"
-          git push origin master "${release_tag}"
+          git push --tags
           gh release create "${release_tag}" --notes "# Download
           https://repo1.maven.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/${release_version}/devonfw-ide-scripts-${release_version}.tar.gz
           # Changes
           https://github.com/devonfw/ide/blob/master/CHANGELOG.asciidoc#${noDotVersion}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      # set next version for next release
-      - name: set next version
-        run: |
-          next_version="${{ github.event.inputs.next-version }}-SNAPSHOT"
-          sed -i "s/${release_version}/${next_version}/" .mvn/maven.config
-          git add -f .mvn/maven.config
-          git commit -m "set next version to ${next_version}"
-          git push origin master
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
