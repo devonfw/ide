@@ -67,7 +67,7 @@
             <extensions>true</extensions>
             <configuration>
               <serverId>repository</serverId>
-              <nexusUrl>${maven.release.repository}</nexusUrl>
+              <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
               <autoReleaseAfterClose>true</autoReleaseAfterClose>
             </configuration>
           </plugin>
