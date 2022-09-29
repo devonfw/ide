@@ -13,6 +13,7 @@ Release in process:
 * https://github.com/devonfw/ide/issues/877[#877]: Update version of vscode to 1.71.0+
 * https://github.com/devonfw/ide/issues/880[#880]: Customize the trigger of the integration tests
 * https://github.com/devonfw/ide/issues/879[#879]: Renaming integration-tests and adding badges
+* https://github.com/devonfw/ide/issues/894[#894]: Integration of Quarkus CLI
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/32?closed=1[milestone 2022.08.002].
 
