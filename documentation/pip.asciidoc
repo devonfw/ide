@@ -1,0 +1,26 @@
+:toc:
+toc::[]
+
+= Pip
+
+The Pip Commandlet allows you to install and use https://packaging.python.org/en/latest/key_projects/#pip[pip] (python installer of pacakges).
+
+Usage:
+
+* `devon pip setup` to install pip
+* `devon pip install «package»` to install a pip package where <package> is replaced with the package you want to install
+* `devon pip remove` to remove pip
+* `devon pip remove «package»` to remove/uninstall a given pip package
+
+After each installation of a new package, write `devon` for changes to take place. Not doing so might result in command being not found by devonfw-ide.
+
+.Usage of `pip`
+[options="header"]
+|=======================
+|*Argument(s)*       |*Meaning*
+|`setup`             |install pip on your machine.
+|`«args»`            |call pip with the specified arguments (call 'pip --help' for details).
+|`install «package»` |install the specified Pip package.
+|`remove «package»`  |remove the specified Pip package. If no package is specified, pip will be removed.
+|`version`           |show the version of pip installed.
+|=======================
