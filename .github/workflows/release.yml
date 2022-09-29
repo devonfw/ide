@@ -58,7 +58,7 @@ jobs:
 
           noDotVersion="${release_version//.}"
           release_tag="release/${release_version}"
-          git tag "${release_tag}"
+          git tag -a "release/${release_tag}" -m "tagged version ${release_version}"
           git push --tags
           gh release create "${release_tag}" --notes "# Download
           https://repo1.maven.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/${release_version}/devonfw-ide-scripts-${release_version}.tar.gz
