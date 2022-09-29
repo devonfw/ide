@@ -160,6 +160,9 @@ The doIsInstallerExtension function checks whether the file extension of the fil
 === doIsPackageJsonContainingScript
 The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If so, then it ends with the return value 0 otherwise with a message and the return value 255.
 
+=== doListSoftwareVersions
+The function doListSoftwareVersions takes the name of the tool as a parameter and displays the available versions.
+
 === doMoveGlobSafe
 The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
 
@@ -189,6 +192,9 @@ The doRunCommand function can be given 3 parameters, the command to be executed,
 
 === doRunConfigurator
 The doRunConfigurator function transfers all jar files in the DEVON_IDE_HOME/scripts/lib directory separated by ":" as a class path to the Java command and executes the Java program specified as a parameter.
+
+=== doSetSoftwareVersion
+The function doSetSoftwareVersion is used to set a specific version of a software tool, and requires 2 parameters: the name of the software tool and the desired version. The version is saved as `«tool»_VERSION` variable in `settings/devon.properties`.
 
 === doUnzip
 The doUnzip function checks if an unzip program is installed, and if not, installs the program. The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
