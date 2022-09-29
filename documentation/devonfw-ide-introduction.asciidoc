@@ -4,16 +4,22 @@
 
 `devonfw-ide` is a toolbox allowing you to pick tools which fit the requirements and needs of your project.
 
-It is not another Eclipse. It gives you Eclipse, along with Java, maven, NodeJs, VSCode and everything else you may need to quick start your development. All you need to do is download and extract a zip file and execute its setup, reducing your initial setup time for starting a project from days to minutes.
+It is not another Eclipse or VSCode. It gives you everything you may need to quick start your development, tools like java, nodejs, maven etc., IDEs such as Eclipse, VSCode, IntelliJ etc..
 
-That is not all. `devonfw-ide` extends the existing shell with helpful commands to automate the provisioning of the development environment.
+All you need to do is download and extract a zip file and execute its setup, reducing your initial setup time for starting a project from days to minutes.
+
+This is not all you can do with `devon-ide`. It extends the existing shell with helpful commands to automate the provisioning of the development environment.
 
 
 == Why do you need devonfw-ide?
 
-Usually the team members follows wiki/confluence articles at least once to setup the environment. Most of the times, these articles might have outdated some days after writing it. Also there are chances that the team members of a project might have downloaded and using different versions of tools. Setting up the tools manually are tedious and error prone. Following the step by step instructions sometimes throw errors.  Use of different configuration by team members can cause diff-wars. `devon-ide' let you download, install and configure the required tools in a single click.
+Usually the team members follows wiki/confluence articles at least once to setup the environment. Many times, these articles might have outdated some days after writing it. Following the step by step instructions, sometimes you may run into errors. Setting up the tools manually are tedious and error prone.
 
-The `devonfw-ide` will solve these issues. Here are the features you will find through `devonfw-ide`:
+Also there are chances that the team members of a project might have downloaded and using different versions of tools.  Use of different configuration by team members can cause diff-wars. 
+
+The `devonfw-ide` helps you solve these issues, let you download, install and configure the required tools in a single click.
+
+Here are the features you will find through `devonfw-ide`:
 
 * *Efficient* +
 Set up your IDE within minutes tailored for the requirements of your project.
@@ -45,7 +51,7 @@ We support the following IDEs:
 * link:intellij.asciidoc[IntelliJ]
 
 === Platforms
-Some of the major platforms supported by `devon` are:
+`devon-ide` focuses on development of  java, c# and nodejs, but the usage is not limited to these languages.
 
 * link:java.asciidoc[java] (see also https://github.com/devonfw/devon4j/wiki[devon4j])
 * link:cs.asciidoc[C#] (see https://devon4net.github.io/[devon4net])
