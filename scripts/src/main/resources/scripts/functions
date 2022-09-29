@@ -1515,6 +1515,44 @@ function doIsEmptyDirectory() {
   fi
 }
 
+# $1: tool
+function doCheckIsTool() {
+  local tool=$(echo "${1}" | awk '{print tolower($0)}')
+  local tool_list=$(
+    ${HOME}/.devon/devon help | awk '
+    BEGIN {i=0}
+    /^Commands:/ {i=1; next}
+    i==1 && /^$/ {i=0}
+    i==0 {next}
+    {gsub(/ /,""); printf"%s ", $0}
+  ')
+  if [[ ${tool_list} != *"${tool}"* ]] || [[ $(which "${tool}" >/dev/null 2>&1; echo $?) != "0" ]]
+  then
+    return 1
+  fi
+}
+
+# $1: tool
+function doGetToolFolder() {
+  local tool=$(echo "${1}" | awk '{print tolower($0)}')
+  local cmd=""
+  local dir=""
+  if ! doCheckIsTool "${tool}"
+  then
+    return 1
+  fi
+  cmd=$(which "${tool}")
+  dir=$(dirname "${cmd}")
+  if [ $(basename "${dir}") == "bin" ]
+  then
+    dir=$(dirname "${dir}")
+  fi
+  if [ -n "${dir}" ]
+  then
+    echo "${dir}"
+  fi
+}
+
 function doIsPackageJsonContainingScript() {
   doDebug "Checking if package.json contains script section named $1"
   if sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/§/g' package.json | tr -d '\r' | grep -q "[\"']scripts[\"']\s*:\s*{\s*§.*[\"']${1}[\"']\s*:"
