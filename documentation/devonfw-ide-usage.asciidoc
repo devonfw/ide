@@ -70,6 +70,8 @@ include::python.asciidoc[leveloffset=3]
 
 include::pip.asciidoc[leveloffset=3]
 
+include::quarkus.asciidoc[leveloffset=3]
+
 include::release.asciidoc[leveloffset=3]
 
 include::sonar.asciidoc[leveloffset=3]

@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+QUARKUS_HOME="${DEVON_IDE_HOME}/software/quarkus"
+
+# Call quarkus with specified arguments.
+function doRun() {
+  doSetup silent
+  doRunCommand "${QUARKUS_HOME}/bin/quarkus ${*}"
+}
+
+# quarkus CLI installation
+function doSetup() {
+  if [ ! -d "${QUARKUS_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    # Getting latest release
+    if [ -z "${QUARKUS_VERSION}" ]
+    then
+      doEcho "Getting latest release..."
+      QUARKUS_VERSION=$(curl "https://api.github.com/repos/quarkusio/quarkus/releases" | awk -F "\"" '/tag_name/ {print $4}' | grep -v "CR" | head -1)
+    fi
+    doInstall "-" "${QUARKUS_HOME}" "quarkus" "${QUARKUS_VERSION}"
+  fi
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run QUARKUS CLI."
+  echo
+  echo "Arguments:"
+  echo " setup                    install QUARKUS CLI on your machine."
+  echo " <<args>>                 call quarkus with the specified arguments. Call quarkus --help for details or use quarkus directly as preferred."
+  echo
+;;
+"setup" | "s")
+  doSetup "${2}"
+;;
+*)
+  doRun "${@}"
+;;
+esac
