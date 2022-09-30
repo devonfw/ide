@@ -27,44 +27,45 @@ cd "${DEVON_IDE_HOME}" || exit 255
 # $1: plugin feature group ID
 # $2: plugin URL (update site)
 function doInstallEclipsePlugin() {
-  # Remove feature.group from each plugin id
-  local plugins="${1//.feature.group/}"
-  echo "Installing Eclipse plugin '${plugin_name}' from URL ${2}"
+  # If plugin_name argument ${3} is passed
+  if [ -n "${3}" ]
+  then
+    echo "Installing Eclipse plugin '${3}' from URL ${2}"
+  else
+    echo "Installing Eclipse plugin '${1}' from URL ${2}"
+  fi
 
-  if [ -z "${plugins}" ]
+  if [ -z "${1}" ]
   then
     doEcho "No plugins to install."
     return
   fi
 
-  doCheckPluginsInstalled "${plugins}"
+  doCheckPluginsInstalled "${1}"
 
   # Install plugins and write debug info into temp file
   local debug_info_file
   debug_info_file=$(mktemp)
   "${ECLIPSE_HOME}/eclipsec" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}" > "${debug_info_file}" 2>&1
-  exit_code=$?
+  local exit_code=$?
   # Write only lines with !MESSAGE into debug info
-  debug_info=$(grep -E "!MESSAGE" "${debug_info_file}")
-  
+  local debug_info=$(grep -E "!MESSAGE" "${debug_info_file}")
+  rm "${debug_info_file}"
 
   if [[ "${debug_info}" == *"Overall install request is satisfiable"* ]] && [ "${exit_code}" == 0 ]; then
-    rm "${debug_info_file}"
     return 0
   elif [[ "${debug_info}" == *"Unable to load repositories"* ]] || [[ "${debug_info}" == *"No repository found at"* ]]; then
     doError "The given repository ${2} is not a correct update site."
-    rm "${debug_info_file}"
     return 1
   else
     echo
-    doError "Installation of plugin '${plugin_name}' failed: \n${debug_info}"
-    rm "${debug_info_file}"
+    doError "Installation of plugin '${3}' failed: \n${debug_info}"
     if [ -n "${plugin_dependencies}" ]
     then
       plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
-      doWarning "Plugin '${plugin_name}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
+      doWarning "Plugin '${3}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
     fi
-    return ${exit_code}
+    return 1
   fi
 }
 
@@ -74,6 +75,8 @@ function doInstallEclipsePlugin() {
 function doCheckPluginsInstalled() {
   local plugin_dir="${DEVON_IDE_HOME}/software/eclipse/plugins"
 
+  # Remove feature.group from each plugin id
+  local plugins="${1//.feature.group/}"
   # Remove spaces from plugin variable
   plugins="${1// /}"
   # Iterate each plugin via comma seperation
@@ -170,15 +173,15 @@ function doAddPluginFromConfig() {
       local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
       if [ ! -e "${install_file}" ]
       then
-        doInstallEclipsePlugin "${plugin_id}" "${url}"
+        doInstallEclipsePlugin "${plugin_id}" "${url}" "${plugin_fileprefix}"
         result_rc=$?
         if [ "${result_rc}" = 0 ]
         then
           touch "${install_file}"
-          doSuccess "Plugin ${plugin_name} installed successfully."
+          doSuccess "Plugin ${plugin_fileprefix} installed successfully."
         fi
       else
-        doEcho "Plugin ${plugin_name} is already installed. Use 'devon eclipse remove-plugin ${plugin_name}' if you want to remove it."
+        doEcho "Plugin ${plugin_fileprefix} is already installed. Use 'devon eclipse remove-plugin ${plugin_fileprefix}' if you want to remove it."
       fi
     fi
   elif [ -n "${2}" ]
@@ -193,9 +196,6 @@ function doAddPlugins() {
     local file
     for file in "${SETTINGS_PATH}"/eclipse/plugins/*.properties
     do
-      # Get plugin name from file name
-      plugin_name="${file/*\//}"
-      plugin_name="${plugin_name/.properties/}"
       doAddPluginFromConfig "${file}"
     done
   else
@@ -239,7 +239,6 @@ function doConfigureEclipse() {
 # $1: id
 # $2: optional URL
 function doAddPlugin() {
-  plugin_name="${1}"
   if [ -z "${2}" ]
   then
     if [ "${1}" = "startexplorer" ]
