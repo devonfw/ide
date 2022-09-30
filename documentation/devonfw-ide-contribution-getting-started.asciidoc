@@ -91,6 +91,8 @@ For a new tool create a folder in https://github.com/devonfw/ide-mirrors[ide-mir
 * `versions-url` contains the url where all available versions can be found. If possible, check if the tool is available via the GitHub API (`https://api.github.com/repos/<organisation>/<repository>/releases`). If that's not possible, provide a different url as well as the `versions-url-op` for this url.
 * `versions-url-op` contains the command used to extract the versions from the response of `curl $versions-url` in a suitable format. This file is always required if you didn't use the GitHub API for the `versions-url`. In case you used the GitHub API, you only have to create this file if the standardized approach doesn't work (e.g. versions have the wrong format, there are versions left that need to be removed, ...).
 
+The file `available-versions` doesn't have to be created manually. Using the `versions-url` and `versions-url-op`, `available-versions` will be generated and updated automatically by a GitHub Actions workflow.
+
 It is important that the line endings of all files are UNIX `\n`.
 
 Note that all rules within a mapping are checked from top to bottom.
