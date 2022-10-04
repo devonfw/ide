@@ -1556,16 +1556,16 @@ function doRequireWsl() {
 function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
-  if [ ! -z "${version}" ]
+  if [ -n "${version}" ]
   then
     if [ "${version}" = "latest" ]
     then
-      version="$(head -n 1 ${DEVON_IDE_HOME}/mirrors/${software}/available-versions)"
+      version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
     fi
     software=$(echo "${software}" | awk '{print toupper($0)}')
-    grep -v "${software}_VERSION" ${DEVON_IDE_HOME}/settings/devon.properties > ${DEVON_IDE_HOME}/settings/devon.properties.tmp
-    mv ${DEVON_IDE_HOME}/settings/devon.properties.tmp ${DEVON_IDE_HOME}/settings/devon.properties
-    echo "${software}_VERSION=\"${version}\"" >> ${DEVON_IDE_HOME}/settings/devon.properties
+    grep -v "${software}_VERSION" "${DEVON_IDE_HOME}/settings/devon.properties" > "${DEVON_IDE_HOME}/settings/devon.properties.tmp"
+    mv "${DEVON_IDE_HOME}/settings/devon.properties.tmp" "${DEVON_IDE_HOME}/settings/devon.properties"
+    echo "${software}_VERSION=\"${version}\"" >> "${DEVON_IDE_HOME}/settings/devon.properties"
   else
     doError "You have to specify the version you want to set."
   fi
@@ -1574,18 +1574,18 @@ function doSetSoftwareVersion() {
 # $1: software
 function doListSoftwareVersions() {
   local versions_path="${DEVON_IDE_HOME}/mirrors/${1}/available-versions"
-  if [ "$(wc -l ${versions_path} | awk '{print $1}')" -lt 20 ]
+  if [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
   then
-    pr -4 -t -s "${versions_path}"
+    pr -4 -t -s "${versions_path}" | column -t
   else
-    head -n 20 "${versions_path}" | pr -4 -t -s
+    head -n 20 "${versions_path}" | pr -4 -t -s | column -t
     doEcho "Only the 20 latest versions are displayed."
     doAskToContinue "Do you want to see all versions?"
     less "${versions_path}"
   fi
 }
 
-# $1: single CLI arg
+# $@: CLI args
 # returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
 function doParseOption() {
   if [ -n "${end_options}" ]
@@ -1616,10 +1616,10 @@ function doParseOption() {
   then
     if [ "${2}" = "list" ]
     then
-      doListSoftwareVersions "$(basename ${0})"
+      doListSoftwareVersions "$(basename "${0}")"
     elif [ "${2}" = "set" ]
     then
-      doSetSoftwareVersion "$(basename ${0})" "${3}"
+      doSetSoftwareVersion "$(basename "${0}")" "${3}"
     fi
     exit
   fi
