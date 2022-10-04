@@ -4,9 +4,9 @@ if NOT "%DEVON_IDE_TRACE%"=="" echo on
 set _fBGreen=[92m
 set _RESET=[0m
 
-echo %PSModulePath% | findstr %USERPROFILE% >NUL
+echo "%PSModulePath%" | findstr "%USERPROFILE%" >NUL
 if "%ERRORLEVEL%" == "0" (
-  set PSModulePath=%PSModulePath:*;=%
+  set PSModulePath="%PSModulePath:*;=%"
   start "CMD window" "%~f0"
   goto :EOF
 )
