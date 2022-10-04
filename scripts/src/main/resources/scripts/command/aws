@@ -17,14 +17,19 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "aws ${*}"
+  if doIsWindows
+  then
+    doRunCommand "\"/c/Program Files/Amazon/AWSCLIV2/aws\" ${*}"
+  else
+    doRunCommand "aws ${*}"
+  fi
 }
 
 
 # OS independent check if aws is installed.
 function doIsAwsInstalled() {
   if command -v aws &> /dev/null
-  then 
+  then
     return
   else
     return 255
@@ -54,8 +59,7 @@ function doPackageInstall()
 }
 
 function doSetup() {
-
-  if [[ $(command -v aws) != "/c/Program Files/Amazon/AWSCLIV2/aws" ]] || [ "${1}" != "silent" ] 
+  if [[ $(doIsAwsInstalled; echo $?) != "0" ]] || [[ "${1}" != "silent" ]]
   then
     # Get leatest release
     if [ -z "${AWS_VERSION}" ]
@@ -64,22 +68,22 @@ function doSetup() {
       AWS_VERSION=$(curl "https://github.com/aws/aws-cli/tags" | awk -F'tags/' '/archive/ { print $2}' | sort -r | head -1 | awk -F'.zip' '{print $1}')
     fi
 
-    doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}" 
+    doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}"
     if [ "${?}" = 0 ]
     then
-      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws" "${AWS_VERSION}" 
+      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws" "${AWS_VERSION}"
     fi
 
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then
       doEcho "logon again to test aws with \"aws --version\""
-    fi 
+    fi
   fi
 }
 
 
 # CLI
-case ${1} in 
+case ${1} in
 "help" | "-h")
   echo "Setup or run AWS CLI (command-line interface for Amazon-Web-Services)."
   echo
