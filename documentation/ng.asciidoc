@@ -11,7 +11,7 @@ The arguments (`devon ng «args»`) are explained by the following table:
 [options="header"]
 |=======================
 |*Argument(s)*             |*Meaning*
-|`setup`                   |setup yarn (install and verify), link:configuration.asciidoc[configurable] via `NG_VERSION`
+|`setup`                   |setup angular (install and verify), link:configuration.asciidoc[configurable] via `NG_VERSION`
 |`create`                  |Create a new https://github.com/devonfw/devon4ng/#devon4ng[devon4ng] project.
 |`cicd «args»`             |generate cicd files for the current devon4ng project
 |`«args»`                  |run ng with the given arguments (`«args»`)

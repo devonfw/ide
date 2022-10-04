@@ -12,5 +12,5 @@ The arguments (`devon gh «args»`) are explained in the following table:
 |=======================
 |*Argument(s)*    |*Meaning*
 |`setup`          |install GitHub CLI on your machine.
-|`«args»`         |call GitHub CLI with the specified arguments. Call `gh --help` for details or use helm directly as preferred.
+|`«args»`         |call GitHub CLI with the specified arguments. Call `gh --help` for details or use gh directly as preferred.
 |=======================
