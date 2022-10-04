@@ -7,6 +7,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 Urgent bugfix release:
 
 * https://github.com/devonfw/ide/issues/921[#921]: Setup fails on windows: repository '_isNew' does not exist
+* https://github.com/devonfw/ide/issues/923[#923]: setup.bat fails if whitespaces in PSModulePath
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/33?closed=1[milestone 2022.08.003].
 
