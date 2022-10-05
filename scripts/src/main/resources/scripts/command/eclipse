@@ -87,17 +87,17 @@ function doCheckPluginsInstalled() {
   for plugin in "${plugins_arr[@]}"; do
     # Remove feature from plugin variable
     plugin=${plugin/\.feature*/}
-    # shellcheck disable=SC2010
+
     local plugin_dependencies
-    plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
+    plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
       if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]; then
         break
       fi
-      # shellcheck disable=SC2010
+      
       local new_plugin_dependencies
-      new_plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
+      new_plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
       if [ -n "${new_plugin_dependencies}" ] 
       then
         plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
@@ -105,6 +105,8 @@ function doCheckPluginsInstalled() {
       plugin=${plugin%.*}
     done
   done
+  # Remove plugin_dir from plugin variable
+  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_dir}/||g")
   echo -e "${plugin_dependencies}"
 }
 
