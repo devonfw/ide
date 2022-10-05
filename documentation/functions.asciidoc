@@ -170,7 +170,13 @@ The doMoveGlobSafe function moves the file specified as the second parameter aft
 The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
 
 === doParseOption
-The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. If -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
+The doParseOption function checks whether the parameter passed to it 
+
+* is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. 
+
+* is the option version. In this case, it determines whether `version list` or `version set` was entered and calls the corresponding function before exiting the program.
+
+If -- is passed, a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
 
 === doReplaceExtracted
 The doReplaceExtracted function prepares to move an unpacked archive (specified in the first parameter). The current date is defined as the name for the backup directory of the currently installed software. Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME. If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed. If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory. Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
