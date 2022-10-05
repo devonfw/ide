@@ -41,7 +41,8 @@ function doInstallEclipsePlugin() {
     return
   fi
 
-  doCheckPluginsInstalled "${1}"
+  local plugin_dependencies
+  plugin_dependencies=$(doCheckPluginsInstalled "${1}")
 
   # Install plugins and write debug info into temp file
   local debug_info_file
@@ -87,6 +88,7 @@ function doCheckPluginsInstalled() {
     # Remove feature from plugin variable
     plugin=${plugin/\.feature*/}
     # shellcheck disable=SC2010
+    local plugin_dependencies
     plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
@@ -94,6 +96,7 @@ function doCheckPluginsInstalled() {
         break
       fi
       # shellcheck disable=SC2010
+      local new_plugin_dependencies
       new_plugin_dependencies=$(ls -1 "${plugin_dir}" | grep -o -E "${plugin}\..*\.jar")
       if [ -n "${new_plugin_dependencies}" ] 
       then
@@ -101,7 +104,8 @@ function doCheckPluginsInstalled() {
       fi
       plugin=${plugin%.*}
     done
-  done 
+  done
+  echo -e "${plugin_dependencies}"
 }
 
 function doSetup() {
