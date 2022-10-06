@@ -1525,14 +1525,14 @@ function doCheckIsTool() {
     return 1
   fi
   tool_list=$(
-    ${HOME}/.devon/devon help | awk '
+    "${HOME}"/.devon/devon help | awk '
     BEGIN {i=0}
     /^Commands:/ {i=1; next}
     i==1 && /^$/ {i=0}
     i==0 {next}
     {gsub(/ /,""); printf"%s ", $0}
   ')
-  if [[ $(echo "${tool_list}" | awk  '! /'${tool}'/ {print "1"}') ]] || [[ $(command -v "${tool}" >/dev/null 2>&1; echo $?) != "0" ]]
+  if [[ $(echo "${tool_list}" | awk  '! /'"${tool}"'/ {print "1"}') ]] || [[ $(command -v "${tool}" >/dev/null 2>&1; echo $?) != "0" ]]
   then
     return 1
   fi
