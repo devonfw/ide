@@ -1,8 +1,15 @@
 @echo off
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
-Set _fBGreen=[92m
-Set _RESET=[0m
+set _fBGreen=[92m
+set _RESET=[0m
+
+echo "%PSModulePath%" | findstr "%USERPROFILE%" >NUL
+if "%ERRORLEVEL%" == "0" (
+  set PSModulePath="%PSModulePath:*;=%"
+  start "CMD window" "%~f0"
+  goto :EOF
+)
 
 pushd %~dp0
 echo Setting up your devonfw-ide in %CD%
