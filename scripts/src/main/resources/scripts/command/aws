@@ -32,6 +32,13 @@ function doIsAwsInstalled() {
   then
     return
   else
+    if doIsWindows
+    then
+      if [ -f "/c/Program Files/Amazon/AWSCLIV2/aws" ]
+      then
+        return
+      fi
+    fi
     return 255
   fi
 }
@@ -53,13 +60,18 @@ function doPackageInstall()
     sudo installer -pkg "${path_to_package}"/aws-"${version}"-mac.pkg -target /
   else
     doEcho "Installating AWS for Linux..."
-    doRunCommand "sudo ${path_to_package}/install"
+    if [ -L "/usr/local/bin/aws" ]
+    then
+      doRunCommand "sudo ${path_to_package}/install -u"
+    else
+      doRunCommand "sudo ${path_to_package}/install"
+    fi
   fi
-  doRunCommand "rm -rf ${path_to_package}"
 }
 
 function doSetup() {
-  if [[ $(doIsAwsInstalled; echo $?) != "0" ]] || [[ "${1}" != "silent" ]]
+  local ERR=""
+  if [[ $(doIsAwsInstalled &> /dev/null; echo $?) != "0" ]] || [[ "${1}" != "silent" ]]
   then
     # Get leatest release
     if [ -z "${AWS_VERSION}" ]
@@ -69,10 +81,12 @@ function doSetup() {
     fi
 
     doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}"
-    if [ "${?}" = 0 ]
+    ERR="${?}"
+    if [ "${ERR}" = "0" ]
     then
       doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws" "${AWS_VERSION}"
     fi
+    doRunCommand "rm -rf ${DEVON_IDE_HOME}/updates/install/aws"
 
     if [ "${1}" != "silent" ] && ! doIsQuiet
     then
