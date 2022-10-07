@@ -60,8 +60,6 @@ then
   echo " setup                setup jasypt (install into local maven repo)"
   echo " encrypt              encrypt a secret with a master-password"
   echo " decrypt              decrypt an encrypted secret with a master-password"
-  echo
-  echo "Options:"
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"

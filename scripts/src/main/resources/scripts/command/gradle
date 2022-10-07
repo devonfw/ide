@@ -79,15 +79,13 @@ then
   echo "Setup or run gradle build tool."
   echo
   echo "Arguments:"
-  echo "                          run default build"
-  echo " setup                    setup gradle (install, verify, configure)"
-  echo " get-version              get the current project version"
-  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
-  echo " release                  start a clean deploy release build"
-  echo " «args»                   call gradle with the specified arguments"
-  echo
-  echo "Options:"
+  echo "                                run default build"
+  echo " setup                          setup gradle (install, verify, configure)"
+  echo " get-version                    get the current project version"
+  echo " set-version «nv» [«cv»]        set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project        check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                        start a clean deploy release build"
+  echo " «args»                         call gradle with the specified arguments"
   exit
 fi
 GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"

@@ -232,9 +232,8 @@ case ${1} in
   echo "Setup docker."
   echo
   echo "Arguments:"
-  echo " setup                    setup docker on your machine (global installation)."
-  echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
-  echo 
+  echo " setup                          setup docker on your machine (global installation)."
+  echo " «args»                         call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
 ;;
 "setup" | "s" | "")
   doSetup setup "${2}"

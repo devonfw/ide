@@ -48,9 +48,8 @@ case ${1} in
   echo "Install helm."
   echo
   echo "Arguments:"
-  echo " setup                    install helm on your machine."
-  echo " <<args>>                 call helm with the specified arguments. Call helm --help for details or use helm directly as preferred."
-  echo
+  echo " setup                          install helm on your machine."
+  echo " «args»                         call helm with the specified arguments. Call helm --help for details or use helm directly as preferred."
 ;;
 "setup" | "s" | "")
   doEcho "Installating helm..."

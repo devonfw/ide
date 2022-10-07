@@ -48,9 +48,8 @@ case ${1} in
   echo "Setup or run DotNet SDK."
   echo
   echo "Arguments:"
-  echo " setup                    setup DotNet SDK (install and verify)"
-  echo " create «name» [«args»]   create a new devon4net application"
-  echo
+  echo " setup                          setup DotNet SDK (install and verify)"
+  echo " create «name» [«args»]         create a new devon4net application"
   exit
 ;;
 "setup" | "s")

@@ -43,8 +43,6 @@ then
   echo "create                create a new devon4ng ionic project"
   echo "cicd «args»           generate cicd files for the current devon4ng ionic project: $PWD"
   echo "«args»                call ionic with the specified arguments"
-  echo
-  echo "Options:"
   exit
 fi
 

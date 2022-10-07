@@ -83,9 +83,8 @@ case ${1} in
   echo "Setup GraalVM."
   echo
   echo "Arguments:"
-  echo " setup                    setup GraalVM (install and verify)"
-  echo " «args»                   call GraalVM with the specified arguments"
-  echo  
+  echo " setup                          setup GraalVM (install and verify)"
+  echo " «args»                         call GraalVM with the specified arguments"
 ;;
 "setup" | "s" | "")
   doSetup "${2}"
