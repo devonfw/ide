@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup create generate db cicd help"
+    echo "setup version create generate db cicd help"
   fi
   exit
 fi

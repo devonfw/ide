@@ -3,9 +3,13 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
+    echo "--all setup version add-plugin run start ${all_opts} help"
+  elif [ "${2}" = "--all" ]
+  then
+    echo "${all_opts}"
   fi
   exit
 fi

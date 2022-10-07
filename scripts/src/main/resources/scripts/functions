@@ -736,8 +736,7 @@ function doInstallWithPackageManager() {
 }
 
 # $1: filename (e.g. ${filename})
-function doIsInstallerExtension()
-{
+function doIsInstallerExtension() {
   local myext="${1/*\./.}"
   if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
@@ -1551,6 +1550,23 @@ function doRequireWsl() {
   doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
+# $1: name of the tool (commandlet name)
+# echos name of the tool folder (in mirrors or software)
+function doGetToolFolderName() {
+  local tool="${1/*\//}"
+  if [ "${tool}" = "mvn" ]
+  then
+    tool="maven"
+  elif [ "${tool}" = "node" ]
+  then
+    tool="nodejs"
+  elif [ "${tool}" = "sonar" ]
+  then
+    tool="sonarqube"
+  fi
+  echo "${tool}"
+}
+
 # $1: software
 # $2: selected version
 function doSetSoftwareVersion() {
@@ -1574,7 +1590,10 @@ function doSetSoftwareVersion() {
 # $1: software
 function doListSoftwareVersions() {
   local versions_path="${DEVON_IDE_HOME}/mirrors/${1}/available-versions"
-  if [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
+  if [ ! -f "${versions_path}" ]
+  then
+    doError "No versions available at ${versions_path}"
+  elif [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
   then
     pr -4 -t -s "${versions_path}" | column -t
   else
@@ -1616,10 +1635,10 @@ function doParseOption() {
   then
     if [ "${2}" = "list" ]
     then
-      doListSoftwareVersions "$(basename "${0}")"
+      doListSoftwareVersions "$(doGetToolFolderName "${0}")"
     elif [ "${2}" = "set" ]
     then
-      doSetSoftwareVersion "$(basename "${0}")" "${3}"
+      doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}"
     fi
     exit
   fi
