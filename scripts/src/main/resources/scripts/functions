@@ -305,7 +305,7 @@ function doLicenseAgreement() {
     if doIsBatch
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
-    fi    
+    fi
     if doAskToContinue "Do you accept these terms of use and all license agreements?" "return"
     then
       echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"      
@@ -376,7 +376,7 @@ function doDevonCommandAndReturn() {
       doError "Command '${command_name} ${*}' failed with exit code ${result}"
       return ${result}
     fi
-  fi  
+  fi
 }
 
 # $1: the URL to download
