@@ -102,9 +102,8 @@ case ${1} in
   echo "Setup or run AWS CLI (command-line interface for Amazon-Web-Services)."
   echo
   echo "Arguments:"
-  echo " setup                    install aws on your machine."
-  echo " <<args>>                 call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
-  echo
+  echo " setup                          install aws on your machine."
+  echo " «args»                         call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
 ;;
 "setup" | "s" | "")
   doSetup

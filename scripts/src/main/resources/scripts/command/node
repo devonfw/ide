@@ -59,14 +59,12 @@ case ${1} in
   echo "Setup or run NodeJS."
   echo
   echo "Arguments:"
-  echo " setup                    setup NodeJS (install and verify)"
-  echo " create «name» [«args»]   create a new devon4node application (same as devon4node new)"
-  echo " generate «s» [«args»]    generate devon4node components using the schematic «s» (same as devon4node generate)"
-  echo " db «c» [«args»]          execute a TypeORM command «c» (same as devon4node db)"
-  echo " cicd «args»              generate cicd files for the current devon4node project: $PWD"
-  echo " «args»                   call NodeJS with the specified arguments"
-  echo
-  echo "Options:"
+  echo " setup                          setup NodeJS (install and verify)"
+  echo " create «name» [«args»]         create a new devon4node application (same as devon4node new)"
+  echo " generate «s» [«args»]          generate devon4node components using the schematic «s» (same as devon4node generate)"
+  echo " db «c» [«args»]                execute a TypeORM command «c» (same as devon4node db)"
+  echo " cicd «args»                    generate cicd files for the current devon4node project: $PWD"
+  echo " «args»                         call NodeJS with the specified arguments"
   exit
 ;;
 "setup" | "s")

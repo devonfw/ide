@@ -48,9 +48,8 @@ case ${1} in
   echo "Install Github CLI."
   echo
   echo "Arguments:"
-  echo " setup                    install GitHub CLI on your machine."
-  echo " <<args>>                 call GitHub CLI with the specified arguments."
-  echo
+  echo " setup                          install GitHub CLI on your machine."
+  echo " «args»                         call GitHub CLI with the specified arguments."
 ;;
 "setup" | "s")
   doEcho "Installing GitHub CLI..."

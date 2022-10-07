@@ -94,17 +94,15 @@ then
   echo "Install and manage Java."
   echo
   echo "Arguments:"
-  echo " setup                              setup Java (install and verify)"
-  echo " create «args»                      create new Java project based on devon4j template. If a single argument is provided,"
-  echo "                                    this is the package name and is automatically split into groupId and artifactId. Use"
-  echo "                                    -DdbType=«db» to choose the database. Any option starting with dash is passed as is."
-  echo " migrate [from «version»] [single]  update the current devon4j project to the latest supported version. If for some reasons"
-  echo "                                    the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
-  echo "                                    it manually after the 'from' argument. Also the 'single' option allows to migrate only to"
-  echo "                                    the next available version."
-  echo " cicd «args»                        generate cicd files for the current project: $PWD"
-  echo
-  echo "Options:"
+  echo " setup                          setup Java (install and verify)"
+  echo " create «args»                  create new Java project based on devon4j template. If a single argument is provided,"
+  echo "                                this is the package name and is automatically split into groupId and artifactId. Use"
+  echo "                                -DdbType=«db» to choose the database. Any option starting with dash is passed as is."
+  echo " migrate [from «v»] [single]    update the current devon4j project to the latest supported version. If for some reasons"
+  echo "                                the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
+  echo "                                the version «v» manually after the 'from' argument. Also the 'single' option allows"
+  echo "                                to migrate only to the next available version."
+  echo " cicd «args»                    generate cicd files for the current project: $PWD"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
   doSetup "${2}"

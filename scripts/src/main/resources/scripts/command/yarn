@@ -104,8 +104,6 @@ then
   echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
   echo " release                  start a clean deploy release build"
   echo " «args»                   call maven with the specified arguments"
-  echo
-  echo "Options:"
   exit
 fi
 if [ -z "${1}" ] || [ "${1}" = "build" ]

@@ -160,6 +160,9 @@ The doIsInstallerExtension function checks whether the file extension of the fil
 === doIsPackageJsonContainingScript
 The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If so, then it ends with the return value 0 otherwise with a message and the return value 255.
 
+=== doListSoftwareVersions
+The function doListSoftwareVersions takes the name of the tool as a parameter and displays the available versions.
+
 === doMoveGlobSafe
 The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
 
@@ -167,7 +170,13 @@ The doMoveGlobSafe function moves the file specified as the second parameter aft
 The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
 
 === doParseOption
-The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. If -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
+The doParseOption function checks whether the parameter passed to it 
+
+* is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. 
+
+* is the option version. In this case, it determines whether `version list` or `version set` was entered and calls the corresponding function before exiting the program.
+
+If -- is passed, a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
 
 === doReplaceExtracted
 The doReplaceExtracted function prepares to move an unpacked archive (specified in the first parameter). The current date is defined as the name for the backup directory of the currently installed software. Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME. If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed. If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory. Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
@@ -189,6 +198,9 @@ The doRunCommand function can be given 3 parameters, the command to be executed,
 
 === doRunConfigurator
 The doRunConfigurator function transfers all jar files in the DEVON_IDE_HOME/scripts/lib directory separated by ":" as a class path to the Java command and executes the Java program specified as a parameter.
+
+=== doSetSoftwareVersion
+The function doSetSoftwareVersion is used to set a specific version of a software tool, and requires 2 parameters: the name of the software tool and the desired version. The version is saved as `«tool»_VERSION` variable in `settings/devon.properties`.
 
 === doUnzip
 The doUnzip function checks if an unzip program is installed, and if not, installs the program. The file specified in the first parameter is then unpacked into the directory specified in the second parameter.

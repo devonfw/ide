@@ -163,14 +163,14 @@ then
   echo "Manage IntelliJ IDE and workspace."
   echo
   echo "Arguments:"
-  echo " --all              if provided as first arg then to command will be invoked for each workspace"
-  echo " setup              setup IntelliJ (install or update)"
-  echo " add-plugin «id»    install an additional plugin"
-  echo " run | start        launch IntelliJ IDE (default if no argument is given)"
-  echo " ws-up[date]        update IntelliJ workspace"
-  echo " ws-re[verse]       reverse merge changes from workspace into settings"
-  echo " ws-reverse-add     reverse merge adding new properties"
-  echo " create-script      create intellij-${WORKSPACE} script if not already exists"
+  echo " --all                          if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                          setup IntelliJ (install or update)"
+  echo " add-plugin «id»                install an additional plugin"
+  echo " run | start                    launch IntelliJ IDE (default if no argument is given)"
+  echo " ws-up[date]                    update IntelliJ workspace"
+  echo " ws-re[verse]                   reverse merge changes from workspace into settings"
+  echo " ws-reverse-add                 reverse merge adding new properties"
+  echo " create-script                  create intellij-${WORKSPACE} script if not already exists"
   exit
 fi
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"

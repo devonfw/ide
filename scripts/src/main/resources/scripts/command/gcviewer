@@ -51,9 +51,8 @@ case ${1} in
   echo "Setup or run gcviewer"
   echo
   echo "Arguments:"
-  echo " setup                    install the latest version GCViewer on your machine."
-  echo " start                    launch GCViewer App."
-  echo
+  echo " setup                          install the latest version GCViewer on your machine."
+  echo " start                          launch GCViewer App."
 ;;
 "setup" | "s")
   if [ "${2}" == "silent" ]
