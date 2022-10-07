@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup version help"
+  fi
+  exit
+fi
+
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255

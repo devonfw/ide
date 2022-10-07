@@ -125,12 +125,11 @@ case ${1} in
     echo " «args»                         call pip with the specified arguments (call 'pip --help' for details)."
     echo " install «package»              install the specified Pip package."
     echo " remove «package»               remove the specified Pip package. If no package is specified, pip will be removed."
-    echo " version                        show the version of pip installed."
   ;;
   "setup" | "-s" | "")
     doSetup "${2}"
   ;;
-  "version" | "-v" | "--version")
+  "version")
      doRunPip --version
   ;;
   "install" | "-i")
