@@ -43,6 +43,17 @@ else
       elif [ "${parameter[1]}" = "set" ] && [ "${arg_count}" = 4 ]
       then
         local tool="${COMP_WORDS[1]}"
+        if [ "${tool}" = "mvn" ]
+        then
+          tool="maven"
+        elif [ "${tool}" = "node" ]
+        then
+          tool="nodejs"
+        elif [ "${tool}" = "sonar" ]
+        then
+          tool="sonarqube"
+        fi
+        
         if [ -f "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions" ]
         then
           commandlist=$(cat "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions")
