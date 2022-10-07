@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
@@ -53,9 +53,8 @@ case ${1} in
   echo "Install terraform."
   echo
   echo "Arguments:"
-  echo " setup                    install terraform on your machine."
-  echo " <<args>>                 call terraform with the specified arguments. Call terraform --help for details or use terraform directly as preferred."
-  echo
+  echo " setup                          install terraform on your machine."
+  echo " «args»                         call terraform with the specified arguments. Call terraform --help for details or use terraform directly as preferred."
 ;;
 "setup" | "s" | "")
   doEcho "Installating Terraform..."

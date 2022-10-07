@@ -2,16 +2,39 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.08.004
+
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
+
+== 2022.08.003
+
+Urgent bugfix release:
+
+* https://github.com/devonfw/ide/issues/921[#921]: Setup fails on windows: repository '_isNew' does not exist
+* https://github.com/devonfw/ide/issues/923[#923]: setup.bat fails if whitespaces in PSModulePath
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/33?closed=1[milestone 2022.08.003].
+
 == 2022.08.002
 
-Release in process:
+New release with various improvements and bugfixes:
 
 * https://github.com/devonfw/ide/issues/833[#833]: Implementing GitHub CLI
-* https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
+* https://github.com/devonfw/ide/issues/894[#894]: Integration of Quarkus CLI
 * https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites
-* https://github.com/devonfw/ide/issues/877[#877]: Update version of vscode to 1.71.0+
+* https://github.com/devonfw/ide/issues/877[#877]: Update version of vscode to 1.71.0
+* https://github.com/devonfw/ide/issues/898[#898]: AWS can not be installed
+* https://github.com/devonfw/ide/pull/882[#882]: Fixing NPE by updating mvn default version to 3.8.4
+* https://github.com/devonfw/ide/issues/409[#409]: Redo PATH adaptation if devon.bat is not in PATH
+* https://github.com/devonfw/ide/issues/866[#866]:  scripts folder not added to PATH if setup.bat called from powershell
 * https://github.com/devonfw/ide/issues/880[#880]: Customize the trigger of the integration tests
 * https://github.com/devonfw/ide/issues/879[#879]: Renaming integration-tests and adding badges
+* https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
+* https://github.com/devonfw/ide/pull/914[#914]: Tools Documentation Update
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/32?closed=1[milestone 2022.08.002].
 

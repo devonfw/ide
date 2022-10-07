@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
@@ -47,9 +47,8 @@ case ${1} in
   echo "Setup or run Openshift CLI."
   echo
   echo "Arguments:"
-  echo " setup                    install Openshift CLI on your machine."
-  echo " <<args>>                 call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
-  echo
+  echo " setup                          install Openshift CLI on your machine."
+  echo " «args»                         call oc with the specified arguments. Call oc --help for details or use oc directly as preferred."
 ;;
 "setup" | "s")
   doSetup "${2}"
