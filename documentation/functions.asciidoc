@@ -45,7 +45,7 @@ Passes all arguments to xref:doWarning[] to print as warning.
 Then it calls xref:doAskToContinue[].
 
 === doDebug
-Prints the given arguments as debug message with according coloring.
+Prints the given arguments as debug message with according coloring (in gray).
 Debug messages will be printed in xref:doIsDebug[debug] mode.
 
 === doEcho
