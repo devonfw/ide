@@ -736,8 +736,7 @@ function doInstallWithPackageManager() {
 }
 
 # $1: filename (e.g. ${filename})
-function doIsInstallerExtension()
-{
+function doIsInstallerExtension() {
   local myext="${1/*\./.}"
   if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
