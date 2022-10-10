@@ -11,6 +11,8 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
+TOOL_VERSION_COMMAND="java -jar '${JENKINS_HOME}/jenkins.war' --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -76,7 +78,6 @@ function doRemove() {
 }
 
 # CLI
-JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup or run Jenkins CI build server on local machine."
