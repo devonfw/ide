@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="terraform version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -40,7 +41,7 @@ function doSetup() {
 
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "terraform version"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi 
 
 }
