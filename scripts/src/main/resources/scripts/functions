@@ -1148,13 +1148,14 @@ function doInstall() {
     doGitPullOrClone "${target_path}" "${url}"
     return
   fi
-  if [ -n "${version}" ]
+  if [ -z "${version}" ]
   then
     doUpdateMirrors
     local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
     then
       version="$(head -n 1 "${available_versions}")"
+      doDebug "Resolved latest version of ${software} to ${version} from ${available_versions}"
     else
       doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
     fi
