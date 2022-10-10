@@ -1578,6 +1578,9 @@ function doGetToolFolderName() {
   elif [ "${tool}" = "sonar" ]
   then
     tool="sonarqube"
+  elif [ "${tool}" = "cobigen" ]
+  then
+    tool="cobigen-cli"
   fi
   echo "${tool}"
 }
