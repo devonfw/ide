@@ -97,7 +97,7 @@ function doIsForce() {
 
 function doIsBatch() {
   # shellcheck disable=SC2154
-  [ -n "${batch}" ]
+  [ -n "${batch}" ] || [ "${CI}" = "true" ]
   return
 }
 
