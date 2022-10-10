@@ -343,9 +343,19 @@ Updates the PATH variable according to the latest tools installed in the `softwa
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
+=== doGetSoftwareVersion
+Determines the currently installed version of a software and prints it out for the end-user.
+
+|=======================
+|*Param*|*Name*     |*Description*
+|`$1`   |software   |The software tool to check (e.g. `maven` or `java`).
+|`$2`   |version_cmd|The command to determine the version via the software. Maybe `-` if the software is a regular installation but does not support this.
+|`$3`   |commandlet |The commandlet corresponding to the software. Typically the same as `$1` but may differ (e.g. `mvn` instead of `maven`). Only used for log messages to assist end-user.
+|=======================
+
 === doIsDevVersion
-The doIsDevVersion function checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter.
-If this is the case, it ends with the return value 0 otherwise 1.
+Checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter.
+If this is the case, it ends with the return value `0` otherwise `1`.
 
 === doListSoftwareVersions
 Takes the name of the tool as a parameter and displays the available versions.
