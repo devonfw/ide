@@ -1592,14 +1592,22 @@ function doGetToolFolderName() {
 function doGetSoftwareVersion() {
   local software="${1}"
   local version_cmd="${2}"
+  local commandlet="${3}"
   local software_folder="${DEVON_IDE_HOME}/software/${software}"
   if [ ! -d "${software_folder}" ]
   then
     software_folder="${DEVON_IDE_HOME}/software/extra/${software}"
     if [ ! -d "${software_folder}" ]
     then
-      #TODO global tools
-      doFail "Software ${software} is not installed.\nUse 'devon ${3} setup' to install."
+      local software_cmd="${commandlet}"
+      if [ "${commandlet}" = "cobigen" ]
+      then
+        software_cmd="cg"
+      fi
+      if ! command -v "${software_cmd}" &> /dev/null
+      then
+        doFail "Software ${software} is not installed.\nUse 'devon ${commandlet} setup' to install."
+      fi
     fi
   fi
   local version_file="${software_folder}/.devon.software.version"
