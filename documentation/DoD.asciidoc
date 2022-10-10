@@ -31,3 +31,4 @@ However, chances to get your change merged quickly are higher if you address all
 ** [ ] The new commandlet installs potential dependencies automatically (e.g. `doDevonCommand «required-other-tool» setup silent`).
 ** [ ] The variable `«TOOL»_VERSION` is honored by your commandlet so if present that version will be downloaded and installed.
 ** [ ] The new commandlet is tested on all plattforms it is availible for. Assuming you are using Windows, testing for Linux can be done with the Windows Subsystem for Linux and for MacOS we have a virtual cloud instance.
+* [ ] In case your PR adds, changes, or removes a function (in `functions` or `environment-project`) you need to update `functions.asciidoc` accordingly. There is an automated test that will fail otherwise.
