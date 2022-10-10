@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
@@ -90,9 +90,8 @@ case ${1} in
   echo "Install lazydocker."
   echo
   echo "Arguments:"
-  echo " setup                    install lazydocker on your machine."
-  echo "                          call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
-  echo
+  echo " setup                          install lazydocker on your machine."
+  echo "                                call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
 ;;
 "setup" | "s" )
   doEcho "Installing lazydocker..."

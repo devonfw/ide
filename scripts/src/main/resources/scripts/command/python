@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help version version -v --version"
+    echo "setup version help"
   fi
   exit
 fi
@@ -83,15 +83,13 @@ case ${1} in
     echo "Install Python."
     echo
     echo "Arguments:"
-    echo " setup                    setup Python."
-    echo " version                  get Python version."
-    echo " «args»                   call Python with the specified arguments."
-    echo
+    echo " setup                          setup Python."
+    echo " «args»                         call Python with the specified arguments."
   ;;
   "setup" | "s" | "")
     doSetup "${2}"
   ;;
-  "version" | "-v" | "--version")
+  "version")
      doRunPython --version
   ;;
   *)

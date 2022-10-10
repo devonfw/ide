@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup start stop analyze help"
+    echo "setup version start stop analyze help"
   fi
   exit
 fi
@@ -74,12 +74,10 @@ then
   echo "Setup or run SonarQube server on local machine."
   echo
   echo "Arguments:"
-  echo " start                    start local SonarQube server"
-  echo " stop                     stop local SonarQube server"
-  echo " setup                    setup SonarQube (install, verify, configure)"
-  echo " analyze                  analyze current project with SonarQube"
-  echo
-  echo "Options:"
+  echo " start                          start local SonarQube server"
+  echo " stop                           stop local SonarQube server"
+  echo " setup                          setup SonarQube (install, verify, configure)"
+  echo " analyze                        analyze current project with SonarQube"
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
