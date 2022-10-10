@@ -16,7 +16,7 @@ fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
-if [ -e "${IDEA_HOME}/product-info.json" ]
+if doIsMacOs
 then
   TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
 else

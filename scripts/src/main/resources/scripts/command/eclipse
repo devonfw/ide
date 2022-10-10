@@ -22,7 +22,7 @@ then
   ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
 fi
 ECLIPSE_PRODUCT="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
-if [ ! -e "${eclipseproduct}" ]
+if [ ! -e "${ECLIPSE_PRODUCT}" ]
 then
   ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
 fi
