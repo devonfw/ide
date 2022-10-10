@@ -29,8 +29,6 @@ then
   echo "Arguments:"
   echo "                      run the default build if no arguments are given. Needs to succeed for definition-of-done."
   echo " «args»               run the build with the given arguments."
-  echo
-  echo "Options:"
   exit
 fi
 

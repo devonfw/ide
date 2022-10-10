@@ -51,8 +51,6 @@ then
   echo "                          run default build"
   echo " setup                    setup CobiGen CLI (install, verify)"
   echo " «args»                   call CobiGen CLI with the specified arguments"
-  echo
-  echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
   doSetup "${2}"

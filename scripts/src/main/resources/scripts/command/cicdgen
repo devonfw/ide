@@ -43,8 +43,6 @@ function printCicdgenHelp() {
   echo "ng «args»             generate cicd files for the current devon4ng project: $PWD"
   echo "node «args»           generate cicd files for the current devon4node project: $PWD"
   echo "«args»                call cicdgen with the specified arguments"
-  echo
-  echo "Options:"
   exit
 }
 
