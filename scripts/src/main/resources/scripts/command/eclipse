@@ -51,7 +51,6 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${ECLIPSE_HOME}" ]
   then
-    local version="${ECLIPSE_VERSION:-2022-03}"
     local javaVersion="${EXTRA_JAVA_VERSION}"
     if [ -z "${javaVersion}" ]
     then
@@ -63,15 +62,25 @@ function doSetup() {
       if [ "${?}" == 2 ]
       then
         # Java version is lower than 11
-        doVersionCompare "${version}" "2020-09"
-        if [ "${?}" != 2 ]
+        local requireJava11="no"
+        if [ -z "${ECLIPSE_VERSION}" ]
         then
-          # Eclipse version is >= 2020-09
-          doConfirmWarning "You are using eclipse version ${version} that requires Java 11 or newer.\nHowever, [EXTRA_]JAVA_VERSION is ${javaVersion} - in this setup eclipse can not work.\nPlease update JAVA_VERSION, set EXTRA_JAVA_VERSION or downgrade ECLIPSE_VERSION in your settings/devon.properties!"
+          requireJava11="yes"
+        else
+          doVersionCompare "${ECLIPSE_VERSION}" "2020-09"
+          if [ "${?}" != 2 ]
+          then
+            # Eclipse version is >= 2020-09
+            requireJava11="yes"
+          fi
+        fi
+        if [ "${requireJava11}" = "yes" ]
+        then
+          doConfirmWarning "You are using eclipse version ${ECLIPSE_VERSION:-latest} that requires Java 11 or newer.\nHowever, [EXTRA_]JAVA_VERSION is ${javaVersion} - in this setup eclipse can not work.\nPlease update JAVA_VERSION, set EXTRA_JAVA_VERSION or downgrade ECLIPSE_VERSION in your settings/devon.properties!"
         fi
       fi
     fi
-    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${version}" "${ECLIPSE_EDITION_TYPE:-java}"
+    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${ECLIPSE_VERSION}" "${ECLIPSE_EDITION_TYPE:-java}"
     if doIsMacOs
     then
       if [ ! -x "${ECLIPSE_HOME}/eclipse" ]

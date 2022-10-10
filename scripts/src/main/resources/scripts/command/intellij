@@ -30,9 +30,8 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${IDEA_HOME}" ]
   then
-    local version="${INTELLIJ_VERSION:-2021.3}"
     local edition="${INTELLIJ_EDITION_TYPE:-C}"
-    doInstall "-" "${IDEA_HOME}" "intellij" "${version}" "${edition}"
+    doInstall "-" "${IDEA_HOME}" "intellij" "${INTELLIJ_VERSION}" "${edition}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."

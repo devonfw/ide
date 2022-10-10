@@ -33,16 +33,14 @@ function doIsAwsInstalled() {
 }
 
 # $1: path_to_package
-# $2: software version
 function doPackageInstall()
 {
   local path_to_package="${1}"
-  local version="${2}"
   if doIsWindows
   then
     doEcho "Installing AWS for Windows..."
     windows_path_to_package=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-${version}-windows.msi /quiet'"
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-*-windows.msi /quiet'"
   elif doIsMacOs
   then
     doFail "Sorry, AWS CLI installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
@@ -57,17 +55,10 @@ function doSetup() {
 
   if [[ $(command -v aws) != "/c/Program Files/Amazon/AWSCLIV2/aws" ]] || [ "${1}" != "silent" ] 
   then
-    # Get leatest release
-    if [ -z "${AWS_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      AWS_VERSION=$(curl "https://github.com/aws/aws-cli/tags" | awk -F'tags/' '/archive/ { print $2}' | sort -r | head -1 | awk -F'.zip' '{print $1}')
-    fi
-
     doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}" 
     if [ "${?}" = 0 ]
     then
-      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws" "${AWS_VERSION}" 
+      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
     fi
 
     if [ "${1}" != "silent" ] && ! doIsQuiet

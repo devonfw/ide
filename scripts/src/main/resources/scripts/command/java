@@ -25,11 +25,10 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-  local version="${JAVA_VERSION:-11.0.13_8}"
-  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software"
+  doSetupJava "${1}" "${JAVA_VERSION}" "${DEVON_IDE_HOME}/software"
   if [ -n "${EXTRA_JAVA_VERSION}" ]
   then
-    if [ "${EXTRA_JAVA_VERSION}" = "${version}" ]
+    if [ -n "${JAVA_VERSION}" ] && [ "${EXTRA_JAVA_VERSION}" = "${JAVA_VERSION}" ]
     then
       doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
     fi

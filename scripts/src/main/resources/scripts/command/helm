@@ -24,19 +24,12 @@ function doRun() {
 function doSetup() {
   if [ ! -d "${HELM_HOME}" ] || [ "${1}" != "silent" ]
   then
-    # Get leatest release
-    if [ -z "${HELM_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      HELM_VERSION=$(curl -LsH "Accept: application/vnd.github.v3+json" https://api.github.com/repos/helm/helm/releases/latest | awk -F':' '/tag_name/ {print $2}' | awk -F'"' '{print $2}')
-    fi
-
     doInstall "-" "${HELM_HOME}" "helm" "${HELM_VERSION}"
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "helm version"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi 
 
 }

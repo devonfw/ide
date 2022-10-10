@@ -187,7 +187,7 @@ If the URL is not provided as first argument, it will use the `mirrors` config t
 
 |=======================
 |*Param*|*Name*  |*Description*
-|`$1`   |URL     |The explicit URL to download from or `-` to compute in xref:doDownload[].
+|`$1`   |URL     |The explicit URL to download from or `-` to compute from mirrors.
 |`$2`   |dir     |The optional target directory where to save the downloaded file.
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
@@ -289,6 +289,9 @@ The parameters source directory, target directory, backup directory and possibly
 The first three parameters are taken directly into variables and removed from the list of passed parameters with the shift so that the last specification can be viewed as a whole.
 If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory.
 Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
+
+=== doUpdateMirrors
+Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
 
 === doUnzip
 Checks if an unzip program is installed, and if not, installs the program.

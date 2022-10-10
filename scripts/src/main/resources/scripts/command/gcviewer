@@ -20,11 +20,6 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
   then
-    if [ -z "${GCVIEWER_VERSION}" ]
-    then
-      doEcho "Getting the latest release of GCViewer..."
-      GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
-    fi 
     do_not_extract="Not Empty"
     doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
     doCreateGCViewerScript

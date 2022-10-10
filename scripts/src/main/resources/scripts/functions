@@ -379,6 +379,12 @@ function doDevonCommandAndReturn() {
   fi
 }
 
+function doUpdateMirrors() {
+  local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
+  doDebug "Cloning or updating download mirrors"
+  doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
+}
+
 # $1: the URL to download
 # $2: the optional, target directory to save to
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
@@ -426,10 +432,8 @@ function doDownload() {
         os="${OSTYPE}"
       fi
     fi
-    local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
-    doDebug "Cloning or updating download mirrors"
-    doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
-    local mirrors_software_dir="${mirrors_dir}/${software}"
+    doUpdateMirrors
+    local mirrors_software_dir="${DEVON_IDE_HOME}/mirrors/${software}"
     if [ ! -d "${mirrors_software_dir}" ]
     then
       doFail "No mirror is configured at ${mirrors_software_dir}"
@@ -1143,6 +1147,17 @@ function doInstall() {
   then
     doGitPullOrClone "${target_path}" "${url}"
     return
+  fi
+  if [ -n "${version}" ]
+  then
+    doUpdateMirrors
+    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+    if [ -e "${available_versions}" ]
+    then
+      version="$(head -n 1 "${available_versions}")"
+    else
+      doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
+    fi
   fi
   local version_file="${target_path}/.devon.software.version"
   local current_version=

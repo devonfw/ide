@@ -20,8 +20,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${GRADLE_HOME}" ]
   then
-    local version="${GRADLE_VERSION:-5.5.1}"
-    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "" "" "-"
+    doInstall "-" "${GRADLE_HOME}" "gradle" "${GRADLE_VERSION}" "" "" "-"
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
