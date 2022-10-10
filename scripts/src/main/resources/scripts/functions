@@ -97,7 +97,7 @@ function doIsForce() {
 
 function doIsBatch() {
   # shellcheck disable=SC2154
-  [ -n "${batch}" ]
+  [ -n "${batch}" ] || [ "${CI}" = "true" ]
   return
 }
 
@@ -323,12 +323,7 @@ function doDevonCommand() {
   result=${?}
   if [ ${result} != 0 ]
   then
-    if ! doIsBatch
-    then
-      doAskToContinue "Failed to run devon ${*} - do you want to continue?"
-    else
-      exit ${result}
-    fi
+    doFail "Failed to run devon ${*}" "${result}"
   else
     doUpdatePath
   fi
