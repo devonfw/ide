@@ -39,17 +39,6 @@ function doSetup() {
         fi
       else
         doRequireNotBatch
-        if [ -z "${RANCHER_VERSION}" ]
-        then
-          RANCHER_VERSION="1.4.1"
-          latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
-          doVersionCompare "${latestversion}" "${RANCHER_VERSION}"
-          VersCompRes=${?}
-          if [ "${VersCompRes}" = 1 ]
-          then
-            RANCHER_VERSION=${latestversion}
-          fi
-        fi
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
         doInstall "-" "${rancher_install_dir}" "rancher" "${RANCHER_VERSION}" 
         if doIsWindows
@@ -57,7 +46,7 @@ function doSetup() {
           doSetVpnKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
           # ensures installation of vpnkit if user directly restarts computer for enabling wsl
-          doRunCommand "${rancher_install_dir}/rancher-${RANCHER_VERSION}-windows.exe" 
+          doRunCommand "${rancher_install_dir}/rancher-*-windows.exe" 
           #check if vpnkit is already installed
           doEnsureVpnKitInstallation
         elif doIsMacOs
