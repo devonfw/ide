@@ -644,7 +644,7 @@ function doGetExtension() {
 #.$@ any number of file paths
 # echos the first of the given paths that does exist
 function doGetFirstExistingPathOrFail() {
-  local message="None of the followin path(s) exists:"
+  local message="None of the following path(s) exists:"
   while [ -n "${1}" ]
   do
     message="${message}\n${1}"
