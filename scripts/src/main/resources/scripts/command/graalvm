@@ -12,7 +12,7 @@ fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 GRAALVM_HOME="${DEVON_IDE_HOME}/software/extra/graalvm"
-TOOL_VERSION_COMMAND="'${GRAALVM_HOME}' -version"
+TOOL_VERSION_COMMAND="'${GRAALVM_HOME}/bin/java' -version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 

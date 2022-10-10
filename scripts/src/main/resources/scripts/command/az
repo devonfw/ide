@@ -22,7 +22,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "az -v" "verify installation of azure cli"
+    doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of azure cli"
   fi
 }
 
