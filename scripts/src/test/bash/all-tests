@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$(dirname "${0}")"/functions-test
+
 success=0
 failure=0
 total=0
@@ -12,15 +14,17 @@ do
   mkdir -p "${testcase}/conf"
   cd "${testcase}"
   echo "export M2_REPO=~/.m2/repository" > "conf/devon.properties"
-  "${testpath}"
+  "${testpath}" &> errorLog
   result=${?}
   if [ "${result}" == 0 ]
   then
-    echo "[SUCCESS] Succeeded running test #${total}: ${testcase}"
+    doSuccess "[SUCCESS] Succeeded running test #${total}: ${testcase}"
     let "success++"
   else
-    echo "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
+    doError "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
     let "failure++"
+    doError "[ERROR LOG] ${testcase}" >> ../errorLogs
+    echo -e "$(cat errorLog)\n" >> ../errorLogs
   fi
   let "total++"
   cd ..
@@ -35,13 +39,14 @@ cd integration-test
 export DEVON_SKIP_PROJECT_SETUP=true
 doTests "test"
 [[ "${INTEGRATION_TEST}" == true ]] && doTests "integration-test"
-echo
-echo "*****************************************************"
+echo -e "\n*****************************************************"
 echo "Executed #${total} test(s), #${success} succeeded and #${failure} failed"
+echo -e "*****************************************************\n"
 if [ "${failure}" == 0 ]
 then
-  echo "All test succeeded. Fine!"
+  doSuccess "All test succeeded. Fine!"
 else
-  echo "There are test failures! Please check the logs and fix errors."
+  doWarning "There are test failures! Please check the logs and fix errors.\n"
+  cat errorLogs
   exit 1
 fi
