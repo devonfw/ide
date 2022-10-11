@@ -20,17 +20,17 @@ function doRun() {
   doRunCommand "${TERRAFORM_HOME}/terraform ${*}"
 }
 
-function doSeddstup() {
+function doSetup() {
   if [ ! -d "${TERRAFORM_HOME}" ] || [ "${1}" != "silent" ]
   then
     # Get leatest release
     if [ -z "${TERRAFORM_VERSION}" ]
     then
-      doEchasdo "Getting latest release..."
+      doEcho "Getting latest release..."
       TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | sed 's/v//')
     fi
 
-    doInstalssl "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
+    doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
 
     if ! grep terraform ~/.bashrc >/dev/null
     then
