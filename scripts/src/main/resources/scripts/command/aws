@@ -17,29 +17,29 @@ source "$(dirname "${0}")"/../functions
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  if doIsWindows
-  then
-    doRunCommand "\"/c/Program Files/Amazon/AWSCLIV2/aws\" ${*}"
-  else
-    doRunCommand "aws ${*}"
-  fi
+  findAws
+  doRunCommand "'${AWS}' ${*}"
 }
 
 
 # OS independent check if aws is installed.
-function doIsAwsInstalled() {
+function findAws() {
+  AWS="aws"
+  AWS_INSTALLED="no"
   if command -v aws &> /dev/null
   then
-    return
-  else
-    if doIsWindows
+    AWS_INSTALLED="yes"
+  elif doIsWindows
+  then
+    local aws_win
+    aws_win="$(powershell  -c '${env:ProgramFiles}')"
+    aws_win="$(cygpath "${aws_win}")"
+    aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
+    if [ -f "${aws_win}" ]
     then
-      if [ -f "/c/Program Files/Amazon/AWSCLIV2/aws" ]
-      then
-        return
-      fi
+      AWS="${aws_win}"
+      AWS_INSTALLED="yes"
     fi
-    return 255
   fi
 }
 
@@ -71,7 +71,8 @@ function doPackageInstall()
 
 function doSetup() {
   local ERR=""
-  if [[ $(doIsAwsInstalled &> /dev/null; echo $?) != "0" ]] || [[ "${1}" != "silent" ]]
+  findAws
+  if [[ ${AWS_INSTALLED} != "yes" ]] || [[ "${1}" != "silent" ]]
   then
     # Get leatest release
     if [ -z "${AWS_VERSION}" ]
@@ -102,8 +103,9 @@ case ${1} in
   echo "Setup or run AWS CLI (command-line interface for Amazon-Web-Services)."
   echo
   echo "Arguments:"
-  echo " setup                          install aws on your machine."
-  echo " «args»                         call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
+  echo " setup                    install aws on your machine."
+  echo " <<args>>                 call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
+  echo
 ;;
 "setup" | "s" | "")
   doSetup
