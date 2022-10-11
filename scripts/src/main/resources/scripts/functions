@@ -1269,7 +1269,7 @@ function doInstall() {
   fi
 
   # macos workaround
-  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents" ]
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/Home/bin" ]
   then
     doEcho "Creating symlink as workaround for ${software} on MacOS"
     local target_software_macos=${target_path%\/*}/macos
