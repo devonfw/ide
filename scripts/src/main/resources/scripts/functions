@@ -466,7 +466,7 @@ function doDownload() {
     # remap architecture
     local mirrors_arch
     local arch_new="${arch}"
-    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
+    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${DEVON_IDE_HOME}/mirrors/arch-mappings")"
     if [ -e "${mirrors_arch}" ]
     then
       while IFS="=" read -r key value
@@ -497,7 +497,7 @@ function doDownload() {
     # remap operating system
     local mirrors_os
     local os_new="${os}"
-    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
+    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${DEVON_IDE_HOME}/mirrors/os-mappings")"
     local key
     local value
     while IFS="=" read -r key value
@@ -1619,19 +1619,25 @@ function doGetSoftwareVersion() {
 
 # $1: software
 # $2: selected version
+# $3: commandlet name
 function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
+  local commandlet="${3}"
   if [ -n "${version}" ]
   then
     if [ "${version}" = "latest" ]
     then
+      doUpdateMirrors
       version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
     fi
-    software=$(echo "${software}" | awk '{print toupper($0)}')
-    grep -v "${software}_VERSION" "${DEVON_IDE_HOME}/settings/devon.properties" > "${DEVON_IDE_HOME}/settings/devon.properties.tmp"
-    mv "${DEVON_IDE_HOME}/settings/devon.properties.tmp" "${DEVON_IDE_HOME}/settings/devon.properties"
-    echo "${software}_VERSION=\"${version}\"" >> "${DEVON_IDE_HOME}/settings/devon.properties"
+    local software_version_variable
+    software_version_variable="$(echo "${software}" | awk '{print toupper($0)}')_VERSION"
+    local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
+    grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
+    mv "${devon_properties}.tmp" "${devon_properties}"
+    echo "${software_version_variable}=\"${version}\"" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=\"${version}\" has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
     doError "You have to specify the version you want to set."
   fi
@@ -1639,7 +1645,9 @@ function doSetSoftwareVersion() {
 
 # $1: software
 function doListSoftwareVersions() {
-  local versions_path="${DEVON_IDE_HOME}/mirrors/${1}/available-versions"
+  local software="${1}"
+  doUpdateMirrors
+  local versions_path="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
   if [ ! -f "${versions_path}" ]
   then
     doError "No versions available at ${versions_path}"
@@ -1691,7 +1699,7 @@ function doParseOption() {
         exit
       elif [ "${2}" = "set" ]
       then
-        doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}"
+        doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}" "${0/*\//}"
         exit
       elif [ "${2}" = "get" ] || [ -z "${2}" ]
       then
