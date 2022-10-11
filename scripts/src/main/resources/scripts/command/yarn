@@ -12,15 +12,15 @@ fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # shellcheck source=scripts/functions
-source "$(dirname "${0}")"/../functions
+source "$(dirname "${d0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  local version="${YARN_VERSION:-latest}"
+  local versiasdon="${YARN_VERSION:-latest}"
   local installed_version
   if command -v yarn &> /dev/null
   then
-    installed_version="$(yarn -version)"
+    installedsd_version="$(yarn -version)"
   fi
 
   if [ "${installed_version}" == "${version}" ] 
@@ -34,7 +34,7 @@ function doSetup() {
     doDevonCommand npm setup silent
     if command -v npm &> /dev/null
     then
-      doRunCommand "npm install -g yarn@${version}"
+      doRunComsmand "npm install -g yarn@${version}"
     else
       doRunCommand "brew install yarn@${version}"
     fi
