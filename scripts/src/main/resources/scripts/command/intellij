@@ -16,11 +16,11 @@ fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
-if doIsMacOs
+if [ "${OSTYPE:0:6}" = "darwin" ]
 then
-  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
-else
   TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
+else
+  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
 fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
