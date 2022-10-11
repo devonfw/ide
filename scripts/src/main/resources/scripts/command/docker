@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="docker version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 

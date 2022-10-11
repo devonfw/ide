@@ -77,7 +77,7 @@ function doRunCommand() {
   then
     message="run command ${1/ */}"
   else
-    message="${2} (${1/ */})"
+    message="${2} (${1})"
   fi
   doDebug "Trying to ${message}"
   eval "${1}"
@@ -97,7 +97,7 @@ function doIsForce() {
 
 function doIsBatch() {
   # shellcheck disable=SC2154
-  [ -n "${batch}" ]
+  [ -n "${batch}" ] || [ "${CI}" = "true" ]
   return
 }
 
@@ -323,12 +323,7 @@ function doDevonCommand() {
   result=${?}
   if [ ${result} != 0 ]
   then
-    if ! doIsBatch
-    then
-      doAskToContinue "Failed to run devon ${*} - do you want to continue?"
-    else
-      exit ${result}
-    fi
+    doFail "Failed to run devon ${*}" "${result}"
   else
     doUpdatePath
   fi
@@ -1568,6 +1563,34 @@ function doGetToolFolderName() {
 }
 
 # $1: software
+# $2: version command
+# $3: commandlet name
+function doGetSoftwareVersion() {
+  local software="${1}"
+  local version_cmd="${2}"
+  local software_folder="${DEVON_IDE_HOME}/software/${software}"
+  if [ ! -d "${software_folder}" ]
+  then
+    software_folder="${DEVON_IDE_HOME}/software/extra/${software}"
+    if [ ! -d "${software_folder}" ]
+    then
+      #TODO global tools
+      doFail "Software ${software} is not installed.\nUse 'devon ${3} setup' to install."
+    fi
+  fi
+  local version_file="${software_folder}/.devon.software.version"
+  if [ -e "${version_file}" ]
+  then
+    doEcho "The version of ${software} that has been installed by devonfw-ide was:"
+    cat "${version_file}"
+  fi
+  if [ "${version_cmd}" != "-" ] && ! doIsQuiet
+  then
+    doRunCommand "${version_cmd}" "verify installation of ${software}"
+  fi
+}
+
+# $1: software
 # $2: selected version
 function doSetSoftwareVersion() {
   local software="${1}"
@@ -1633,14 +1656,23 @@ function doParseOption() {
     return
   elif [ "${1}" = "version" ]
   then
-    if [ "${2}" = "list" ]
+    if [ -n "${TOOL_VERSION_COMMAND}" ]
     then
-      doListSoftwareVersions "$(doGetToolFolderName "${0}")"
-    elif [ "${2}" = "set" ]
-    then
-      doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}"
+      if [ "${2}" = "list" ]
+      then
+        doListSoftwareVersions "$(doGetToolFolderName "${0}")"
+        exit
+      elif [ "${2}" = "set" ]
+      then
+        doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}"
+        exit
+      elif [ "${2}" = "get" ] || [ -z "${2}" ]
+      then
+        doGetSoftwareVersion "$(doGetToolFolderName "${0}")" "${TOOL_VERSION_COMMAND}" "${0/*\//}"
+        exit
+      fi
     fi
-    exit
+    doFail "Unknown argument(s): ${*}"
   fi
   return 255
 }
