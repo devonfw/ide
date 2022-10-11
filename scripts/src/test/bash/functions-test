@@ -3,7 +3,7 @@
 function doCommandTest()  {
   cd ../test-setup
   CLI="${PWD}/scripts/devon"
-  echo yes | "${CLI}" "${1}" setup
+  "${CLI}" "${1}" --batch setup
   exit "${?}"
 }
 
