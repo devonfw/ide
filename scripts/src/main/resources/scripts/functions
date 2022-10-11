@@ -374,6 +374,12 @@ function doDevonCommandAndReturn() {
   fi
 }
 
+function doUpdateMirrors() {
+  local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
+  doDebug "Cloning or updating download mirrors"
+  doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
+}
+
 # $1: the URL to download
 # $2: the optional, target directory to save to
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
@@ -421,10 +427,8 @@ function doDownload() {
         os="${OSTYPE}"
       fi
     fi
-    local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
-    doDebug "Cloning or updating download mirrors"
-    doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
-    local mirrors_software_dir="${mirrors_dir}/${software}"
+    doUpdateMirrors
+    local mirrors_software_dir="${DEVON_IDE_HOME}/mirrors/${software}"
     if [ ! -d "${mirrors_software_dir}" ]
     then
       doFail "No mirror is configured at ${mirrors_software_dir}"
@@ -635,7 +639,7 @@ function doGetExtension() {
 #.$@ any number of file paths
 # echos the first of the given paths that does exist
 function doGetFirstExistingPathOrFail() {
-  local message="None of the followin path(s) exists:"
+  local message="None of the following path(s) exists:"
   while [ -n "${1}" ]
   do
     message="${message}\n${1}"
@@ -1568,14 +1572,22 @@ function doGetToolFolderName() {
 function doGetSoftwareVersion() {
   local software="${1}"
   local version_cmd="${2}"
+  local commandlet="${3}"
   local software_folder="${DEVON_IDE_HOME}/software/${software}"
   if [ ! -d "${software_folder}" ]
   then
     software_folder="${DEVON_IDE_HOME}/software/extra/${software}"
     if [ ! -d "${software_folder}" ]
     then
-      #TODO global tools
-      doFail "Software ${software} is not installed.\nUse 'devon ${3} setup' to install."
+      local software_cmd="${commandlet}"
+      if [ "${commandlet}" = "cobigen" ]
+      then
+        software_cmd="cg"
+      fi
+      if ! command -v "${software_cmd}" &> /dev/null
+      then
+        doFail "Software ${software} is not installed.\nUse 'devon ${commandlet} setup' to install."
+      fi
     fi
   fi
   local version_file="${software_folder}/.devon.software.version"
