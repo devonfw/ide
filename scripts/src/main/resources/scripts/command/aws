@@ -32,7 +32,7 @@ function findAws() {
   elif doIsWindows
   then
     local aws_win
-    aws_win="$(powershell  -c '${env:ProgramFiles}')"
+    aws_win="${PROGRAMFILES}"
     aws_win="$(cygpath "${aws_win}")"
     aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
     if [ -f "${aws_win}" ]
