@@ -47,22 +47,20 @@ function doInstallEclipsePlugin() {
   # Install plugins and write debug info into temp file
   local debug_info_file
   debug_info_file=$(mktemp)
+  # get only !MESSAGE lines from the debug info
   "${ECLIPSE_HOME}/eclipsec" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}" > "${debug_info_file}" 2>&1
   local exit_code=$?
-  # Write only lines with !MESSAGE into debug info
-  local debug_info
-  debug_info=$(grep -E "!MESSAGE" "${debug_info_file}")
-  
-  rm "${debug_info_file}"
+  # Overwrite file with lines containing !MESSAGE
+  sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
 
-  if [[ "${debug_info}" == *"Overall install request is satisfiable"* ]] && [ "${exit_code}" == 0 ]; then
+  if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]; then
     return 0
-  elif [[ "${debug_info}" == *"Unable to load repositories"* ]] || [[ "${debug_info}" == *"No repository found at"* ]]; then
+  elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]; then
     doError "The given repository ${2} is not a correct update site."
     return 1
   else
     echo
-    doError "Installation of plugin '${3}' failed: \n${debug_info}"
+    doError "Installation of plugin '${3}' failed: \n$(cat "${debug_info_file}")"
     if [ -n "${plugin_dependencies}" ]
     then
       plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
