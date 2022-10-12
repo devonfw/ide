@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND=
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -29,8 +30,6 @@ then
   echo "Arguments:"
   echo "                      run the default build if no arguments are given. Needs to succeed for definition-of-done."
   echo " «args»               run the build with the given arguments."
-  echo
-  echo "Options:"
   exit
 fi
 

@@ -77,7 +77,7 @@ function doRunCommand() {
   then
     message="run command ${1/ */}"
   else
-    message="${2} (${1/ */})"
+    message="${2} (${1})"
   fi
   doDebug "Trying to ${message}"
   eval "${1}"
@@ -97,7 +97,7 @@ function doIsForce() {
 
 function doIsBatch() {
   # shellcheck disable=SC2154
-  [ -n "${batch}" ]
+  [ -n "${batch}" ] || [ "${CI}" = "true" ]
   return
 }
 
@@ -305,7 +305,7 @@ function doLicenseAgreement() {
     if doIsBatch
     then
       doFail "You need to accept these terms of use and all license agreements. Please rerun in interactive (non-batch) mode."
-    fi    
+    fi
     if doAskToContinue "Do you accept these terms of use and all license agreements?" "return"
     then
       echo -e "On $(date +"%Y-%m-%d") at $(date +"%H:%M:%S") you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc" > "${DEVON_HOME_DIR}/.devon/.license.agreement"      
@@ -323,12 +323,7 @@ function doDevonCommand() {
   result=${?}
   if [ ${result} != 0 ]
   then
-    if ! doIsBatch
-    then
-      doAskToContinue "Failed to run devon ${*} - do you want to continue?"
-    else
-      exit ${result}
-    fi
+    doFail "Failed to run devon ${*}" "${result}"
   else
     doUpdatePath
   fi
@@ -376,7 +371,13 @@ function doDevonCommandAndReturn() {
       doError "Command '${command_name} ${*}' failed with exit code ${result}"
       return ${result}
     fi
-  fi  
+  fi
+}
+
+function doUpdateMirrors() {
+  local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
+  doDebug "Cloning or updating download mirrors"
+  doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
 }
 
 # $1: the URL to download
@@ -426,10 +427,8 @@ function doDownload() {
         os="${OSTYPE}"
       fi
     fi
-    local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
-    doDebug "Cloning or updating download mirrors"
-    doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
-    local mirrors_software_dir="${mirrors_dir}/${software}"
+    doUpdateMirrors
+    local mirrors_software_dir="${DEVON_IDE_HOME}/mirrors/${software}"
     if [ ! -d "${mirrors_software_dir}" ]
     then
       doFail "No mirror is configured at ${mirrors_software_dir}"
@@ -467,7 +466,7 @@ function doDownload() {
     # remap architecture
     local mirrors_arch
     local arch_new="${arch}"
-    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${mirrors_dir}/arch-mappings")"
+    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${DEVON_IDE_HOME}/mirrors/arch-mappings")"
     if [ -e "${mirrors_arch}" ]
     then
       while IFS="=" read -r key value
@@ -498,7 +497,7 @@ function doDownload() {
     # remap operating system
     local mirrors_os
     local os_new="${os}"
-    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${mirrors_dir}/os-mappings")"
+    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${DEVON_IDE_HOME}/mirrors/os-mappings")"
     local key
     local value
     while IFS="=" read -r key value
@@ -640,7 +639,7 @@ function doGetExtension() {
 #.$@ any number of file paths
 # echos the first of the given paths that does exist
 function doGetFirstExistingPathOrFail() {
-  local message="None of the followin path(s) exists:"
+  local message="None of the following path(s) exists:"
   while [ -n "${1}" ]
   do
     message="${message}\n${1}"
@@ -736,8 +735,7 @@ function doInstallWithPackageManager() {
 }
 
 # $1: filename (e.g. ${filename})
-function doIsInstallerExtension()
-{
+function doIsInstallerExtension() {
   local myext="${1/*\./.}"
   if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
@@ -1259,7 +1257,7 @@ function doInstall() {
   fi
 
   # macos workaround
-  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents" ]
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/Home/bin" ]
   then
     doEcho "Creating symlink as workaround for ${software} on MacOS"
     local target_software_macos=${target_path%\/*}/macos
@@ -1551,7 +1549,105 @@ function doRequireWsl() {
   doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
-# $1: single CLI arg
+# $1: name of the tool (commandlet name)
+# echos name of the tool folder (in mirrors or software)
+function doGetToolFolderName() {
+  local tool="${1/*\//}"
+  if [ "${tool}" = "mvn" ]
+  then
+    tool="maven"
+  elif [ "${tool}" = "node" ]
+  then
+    tool="nodejs"
+  elif [ "${tool}" = "sonar" ]
+  then
+    tool="sonarqube"
+  fi
+  echo "${tool}"
+}
+
+# $1: software
+# $2: version command
+# $3: commandlet name
+function doGetSoftwareVersion() {
+  local software="${1}"
+  local version_cmd="${2}"
+  local commandlet="${3}"
+  local software_folder="${DEVON_IDE_HOME}/software/${software}"
+  if [ ! -d "${software_folder}" ]
+  then
+    software_folder="${DEVON_IDE_HOME}/software/extra/${software}"
+    if [ ! -d "${software_folder}" ]
+    then
+      local software_cmd="${commandlet}"
+      if [ "${commandlet}" = "cobigen" ]
+      then
+        software_cmd="cg"
+      fi
+      if ! command -v "${software_cmd}" &> /dev/null
+      then
+        doFail "Software ${software} is not installed.\nUse 'devon ${commandlet} setup' to install."
+      fi
+    fi
+  fi
+  local version_file="${software_folder}/.devon.software.version"
+  if [ -e "${version_file}" ]
+  then
+    doEcho "The version of ${software} that has been installed by devonfw-ide was:"
+    cat "${version_file}"
+  fi
+  if [ "${version_cmd}" != "-" ] && ! doIsQuiet
+  then
+    doRunCommand "${version_cmd}" "verify installation of ${software}"
+  fi
+}
+
+# $1: software
+# $2: selected version
+# $3: commandlet name
+function doSetSoftwareVersion() {
+  local software="${1}"
+  local version="${2}"
+  local commandlet="${3}"
+  if [ -n "${version}" ]
+  then
+    if [ "${version}" = "latest" ]
+    then
+      doUpdateMirrors
+      version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
+    fi
+    local software_version_variable
+    software_version_variable="$(echo "${software}" | awk '{print toupper($0)}')_VERSION"
+    local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
+    grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
+    mv "${devon_properties}.tmp" "${devon_properties}"
+    echo "${software_version_variable}=\"${version}\"" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=\"${version}\" has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+  else
+    doError "You have to specify the version you want to set."
+  fi
+}
+
+# $1: software
+function doListSoftwareVersions() {
+  local software="${1}"
+  doUpdateMirrors
+  local versions_path="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+  if [ ! -f "${versions_path}" ]
+  then
+    doError "No versions available at ${versions_path}"
+  elif [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
+  then
+    pr -4 -t -s "${versions_path}" | column -t
+  else
+    head -n 20 "${versions_path}" | pr -4 -t -s | column -t
+    doEcho "Only the 20 latest versions are displayed."
+    doAskToContinue "Do you want to see all versions?"
+    less "${versions_path}"
+  fi
+}
+
+# $@: CLI args
 # returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
 function doParseOption() {
   if [ -n "${end_options}" ]
@@ -1578,6 +1674,25 @@ function doParseOption() {
   then
     quiet="${1}"
     return
+  elif [ "${1}" = "version" ]
+  then
+    if [ -n "${TOOL_VERSION_COMMAND}" ]
+    then
+      if [ "${2}" = "list" ]
+      then
+        doListSoftwareVersions "$(doGetToolFolderName "${0}")"
+        exit
+      elif [ "${2}" = "set" ]
+      then
+        doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}" "${0/*\//}"
+        exit
+      elif [ "${2}" = "get" ] || [ -z "${2}" ]
+      then
+        doGetSoftwareVersion "$(doGetToolFolderName "${0}")" "${TOOL_VERSION_COMMAND}" "${0/*\//}"
+        exit
+      fi
+    fi
+    doFail "Unknown argument(s): ${*}"
   fi
   return 255
 }
@@ -1587,7 +1702,7 @@ batch=""
 force=""
 quiet=""
 debug=""
-while [ -n "${1}" ] && doParseOption "${1}"
+while [ -n "${1}" ] && doParseOption "${@}"
 do
   shift
 done

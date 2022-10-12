@@ -5,207 +5,416 @@ toc::[]
 = Documentations of functions
 
 == Functions for testing flags
-The functions for testing flags return a 0 if the corresponding flag is set in the form of a variable. The name of the flag is part of the function name.
+The functions for testing flags return `0` (true) if flag is set and `1` (false) otherwise.
+The name of the flag is part of the function name.
 
 === doIsBatch
-This function returns a 0 if the variable "batch" is set.
+Determines if `batch` mode is active.
+This mode shall be used for non-interactive usage (e.g. in automated invocations) where no user is available for interactive feedback.
+It can be enabled with `-b` or `--batch`.
 
 === doIsDebug
-This function returns a 0 if the variable "debug" is set and the -q option is not specified.
+Determines if `debug` mode is active.
+This mode activates more verbose output for debugging.
+It can be enabled with `-d` or `--debug`.
 
 === doIsForce
-This function returns a 0 if the variable "force" is set.
+Determines if `force` mode is active.
+This mode enforces specific aspects such as xref:doDownload[downloading] cached resources again or to answer xref:doAskToContinue[questions to continue] automatically with `yes`.
+It can be enabled with option `-f` or `--force`.
 
 === doIsQuiet
-This function returns a 0 if the variable "quiet" is set.
+Determines if `quiet` mode is active.
+This mode reduces the output to a minimum so information messages are suppressed.
+It can be enabled with option `-q` or `--quiet`.
 
 == Functions for input and output
 
+Output functions like xref:doEcho[] support backslash-escaped characters, for example "\n" for new line.
+
 === doAskToContinue
-A message can be passed as the first parameter to the doAskToContinue function. If this is not done, the standard message "Do you want to continue?" used. If the variable force is set, the message is output and the function ends directly with the return value 0. If neither the variable force nor the variable batch is set, the message is output in a loop and the input of yes, no or no input at all is awaited. With "yes" or no specification at all, it ends the function with the return value 0, and with "no" it is checked whether return was passed as the second parameter. If this is the case, the function ends with the return value 255, otherwise the entire program ends with the return value 255.
+Display a question and ask the user if he wants to continue.
+In xref:doIsForce[force] or xref:doIsBatch[batch] mode, it will continue automatically.
+
+|=======================
+|*Param*|*Name*  |*Description*
+|`$1`   |question|The question to display. Defaults to `Do you want to continue?`.
+|`$2`   |return  |If the user does not want to continue, this function will exit immediately by default. However, if `return` is passed the function will return 255 and the called can handle the program flow.
+|=======================
 
 === doConfirmWarning
-The doConfirmWarning function calls the doWarning function with the message passed to it, and then calls the doAskToContinue function with no parameters.
+Passes all arguments to xref:doWarning[] to print as warning.
+Then it calls xref:doAskToContinue[].
+
+=== doDebug
+Prints the given arguments as debug message with according coloring (in gray).
+Debug messages will be printed in xref:doIsDebug[debug] mode.
 
 === doEcho
-The doEcho function prints the arguments passed to it if the variable quiet is not set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
+Prints the given arguments as regular info message.
+The message will be suppressed in xref:doIsQuiet[quiet] mode.
 
 === doEchoAttention
-The doEchoAttention function returns the header ******** ATTENTION ******** followed by the message specified as a parameter. Backslash-escaped characters, for example "\n" for new line, are also allowed in the message.
+Like xref:doWarning[] but prefixes the message with an `ATTENTION` header.
 
 === doEchoInteraction
-The doEchoInteraction function outputs the message passed as a parameter in light blue and appends a blank line, and allows backslash-escaped characters, for example "\n" for new line.
+Prints the given arguments as interaction message with according coloring (in light blue).
+An interaction message is an information or question the end-user should react to with interactive feedback.
 
 === doEchoOption
-The doEchoOption function outputs the message passed as a parameter in light blue, and allows backslash-escaped characters, e.g. "\n" for new line.
+Prints the given arguments as option message with according coloring (in light blue).
+An option message is an option the user can choose from.
 
 === doEchoStep
-The doEchoStep function prints the message passed as a parameter with three asterisks before and after the message in purple, and allows backslash-escaped characters, for example "\n" for new line.
+Prints the given arguments as step message with according coloring (in purple).
+A step message informs about a step as part of a command or process that has been completed.
 
 === doError
-The doError function prints the message passed to it in bright red.
+Prints the given arguments as error message with according coloring (in bright red).
+An error message informs the user that something went wrong.
+The coloring should help to highlight such problems.
 
 === doFail
-The doFail function is called with an error message as the first parameter and an exit code as the second parameter. The function first calls the doEchoAttention function without parameter, followed by the specified error message and a message on how to proceed. If a 0 is specified as the exit code, the function ends with exit code 1, otherwise with the specified exit code. If no exit code is specified, the function terminates with exit code 255.
+Prints an xref:doEchoAttention[ATTENTION] banner.
+Then it prints the first argument followed by a generic text as xref:doError[error] message.
+Then this function immediately exists the program with an error code.
+The error code can be provided as second argument but `0` will be replaced with `1` and if omitted `255` is used.
 
 === doInfo
-The doInfo function prints the message passed as a parameter in blue and appends an extra blank line, and allows backslash-escaped characters, for example "\n" for new line.
+Prints the given arguments as info message with according coloring (in blue).
+An information message is a more important message but not indicating any problem (like warning or error).
 
 === doLicenseAgreement
-The doLicenseAgreement function checks whether the DEVON_HOME_DIR/.devon/.license.agreement file exists locally. If the file exists, the function exits with the return value 0. If the file does not exist, the function calls doLogo and then license information about devonfw-ide. Then the website with the license conditions is called up or an error is output if the variable batch is set. Now the question is asked in a loop until either "yes" or "no" is entered. If "no" is entered, the function ends with a return value of 255. If "yes" is entered, the license from the opened website is saved in the local file DEVON_HOME_DIR/.devon/.license.agreement stored and the function ends with return value 0.
+Ensures that the end-user confirms the license agreement of `devonfw-ide` on the first usage on his machine.
+If the user has already confirmed, this function will have no effect.
+Otherwise it will xref:doLogo[print the logo] followed by the license information.
+This contains a link that will also be opened automatically in the web-browser.
+Then xref:doAskToContinue[] is used to let the user confirm the license agreement.
+If the user does not confirm or runs in xref:doIsBatch[batch] mode this function will fail with an error message.
+Otherwise, the user confirmation will be saved to `$DEVON_HOME_DIR/.devon/.license.agreement`.
 
 === doLogo
-The doLogo function prints out the devon logo.
+Prints out the devon logo with clipping if the width of the terminal is too small to prevent line-wrapping.
 
 === doQuestion
-The doQuestion function outputs the message passed to it in light blue.
+Passes arguments to xref:doEchoInteraction[].
 
 === doResult
-The function doResult outputs the message passed as the first parameter, depending on the second parameter as Succeeded for 0 or Failed for all other values. If the second parameter is not specified, Failed (internal error missing exit code) is output.
+Handles the result of a command. 
+Will print the operation (`$1`) as xref:doSuccess[success] message if exitCode (`$2`) is `0`.
+Otherwise it will pass it to xref:doFail[].
+
+|=======================
+|*Param*|*Name*    |*Description*
+|`$1`   |operation |The operation that failed or succeeded.
+|`$2`   |exitCode  |`0` for sucess, otherwise the error code.
+|=======================
 
 === doSuccess
-The doSuccess function outputs the message passed to it in green.
+Prints the given arguments as success message with according coloring (in green).
 
 === doWarning
-The doWarning function outputs the text "WARNING:" with the message passed in the parameter and allows backslash-escaped characters, for example "\n" for new line.
+Prints the given arguments as warning message with according coloring (in orange).
 
 == Environment Checks
 
+The functions for testing environments return `0` (true) if the operating-system matches and `1` (false) otherwise.
+
 === doIsMacOs
-The doIsMacOs function returns 0 if the operating system is detected as MacOs. If not, a 255 is returned.
+Checks if  the operating system is detected as MacOs.
 
 === doIsWindows
-The doIsWindows function returns 0 if the operating system is detected as Windows. If not, a 255 is returned.
+Checks if  the operating system is detected as Windows.
 
-== Functions for Maven
+== Functions to verify requirements
 
-=== doArrayContainsItemWithPrefix
-An array is defined from a number of elements, with the last element being defined as a prefix. The function doArrayContainsItemWithPrefix now checks the array if it contains elements that start with this prefix. If this is the case, the function ends with the return value 0, otherwise with 1.
+=== doRequireNotBatch
+Uses xref:doIsBatch[] to check whether the batch variable is set and, if set, issues an error message.
 
-=== doMavenGetLatestVersion
-The doMavenGetLatestVersion function looks in the artifact repository specified in the (url) parameter for the latest version of the software stored there.
+=== doRequireWsl
+Checks whether Windows Subsystem for Linux (WSL) is installed and whether it is activated and issues a corresponding message via xref:doFail[] if one of the two requirements is not met.
 
-=== doUpgradeMavenArtifact
-The function doUpgradeMavenArtifact first looks in the target directory to see if it is a git repository and then carries out a doGitPullOrClone if necessary and then terminates the function. If the target directory is not a git repository and LATEST was specified as the fourth parameter for the target version, then the latest target version of the Maven artifact (parameter 3) is determined under the url (parameter 2). Now the current version (parameter 6) is compared with the desired target version, and if it is the same or if the current version is greater than the target version, the function aborts with a corresponding message. If the target version is larger than the current version, the software is installed in the target version in the target directory (parameter 1).
-
-== to categorize
-
-=== doBackup
-A file or directory is transferred to the doBackup function as the first parameter and the date after which the backup directory is named that is to be created in the /updates/backups subdirectory for the backup as the second parameter. If the second parameter is not specified, the current date is used. If a single file is specified in the first parameter and such a file already exists in the backup directory, then a time stamp is added to the backup directory as an additional subdirectory. Then the backup directory is created and the files to be backed up are moved there.
-
-=== doDebug
-The doDebug function is called with arguments that are printed if the variable debug is set. Backslash-escaped characters, for example "\n" for new line, are also allowed in the arguments.
+== Functions for generic command execution
 
 === doDevonCommand
-The doDevonCommand function calls the doDevonCommandAndReturn function and passes it all the parameters. If the return value of the doDevonCommandAndReturn function is not equal to 0, the script that called the doDevonCommand function is ended with the return value.
+Calls xref:doDevonCommandAndReturn[] and passes all the parameters.
+On success it calls xref:doUpdatePath[] to ensure the PATH is updated after an installation.
+On failure it will xref:doAskToContinue[ask to continue] if not in xref:doIsBatch[batch] mode or exit immediately with the error code.
 
 === doDevonCommandAllWorkspaces
-The doDevonCommandAllWorkspaces function is given a devon command as a parameter that is executed in all directories in the workspaces directory. If other directories or the readme.txt file are found in the workspaces directory, a corresponding message is output. If a directory change does not work, the function ends with the return value 1.
+Iterates over all workspaces (sub-folders of `workspaces` folder) and executes the given commandlet in each of them.
 
 === doDevonCommandAndReturn
-The doDevonCommandAndReturn function is passed a command from the devon environment with parameters as a parameter, i.e. a command that must be installed under DEVON_IDE_HOME/scripts/command. If no parameter is given, an error message is output using the doFail function. If the specified command does not exist, an error message is also output using doFail. If the command exists, it is checked whether it is executable and, if not so, set to executable. Then the command is called with the options batch, force, debug and quiet, if set, and the specified parameters. If the command encounters an error, an error message is output with the return value passed by the command. Otherwise the function ends with the return value 0.
+Runs the commandlet at `$DEVON_IDE_HOME/scripts/command/$1` with the further given arguments.
+It will automatically pass mode options like xref:doIsBatch[batch] to the commandlet before other given arguments.
+Further it xref:doError[prints an error message] if the commandlet was not successful.
+It will return with the exit code of the commandlet that has been invoked.
+
+|=======================
+|*Param*|*Name*     |*Description*
+|`$1`   |commandlet |The devonfw-ide commandlet to call. E.g. `help` or `ide`.
+|`$2`-$n|args       |Any additional argument is passed to the specified commandlet.
+|=======================
+
+=== doRunCommand
+Executes the given command (`$1`).
+If a a third parameter (`$3`) is provided, it has to point to an existing directory where to command will be executed and the function will return back to the original directory afterwards.
+It will use xref:doResult[] using the `message` (`$2`) to handle the result of the command execution (success or failure).
+
+|=======================
+|*Param*|*Name*  |*Description*
+|`$1`   |command |The command to execute including all its parameters.
+|`$2`   |message |Optional description of the command. Will fall back to "run command" followed by a simplification of the command (`$1`).
+|`$3`   |dir     |Optional working directory where to execute the command.
+|=======================
+
+== Functions for IO operations (download, install, backup, extract, load, save)
+
+=== doBackup
+Takes a file or directory as the first parameter and the date after which the backup directory is named that is to be created in the `updates/backups` subdirectory for the backup as the second parameter.
+If the second parameter is not specified, the current date is used.
+If a single file is specified in the first parameter and such a file already exists in the backup directory, then a time stamp is added to the backup directory as an additional subdirectory.
+Then the backup directory is created and the files to be backed up are moved there.
+
+=== doBrewInstall
+Installs a tool using homebrew.
+If homebrew is installed (`brew` command found), the desired tool will be installed using `brew install`.
+Otherwise, the function will fail with an error message guiding the user to install homebrew.
+
+=== doDownload
+Downloads an artifact from the internet.
+If the URL is not provided as first argument, it will use the `mirrors` config to automatically determine the URL from the other arguments.
+
+|=======================
+|*Param*|*Name*  |*Description*
+|`$1`   |URL     |The explicit URL to download from or `-` to compute from mirrors.
+|`$2`   |dir     |The optional target directory where to save the downloaded file.
+|`$3`   |name    |The name of the software to download.
+|`$4`   |version |The version of the software to download. May be omitted to download the latest version.
+|`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
+|`$6`   |code    |The optional technical code used for specific software to compute download URL.
+|`$7`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$8`   |arch    |The optional architecture (e.g. x86_64).
+|`$9`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
+|`$10`  |filename|The optional filename to save the downloaded file to.
+|=======================
 
 === doDownloadInternal
-The function doDownloadInternal is given the URL as the first parameter, a temporary name for the file to be downloaded as the second, and the target directory in which the file is to be stored as the third parameter. Optionally, the name of the downloaded file can be given as a fourth parameter. If this does not happen, the name is determined from the URL. If the file exists and the force option was not specified, the function ends with a corresponding message and the return value 255. Otherwise the file is downloaded and, if successful, moved to the target directory.
-
-=== doExtendPath
-A directory is passed to the doExtendPath function as a parameter. The function then checks whether the "bin" subdirectory exists in the transferred directory. If the directory exists, the PATH variable is extended by this "bin" directory. Otherwise the PATH variable is expanded with the passed directory.
+Takes the URL as the first parameter, a temporary name for the file to be downloaded as the second, and the target directory in which the file is to be stored as the third parameter.
+Optionally, the name of the downloaded file can be given as a fourth parameter.
+If this does not happen, the name is determined from the URL.
+If the file exists and the force option was not specified, the function ends with a corresponding message and the return value 255.
+Otherwise the file is downloaded and, if successful, moved to the target directory.
 
 === doExtract
-The doExtract function is given the file to be extracted and possibly a path to where it should be extracted. Then the right tool is selected based on the file extension and the file is unzipped.
-
-=== doGetExtension
-The doGetExtension function is given a file name as a parameter, including the path, and returns the file extension as the result.
-
-=== doGetFirstExistingPath
-The doGetFirstExistingPath function takes a list of directories as a parameter and then checks in the specified order until one of the specified directories exists. This directory is then output and the function ends with the return value 0. If none of the passed directories exist, the function ends with the return value 1.
-
-=== doGetFirstExistingPathOrFail
-The doGetFirstExistingPathOrFail function takes a list of directories as a parameter and then checks in the
-specified sequence until one of the specified directories exists. This directory is then output and the function ends with the return value 0. If none of the directories passed exist, the doFail function is called with a corresponding message.
-
-=== doGetNextVersion
-A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
+Takes the file to be extracted and possibly a path to where it should be extracted.
+Then the right tool is selected based on the file extension and the file is unzipped.
 
 === doGitPullOrClone
-The doGitPullOrClone function is given the target path and the URL or URL#branch as parameters. If the directory is a Git repository, it is tested whether remote repositories are configured and, if so, a git pull is performed. If not, a corresponding message is output and the function is ended with a return value of 1. If the directory is not a Git repository and no URL was specified, the function is aborted with a doFail message. However, if a URL was specified, the specified directory is created, changed to the directory and the repository of the specified URL is cloned into the specified directory. If the branch was also specified in the URL, a checkout is carried out on this branch.
+Takes the target path and the URL or URL#branch as parameters.
+If the directory is a Git repository, it is tested whether remote repositories are configured and, if so, a git pull is performed.
+If not, a corresponding message is output and the function is ended with a return value of 1.
+If the directory is not a Git repository and no URL was specified, the function is aborted with a doFail message.
+However, if a URL was specified, the specified directory is created, changed to the directory and the repository of the specified URL is cloned into the specified directory.
+If the branch was also specified in the URL, a checkout is carried out on this branch.
 
 === doInstall
-The url of the software to be installed, the target directory in which the software is to be stored and the name of the software are given as parameters to the doInstall function. The function then downloads the software via doDownload into the download directory of the registered user, unpacks the software into the updates/extracted directory and then finally moves the software into the DEVON_IDE_HOME/software/"name of the software" directory.
+The url of the software to be installed, the target directory in which the software is to be stored and the name of the software are given as parameters to the doInstall function.
+The function then downloads the software via doDownload into the download directory of the registered user, unpacks the software into the updates/extracted directory and then finally moves the software into the DEVON_IDE_HOME/software/"name of the software" directory.
 
 Additional parameters can also be passed to the function:
 
 * The version parameter ensures that a specific version of the software is installed.
 
-* If a "-" is passed to the function as the url, the settings from the Git repository ide-mirrors are used to download the correct software, e.g. depending on the operating system.
+* If a "-" is passed to the function as the url, the settings from the Git repository ide-mirrors are used to download the correct software, e.g.
+depending on the operating system.
 
-* You can specify your own repository using the repository parameter or the DEVON_SOFTWARE_REPOSITORY variable. This ensures that the package to be installed is loaded from there.
+* You can specify your own repository using the repository parameter or the DEVON_SOFTWARE_REPOSITORY variable.
+This ensures that the package to be installed is loaded from there.
 
-* If software is required that needs to be installed instead of just being unpacked and moved to the IDE_DEVON_HOME/software directory, you can set the directory for the installation software to DEVON_IDE_HOME/updates/install as the target directory. Following the doInstall call in the commandlet, the installation of the software can then be initiated.
+* If software is required that needs to be installed instead of just being unpacked and moved to the IDE_DEVON_HOME/software directory, you can set the directory for the installation software to DEVON_IDE_HOME/updates/install as the target directory.
+Following the doInstall call in the commandlet, the installation of the software can then be initiated.
 
 * If parameters five through nine (edition, code, os, arch, and ext) are specified, they are passed directly to the doDownload function.
 
-=== doIsDevVersion
-The doIsDevVersion function checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter. If this is the case, it ends with the return value 0 otherwise 1.
+|=======================
+|*Param*|*Name*  |*Description*
+|`$1`   |URL     |The explicit URL to download from or `-` to compute in xref:doDownload[].
+|`$2`   |path    |The absolute target path where to install the software.
+|`$3`   |name    |The name of the software to install.
+|`$4`   |version |The version of the software to install. May be omitted to install the latest version.
+|`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
+|`$6`   |code    |The optional technical code used for specific software to compute download URL.
+|`$7`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$8`   |arch    |The optional architecture (e.g. x86_64).
+|`$9`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
+|`$10`  |repo    |The optional software repository.
+|`$11`  |noUnpack|The optional argument to ignore extracting downloaded files (if not empty extracting will be skipped)
+|=======================
 
-=== doIsEmptyDirectory
-The function checks whether the directory passed as a parameter is empty. If the directory is empty, the return value is 0, otherwise 1.
+=== doInstallWithPackageManager
+Called with a list of installation options for various (non windows) operating systems.
+For each provided installer option it will check if that installer (e.g. `apt-get`, `yum`, `apk`, `brew`) is present.
+If present, it will call that option with `sudo` and return.
+In case none of the provided installer options could be executed, it will fail with an according error message.
 
-=== doIsIgnoredFolder
-The function doIsIgnoredFolder checks whether the directory that is passed to it as a parameter corresponds to the directory target, eclipse-target, node_modules, .git, or .svn and returns the return code 0 otherwise 255.
-
-=== doIsInstallerExtension
-The doIsInstallerExtension function checks whether the file extension of the file specified in the parameter is an executable file, i.e. .exe .msi .pkg or .bat. If so, the function returns 0, otherwise 255.
-
-=== doIsPackageJsonContainingScript
-The function doIsPackageJsonContainingScript checks whether the module passed with the first parameter is contained in the package package.json. If so, then it ends with the return value 0 otherwise with a message and the return value 255.
+=== doLoadProperties
+Loads a `*.properties` file given as first argument into variables of the bash context.
+The second argument allows to specify an optional prefix for the variables to load.
+So e.g. if the properties file contains `foo=bar` and seconds argument is `some_` it will result in the variable assignment `some_foo=bar`.
+In case the third argument is not empty, then all variables will be exported.
+*ATTENTION:* This function is defined in the file `environment-project`.
 
 === doMoveGlobSafe
-The doMoveGlobSafe function moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
+Moves the file specified as the second parameter after checking whether it exists to the target specified in parameter one and outputs the performed action via doEcho.
 
 === doOpen
-The doOpen function opens the URL passed to it in the browser window or calls the specified program under Windows and MacOS.
-
-=== doParseOption
-The doParseOption function checks whether the parameter passed to it is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0. If -- is passed , a variable is set that prevents further calls of this function and ends with the return value 0. If none of these options are passed, the return value is 255.
+Opens the URL passed to it in the browser window or calls the specified program under Windows or MacOS.
 
 === doReplaceExtracted
-The doReplaceExtracted function prepares to move an unpacked archive (specified in the first parameter). The current date is defined as the name for the backup directory of the currently installed software. Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME. If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed. If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory. Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
+Prepares to move an unpacked archive (specified in the first parameter).
+The current date is defined as the name for the backup directory of the currently installed software.
+Then it is checked whether the target directory (specified in the second parameter) corresponds to DEVON_IDE_HOME.
+If it does not correspond to DEVON_IDE_HOME, the function doReplaceExtractedSkipSingleFolder is called and the parameters archive directory, target directory, backup directory and the specification that all files in the archive directory are to be processed are passed.
+If the target directory is DEVON_IDE_HOME, which corresponds to the complete devonfw IDE installation, then all files and directories, except the workspaces directory, are passed in a loop to the doReplaceExtractedFile function as the first parameter, the second parameter specifies the target directory with the corresponding subdirectory names and the third Parameter is the backup directory.
+Attention: for one installation package the function doReplaceExtractedSkipSingleFolder is called, while in the other case the function doReplaceExtractedFile is called in a loop.
 
 === doReplaceExtractedFile
-The doReplaceExtractedFile function is called with the three parameters path of the file or directory to be moved, the target directory and a backup directory. The function creates missing directories, makes a backup from the target directory to the backup directory. Then the files specified in the first parameter are moved to the target directory.
+Called with the three parameters path of the file or directory to be moved, the target directory and a backup directory.
+The function creates missing directories, makes a backup from the target directory to the backup directory.
+Then the files specified in the first parameter are moved to the target directory.
 
 === doReplaceExtractedSkipSingleFolder
-The parameters source directory, target directory, backup directory and possibly a list of files and directories via shell file name expansion (globbing) are passed to the doReplaceExtractedSkipSingleFolder function. The first three parameters are taken directly into variables and removed from the list of passed parameters with the shift so that the last specification can be viewed as a whole. If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory. Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
+The parameters source directory, target directory, backup directory and possibly a list of files and directories via shell file name expansion (globbing) are passed to the doReplaceExtractedSkipSingleFolder function.
+The first three parameters are taken directly into variables and removed from the list of passed parameters with the shift so that the last specification can be viewed as a whole.
+If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory.
+Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
 
-=== doRequireNotBatch
-The doRequireNotBatch function uses doIsBatch to check whether the batch variable is set and, if set, issues the error message "Cannot proceed in batch mode as interactive installation is required. Please rerun without batch option.".
-
-=== doRequireWsl
-The function doRequireWsl checks whether WSL for Windows is installed and whether it is activated and issues a corresponding message via doFail if one of the two requirements is not met.
-
-=== doRunCommand
-The doRunCommand function can be given 3 parameters, the command to be executed, a message to be printed and the directory in which the command is to be executed. First, the function is checked whether the specified directory exists. If the directory does not exist, it will take the current directory. Then the command is executed and depending on the return value of the command, a message is output that starts with "Succeed" or "Failed".
-
-=== doRunConfigurator
-The doRunConfigurator function transfers all jar files in the DEVON_IDE_HOME/scripts/lib directory separated by ":" as a class path to the Java command and executes the Java program specified as a parameter.
+=== doUpdateMirrors
+Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
 
 === doUnzip
-The doUnzip function checks if an unzip program is installed, and if not, installs the program. The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
+Checks if an unzip program is installed, and if not, installs the program.
+The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
+
+== Functions on system PATH, files, or folders
+
+=== doExtendPath
+Takes a directory as a parameter.
+The function then checks whether the "bin" subdirectory exists in the transferred directory.
+If the directory exists, the PATH variable is extended by this "bin" directory.
+Otherwise the PATH variable is expanded with the passed directory.
+
+=== doGetExtension
+Takes a file name as a parameter, including the path, and returns the file extension as the result.
+
+=== doGetFirstExistingPath
+Takes a list of directories as a parameter and then checks in the specified order until one of the specified directories exists.
+This directory is then output and the function ends with the return value 0.
+If none of the passed directories exist, the function ends with the return value 1.
+
+=== doGetFirstExistingPathOrFail
+Takes a list of directories as a parameter and then checks in the
+specified sequence until one of the specified directories exists.
+This directory is then output and the function ends with the return value 0.
+If none of the directories passed exist, the doFail function is called with a corresponding message.
+
+=== doGetToolFolderName
+Takes the name or path to a commandlet and prints the corresponding folder name in `mirrors` or `software`.
+E.g. for `mvn` or `scripts/command/mvn` it will print `maven`.
+For `java` it will simply print `java`.
+Usage: `folder=$(doGetToolFolderName "${tool}")`
+
+=== doIsEmptyDirectory
+Checks whether the directory passed as a parameter is empty.
+If the directory is empty, the return value is 0, otherwise 1.
+
+=== doIsIgnoredFolder
+Checks whether the directory that is passed to it as a parameter corresponds to the directory target, eclipse-target, node_modules, .git, or .svn and returns the return code 0 otherwise 255.
+
+=== doIsInstallerExtension
+Checks whether the file extension of the file specified in the parameter is an executable file, i.e.
+.exe .msi .pkg or .bat.
+If so, the function returns 0, otherwise 255.
+
+=== doUpdatePath
+Updates the PATH variable according to the latest tools installed in the `software` folder.
+*ATTENTION:* This function is defined in the file `environment-project`.
+
+== Version handling
+
+=== doGetNextVersion
+A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
+
+=== doGetSoftwareVersion
+Determines the currently installed version of a software and prints it out for the end-user.
+
+|=======================
+|*Param*|*Name*     |*Description*
+|`$1`   |software   |The software tool to check (e.g. `maven` or `java`).
+|`$2`   |version_cmd|The command to determine the version via the software. Maybe `-` if the software is a regular installation but does not support this.
+|`$3`   |commandlet |The commandlet corresponding to the software. Typically the same as `$1` but may differ (e.g. `mvn` instead of `maven`). Only used for log messages to assist end-user.
+|=======================
+
+=== doIsDevVersion
+Checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter.
+If this is the case, it ends with the return value `0` otherwise `1`.
+
+=== doListSoftwareVersions
+Takes the name of the tool as a parameter and displays the available versions.
+
+=== doSetSoftwareVersion
+Used to set a specific version of a software tool, and requires 2 parameters: the name of the software tool and the desired version.
+The version is saved as `«tool»_VERSION` variable in `settings/devon.properties`.
 
 === doVersionCompare
-Two version numbers are passed to the doVersionCompare function as parameters. If the versions are equal, the function returns 0, if the first version is higher than the second, returns 1, and if the second version is higher than the first, the function returns 2.
+Two version numbers are passed to the doVersionCompare function as parameters.
+If the versions are equal, the function returns 0, if the first version is higher than the second, returns 1, and if the second version is higher than the first, the function returns 2.
 
-== Todo
+== Functions on workspaces
+
 === doConfigureWorkspace
-to do
+Runs the configurator using xref:doRunConfigurator[] to configure a workspace.
 
 === doCreateIdeScript
-to do
+Creates a launch script for the IDE given as first argument (e.g. `eclipse`) and the configured workspace (`$WORKSPACE`).
 
-=== doDownload
-to do
+=== doRunConfigurator
+Runs the given Java class from the configurator (jar files in `lib`) with the given arguments.
+
+== Functions for Maven
 
 === doMavenArchetype
-to do
+Calls maven to generate archetype (project template) for the given parameters.
+Uses `$ARCHETYPE_GROUP_ID` and `$ARCHETYPE_ARTIFACT_ID` that default to devon4j template.
+
+=== doMavenGetLatestVersion
+The doMavenGetLatestVersion function looks in the artifact repository specified in the (url) parameter for the latest version of the software stored there.
+
+=== doUpgradeMavenArtifact
+The function doUpgradeMavenArtifact first looks in the target directory to see if it is a git repository and then carries out a doGitPullOrClone if necessary and then terminates the function.
+If the target directory is not a git repository and LATEST was specified as the fourth parameter for the target version, then the latest target version of the Maven artifact (parameter 3) is determined under the url (parameter 2).
+Now the current version (parameter 6) is compared with the desired target version, and if it is the same or if the current version is greater than the target version, the function aborts with a corresponding message.
+If the target version is larger than the current version, the software is installed in the target version in the target directory (parameter 1).
+
+== Misc
+
+=== doArrayContainsItemWithPrefix
+An array is defined from a number of elements, with the last element being defined as a prefix.
+The function doArrayContainsItemWithPrefix now checks the array if it contains elements that start with this prefix.
+If this is the case, the function ends with the return value 0, otherwise with 1.
+
+=== doIsPackageJsonContainingScript
+Checks whether the module passed with the first parameter is contained in the package package.json.
+If so, then it ends with the return value 0 otherwise with a message and the return value 255.
+
+=== doParseOption
+Checks whether the parameter passed to it 
+
+* is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0.
+* is the option version.
+In this case, it does the handling to `list`, `get`, or `set` the version and exits the program.
+
+If -- is passed, a variable is set that prevents further calls of this function and ends with the return value 0.
+If none of these options are passed, the return value is 255.
 

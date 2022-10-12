@@ -5,12 +5,13 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="aws --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -83,9 +84,8 @@ case ${1} in
   echo "Setup or run AWS CLI (command-line interface for Amazon-Web-Services)."
   echo
   echo "Arguments:"
-  echo " setup                    install aws on your machine."
-  echo " <<args>>                 call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
-  echo
+  echo " setup                          install aws on your machine."
+  echo " «args»                         call aws with the specified arguments. Call aws --help for details or use aws directly as preferred."
 ;;
 "setup" | "s" | "")
   doSetup

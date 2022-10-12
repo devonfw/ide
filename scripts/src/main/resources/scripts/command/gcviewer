@@ -5,17 +5,16 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup start help"
+    echo "setup version start help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
+TOOL_VERSION_COMMAND="-"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-
-GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
-
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
@@ -51,9 +50,8 @@ case ${1} in
   echo "Setup or run gcviewer"
   echo
   echo "Arguments:"
-  echo " setup                    install the latest version GCViewer on your machine."
-  echo " start                    launch GCViewer App."
-  echo
+  echo " setup                          install the latest version GCViewer on your machine."
+  echo " start                          launch GCViewer App."
 ;;
 "setup" | "s")
   if [ "${2}" == "silent" ]

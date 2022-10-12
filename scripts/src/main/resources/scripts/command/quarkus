@@ -5,17 +5,16 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-
+QUARKUS_HOME="${DEVON_IDE_HOME}/software/quarkus"
+TOOL_VERSION_COMMAND="quarkus -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-
-QUARKUS_HOME="${DEVON_IDE_HOME}/software/quarkus"
 
 # Call quarkus with specified arguments.
 function doRun() {

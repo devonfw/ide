@@ -5,12 +5,13 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup get-version set-version check-no-snapshots check-top-level-project release help"
+    echo "setup version get-version set-version check-no-snapshots check-top-level-project release help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="mvn -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -350,16 +351,14 @@ then
   echo "Setup or run maven build tool."
   echo
   echo "Arguments:"
-  echo "                          run default build"
-  echo " setup                    setup maven (install, verify, configure)"
-  echo " get-version              get the current project version"
-  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
-  echo " check-no-snapshots       check if no «version»-SNAPSHOT dependencies are used"
-  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
-  echo " release                  start a clean deploy release build"
-  echo " «args»                   call maven with the specified arguments"
-  echo
-  echo "Options:"
+  echo "                                run default build"
+  echo " setup                          setup maven (install, verify, configure)"
+  echo " get-version                    get the current project version"
+  echo " set-version «nv» [«cv»]        set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-no-snapshots             check if no «version»-SNAPSHOT dependencies are used"
+  echo " check-top-level-project        check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                        start a clean deploy release build"
+  echo " «args»                         call maven with the specified arguments"
 elif [ -z "${1}" ]
 then
   # shellcheck disable=SC2086

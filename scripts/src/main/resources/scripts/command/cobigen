@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="cg -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -51,8 +52,6 @@ then
   echo "                          run default build"
   echo " setup                    setup CobiGen CLI (install, verify)"
   echo " «args»                   call CobiGen CLI with the specified arguments"
-  echo
-  echo "Options:"
 elif [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
   doSetup "${2}"

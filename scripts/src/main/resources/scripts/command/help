@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND=
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 echo
@@ -41,6 +42,12 @@ else
     echo "Print help for <command>"
   else
     doDevonCommand "${1}" help
+    if [ -f "${DEVON_IDE_HOME}/ide-mirrors/${1}/available-versions" ]
+    then
+      echo " version list | set [«v»]       list available versions or set a specific version «v»."
+    fi
+    echo
+    echo "Options:"
     echo " -b | --batch         run in non-interactive mode (do not ask any questions)."
     echo " -q | --quiet         be quiet and avoid output."
     echo " -d | --debug         be extra verbose and print more output for debugging."

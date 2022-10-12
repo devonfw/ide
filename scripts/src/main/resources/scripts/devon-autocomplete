@@ -24,14 +24,47 @@ else
   else
     # script specific > 2 level completion
     # remove flags (-*) if flags has been specified before
+    local arg_count="${COMP_CWORD}"
     parameter=()
     for value in "${COMP_WORDS[@]:2}"
     do
-      [[ $value != -* ]] && parameter+=($value)
+      if [ "${value}" = "--all" ] || [[ ${value} != -* ]]
+      then
+        parameter+=($value)
+      else
+        ((arg_count=arg_count-1))
+      fi
     done
-    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${parameter[@]})
+    if [ "${parameter[0]}" = "version" ]
+    then
+      if [ "${arg_count}" = 3 ]
+      then
+        commandlist="list get set"
+      elif [ "${parameter[1]}" = "set" ] && [ "${arg_count}" = 4 ]
+      then
+        local tool="${COMP_WORDS[1]}"
+        if [ "${tool}" = "mvn" ]
+        then
+          tool="maven"
+        elif [ "${tool}" = "node" ]
+        then
+          tool="nodejs"
+        elif [ "${tool}" = "sonar" ]
+        then
+          tool="sonarqube"
+        fi
+        
+        if [ -f "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions" ]
+        then
+          commandlist=$(cat "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions")
+        fi
+      fi
+    else
+      commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${parameter[@]})
+    fi
   fi
-  if [ -z "${commandlist}" ]; then
+  if [ -z "${commandlist}" ]
+  then
     # only completion for flags
     COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
   else
