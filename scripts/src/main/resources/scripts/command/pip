@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="pip --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -47,7 +48,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "pip --version"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -125,12 +126,11 @@ case ${1} in
     echo " «args»                         call pip with the specified arguments (call 'pip --help' for details)."
     echo " install «package»              install the specified Pip package."
     echo " remove «package»               remove the specified Pip package. If no package is specified, pip will be removed."
-    echo " version                        show the version of pip installed."
   ;;
   "setup" | "-s" | "")
     doSetup "${2}"
   ;;
-  "version" | "-v" | "--version")
+  "version")
      doRunPip --version
   ;;
   "install" | "-i")

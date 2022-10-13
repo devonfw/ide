@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup create migrate cicd help"
+    echo "setup version create migrate cicd help"
   elif [ "${2}" = "migrate" ]
   then
     shortlist3="from"
@@ -18,6 +18,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="java -version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 

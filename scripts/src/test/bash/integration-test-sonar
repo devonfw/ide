@@ -1,4 +1,4 @@
 #!/bin/bash
 
-source "$(dirname "${0}")"/test-functions
+source "$(dirname "${0}")"/functions-test
 doCommandTest sonar

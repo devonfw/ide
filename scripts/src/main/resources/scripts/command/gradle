@@ -5,12 +5,13 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup get-version set-version check-top-level-project release help"
+    echo "setup version get-version set-version check-top-level-project release help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="gradle -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 

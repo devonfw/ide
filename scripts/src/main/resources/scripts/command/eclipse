@@ -3,21 +3,30 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script import help"
+    echo "--all setup version add-plugin run start ${all_opts} import help"
   elif [ "${2}" = "--all" ]
   then
-    shortlist3="setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script import help"
-    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
-    then
-      echo "${shortlist3}"
-    fi
+    echo "${all_opts}"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
+ECLIPSE_JAVA_HOME="${JAVA_HOME}"
+if [ -n "${EXTRA_JAVA_VERSION}" ]
+then
+  ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+fi
+ECLIPSE_PRODUCT="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
+if [ ! -e "${ECLIPSE_PRODUCT}" ]
+then
+  ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
+fi
+TOOL_VERSION_COMMAND="cat '${ECLIPSE_PRODUCT}'"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 L_PWD=$(pwd)
@@ -80,12 +89,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    local eclipseproduct="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
-    if [ ! -e "${eclipseproduct}" ]
-    then
-      eclipseproduct="${ECLIPSE_HOME}/.eclipseproduct"
-    fi
-    doRunCommand "cat '${eclipseproduct}'"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -317,12 +321,6 @@ then
   echo " import «path» [«workingsets»]  import projects in «path» into current workspace. «workingsets» comma-separated list of workingsets (no spaces between ,), eg: ./myproject ws1,ws2"
   echo " mirror «id» [«url»]            mirror the content of an update-site"
   exit
-fi
-ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
-ECLIPSE_JAVA_HOME="${JAVA_HOME}"
-if [ -n "${EXTRA_JAVA_VERSION}" ]
-then
-  ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
 fi
 if [ -z "${1}" ]
 then

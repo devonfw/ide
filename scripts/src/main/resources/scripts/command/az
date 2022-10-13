@@ -5,11 +5,12 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
-
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="az -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -21,7 +22,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "az -v" "verify installation of azure cli"
+    doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of azure cli"
   fi
 }
 

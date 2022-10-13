@@ -3,14 +3,20 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
+    echo "--all setup version add-plugin run start ${all_opts} help"
+  elif [ "${2}" = "--all" ]
+  then
+    echo "${all_opts}"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+TOOL_VERSION_COMMAND="code -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
@@ -134,7 +140,6 @@ then
   echo " create-script                  create vscode-${WORKSPACE} script if not already exists"
   exit
 fi
-VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
 if [ -z "${1}" ]
 then
   doSetup

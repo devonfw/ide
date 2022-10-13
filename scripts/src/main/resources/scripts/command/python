@@ -5,12 +5,13 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help version version -v --version"
+    echo "setup version help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="python --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -62,7 +63,7 @@ function doSetup() {
   # check version
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "python --version"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -84,13 +85,12 @@ case ${1} in
     echo
     echo "Arguments:"
     echo " setup                          setup Python."
-    echo " version                        get Python version."
     echo " «args»                         call Python with the specified arguments."
   ;;
   "setup" | "s" | "")
     doSetup "${2}"
   ;;
-  "version" | "-v" | "--version")
+  "version")
      doRunPython --version
   ;;
   *)
