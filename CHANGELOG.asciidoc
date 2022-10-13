@@ -25,6 +25,7 @@ The full list of changes for this release can be found in https://github.com/dev
 
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/905[#905]: Improving eclipse output when installing plugins
 * https://github.com/devonfw/ide/issues/833[#833]: Implementing GitHub CLI
 * https://github.com/devonfw/ide/issues/894[#894]: Integration of Quarkus CLI
 * https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites
