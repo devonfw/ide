@@ -22,7 +22,7 @@ function doSetup(){
 
   if [ ! -d "${GH_HOME}" ] || [ "${1}" != "silent" ]
   then
-    doInstall "-" "${GH_HOME}" "gh" "${GH_VERSION}"
+    doInstall "gh" "${GH_VERSION}"
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet

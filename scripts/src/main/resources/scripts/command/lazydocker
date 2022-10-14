@@ -30,22 +30,8 @@ function doSetup() {
   if [ ! -d "${LAZYDOCKER_HOME}" ] || [ "${1}" != "silent" ]
   then
     doDevonCommand docker setup silent
-    local version="${LAZYDOCKER_VERSION}"
-    # Get latest release
-    if [ -z "${version}" ]
-    then 
-      version="0.18.1"
-      doEcho "Getting latest release..."
-      local latestversion
-      latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/jesseduffield/lazydocker/releases/latest | sed 's/^.*\///' | sed 's/^v//')
-      doVersionCompare "${latestversion}" "${version}"
-      if [ "${?}" = 1 ]
-      then
-        version=${latestversion}
-      fi
-    fi
     doCheckDockerVersions
-    doInstall "-" "${LAZYDOCKER_HOME}" "lazydocker" "${version}"
+    doInstall "lazydocker" "${LAZYDOCKER_VERSION}"
   fi
 }
 

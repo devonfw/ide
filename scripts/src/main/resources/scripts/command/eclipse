@@ -80,7 +80,7 @@ function doSetup() {
         fi
       fi
     fi
-    doInstall "-" "${ECLIPSE_HOME}" "eclipse" "${ECLIPSE_VERSION}" "${ECLIPSE_EDITION_TYPE:-java}"
+    doInstall "eclipse" "${ECLIPSE_VERSION}" "${ECLIPSE_EDITION_TYPE:-java}"
     if doIsMacOs
     then
       if [ ! -x "${ECLIPSE_HOME}/eclipse" ]

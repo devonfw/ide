@@ -24,8 +24,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 function doSetup() {
   if [ "${1}" != "silent" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    local version="${VSCODE_VERSION:-1.71.0}"
-    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
+    doInstall "vscode" "${VSCODE_VERSION}"
     if [ "${?}" = 0 ]
     then
       if doIsMacOs

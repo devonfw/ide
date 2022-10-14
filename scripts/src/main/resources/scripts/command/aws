@@ -55,7 +55,7 @@ function doSetup() {
 
   if [[ $(command -v aws) != "/c/Program Files/Amazon/AWSCLIV2/aws" ]] || [ "${1}" != "silent" ] 
   then
-    doInstall "-" "${DEVON_IDE_HOME}/updates/install/aws" "aws" "${AWS_VERSION}" 
+    doInstall "aws" "${AWS_VERSION}" "" "${DEVON_IDE_HOME}/updates/install/aws"
     if [ "${?}" = 0 ]
     then
       doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"

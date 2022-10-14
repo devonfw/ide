@@ -33,7 +33,7 @@ function doSetup() {
       doEcho "Getting latest release..."
       OC_VERSION=$(curl "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/" | awk -F "openshift-client-windows-" '/openshift-client-windows-/ {print $2}' | head -1 | awk -F'.zip' '{print $1}')
     fi
-    doInstall "-" "${OPENSHIFT_HOME}" "oc" "${OC_VERSION}"
+    doInstall "oc" "${OC_VERSION}"
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet

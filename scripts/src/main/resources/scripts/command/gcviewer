@@ -20,8 +20,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
   then
-    do_not_extract="Not Empty"
-    doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
+    doInstall "gcviewer" "${GCVIEWER_VERSION}" "" "${GCVIEWER_HOME}" "" "noUnpack"
     doCreateGCViewerScript
   fi
 }

@@ -15,6 +15,24 @@ TOOL_VERSION_COMMAND="docker version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
+# $1: URL
+# $2: resolved version
+# $3: resolved os
+# $4: resolved arch
+# $5: optional software edition
+function doResolveDownloadUrl() {
+  local url="${1}"
+  local version="${2}"
+  local code
+  if doIsWindows
+  then
+    code="Docker%20Desktop%20Installer"
+  else
+    code="Docker"
+  fi
+  echo "${url//\$\{code\}/${code}}"
+}
+
 # $1: optional setup
 function doSetup() {  
   if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
@@ -40,7 +58,7 @@ function doSetup() {
       else
         doRequireNotBatch
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
-        doInstall "-" "${rancher_install_dir}" "rancher" "${RANCHER_VERSION}" 
+        doInstall "rancher" "${RANCHER_VERSION}" "" "${rancher_install_dir}" 
         if doIsWindows
         then
           doSetVpnKitStartupInstaller
@@ -70,16 +88,6 @@ function doSetup() {
       fi
     else
       doRequireNotBatch
-      local code
-      if doIsWindows
-      then
-        code="Docker%20Desktop%20Installer"
-      elif doIsMacOs
-      then
-        code="Docker"
-      else
-        doFail "Sorry, docker-installation support is not yet implemented for your OS. Please use Rancher Desktop instead, or install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-      fi
       doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}" "" "${code}"
       if doIsWindows
       then

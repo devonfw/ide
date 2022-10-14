@@ -35,7 +35,7 @@ function doSetup() {
     fi
   else
     local software_dir="${NODE_HOME}/node_modules/npm"
-    doInstall "-" "${software_dir}" "npm" "${software_version}"
+    doInstall "npm" "${software_version}" "" "${software_dir}"
     if [ -f "${NODE_HOME}/npm" ]
     then 
       rm "${NODE_HOME}/npm"

@@ -22,6 +22,25 @@ TOOL_VERSION_COMMAND="java -version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
+# $1: URL
+# $2: resolved version
+# $3: resolved os
+# $4: resolved arch
+# $5: optional software edition
+function doResolveDownloadUrl() {
+  local url="${1}"
+  local version="${2}"
+  local os="${3}"
+  local code
+  if [ "${version:0:1}" = "8" ]
+  then
+    code="jdk${version/b/-b}"
+  else
+    code="jdk-${version/_/%2B}"
+  fi
+  echo "${url//\$\{code\}/${code}}"
+}
+
 # $1: optional setup
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
@@ -47,14 +66,7 @@ function doSetupJava() {
   local java_path="${path}/java"
   if [ "${mode}" != "silent" ] || [ ! -d "${java_path}" ]
   then
-    local code
-    if [ "${version:0:1}" = "8" ]
-    then
-      code="jdk${version/b/-b}"
-    else
-      code="jdk-${version/_/%2B}"
-    fi
-    doInstall "-" "${java_path}" "java" "${version}" "" "${code}"
+    doInstall "java" "${version}" "" "${java_path}"
     # delete not used jdk for old installations
     rm -rf "${DEVON_IDE_HOME}/software/jdk"
   fi

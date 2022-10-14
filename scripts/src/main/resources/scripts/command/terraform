@@ -24,15 +24,7 @@ function doRun() {
 function doSetup() {
   if [ ! -d "${TERRAFORM_HOME}" ] || [ "${1}" != "silent" ]
   then
-    # Get leatest release
-    if [ -z "${TERRAFORM_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | sed 's/v//')
-    fi
-
-    doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
-
+    doInstall "terraform" "${TERRAFORM_VERSION}"
     if ! grep terraform ~/.bashrc >/dev/null
     then
       terraform -install-autocomplete

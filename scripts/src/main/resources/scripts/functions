@@ -544,7 +544,10 @@ function doDownload() {
       mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
+      # TODO could be removed and done in doResolveDownloadUrl
       mirror_url="${mirror_url//\$\{major\}/${major}}"
+      mirror_url="$(doResolveDownloadUrl "${mirror_url}" "${version}" "${os_new}" "${arch_new}" "${edition}")"
+      # TODO can be removed
       mirror_url="${mirror_url//\$\{code\}/${code}}"
 
       if [ -z "${filename}" ]
@@ -1109,33 +1112,42 @@ function doGitPullOrClone() {
   fi
 }
 
-# $1: download URL
-# $2: absolute target path where to install
-# $3: name of software
-# $4: version of software
-# $5: the optional edition (e.g. "enterprise" or "community")
-# $6: optional code (for tool specific quirks)
-# $7: optional OS indicator ('-' if OS independent)
-# $8: optional architecture (e.g. x86_64)
-# $9: optional extension (e.g. 'tar.gz' or 'zip')
-# $10: optional software repo
-# $11: optional to ignore extracting downloaded files (must not be empty to ignore extracting!)
+# $1: URL
+# $2: resolved version
+# $3: resolved os
+# $4: resolved arch
+# $5: optional software edition
+function doResolveDownloadUrl() {
+  echo "${1}"
+}
+
+# $1: name of software
+# $2: version of software
+# $3: optional edition (e.g. "enterprise" or "community")
+# $4: optional absolute target path where to install
+# $5: optional OS indicator ('-' if OS independent)
+# $6: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+# $7: optional software repository
 function doInstall() {
-  local url="${1}"
-  local target_path="${2}"
-  local software="${3}"
-  local version="${4}"
-  local edition="${5}"
-  local code="${6}"
-  local os="${7}"
-  local arch="${8}"
-  local ext="${9}"
-  local repository="${10}"
-  local ignore_extract="${11}"
-  local download_dir="${DEVON_DOWNLOAD_DIR}"
-  if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
+  local software="${1}"
+  local version="${2}"
+  local edition="${3}"
+  local target_path="${4}"
+  local os="${5}"
+  local noUnpack="${6}"
+  local repository="${7}"
+  if [ -z "${target_path}" ]
   then
-    doFail "Missing arguments for doInstall: ${*}"
+    target_path="${DEVON_IDE_HOME}/software/${software}"
+  fi
+  local ext
+  local url
+  local arch
+  local repository="${DEVON_SOFTWARE_REPOSITORY}"
+  local download_dir="${DEVON_DOWNLOAD_DIR}"
+  if [ -z "${software}" ]
+  then
+    doFail "Missing software argument for doInstall: ${*}"
   fi
   local result=0
   if [ "${url/.git/}" != "${url}" ]
@@ -1220,9 +1232,9 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    if [ -n "${ignore_extract}" ]
+    if [ -n "${noUnpack}" ]
     then
-      doDownload "${url}" "${target_path}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+      doDownload "${url}" "${install_path}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
       doDebug "Received download file ${DOWNLOAD_FILENAME}"
     else
       doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"

@@ -192,7 +192,6 @@ If the URL is not provided as first argument, it will use the `mirrors` config t
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
 |`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
-|`$6`   |code    |The optional technical code used for specific software to compute download URL.
 |`$7`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
 |`$8`   |arch    |The optional architecture (e.g. x86_64).
 |`$9`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
@@ -209,6 +208,24 @@ Otherwise the file is downloaded and, if successful, moved to the target directo
 === doExtract
 Takes the file to be extracted and possibly a path to where it should be extracted.
 Then the right tool is selected based on the file extension and the file is unzipped.
+
+=== doResolveDownloadUrl
+Function for additional custom logic when resolving the download URL.
+The xref:doDownload[] function resolves standard variables like `version`, `os`, `arch`, and `ext` automatically in URLs from `mirrors` repository config.
+However, for special cases this is insufficient as some tools do not follow best-pratices for consistent and systematic download URLs.
+Therefire xref:doDownload[] will call this function to further resolve the computed download URL.
+By default this function does nothing but echoing the given URL (`$1`).
+However, a commandlet may override this function after souring `functions` in order to define custom logic for URL resolving.
+When required, we typically resolve a `code` variable that can be derived from the arguments given to this function.
+
+|=======================
+|*Param*|*Name*  |*Description*
+|`$1`   |URL     |The download URL with standard variables resolved.
+|`$2`   |version |The resolved version to download.
+|`$3`   |os      |The resolved/mapped operating system.
+|`$4`   |arch    |The resolved/mapped architecture (e.g. x86_64).
+|`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
+|=======================
 
 === doGitPullOrClone
 Takes the target path and the URL or URL#branch as parameters.
@@ -239,17 +256,13 @@ Following the doInstall call in the commandlet, the installation of the software
 
 |=======================
 |*Param*|*Name*  |*Description*
-|`$1`   |URL     |The explicit URL to download from or `-` to compute in xref:doDownload[].
-|`$2`   |path    |The absolute target path where to install the software.
-|`$3`   |name    |The name of the software to install.
-|`$4`   |version |The version of the software to install. May be omitted to install the latest version.
-|`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
-|`$6`   |code    |The optional technical code used for specific software to compute download URL.
-|`$7`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
-|`$8`   |arch    |The optional architecture (e.g. x86_64).
-|`$9`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
-|`$10`  |repo    |The optional software repository.
-|`$11`  |noUnpack|The optional argument to ignore extracting downloaded files (if not empty extracting will be skipped)
+|`$1`   |software|The name of the software to install.
+|`$2`   |version |The version of the software to install. May be omitted to install the latest version.
+|`$3`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
+|`$4`   |path    |The absolute target path where to install the software.
+|`$5`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$6`   |noUnpack|The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+|`$7`   |repo    |The optional software repository.
 |=======================
 
 === doInstallWithPackageManager

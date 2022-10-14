@@ -24,7 +24,7 @@ function doRun() {
 function doSetup() {
   if [ ! -d "${HELM_HOME}" ] || [ "${1}" != "silent" ]
   then
-    doInstall "-" "${HELM_HOME}" "helm" "${HELM_VERSION}"
+    doInstall "helm" "${HELM_VERSION}"
   fi
 
   if [ "${1}" != "silent" ] && ! doIsQuiet

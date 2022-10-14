@@ -32,7 +32,7 @@ function doSetup() {
       doEcho "Getting latest release..."
       QUARKUS_VERSION=$(curl "https://api.github.com/repos/quarkusio/quarkus/releases" | awk -F "\"" '/tag_name/ {print $4}' | grep -v "CR" | head -1)
     fi
-    doInstall "-" "${QUARKUS_HOME}" "quarkus" "${QUARKUS_VERSION}"
+    doInstall "quarkus" "${QUARKUS_VERSION}"
   fi
 }
 

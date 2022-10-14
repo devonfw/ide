@@ -21,8 +21,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${SONARQUBE_HOME}" ]
   then
-    local version="${SONARQUBE_VERSION:-9.4.0.54424}"
-    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "" "" "-"
+    doInstall "sonarqube" "${SONARQUBE_VERSION}" "" "${SONARQUBE_HOME}" "-"
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then

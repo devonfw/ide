@@ -372,7 +372,7 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "-" "${DEVON_IDE_HOME}/software/${software}" "${software}" "${software_version}" "" "" "${os}" "" ".tgz" "${repo}"
+        doInstall "${software}" "${software_version}" "" "${DEVON_IDE_HOME}/software/${software}" "${os}" "" "${repo}"
       fi
     fi
   done

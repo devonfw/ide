@@ -27,7 +27,7 @@ function doExists() {
 function doSetup() {
   if [ "${1}" != "silent" ] || [ ! -d "${DOTNET_HOME}" ]
   then
-    doInstall "-" "${DOTNET_HOME}" "dotnet" "${DOTNET_VERSION}"
+    doInstall "dotnet" "${DOTNET_VERSION}"
     if doExists ~/.templateengine/packages/Devon4Net.WebAPI.Template*
     then
       doDebug "Devon4net template already installed."

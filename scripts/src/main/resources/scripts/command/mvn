@@ -24,7 +24,7 @@ function doSetup() {
   doDevonCommand java setup silent
   if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
   then
-    doInstall "-" "${MAVEN_HOME}" "maven" "$(doGetMavenVersion)" "" "" "-"
+    doInstall "maven" "${MAVEN_VERSION}" "" "${MAVEN_HOME}" "-"
   fi
   if [ "${1}" != "silent" ]
   then
@@ -316,7 +316,7 @@ function doRunBuild() {
   fi
   if [ -n "${MAVEN_ARGS}" ]
   then
-    doVersionCompare "$(doGetMavenVersion)" "4.0"
+    doVersionCompare "$(cat "${MAVEN_HOME}/.devon.software.version")" "4.0"
     if [ "${?}" == 2 ]
     then
       # Maven version is lower than 4.0 (3.x)

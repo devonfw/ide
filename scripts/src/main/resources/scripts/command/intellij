@@ -31,7 +31,7 @@ function doSetup() {
   if [ "${1}" != "silent" ] || [ ! -d "${IDEA_HOME}" ]
   then
     local edition="${INTELLIJ_EDITION_TYPE:-C}"
-    doInstall "-" "${IDEA_HOME}" "intellij" "${INTELLIJ_VERSION}" "${edition}"
+    doInstall "intellij" "${INTELLIJ_VERSION}" "${edition}"
     if [ "${?}" = 0 ] && doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
