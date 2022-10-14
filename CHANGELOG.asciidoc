@@ -8,6 +8,9 @@ New release with various improvements and bugfixes:
 
 * https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
 * https://github.com/devonfw/ide/issues/878[#878]: Use default tool version from `available-versions`
+* https://github.com/devonfw/ide/issues/893[#893]: Ability to configure version prefix 
+* https://github.com/devonfw/ide/issues/908[#908]: AWS CLI integration for MacOS and bugfix for win/linux
+* https://github.com/devonfw/ide/issues/940[#940]: Make doInstall even more generic
 * https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
 * https://github.com/devonfw/ide/issues/905[#905]: Better error handling when installing Eclipse plugins
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
