@@ -1166,6 +1166,26 @@ function doInstall() {
     else
       doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
     fi
+  elif [ "${version:${#version}-1}" = "*" ]
+  then
+    doDebug "Resolving version prefix ${version}"
+    local version_prefix="${version:0:${#version}-1}"
+    doUpdateMirrors
+    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+    if [ -e "${available_versions}" ]
+    then
+      local resolved_version
+      resolved_version="$(grep "^${version_prefix}[^0-9]" available-versions | head -n 1)"
+      if [ -n "${resolved_version}" ]
+      then
+        doDebug "Resolved version prefix ${version} to ${resolved_version}"
+        version="${resolved_version}"
+      else
+        doFail "Could not resolve version prefix ${version} : no matching version found in ${available_versions}"
+      fi
+    else
+      doFail "Could not resolve version prefix ${version} : missing file ${available_versions}"
+    fi
   fi
   local version_file="${target_path}/.devon.software.version"
   local current_version=
