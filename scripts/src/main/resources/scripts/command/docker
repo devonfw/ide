@@ -58,7 +58,7 @@ function doSetup() {
       else
         doRequireNotBatch
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
-        doInstall "rancher" "${RANCHER_VERSION}" "" "${rancher_install_dir}" 
+        doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}" 
         if doIsWindows
         then
           doSetVpnKitStartupInstaller
@@ -88,7 +88,7 @@ function doSetup() {
       fi
     else
       doRequireNotBatch
-      doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}" "" "${code}"
+      doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}"
       if doIsWindows
       then
         doEchoStep "Installing Docker Desktop for Windows..."
@@ -129,7 +129,7 @@ function doEnsureVpnKitInstallation {
   #check if vpnkit is already installed
   if ! doIsVpnKitInstalled
   then
-    doInstallVpnKit         
+    doInstallVpnKit
     #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
     if ! doIsVpnKitInstalled
     then 
@@ -232,7 +232,7 @@ case ${1} in
   echo " «args»                         call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
 ;;
 "setup" | "s" | "")
-  doSetup setup "${2}"
+  doSetup "${2}"
 ;;
 *)
    doRun "${@}"

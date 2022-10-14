@@ -372,7 +372,7 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${software}" "${software_version}" "" "${DEVON_IDE_HOME}/software/${software}" "${os}" "" "${repo}"
+        doInstall "${software}" "${software_version}" "silent" "" "${DEVON_IDE_HOME}/software/${software}" "${os}" "" "${repo}"
       fi
     fi
   done
@@ -450,27 +450,27 @@ function doUninstall() {
 }
 
 function doCreate() {
-    local create_path="${1}"
-    if [ -z "${create_path}" ]
-    then
-      create_path="${PWD}"
-    fi
+  local create_path="${1}"
+  if [ -z "${create_path}" ]
+  then
+    create_path="${PWD}"
+  fi
 
-    if [ ! -d "${create_path}" ]
-    then
-      mkdir -p "${create_path}"
-    fi
-    if ! doIsEmptyDirectory "${create_path}"
-    then
-      doAskToContinue "Directory is not empty, continue?"
-    fi
+  if [ ! -d "${create_path}" ]
+  then
+    mkdir -p "${create_path}"
+  fi
+  if ! doIsEmptyDirectory "${create_path}"
+  then
+    doAskToContinue "Directory is not empty, continue?"
+  fi
 
-    doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
+  doUpgradeMavenArtifact "${create_path}/" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" 
 
-    cd "${create_path}" || exit 255
-    [ -f "./.devon.software.version" ] && rm "./.devon.software.version"
-    shift
-    ./setup "${@}"
+  cd "${create_path}" || exit 255
+  [ -f "./.devon.software.version" ] && rm "./.devon.software.version"
+  shift
+  ./setup "${@}"
 }
 
 target_version="LATEST"

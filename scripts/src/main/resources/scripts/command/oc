@@ -25,21 +25,8 @@ function doRun() {
 
 # openshift installation
 function doSetup() {
-  if [ ! -d "${OPENSHIFT_HOME}" ] || [ "${1}" != "silent" ]
-  then
-    # Getting latest release
-    if [ -z "${OC_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      OC_VERSION=$(curl "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/" | awk -F "openshift-client-windows-" '/openshift-client-windows-/ {print $2}' | head -1 | awk -F'.zip' '{print $1}')
-    fi
-    doInstall "oc" "${OC_VERSION}"
-  fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
-  fi 
+  doInstall "oc" "${OC_VERSION}" "${1}"
+  return 0
 }
 
 # CLI

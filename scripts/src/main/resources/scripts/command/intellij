@@ -18,9 +18,9 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
 if [ "${OSTYPE:0:6}" = "darwin" ]
 then
-  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
+  TOOL_VERSION_COMMAND="head -n 6 '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
 else
-  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
+  TOOL_VERSION_COMMAND="head -n 6 '${IDEA_HOME}/product-info.json'"
 fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -28,11 +28,11 @@ cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${IDEA_HOME}" ]
+  local edition="${INTELLIJ_EDITION_TYPE:-C}"
+  doInstall "intellij" "${INTELLIJ_VERSION}" "${1}" "${edition}"
+  if [ "${?}" = 0 ]
   then
-    local edition="${INTELLIJ_EDITION_TYPE:-C}"
-    doInstall "intellij" "${INTELLIJ_VERSION}" "${edition}"
-    if [ "${?}" = 0 ] && doIsMacOs
+    if doIsMacOs
     then
       echo "Doing workarounds for MacOS quirks..."
       if [ "${edition}" = "U"  ]
@@ -44,17 +44,12 @@ function doSetup() {
       mkdir -p "${IDEA_HOME}/bin"
       echo -e "#!/usr/bin/env bash\n'${DEVON_IDE_HOME}/software/intellij/IntelliJ.app/Contents/MacOS/idea' \$@" > "${IDEA_HOME}/bin/idea"
       chmod a+x "${IDEA_HOME}/bin/idea"
-    fi
-    if  [ -f "${IDEA_HOME}/bin/idea.sh" ]
+    elif  [ -f "${IDEA_HOME}/bin/idea.sh" ]
     then
-       ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
+      ln -s "${IDEA_HOME}/bin/idea.sh" "${IDEA_HOME}/bin/idea"
     fi
     export PATH="${IDEA_HOME}/bin:${PATH}"
     doAddPlugins
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 

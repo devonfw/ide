@@ -11,7 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="aws --version"
+findAws
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -30,7 +30,7 @@ function findAws() {
   if command -v aws &> /dev/null
   then
     AWS_INSTALLED="yes"
-  elif doIsWindows
+  elif [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
   then
     local aws_win
     aws_win="${PROGRAMFILES}"
@@ -42,6 +42,7 @@ function findAws() {
       AWS_INSTALLED="yes"
     fi
   fi
+  TOOL_VERSION_COMMAND="${AWS} --version"
 }
 
 # $1: path_to_package
@@ -69,21 +70,11 @@ function doPackageInstall()
 }
 
 function doSetup() {
-  local ERR=""
-  findAws
-  if [[ ${AWS_INSTALLED} != "yes" ]] || [[ "${1}" != "silent" ]]
+  local silent="${1}"
+  doInstall "aws" "${AWS_VERSION}" "${silent}" "" "${DEVON_IDE_HOME}/updates/install/aws"
+  if [ "${?}" = 0 ]
   then
-    doInstall "aws" "${AWS_VERSION}" "" "${DEVON_IDE_HOME}/updates/install/aws"
-    if [ "${?}" = 0 ]
-    then
-      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
-    fi
-    doRunCommand "rm -rf ${DEVON_IDE_HOME}/updates/install/aws"
-
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doEcho "logon again to test aws with \"aws --version\""
-    fi
+    doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
   fi
 }
 
@@ -99,7 +90,7 @@ case ${1} in
   echo
 ;;
 "setup" | "s" | "")
-  doSetup
+  doSetup "${2}"
 ;;
 *)
   doRun "${@}"

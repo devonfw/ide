@@ -17,15 +17,9 @@ TOOL_VERSION_COMMAND="python --version"
 source "$(dirname "${0}")"/../functions
 
 function doSetup() {
-  if [ ! -d "${PYTHON_HOME}" ] || [ "${1}" != "silent" ]
+  doInstall "python" "${PYTHON_VERSION}" "${1}"
+  if [ "${?}" = 0 ]
   then
-    # Get leatest release
-    if [ -z "${PYTHON_VERSION}" ]
-    then
-      PYTHON_VERSION="3.10.5"
-    fi
-
-    doInstall "python" "${PYTHON_VERSION}"
     if doIsMacOs
     then
       doBrewInstall openssl
@@ -55,12 +49,6 @@ function doSetup() {
       make clean
       make distclean
     fi
-  fi
-
-  # check version
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 

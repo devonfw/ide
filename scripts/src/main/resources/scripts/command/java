@@ -41,39 +41,19 @@ function doResolveDownloadUrl() {
   echo "${url//\$\{code\}/${code}}"
 }
 
-# $1: optional setup
+# $1: optional silent mode
 function doSetup() {
   export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
-  doSetupJava "${1}" "${JAVA_VERSION}" "${DEVON_IDE_HOME}/software"
+  doInstall "java" "${JAVA_VERSION}" "${1}"
   if [ -n "${EXTRA_JAVA_VERSION}" ]
   then
     if [ -n "${JAVA_VERSION}" ] && [ "${EXTRA_JAVA_VERSION}" = "${JAVA_VERSION}" ]
     then
       doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
     fi
-    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra"
+    doInstall "java" "${EXTRA_JAVA_VERSION}" "${1}" "${DEVON_IDE_HOME}/software/extra/java"
   fi
-}
-
-# $1: mode (e.g. 'silent')
-# $2: version
-# $3: software path
-# $4: label (e.g. 'extra Java')
-function doSetupJava() {
-  local mode="${1}"
-  local version="${2}"
-  local path="${3}"
-  local java_path="${path}/java"
-  if [ "${mode}" != "silent" ] || [ ! -d "${java_path}" ]
-  then
-    doInstall "java" "${version}" "" "${java_path}"
-    # delete not used jdk for old installations
-    rm -rf "${DEVON_IDE_HOME}/software/jdk"
-  fi
-  if [ "${mode}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "'${java_path}/bin/java' -version" "verify installation of Java"
-  fi
+  return 0
 }
 
 #$@ args (see help)

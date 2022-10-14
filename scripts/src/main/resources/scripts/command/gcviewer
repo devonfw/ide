@@ -18,9 +18,9 @@ source "$(dirname "${0}")"/../functions
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
+  doInstall "gcviewer" "${GCVIEWER_VERSION}" "" "${GCVIEWER_HOME}" "" "noUnpack"
+  if [ "${?}" = 0 ]
   then
-    doInstall "gcviewer" "${GCVIEWER_VERSION}" "" "${GCVIEWER_HOME}" "" "noUnpack"
     doCreateGCViewerScript
   fi
 }
@@ -32,10 +32,8 @@ function doStart() {
 }
 
 doCreateGCViewerScript() {
-  cd "${GCVIEWER_HOME}" || exit
-  touch gcviewer
-  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" >> gcviewer
-  chmod +x gcviewer
+  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" > "${GCVIEWER_HOME}/gcviewer"
+  chmod a+x "${GCVIEWER_HOME}/gcviewer"
 }
 
 # CLI
@@ -48,12 +46,7 @@ case ${1} in
   echo " start                          launch GCViewer App."
 ;;
 "setup" | "s")
-  if [ "${2}" == "silent" ]
-  then
-    doSetup silent
-  else
-    doSetup
-  fi
+  doSetup "${2}"
 ;;
 "start" | "")
   doStart

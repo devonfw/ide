@@ -391,6 +391,7 @@ function doUpdateMirrors() {
 # $9: the optional extension (e.g. 'tar.gz' or 'zip')
 # $10: the optional filename to download to
 function doDownload() {
+  doDebug "doDownload ${*}"
   doLicenseAgreement
   local url="${1}"
   local target_dir="${2}"
@@ -1123,19 +1124,21 @@ function doResolveDownloadUrl() {
 
 # $1: name of software
 # $2: version of software
-# $3: optional edition (e.g. "enterprise" or "community")
-# $4: optional absolute target path where to install
-# $5: optional OS indicator ('-' if OS independent)
-# $6: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
-# $7: optional software repository
+# $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
+# $4: optional edition (e.g. "enterprise" or "community")
+# $5: optional absolute target path where to install
+# $6: optional OS indicator ('-' if OS independent)
+# $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+# $8: optional software repository
 function doInstall() {
   local software="${1}"
   local version="${2}"
-  local edition="${3}"
-  local target_path="${4}"
-  local os="${5}"
-  local noUnpack="${6}"
-  local repository="${7}"
+  local silent="${3}"
+  local edition="${4}"
+  local target_path="${5}"
+  local os="${6}"
+  local noUnpack="${7}"
+  local repository="${8}"
   if [ -z "${target_path}" ]
   then
     target_path="${DEVON_IDE_HOME}/software/${software}"
@@ -1175,7 +1178,7 @@ function doInstall() {
     if [ -e "${available_versions}" ]
     then
       local resolved_version
-      resolved_version="$(grep "^${version_prefix}[^0-9]" available-versions | head -n 1)"
+      resolved_version="$(grep "^${version_prefix}[^0-9]" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
@@ -1194,17 +1197,17 @@ function doInstall() {
     current_version="$(cat "${version_file}")"
     if [ "${current_version}" == "${version}" ]
     then
-      doEcho "Version ${version} of ${software} is already installed."
+      if [ -z "${silent}" ]
+      then
+        doEcho "Version ${version} of ${software} is already installed."
+      fi
       return 1
     else
       doEcho "Updating ${software} from version ${current_version} to version ${version}..."
     fi
   fi
   local dir=${target_path/*\//}
-  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
-  then
-    mkdir -p "${DEVON_IDE_HOME}/software"
-  fi
+  mkdir -p "${DEVON_IDE_HOME}/software"
   local repo="default"
   if [ -z "${repository}" ]
   then
@@ -1315,7 +1318,10 @@ function doInstall() {
     doRunCommand "ln -sf 'macos/${dir}/Contents/Home' '${target_path}'"
     doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
   fi
-
+  if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
+  then
+    doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+  fi
   return ${result}
 }
 

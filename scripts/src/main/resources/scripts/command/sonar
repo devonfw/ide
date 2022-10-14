@@ -19,14 +19,8 @@ source "$(dirname "${0}")"/../functions
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${SONARQUBE_HOME}" ]
-  then
-    doInstall "sonarqube" "${SONARQUBE_VERSION}" "" "${SONARQUBE_HOME}" "-"
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    echo doRunCommand "'${SONAR}' -v" "verify installation of sonarqube"
-  fi
+  doInstall "sonarqube" "${SONARQUBE_VERSION}" "${1}" "" "${SONARQUBE_HOME}" "-"
+  return 0
 }
 
 function doStart() {

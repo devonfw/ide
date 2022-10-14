@@ -236,33 +236,20 @@ However, if a URL was specified, the specified directory is created, changed to 
 If the branch was also specified in the URL, a checkout is carried out on this branch.
 
 === doInstall
-The url of the software to be installed, the target directory in which the software is to be stored and the name of the software are given as parameters to the doInstall function.
-The function then downloads the software via doDownload into the download directory of the registered user, unpacks the software into the updates/extracted directory and then finally moves the software into the DEVON_IDE_HOME/software/"name of the software" directory.
-
-Additional parameters can also be passed to the function:
-
-* The version parameter ensures that a specific version of the software is installed.
-
-* If a "-" is passed to the function as the url, the settings from the Git repository ide-mirrors are used to download the correct software, e.g.
-depending on the operating system.
-
-* You can specify your own repository using the repository parameter or the DEVON_SOFTWARE_REPOSITORY variable.
-This ensures that the package to be installed is loaded from there.
-
-* If software is required that needs to be installed instead of just being unpacked and moved to the IDE_DEVON_HOME/software directory, you can set the directory for the installation software to DEVON_IDE_HOME/updates/install as the target directory.
-Following the doInstall call in the commandlet, the installation of the software can then be initiated.
-
-* If parameters five through nine (edition, code, os, arch, and ext) are specified, they are passed directly to the doDownload function.
+Ensures a specific version of a software is installed.
+If no fixed version is given, it resolves the final version (if version is empty use latest, in case of version prefix use latest matching version).
+In case the software is already installed in the resolved version, return `1`.
 
 |=======================
 |*Param*|*Name*  |*Description*
 |`$1`   |software|The name of the software to install.
 |`$2`   |version |The version of the software to install. May be omitted to install the latest version.
-|`$3`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
-|`$4`   |path    |The absolute target path where to install the software.
-|`$5`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
-|`$6`   |noUnpack|The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
-|`$7`   |repo    |The optional software repository.
+|`$3`   |silent  |The optional silent flag ('silent' to suppress output if already up-to-date or empty for version output).
+|`$4`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
+|`$5`   |path    |The absolute target path where to install the software.
+|`$6`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$7`   |noUnpack|The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+|`$8`   |repo    |The optional software repository.
 |=======================
 
 === doInstallWithPackageManager

@@ -22,20 +22,14 @@ function doRun() {
 }
 
 function doSetup() {
-  if [ ! -d "${TERRAFORM_HOME}" ] || [ "${1}" != "silent" ]
+  doInstall "terraform" "${TERRAFORM_VERSION}"
+  if [ "${?}" = 0 ]
   then
-    doInstall "terraform" "${TERRAFORM_VERSION}"
     if ! grep terraform ~/.bashrc >/dev/null
     then
       terraform -install-autocomplete
     fi
   fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
-  fi 
-
 }
 
 TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"

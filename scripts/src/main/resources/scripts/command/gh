@@ -17,18 +17,9 @@ source "$(dirname "${0}")"/../functions
 
 GH_HOME="${DEVON_IDE_HOME}/software/gh"
 
-function doSetup(){
-  # Install GitHub CLI in the software folder
-
-  if [ ! -d "${GH_HOME}" ] || [ "${1}" != "silent" ]
-  then
-    doInstall "gh" "${GH_VERSION}"
-  fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
-  fi
+function doSetup() {
+  doInstall "gh" "${GH_VERSION}" "${1}"
+  return 0
 }
 
 function doRun(){
@@ -45,7 +36,6 @@ case ${1} in
   echo " «args»                         call GitHub CLI with the specified arguments."
 ;;
 "setup" | "s")
-  doEcho "Installing GitHub CLI..."
   doSetup "${2}"
 ;;
 *)

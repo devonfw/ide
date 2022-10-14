@@ -24,16 +24,8 @@ function doRun() {
 
 # quarkus CLI installation
 function doSetup() {
-  if [ ! -d "${QUARKUS_HOME}" ] || [ "${1}" != "silent" ]
-  then
-    # Getting latest release
-    if [ -z "${QUARKUS_VERSION}" ]
-    then
-      doEcho "Getting latest release..."
-      QUARKUS_VERSION=$(curl "https://api.github.com/repos/quarkusio/quarkus/releases" | awk -F "\"" '/tag_name/ {print $4}' | grep -v "CR" | head -1)
-    fi
-    doInstall "quarkus" "${QUARKUS_VERSION}"
-  fi
+  doInstall "quarkus" "${QUARKUS_VERSION}" "${1}"
+  return 0
 }
 
 # CLI

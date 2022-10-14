@@ -18,41 +18,15 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-
-  doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${GRAALVM_HOME}" ]
+  #doDevonCommand java setup silent
+  doInstall "graalvm" "${GRAALVM_VERSION}" "${1}" "" "${GRAALVM_HOME}"
+  if [ "${?}" = 0 ]
   then
-    local javaVersion="${EXTRA_JAVA_VERSION}"
-    if [ -z "${javaVersion}" ]
-    then
-      javaVersion="${JAVA_VERSION}"
-    fi
-    if [ -n "${javaVersion}" ]
-    then
-      doVersionCompare "${javaVersion}" "11u0"
-      if [ "${?}" == 2 ]
-      then
-        # Java version is lower than 11
-        doConfirmWarning "GraalVM requires Java 11 or newer.\nHowever, [EXTRA_]JAVA_VERSION is ${javaVersion} - in this setup GraalVM can not work.\nPlease update JAVA_VERSION or set EXTRA_JAVA_VERSION in your settings/devon.properties!"
-      fi
-    fi
-    doInstall "graalvm" "${GRAALVM_VERSION}" "" "${GRAALVM_HOME}"
-
     graalvm_export="export GRAALVM_HOME=${GRAALVM_HOME}"
     if ! grep -q "${graalvm_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
     then
       echo -e "\n${graalvm_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
     fi
-  fi
-
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    local java_binary="${GRAALVM_HOME}/bin/java"
-    if [ ! -f "${java_binary}" ]
-    then
-      java_binary="${GRAALVM_HOME}/bin/java.exe"
-    fi
-    doRunCommand "'${java_binary}' -version" "verify installation of GraalVM"
   fi
 }
 

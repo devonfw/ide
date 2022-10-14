@@ -31,7 +31,8 @@ function doSetup() {
   then
     doDevonCommand docker setup silent
     doCheckDockerVersions
-    doInstall "lazydocker" "${LAZYDOCKER_VERSION}"
+    doInstall "lazydocker" "${LAZYDOCKER_VERSION}" "${1}"
+    return 0
   fi
 }
 
@@ -81,8 +82,7 @@ case ${1} in
   echo "                                call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
 ;;
 "setup" | "s" )
-  doEcho "Installing lazydocker..."
-  doSetup
+  doSetup "${2}"
 ;;
 "version" | "v" )
   lazydversion=$(cat "${LAZYDOCKER_HOME}"/.devon.software.version)

@@ -11,21 +11,16 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="mvn -v"
+MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
+MVN="${MAVEN_HOME}/bin/mvn"
+TOOL_VERSION_COMMAND="${MVN} -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-
-function doGetMavenVersion() {
-  echo "${MAVEN_VERSION:-3.8.4}"
-}
 
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${MAVEN_HOME}" ]
-  then
-    doInstall "maven" "${MAVEN_VERSION}" "" "${MAVEN_HOME}" "-"
-  fi
+  doInstall "maven" "${MAVEN_VERSION}" "${1}" "" "${MAVEN_HOME}" "-"
   if [ "${1}" != "silent" ]
   then
     if [ -d "${SETTINGS_PATH}" ]
@@ -71,10 +66,6 @@ function doSetup() {
       doWarning "WARNING: Settings are missing at ${SETTINGS_PATH}"
       doEchoInteraction "Please run the following command to fix:"
       doEchoInteraction "devon setup"
-    fi
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      doRunCommand "'${MVN}' -v" "verify installation of maven"
     fi
   fi
 }
@@ -344,8 +335,6 @@ function doRunBuild() {
 }
 
 # CLI
-MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
-MVN="${MAVEN_HOME}/bin/mvn"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup or run maven build tool."

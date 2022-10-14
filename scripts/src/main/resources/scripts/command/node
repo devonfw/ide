@@ -18,14 +18,8 @@ source "$(dirname "${0}")"/../functions
 
 # $1: optional setup
 function doSetup() {
-  if [ "${1}" != "silent" ] || [ ! -d "${NODE_HOME}" ]
-  then
-    doInstall "nodejs" "${NODE_VERSION}" "" "${NODE_HOME}"
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
-  fi
+  doInstall "nodejs" "${NODE_VERSION}" "${1}" "" "${NODE_HOME}"
+  return 0
 }
 
 function doSetupDevon4node() {
