@@ -11,6 +11,26 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# OS independent check if aws is installed.
+function findAws() {
+  AWS="aws"
+  if ! command -v aws &> /dev/null
+  then
+    if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
+    then
+      local aws_win
+      aws_win="${PROGRAMFILES}"
+      aws_win="$(cygpath "${aws_win}")"
+      aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
+      if [ -f "${aws_win}" ]
+      then
+        AWS="${aws_win}"
+      fi
+    fi
+  fi
+  TOOL_VERSION_COMMAND="${AWS} --version"
+}
+
 findAws
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -20,29 +40,6 @@ function doRun() {
   doSetup silent
   findAws
   doRunCommand "'${AWS}' ${*}"
-}
-
-
-# OS independent check if aws is installed.
-function findAws() {
-  AWS="aws"
-  AWS_INSTALLED="no"
-  if command -v aws &> /dev/null
-  then
-    AWS_INSTALLED="yes"
-  elif [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
-  then
-    local aws_win
-    aws_win="${PROGRAMFILES}"
-    aws_win="$(cygpath "${aws_win}")"
-    aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
-    if [ -f "${aws_win}" ]
-    then
-      AWS="${aws_win}"
-      AWS_INSTALLED="yes"
-    fi
-  fi
-  TOOL_VERSION_COMMAND="${AWS} --version"
 }
 
 # $1: path_to_package
