@@ -32,19 +32,89 @@ source "$(dirname "${0}")"/../functions
 L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
 
+# Install Eclipse plugins by feature group id
 # $1: plugin feature group ID
 # $2: plugin URL (update site)
 function doInstallEclipsePlugin() {
-  local plugin="${1/\.feature\.group*/}"
-  echo "Installing eclipse plugin ${plugin} from ${2}"
-  # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs ${ECLIPSE_VMARGS}
-  result=${?}
-  if [ "${result}" != 0 ]
+  # If plugin_name argument ${3} is passed
+  if [ -n "${3}" ]
   then
-    doEchoAttention "Installation of plugin ${plugin} failed. Please try to install manually or rerun setup (devon eclipse setup)."
+    echo "Installing Eclipse plugin '${3}' from URL ${2}"
+  else
+    echo "Installing Eclipse plugin '${1}' from URL ${2}"
   fi
-  return "${result}"
+
+  if [ -z "${1}" ]
+  then
+    doEcho "No plugins to install."
+    return
+  fi
+
+  local plugin_dependencies
+  plugin_dependencies=$(doCheckPluginsInstalled "${1}")
+
+  # Install plugins and write debug info into temp file
+  local debug_info_file
+  debug_info_file=$(mktemp)
+  # get only !MESSAGE lines from the debug info
+  "${ECLIPSE_HOME}/eclipsec" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}" > "${debug_info_file}" 2>&1
+  local exit_code=$?
+  # Overwrite file with lines containing !MESSAGE
+  sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
+
+  if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]; then
+    return 0
+  elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]; then
+    doError "The given repository ${2} is not a correct update site."
+    return 1
+  else
+    echo
+    doError "Installation of plugin '${3}' failed: \n$(cat "${debug_info_file}")"
+    if [ -n "${plugin_dependencies}" ]
+    then
+      plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
+      doWarning "Plugin '${3}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
+    fi
+    return 1
+  fi
+}
+
+# Check if the plugins are already installed by looking at the eclipse/plugins folder
+# $1: plugin feature group ID
+# return: dependencies that are already installed
+function doCheckPluginsInstalled() {
+  local plugin_dir="${DEVON_IDE_HOME}/software/eclipse/plugins"
+
+  # Remove feature.group from each plugin id
+  local plugins="${1//.feature.group/}"
+  # Remove spaces from plugin variable
+  plugins="${1// /}"
+  # Iterate each plugin via comma seperation
+  IFS=',' read -ra plugins_arr <<< "${plugins}"
+  for plugin in "${plugins_arr[@]}"; do
+    # Remove feature from plugin variable
+    plugin=${plugin/\.feature*/}
+
+    local plugin_dependencies
+    plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
+    # Remove last word after dot
+    while [[ "${plugin}" == *.* ]]; do
+      if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]; then
+        break
+      fi
+      
+      local new_plugin_dependencies
+      new_plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
+      if [ -n "${new_plugin_dependencies}" ] 
+      then
+        plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
+      fi
+      plugin=${plugin%.*}
+    done
+  done
+  # Remove plugin_dir from plugin variable
+  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_dir}/||g")
+  echo -e "${plugin_dependencies}"
 }
 
 function doSetup() {
@@ -113,12 +183,15 @@ function doAddPluginFromConfig() {
       local install_file="${ECLIPSE_HOME}/.devon.${plugin_fileprefix}.installed"
       if [ ! -e "${install_file}" ]
       then
-        doInstallEclipsePlugin "${plugin_id}" "${url}"
+        doInstallEclipsePlugin "${plugin_id}" "${url}" "${plugin_fileprefix}"
         result_rc=$?
         if [ "${result_rc}" = 0 ]
         then
           touch "${install_file}"
+          doSuccess "Plugin ${plugin_fileprefix} installed successfully."
         fi
+      else
+        doEcho "Plugin ${plugin_fileprefix} is already installed. Use 'devon eclipse remove-plugin ${plugin_fileprefix}' if you want to remove it."
       fi
     fi
   elif [ -n "${2}" ]
