@@ -677,6 +677,7 @@ function doGetFirstExistingPath() {
 function doExtract() {
   local target_dir=${DEVON_IDE_HOME}/updates/extracted
   local filename=${1/*\//}
+  local extracted="no"
   rm -rf "${target_dir}"
   if [ -n "${2}" ]
   then
@@ -688,9 +689,11 @@ function doExtract() {
   if [ "${filename_base/*\./.}" = ".tar" ] || [ "${ext}" = ".tar" ] || [ "${ext}" = ".tgz" ] || [ "${ext}" = ".tbz2" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
+    extracted="yes"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
     doUnzip "${1}" "${target_dir}"
+    extracted="yes"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
@@ -702,11 +705,24 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
+    extracted="yes"
   elif doIsInstallerExtension "${filename}"
   then
      doRunCommand "mv \"${1}\" \"${target_dir}\""
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
+  fi
+  if [ "${extracted}" = "yes" ]
+  then
+    pushd "${target_dir}" > /dev/null || exit 255
+    doIsMaxArgExisting 1 ./*
+    local folder=(*)
+    if [ -d "${folder[0]}" ] && [ "${folder[0]}" != "bin" ] && [ "${folder[0]}" != "Contents" ]
+    then
+      doDebug "Resolving single folder ${folder} in ${target_dir}"
+      doRunCommand "mv '${folder}'/{.,}*. && rmdir '${folder}'"
+    fi
+    popd > /dev/null || exit 255 
   fi
   doSuccess "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
@@ -1064,7 +1080,7 @@ function doGitPullOrClone() {
   fi
   if [ -d "${dir}/.git" ]
   then
-    pushd "${dir}" > /dev/null || exit 255 
+    pushd "${dir}" > /dev/null || exit 255
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
@@ -1304,19 +1320,43 @@ function doInstall() {
   fi
 
   # macos workaround
-  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/Home/bin" ]
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/" ]
   then
-    doEcho "Creating symlink as workaround for ${software} on MacOS"
-    local target_software_macos=${target_path%\/*}/macos
-    if [ ! -d "${target_software_macos}" ]
+    local app_folder=""
+    local folder
+    for folder in $(find "${target_path}/Contents/" -maxdepth 1 -type d)
+    do
+      if [[ "${folder}" =~ ${target_path}/Contents/(|_*|Resources) ]]
+      then
+        if [ -d "${folder}/bin" ]
+        then
+          app_folder="${folder/*\//}"
+          break
+        else
+          local file
+          for file in $(find "${folder}/" -maxdepth 1 -type f -executable)
+          do
+            app_folder="${folder/*\//}"
+            break
+          done
+        fi
+      fi
+    done
+    if [ -n "${app_folder}" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then
-      mkdir -p "${target_software_macos}"
+      # Home/bin
+      doEcho "Creating symlink as workaround for ${software} on MacOS"
+      local target_software_macos=${target_path%\/*}/macos
+      if [ ! -d "${target_software_macos}" ]
+      then
+        mkdir -p "${target_software_macos}"
+      fi
+      local target_software_software=${target_software_macos}/${dir}
+      doRunCommand "rm -rf '${target_software_software}'"
+      doRunCommand "mv '${target_path}' '${target_software_software}'"
+      doRunCommand "ln -sf 'macos/${dir}/Contents/${app_folder}' '${target_path}'"
+      doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
     fi
-    local target_software_software=${target_software_macos}/${dir}
-    doRunCommand "rm -rf '${target_software_software}'"
-    doRunCommand "mv '${target_path}' '${target_software_software}'"
-    doRunCommand "ln -sf 'macos/${dir}/Contents/Home' '${target_path}'"
-    doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
   fi
   if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
   then
@@ -1561,6 +1601,15 @@ function doIsEmptyDirectory() {
   then
     return 1
   fi
+}
+
+# $1: max number of argument that may exist (test if path at max+1 or arg max+2 does not exist)
+# $2-$n: path args that to check (typically from glob pattern)
+function doIsMaxArgExisting() {
+  local max="${1}"
+  shift "${max}"
+  [ -f "${2}" ]
+  return
 }
 
 function doIsPackageJsonContainingScript() {
