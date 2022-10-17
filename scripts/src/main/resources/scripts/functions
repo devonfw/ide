@@ -815,7 +815,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local target_dir="${2}"
   local backup_dir="${3}"
   shift 3
-  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ "${#*}" = 1 ] && [ -d "${1}" ]
   then
     doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
     source_dir="${1}"
@@ -1315,26 +1315,37 @@ function doInstall() {
   # macos workaround
   if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/" ]
   then
+    doDebug "Found MacOS app in ${target_path}"
     local app_folder=""
     local folder
     while IFS= read -r -d '' folder
     do
-      if [[ "${folder}" =~ ${target_path}/Contents/(|_*|Resources) ]]
+      folder="${folder/*\//}"
+      doDebug "Checking app sub-folder ${folder}"
+      if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder:0:1}" != "_" ]
       then
-        if [ -d "${folder}/bin" ]
+        doDebug "Found candidate sub-folder ${folder}"
+        if [ -d "${target_path}/Contents/${folder}/bin" ]
         then
           app_folder="${folder/*\//}"
+          doDebug "App folder with bin detected as ${app_folder}"
           break
         else
+          doDebug "Looking for executable in ${folder}"
           local file
           while IFS= read -r -d '' file
           do
-            app_folder="${folder/*\//}"
-            break
-          done < <(find "${folder}/" -maxdepth 1 -type f -executable -print0)
+            if [ -x "${file}" ]
+            then
+              app_folder="${folder/*\//}"
+              doDebug "App folder with executable detected as ${app_folder}"
+              break
+            fi
+            done < <(find "${target_path}/Contents/${folder}/" -maxdepth 1 -type f -print0)
         fi
       fi
-    done < <(find "${target_path}/Contents/" -maxdepth 1 -type d -print0)
+    done < <(find "${target_path}/Contents" -maxdepth 1 -type d -print0)
+    doDebug "App folder detected as ${app_folder}"
 
     if [ -n "${app_folder}" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then

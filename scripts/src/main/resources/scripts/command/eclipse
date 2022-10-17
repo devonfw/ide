@@ -153,15 +153,6 @@ function doSetup() {
   doInstall "eclipse" "${ECLIPSE_VERSION}" "${silent}" "${ECLIPSE_EDITION_TYPE:-java}"
   if [ "${?}" = 0 ]
   then
-    if doIsMacOs
-    then
-      if [ ! -x "${ECLIPSE_HOME}/eclipse" ]
-      then
-        echo "Doing workarounds for MacOS quirks..."
-        echo -e "#!/usr/bin/env bash\nECLIPSE_HOME=\"\$(dirname \"\${0}\")\"\n\"\${ECLIPSE_HOME}/Eclipse.app/Contents/MacOS/eclipse\" \$@" > "${ECLIPSE_HOME}/eclipse"
-        chmod a+x "${ECLIPSE_HOME}/eclipse"
-      fi
-    fi
     doAddPlugins
   fi
 }
