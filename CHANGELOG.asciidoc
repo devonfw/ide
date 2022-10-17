@@ -7,6 +7,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 New release with various improvements and bugfixes:
 
 * https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
+* https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
+* https://github.com/devonfw/ide/issues/905[#905]: Better error handling when installing Eclipse plugins
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
@@ -24,6 +26,7 @@ The full list of changes for this release can be found in https://github.com/dev
 
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/905[#905]: Improving eclipse output when installing plugins
 * https://github.com/devonfw/ide/issues/833[#833]: Implementing GitHub CLI
 * https://github.com/devonfw/ide/issues/894[#894]: Integration of Quarkus CLI
 * https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites

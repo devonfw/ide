@@ -11,6 +11,8 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
+TOOL_VERSION_COMMAND="node -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -23,12 +25,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    local node_binary="${NODE_HOME}/node.exe"
-    if [ ! -x "${node_binary}" ]
-    then
-      node_binary="${NODE_HOME}/bin/node"
-    fi
-    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -50,8 +47,6 @@ function doRun() {
     node "${@}"
   fi
 }
-
-NODE_HOME="${DEVON_IDE_HOME}/software/node"
 
 #CLI
 case ${1} in 

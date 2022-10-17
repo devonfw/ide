@@ -37,7 +37,7 @@ Display a question and ask the user if he wants to continue.
 In xref:doIsForce[force] or xref:doIsBatch[batch] mode, it will continue automatically.
 
 |=======================
-|*Param*|*Name*  |*Description*|
+|*Param*|*Name*  |*Description*
 |`$1`   |question|The question to display. Defaults to `Do you want to continue?`.
 |`$2`   |return  |If the user does not want to continue, this function will exit immediately by default. However, if `return` is passed the function will return 255 and the called can handle the program flow.
 |=======================
@@ -105,7 +105,7 @@ Will print the operation (`$1`) as xref:doSuccess[success] message if exitCode (
 Otherwise it will pass it to xref:doFail[].
 
 |=======================
-|*Param*|*Name*    |*Description*|
+|*Param*|*Name*    |*Description*
 |`$1`   |operation |The operation that failed or succeeded.
 |`$2`   |exitCode  |`0` for sucess, otherwise the error code.
 |=======================
@@ -151,7 +151,7 @@ Further it xref:doError[prints an error message] if the commandlet was not succe
 It will return with the exit code of the commandlet that has been invoked.
 
 |=======================
-|*Param*|*Name*     |*Description*|
+|*Param*|*Name*     |*Description*
 |`$1`   |commandlet |The devonfw-ide commandlet to call. E.g. `help` or `ide`.
 |`$2`-$n|args       |Any additional argument is passed to the specified commandlet.
 |=======================
@@ -162,7 +162,7 @@ If a a third parameter (`$3`) is provided, it has to point to an existing direct
 It will use xref:doResult[] using the `message` (`$2`) to handle the result of the command execution (success or failure).
 
 |=======================
-|*Param*|*Name*  |*Description*|
+|*Param*|*Name*  |*Description*
 |`$1`   |command |The command to execute including all its parameters.
 |`$2`   |message |Optional description of the command. Will fall back to "run command" followed by a simplification of the command (`$1`).
 |`$3`   |dir     |Optional working directory where to execute the command.
@@ -186,8 +186,8 @@ Downloads an artifact from the internet.
 If the URL is not provided as first argument, it will use the `mirrors` config to automatically determine the URL from the other arguments.
 
 |=======================
-|*Param*|*Name*  |*Description*|
-|`$1`   |URL     |The explicit URL to download from or `-` to compute in xref:doDownload[].
+|*Param*|*Name*  |*Description*
+|`$1`   |URL     |The explicit URL to download from or `-` to compute from mirrors.
 |`$2`   |dir     |The optional target directory where to save the downloaded file.
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
@@ -238,7 +238,7 @@ Following the doInstall call in the commandlet, the installation of the software
 * If parameters five through nine (edition, code, os, arch, and ext) are specified, they are passed directly to the doDownload function.
 
 |=======================
-|*Param*|*Name*  |*Description*|
+|*Param*|*Name*  |*Description*
 |`$1`   |URL     |The explicit URL to download from or `-` to compute in xref:doDownload[].
 |`$2`   |path    |The absolute target path where to install the software.
 |`$3`   |name    |The name of the software to install.
@@ -289,6 +289,9 @@ The parameters source directory, target directory, backup directory and possibly
 The first three parameters are taken directly into variables and removed from the list of passed parameters with the shift so that the last specification can be viewed as a whole.
 If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory.
 Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
+
+=== doUpdateMirrors
+Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
 
 === doUnzip
 Checks if an unzip program is installed, and if not, installs the program.
@@ -343,9 +346,19 @@ Updates the PATH variable according to the latest tools installed in the `softwa
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
+=== doGetSoftwareVersion
+Determines the currently installed version of a software and prints it out for the end-user.
+
+|=======================
+|*Param*|*Name*     |*Description*
+|`$1`   |software   |The software tool to check (e.g. `maven` or `java`).
+|`$2`   |version_cmd|The command to determine the version via the software. Maybe `-` if the software is a regular installation but does not support this.
+|`$3`   |commandlet |The commandlet corresponding to the software. Typically the same as `$1` but may differ (e.g. `mvn` instead of `maven`). Only used for log messages to assist end-user.
+|=======================
+
 === doIsDevVersion
-The doIsDevVersion function checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter.
-If this is the case, it ends with the return value 0 otherwise 1.
+Checks whether one of the two values "dev-SNAPSHOT" or "0-SNAPSHOT" was passed to it as a parameter.
+If this is the case, it ends with the return value `0` otherwise `1`.
 
 === doListSoftwareVersions
 Takes the name of the tool as a parameter and displays the available versions.

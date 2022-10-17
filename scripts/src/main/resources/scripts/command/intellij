@@ -15,6 +15,13 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
+if [ "${OSTYPE:0:6}" = "darwin" ]
+then
+  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
+else
+  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
+fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
@@ -48,12 +55,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    if [ -e "${IDEA_HOME}/product-info.json" ]
-    then
-      doRunCommand "cat '${IDEA_HOME}/product-info.json'"
-    else
-      doRunCommand "cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
-    fi
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -177,7 +179,6 @@ then
   echo " create-script                  create intellij-${WORKSPACE} script if not already exists"
   exit
 fi
-IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
 if [ -z "${1}" ]
 then
   doSetup silent
