@@ -677,7 +677,7 @@ function doGetFirstExistingPath() {
 function doExtract() {
   local target_dir=${DEVON_IDE_HOME}/updates/extracted
   local filename=${1/*\//}
-  local extracted="no"
+  local extracted="yes"
   rm -rf "${target_dir}"
   if [ -n "${2}" ]
   then
@@ -689,11 +689,9 @@ function doExtract() {
   if [ "${filename_base/*\./.}" = ".tar" ] || [ "${ext}" = ".tar" ] || [ "${ext}" = ".tgz" ] || [ "${ext}" = ".tbz2" ]
   then
     doRunCommand "tar xf '${1}' -C '${target_dir}'"
-    extracted="yes"
   elif [ "${ext}" = ".zip" ] || [ "${ext}" = ".jar" ]
   then
     doUnzip "${1}" "${target_dir}"
-    extracted="yes"
   elif [ "${ext}" = ".dmg" ]
   then
     local mount_dir="${DEVON_IDE_HOME}/updates/volume"
@@ -705,26 +703,29 @@ function doExtract() {
     then
       rm "${target_dir}/Applications"
     fi
-    extracted="yes"
   elif doIsInstallerExtension "${filename}"
   then
      doRunCommand "mv \"${1}\" \"${target_dir}\""
+    extracted="no"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  if [ "${extracted}" = "yes" ]
+  if [ "${extracted}" = "no" ]
   then
-    pushd "${target_dir}" > /dev/null || exit 255
-    doIsMaxArgExisting 1 ./*
-    local folder=(*)
-    if [ -d "${folder[0]}" ] && [ "${folder[0]}" != "bin" ] && [ "${folder[0]}" != "Contents" ]
+    doSuccess "Successfully moved archive ${filename} to ${target_dir}"
+  else
+    local files=("${target_dir}"/*)
+    if [ "${#files[@]}" = 1 ]
     then
-      doDebug "Resolving single folder ${folder} in ${target_dir}"
-      doRunCommand "mv '${folder}'/{.,}*. && rmdir '${folder}'"
+      local folder="${files[0]}"
+      if [ -d "${folder}" ] && [ "${folder}" != "bin" ] && [ "${folder}" != "Contents" ]
+      then
+        doDebug "Resolving single folder ${folder}"
+        doRunCommand "mv '${folder}'/{.,}*. '${target_dir}' && rmdir '${folder}'"
+      fi
     fi
-    popd > /dev/null || exit 255 
+    doSuccess "Successfully extracted archive ${filename} to ${target_dir}"
   fi
-  doSuccess "Successfully extracted/moved archive ${filename} to updates/extracted"
 }
 
 # $1: the file to unzip
@@ -1271,13 +1272,14 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+    doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    
     if [ -n "${noUnpack}" ]
     then
-      doDownload "${url}" "${install_path}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-      doDebug "Received download file ${DOWNLOAD_FILENAME}"
+      doDebug "Download shall not be extracted, hence moving ${DOWNLOAD_FILENAME} to ${install_path}"
+      doDevonCommand "mv '${download_dir}/${DOWNLOAD_FILENAME}' '${install_path}'"
     else
-      doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-      doDebug "Received download file ${DOWNLOAD_FILENAME}"
       doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
       doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
     fi
@@ -1344,7 +1346,6 @@ function doInstall() {
     done
     if [ -n "${app_folder}" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then
-      # Home/bin
       doEcho "Creating symlink as workaround for ${software} on MacOS"
       local target_software_macos=${target_path%\/*}/macos
       if [ ! -d "${target_software_macos}" ]
@@ -1601,15 +1602,6 @@ function doIsEmptyDirectory() {
   then
     return 1
   fi
-}
-
-# $1: max number of argument that may exist (test if path at max+1 or arg max+2 does not exist)
-# $2-$n: path args that to check (typically from glob pattern)
-function doIsMaxArgExisting() {
-  local max="${1}"
-  shift "${max}"
-  [ -f "${2}" ]
-  return
 }
 
 function doIsPackageJsonContainingScript() {

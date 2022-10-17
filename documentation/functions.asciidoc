@@ -337,17 +337,6 @@ Checks whether the file extension of the file specified in the parameter is an e
 .exe .msi .pkg or .bat.
 If so, the function returns 0, otherwise 255.
 
-=== doIsMaxArgExisting
-Allows to test that a glob pattern gives a maximum number of existing files or folders.
-So e.g. `doIsMaxArgExisting 0 *.bak` would determine if no file with extension `.bak` exists 
-or `doIsMaxArgExisting 1 "${DEVON_IDE_HOME}/software/${software}"/*` would check that the specified software folder contains only one file or directory.
-
-|=======================
-|*Param*|*Name*   |*Description*
-|`$1`   |max      |The maximum number of paths that may exist.
-|`$2`-$n|path args|The path arguments (typically from glob pattern).
-|=======================
-
 === doUpdatePath
 Updates the PATH variable according to the latest tools installed in the `software` folder.
 *ATTENTION:* This function is defined in the file `environment-project`.

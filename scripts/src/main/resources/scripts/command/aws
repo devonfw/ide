@@ -75,7 +75,6 @@ function doSetup() {
   fi
 }
 
-
 # CLI
 case ${1} in
 "help" | "-h")
