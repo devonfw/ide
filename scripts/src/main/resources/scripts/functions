@@ -1326,7 +1326,7 @@ function doInstall() {
   then
     local app_folder=""
     local folder
-    for folder in $(find "${target_path}/Contents/" -maxdepth 1 -type d)
+    while IFS= read -r -d '' folder
     do
       if [[ "${folder}" =~ ${target_path}/Contents/(|_*|Resources) ]]
       then
@@ -1336,14 +1336,15 @@ function doInstall() {
           break
         else
           local file
-          for file in $(find "${folder}/" -maxdepth 1 -type f -executable)
+          while IFS= read -r -d '' file
           do
             app_folder="${folder/*\//}"
             break
-          done
+          done < <(find "${folder}/" -maxdepth 1 -type f -executable -print0)
         fi
       fi
-    done
+    done < <(find "${target_path}/Contents/" -maxdepth 1 -type d -print0)
+
     if [ -n "${app_folder}" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then
       doEcho "Creating symlink as workaround for ${software} on MacOS"
