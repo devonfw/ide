@@ -145,7 +145,7 @@ function doRemovePlugin() {
     plugin_dependencies=$(doCheckPluginsInstalled "${plugin_id}")
     plugin_id="${plugin_id// /}"
     IFS=',' read -ra plugin_id_arr <<< "${plugin_id}"
-    for plugin in ${plugin_id_arr[@]}; do
+    for plugin in "${plugin_id_arr[@]}"; do
       # If debug info contains words The installable unit could not be found, then the plugin was not uninstalled correctly
       if [[ $(grep "The installable unit ${plugin} has not been found" "${debug_info_file}") != "" ]]
       then
