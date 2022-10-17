@@ -63,7 +63,7 @@ function doResult() {
 # $3: optional working directory
 function doRunCommand() {
   local command="${1}"
-  local messsage="${2}"
+  local message="${2}"
   local dir="${3}"
   if [ -n "${dir}" ]
   then
