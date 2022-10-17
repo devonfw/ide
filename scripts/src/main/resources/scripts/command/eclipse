@@ -114,7 +114,51 @@ function doCheckPluginsInstalled() {
   done
   # Remove plugin_dir from plugin variable
   plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_dir}/||g")
-  echo -e "${plugin_dependencies}"
+  echo -e "${plugin_dependencies}" | sort -u
+}
+
+# Remove plugins from Eclipse by feature group ID
+# It first removes .installed filed if such exists, then removes the plugin via eclipe command
+function doRemovePlugin() {
+  if [ -z "${1}" ]
+  then
+    doError "No plugin was specified for removal."
+    return 1
+  fi
+  if [ -f "${ECLIPSE_HOME}/.devon.${1}.installed" ]
+  then
+    rm "${ECLIPSE_HOME}/.devon.${1}.installed"
+  fi
+
+  doLoadPluginProperties "${1}"
+  if [ -n "${plugin_id}" ] 
+  then
+    doEcho "Removing plugin ${1}..."
+    
+    local debug_info_file
+    debug_info_file=$(mktemp)
+    "${ECLIPSE_HOME}/eclipsec" -nosplash -clean -consoleLog -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -uninstallIU "${plugin_id}" -vmargs ${ECLIPSE_VMARGS} > "${debug_info_file}" 2>&1
+    local exit_code=$?
+    # Overwrite file with lines containing !MESSAGE
+    sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
+
+    plugin_dependencies=$(doCheckPluginsInstalled "${plugin_id}")
+    plugin_id="${plugin_id// /}"
+    IFS=',' read -ra plugin_id_arr <<< "${plugin_id}"
+    for plugin in ${plugin_id_arr[@]}; do
+      # If debug info contains words The installable unit could not be found, then the plugin was not uninstalled correctly
+      if [[ $(grep "The installable unit ${plugin} has not been found" "${debug_info_file}") != "" ]]
+      then
+        doError "Plugin ${plugin} couldn't be removed from your Eclipse installation as it was not found. Please check if the plugin exists and try to remove it manually."
+        if [ -n "${plugin_dependencies}" ]
+        then
+          doWarning "If the problem persists, try removing the following dependencies: ${plugin_dependencies}"
+        fi
+        return 1
+      fi
+    done
+    doSuccess "Plugin ${1} removed successfully."
+  fi
 }
 
 function doSetup() {
@@ -386,6 +430,7 @@ then
   echo " --all                          if provided as first arg then to command will be invoked for each workspace"
   echo " setup                          setup Eclipse (install or update)"
   echo " add-plugin «id» [«url»]        install an additional plugin"
+  echo " remove-plugin «id»             remove an installed plugin with given id"
   echo " run | start                    launch Eclipse IDE (default if no argument is given)"
   echo " ws-up[date]                    update eclipse workspace"
   echo " ws-re[verse]                   reverse merge changes from workspace into settings"
@@ -431,6 +476,11 @@ do
   then
     shift
     doAddPlugin "${@}"
+    exit ${?}
+  elif [ "${1}" = "remove-plugin" ]
+  then
+    shift
+    doRemovePlugin "${@}"
     exit ${?}
   elif [ "${1}" = "import" ] 
   then
