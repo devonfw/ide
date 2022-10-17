@@ -62,29 +62,31 @@ function doResult() {
 # $2: message
 # $3: optional working directory
 function doRunCommand() {
-  local cwd=${PWD}
-  if [ -n "${3}" ]
+  local command="${1}"
+  local messsage="${2}"
+  local dir="${3}"
+  if [ -n "${dir}" ]
   then
-    if [ -d "${3}" ]
+    if [ -d "${dir}" ]
     then
-      cd "${3}" || exit 1
+      pushd "${dir}" > /dev/null || exit 255
     else
       doFail "Working directory ${3} does not exist."
     fi
   fi
-  local message
-  if [ -z "${2}" ]
+  if [ -z "${message}" ]
   then
-    message="run command ${1}"
+    doDebug "Trying to runn command ${command}"
+    message="run command ${command/ */}"
   else
-    message="${2} (${1})"
+    doDebug "Trying to ${message} (${command})"
+    message="${message} (${command/ */})"
   fi
-  doDebug "Trying to ${message}"
-  eval "${1}"
+  eval "${command}"
   result=${?}
-  if [ -n "${3}" ]
+  if [ -n "${dir}" ]
   then
-    cd "${cwd}" || exit 1
+    popd > /dev/null || exit 255 
   fi
   doResult "${message}" ${result}
 }
@@ -1316,15 +1318,14 @@ function doInstall() {
   if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/" ]
   then
     doDebug "Found MacOS app in ${target_path}"
-    local app_folder=""
+    local app_folder="-"
     local folder
     while IFS= read -r -d '' folder
     do
       folder="${folder/*\//}"
       doDebug "Checking app sub-folder ${folder}"
-      if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder:0:1}" != "_" ]
+      if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
       then
-        doDebug "Found candidate sub-folder ${folder}"
         if [ -d "${target_path}/Contents/${folder}/bin" ]
         then
           app_folder="${folder/*\//}"
@@ -1335,7 +1336,7 @@ function doInstall() {
           local file
           while IFS= read -r -d '' file
           do
-            if [ -x "${file}" ]
+            if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
             then
               app_folder="${folder/*\//}"
               doDebug "App folder with executable detected as ${app_folder}"
@@ -1345,9 +1346,8 @@ function doInstall() {
         fi
       fi
     done < <(find "${target_path}/Contents" -maxdepth 1 -type d -print0)
-    doDebug "App folder detected as ${app_folder}"
 
-    if [ -n "${app_folder}" ] && [ -d "${target_path}/Contents/${app_folder}" ]
+    if [ "${app_folder}" != "-" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then
       doEcho "Creating symlink as workaround for ${software} on MacOS"
       local target_software_macos=${target_path%\/*}/macos
@@ -1430,7 +1430,7 @@ function doRunConfigurator() {
       classpath="${classpath}:${file}"
     fi
   done
-  doRunCommand "java -cp '${classpath}' ${*}"
+  doRunCommand "java -cp '${classpath}' ${*}" "Configure workspace"
 }
 
 # $1: name of ide
