@@ -75,7 +75,7 @@ function doRunCommand() {
   local message
   if [ -z "${2}" ]
   then
-    message="run command ${1/ */}"
+    message="run command ${1}"
   else
     message="${2} (${1})"
   fi
@@ -714,16 +714,6 @@ function doExtract() {
   then
     doSuccess "Successfully moved archive ${filename} to ${target_dir}"
   else
-    local files=("${target_dir}"/*)
-    if [ "${#files[@]}" = 1 ]
-    then
-      local folder="${files[0]}"
-      if [ -d "${folder}" ] && [ "${folder}" != "bin" ] && [ "${folder}" != "Contents" ]
-      then
-        doDebug "Resolving single folder ${folder}"
-        doRunCommand "mv '${folder}'/{.,}*. '${target_dir}' && rmdir '${folder}'"
-      fi
-    fi
     doSuccess "Successfully extracted archive ${filename} to ${target_dir}"
   fi
 }
@@ -827,6 +817,7 @@ function doReplaceExtractedSkipSingleFolder() {
   shift 3
   if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
   then
+    doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
     source_dir="${1}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
