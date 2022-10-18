@@ -1265,8 +1265,8 @@ function doInstall() {
     
     if [ -n "${noUnpack}" ]
     then
-      doDebug "Download shall not be extracted, hence moving ${DOWNLOAD_FILENAME} to ${install_path}"
-      doDevonCommand "mv '${download_dir}/${DOWNLOAD_FILENAME}' '${install_path}'"
+      doDebug "Download shall not be extracted, hence copying ${DOWNLOAD_FILENAME} to ${install_path}"
+      doDevonCommand "cp '${download_dir}/${DOWNLOAD_FILENAME}' '${install_path}'"
     else
       doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
       doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
