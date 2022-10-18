@@ -51,7 +51,7 @@ function doSetup() {
     then
       doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
     fi
-    doInstall "java" "${EXTRA_JAVA_VERSION}" "${1}" "${DEVON_IDE_HOME}/software/extra/java"
+    doInstall "java" "${EXTRA_JAVA_VERSION}" "${1}" "" "${DEVON_IDE_HOME}/software/extra/java"
   fi
   return 0
 }
