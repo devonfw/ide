@@ -14,21 +14,23 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # OS independent check if aws is installed.
 function findAws() {
   AWS="aws"
-  if ! command -v aws &> /dev/null
+  AWS_INSTALLED="no"
+  if command -v aws &> /dev/null
   then
-    if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
+    AWS_INSTALLED="yes"
+  elif [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
+  then
+    local aws_win
+    aws_win="${PROGRAMFILES}"
+    aws_win="$(cygpath "${aws_win}")"
+    aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
+    if [ -f "${aws_win}" ]
     then
-      local aws_win
-      aws_win="${PROGRAMFILES}"
-      aws_win="$(cygpath "${aws_win}")"
-      aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
-      if [ -f "${aws_win}" ]
-      then
-        AWS="${aws_win}"
-      fi
+      AWS="${aws_win}"
+      AWS_INSTALLED="yes"
     fi
   fi
-  TOOL_VERSION_COMMAND="${AWS} --version"
+  TOOL_VERSION_COMMAND="'${AWS}' --version"
 }
 
 findAws
@@ -43,8 +45,7 @@ function doRun() {
 }
 
 # $1: path_to_package
-function doPackageInstall()
-{
+function doPackageInstall() {
   local path_to_package="${1}"
   if doIsWindows
   then
@@ -67,11 +68,19 @@ function doPackageInstall()
 }
 
 function doSetup() {
-  local silent="${1}"
-  doInstall "aws" "${AWS_VERSION}" "${silent}" "" "${DEVON_IDE_HOME}/updates/install/aws"
-  if [ "${?}" = 0 ]
+  if [ "${AWS_INSTALLED}" == "yes" ]
   then
-    doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
+    if [ -z "${1}" ]
+    then
+      doEcho "Aws already installed in version ${AWS_VERSION:-latest}"
+      doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
+    fi
+  else
+    doInstall "aws" "${AWS_VERSION}" "${1}" "" "${DEVON_IDE_HOME}/updates/install/aws"
+    if [ "${?}" = 0 ]
+    then
+      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
+    fi
   fi
 }
 
