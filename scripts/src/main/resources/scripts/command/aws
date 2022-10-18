@@ -81,6 +81,7 @@ function doSetup() {
     then
       doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
     fi
+    doRunCommand "rm -rf ${DEVON_IDE_HOME}/updates/install/aws"
   fi
 }
 
