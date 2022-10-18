@@ -192,10 +192,10 @@ If the URL is not provided as first argument, it will use the `mirrors` config t
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
 |`$5`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
-|`$7`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
-|`$8`   |arch    |The optional architecture (e.g. x86_64).
-|`$9`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
-|`$10`  |filename|The optional filename to save the downloaded file to.
+|`$6`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$7`   |arch    |The optional architecture (e.g. x86_64).
+|`$8`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
+|`$9`   |filename|The optional filename to save the downloaded file to.
 |=======================
 
 === doDownloadInternal

@@ -27,7 +27,7 @@ function doSetup() {
     fi
   else
     local version=${JENKINS_VERSION:-latest}
-    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "" "jenkins.war"
+    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "jenkins.war"
     mkdir -p "${JENKINS_HOME}"
     doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
     # http://localhost:9999/jnlpJars/jenkins-cli.jar

@@ -387,11 +387,10 @@ function doUpdateMirrors() {
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
 # $4: the version of the software to download
 # $5: the optional edition (e.g. "enterprise" or "community")
-# $6: the optional code (magic value to avoid tool specific quirks in general functions)
-# $7: operating system name
-# $8: the optional architecture (e.g. x64 or x86_64)
-# $9: the optional extension (e.g. 'tar.gz' or 'zip')
-# $10: the optional filename to download to
+# $6: operating system name
+# $7: the optional architecture (e.g. x64 or x86_64)
+# $8: the optional extension (e.g. 'tar.gz' or 'zip')
+# $9: the optional filename to download to
 function doDownload() {
   doDebug "doDownload ${*}"
   doLicenseAgreement
@@ -400,11 +399,10 @@ function doDownload() {
   local software="${3}"
   local version="${4}"
   local edition="${5}"
-  local code="${6}"
-  local os="${7}"
-  local arch="${8}"
-  local ext="${9}"
-  local filename="${10}"
+  local os="${6}"
+  local arch="${7}"
+  local ext="${8}"
+  local filename="${9}"
   if [ -z "${target_dir}" ]
   then
     target_dir="${DEVON_DOWNLOAD_DIR}"
@@ -550,8 +548,6 @@ function doDownload() {
       # TODO could be removed and done in doResolveDownloadUrl
       mirror_url="${mirror_url//\$\{major\}/${major}}"
       mirror_url="$(doResolveDownloadUrl "${mirror_url}" "${version}" "${os_new}" "${arch_new}" "${edition}")"
-      # TODO can be removed
-      mirror_url="${mirror_url//\$\{code\}/${code}}"
 
       if [ -z "${filename}" ]
       then
@@ -1265,7 +1261,7 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}"
     doDebug "Received download file ${DOWNLOAD_FILENAME}"
     
     if [ -n "${noUnpack}" ]
