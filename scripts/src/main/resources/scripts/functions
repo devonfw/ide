@@ -1141,6 +1141,7 @@ function doResolveDownloadUrl() {
 # $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
 # $8: optional software repository
 function doInstall() {
+  doDebug "doInstall ${*}"
   local software="${1}"
   local version="${2}"
   local silent="${3}"
@@ -1156,7 +1157,6 @@ function doInstall() {
   local ext
   local url
   local arch
-  local repository="${DEVON_SOFTWARE_REPOSITORY}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${software}" ]
   then
