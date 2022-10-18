@@ -28,8 +28,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   doDevonCommand java setup silent
-  local edition="${INTELLIJ_EDITION_TYPE:-C}"
-  doInstall "intellij" "${INTELLIJ_VERSION}" "${1}" "${edition}"
+  doInstall "intellij" "${INTELLIJ_VERSION}" "${1}" "${INTELLIJ_EDITION_TYPE:-C}"
   if [ "${?}" = 0 ]
   then
     if  [ -f "${IDEA_HOME}/bin/idea.sh" ]
