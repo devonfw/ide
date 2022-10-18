@@ -545,7 +545,6 @@ function doDownload() {
       mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
-      # TODO could be removed and done in doResolveDownloadUrl
       mirror_url="${mirror_url//\$\{major\}/${major}}"
       mirror_url="$(doResolveDownloadUrl "${mirror_url}" "${version}" "${os_new}" "${arch_new}" "${edition}")"
 
