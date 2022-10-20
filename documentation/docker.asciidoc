@@ -85,6 +85,9 @@ or, when using Windows, untill you see a small blue Rancher Desktop icon in your
 
 image::images/RDCompletedIconNotificArea.png[]
 
+After that you can reconnect to your VPN. If you still run into problems, while using Kubernetes, one possible workaround with git-bash in Windows is to use a wsl-distribution. For this you can download and install the wsl distribution Ubuntu 20.04 LTS and then prefix troublesome commands with `wsl -d ubuntu20.04`. So to run `kubectl get pods` you can execute `wsl -d ubuntu20.04 kubectl get pods`. 
+If you set this distribution as main wsl-distribution via "wsl --set-default ubuntu20.04",
+then you will only need "wsl " as prefix afterwards. So `wsl -d ubuntu20.04 kubectl get pods` reduces to "wsl kubectl get pods". 
 
 
 === requirements
