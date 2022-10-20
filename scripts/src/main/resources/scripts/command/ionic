@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="ionic -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -43,8 +44,6 @@ then
   echo "create                create a new devon4ng ionic project"
   echo "cicd «args»           generate cicd files for the current devon4ng ionic project: $PWD"
   echo "«args»                call ionic with the specified arguments"
-  echo
-  echo "Options:"
   exit
 fi
 

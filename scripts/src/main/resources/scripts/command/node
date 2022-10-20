@@ -5,12 +5,14 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup create generate db cicd help"
+    echo "setup version create generate db cicd help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
+TOOL_VERSION_COMMAND="node -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -23,12 +25,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    local node_binary="${NODE_HOME}/node.exe"
-    if [ ! -x "${node_binary}" ]
-    then
-      node_binary="${NODE_HOME}/bin/node"
-    fi
-    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -51,22 +48,18 @@ function doRun() {
   fi
 }
 
-NODE_HOME="${DEVON_IDE_HOME}/software/node"
-
 #CLI
 case ${1} in 
 "help" | "-h")
   echo "Setup or run NodeJS."
   echo
   echo "Arguments:"
-  echo " setup                    setup NodeJS (install and verify)"
-  echo " create «name» [«args»]   create a new devon4node application (same as devon4node new)"
-  echo " generate «s» [«args»]    generate devon4node components using the schematic «s» (same as devon4node generate)"
-  echo " db «c» [«args»]          execute a TypeORM command «c» (same as devon4node db)"
-  echo " cicd «args»              generate cicd files for the current devon4node project: $PWD"
-  echo " «args»                   call NodeJS with the specified arguments"
-  echo
-  echo "Options:"
+  echo " setup                          setup NodeJS (install and verify)"
+  echo " create «name» [«args»]         create a new devon4node application (same as devon4node new)"
+  echo " generate «s» [«args»]          generate devon4node components using the schematic «s» (same as devon4node generate)"
+  echo " db «c» [«args»]                execute a TypeORM command «c» (same as devon4node db)"
+  echo " cicd «args»                    generate cicd files for the current devon4node project: $PWD"
+  echo " «args»                         call NodeJS with the specified arguments"
   exit
 ;;
 "setup" | "s")

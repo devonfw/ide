@@ -2,23 +2,74 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.04.004
+== 2022.08.004
 
 New release with various improvements and bugfixes:
 
+* https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
+* https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
+* https://github.com/devonfw/ide/issues/905[#905]: Better error handling when installing Eclipse plugins
+* https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
+
+== 2022.08.003
+
+Urgent bugfix release:
+
+* https://github.com/devonfw/ide/issues/921[#921]: Setup fails on windows: repository '_isNew' does not exist
+* https://github.com/devonfw/ide/issues/923[#923]: setup.bat fails if whitespaces in PSModulePath
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/33?closed=1[milestone 2022.08.003].
+
+== 2022.08.002
+
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/905[#905]: Improving eclipse output when installing plugins
+* https://github.com/devonfw/ide/issues/833[#833]: Implementing GitHub CLI
+* https://github.com/devonfw/ide/issues/894[#894]: Integration of Quarkus CLI
+* https://github.com/devonfw/ide/issues/832[#832]: Solution for unstable update sites
+* https://github.com/devonfw/ide/issues/877[#877]: Update version of vscode to 1.71.0
+* https://github.com/devonfw/ide/issues/898[#898]: AWS can not be installed
+* https://github.com/devonfw/ide/pull/882[#882]: Fixing NPE by updating mvn default version to 3.8.4
+* https://github.com/devonfw/ide/issues/409[#409]: Redo PATH adaptation if devon.bat is not in PATH
+* https://github.com/devonfw/ide/issues/866[#866]:  scripts folder not added to PATH if setup.bat called from powershell
+* https://github.com/devonfw/ide/issues/880[#880]: Customize the trigger of the integration tests
+* https://github.com/devonfw/ide/issues/879[#879]: Renaming integration-tests and adding badges
+* https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
+* https://github.com/devonfw/ide/pull/914[#914]: Tools Documentation Update
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/32?closed=1[milestone 2022.08.002].
+
+== 2022.08.001
+
+New release with various improvements and bugfixes:
+
+* https://github.com/devonfw/ide/issues/840[#840]: Pip Integration and fixing package installation
 * https://github.com/devonfw/ide/issues/713[#713]: Python integration
 * https://github.com/devonfw/ide/issues/706[#706]: Folder ${M2_REPO} gets created
 * https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03 
 * https://github.com/devonfw/ide/pull/796[#796]: update sonarqube to 9.4.0.54424
 * https://github.com/devonfw/ide/issues/794[#794]: Improve installation process of Rancher Desktop and VPNKit
+* https://github.com/devonfw/ide/issues/738[#738]: CLI Lazy Docker integration
+* https://github.com/devonfw/ide/issues/819[#819]: add option to create new devonfw-ide installation
+* https://github.com/devonfw/ide/issues/810[#810]: Add OpenShift CLI
+* https://github.com/devonfw/ide/issues/692[#692]: Improve Windows Terminal with gitbash
+* https://github.com/devonfw/ide/issues/786[#786]: Improve Windows Terminal with powershell
+* https://github.com/devonfw/ide/issues/849[#849]: Integration of GCViewer
+* https://github.com/devonfw/ide/issues/867[#867]: ERROR: Error opening the file. There may be a disk or file system error.
 * https://github.com/devonfw/ide/pull/829[#829]: #701: fix registry import paths for Windows Terminal
 * https://github.com/devonfw/ide/pull/802[#802]: #798: English grammar fix for success message
-* https://github.com/devonfw/ide/issues/803[#8ß3]: git pull not working on debug
+* https://github.com/devonfw/ide/issues/803[#803]: git pull not working on debug
+* https://github.com/devonfw/ide/issues/848[#848]: Update PATH automatically on doDevonCommand
 * https://github.com/devonfw/ide/issues/811[#811]: add function for installing with different package managers
 * https://github.com/devonfw/ide/issues/691[#691]: Nightly test of devonfw-ide installation
+* https://github.com/devonfw/ide/issues/800[#800]: Nightly test with additional tests
 * https://github.com/devonfw/ide/issues/767[#767]: Fix AsciiDoc issues
+* https://github.com/devonfw/ide/issues/774[#774]: Create Getting-Started-For-Developers Documentation
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.04.004].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/31?closed=1[milestone 2022.08.001].
 
 == 2022.04.003
 

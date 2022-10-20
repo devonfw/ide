@@ -3,14 +3,25 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
+    echo "--all setup version add-plugin run start ${all_opts} help"
+  elif [ "${2}" = "--all" ]
+  then
+    echo "${all_opts}"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
+if [ "${OSTYPE:0:6}" = "darwin" ]
+then
+  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
+else
+  TOOL_VERSION_COMMAND="cat '${IDEA_HOME}/product-info.json'"
+fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
@@ -44,12 +55,7 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    if [ -e "${IDEA_HOME}/product-info.json" ]
-    then
-      doRunCommand "cat '${IDEA_HOME}/product-info.json'"
-    else
-      doRunCommand "cat '${IDEA_HOME}/IntelliJ.app/Contents/Resources/product-info.json'"
-    fi
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi
 }
 
@@ -163,17 +169,16 @@ then
   echo "Manage IntelliJ IDE and workspace."
   echo
   echo "Arguments:"
-  echo " --all              if provided as first arg then to command will be invoked for each workspace"
-  echo " setup              setup IntelliJ (install or update)"
-  echo " add-plugin «id»    install an additional plugin"
-  echo " run | start        launch IntelliJ IDE (default if no argument is given)"
-  echo " ws-up[date]        update IntelliJ workspace"
-  echo " ws-re[verse]       reverse merge changes from workspace into settings"
-  echo " ws-reverse-add     reverse merge adding new properties"
-  echo " create-script      create intellij-${WORKSPACE} script if not already exists"
+  echo " --all                          if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                          setup IntelliJ (install or update)"
+  echo " add-plugin «id»                install an additional plugin"
+  echo " run | start                    launch IntelliJ IDE (default if no argument is given)"
+  echo " ws-up[date]                    update IntelliJ workspace"
+  echo " ws-re[verse]                   reverse merge changes from workspace into settings"
+  echo " ws-reverse-add                 reverse merge adding new properties"
+  echo " create-script                  create intellij-${WORKSPACE} script if not already exists"
   exit
 fi
-IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
 if [ -z "${1}" ]
 then
   doSetup silent

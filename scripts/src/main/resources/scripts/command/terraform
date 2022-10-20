@@ -5,12 +5,13 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup help"
+    echo "setup version help"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TOOL_VERSION_COMMAND="terraform version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 
@@ -40,7 +41,7 @@ function doSetup() {
 
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "terraform version"
+    doRunCommand "${TOOL_VERSION_COMMAND}"
   fi 
 
 }
@@ -53,9 +54,8 @@ case ${1} in
   echo "Install terraform."
   echo
   echo "Arguments:"
-  echo " setup                    install terraform on your machine."
-  echo " <<args>>                 call terraform with the specified arguments. Call terraform --help for details or use terraform directly as preferred."
-  echo
+  echo " setup                          install terraform on your machine."
+  echo " «args»                         call terraform with the specified arguments. Call terraform --help for details or use terraform directly as preferred."
 ;;
 "setup" | "s" | "")
   doEcho "Installating Terraform..."

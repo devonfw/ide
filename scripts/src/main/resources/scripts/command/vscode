@@ -3,14 +3,20 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
+    echo "--all setup version add-plugin run start ${all_opts} help"
+  elif [ "${2}" = "--all" ]
+  then
+    echo "${all_opts}"
   fi
   exit
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+TOOL_VERSION_COMMAND="code -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 cd "${DEVON_IDE_HOME}" || exit 255
@@ -18,7 +24,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 function doSetup() {
   if [ "${1}" != "silent" ] || [ ! -d "${VSCODE_HOME}" ]
   then
-    local version="${VSCODE_VERSION:-1.54.1}"
+    local version="${VSCODE_VERSION:-1.71.0}"
     doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
     if [ "${?}" = 0 ]
     then
@@ -124,19 +130,16 @@ then
   echo "Launch Visual Studio Code and/or manage VSCode workspace."
   echo
   echo "Arguments:"
-  echo " --all                if provided as first arg then to command will be invoked for each workspace"
-  echo " setup                setup VSCode (install or update)"
-  echo " add-plugin «id»      install an additional plugin (extension)"
-  echo " run | start          launch VSCode IDE (default if no argument is given)"
-  echo " ws-up[date]          update VSCode workspace"
-  echo " ws-re[verse]         reverse merge changes from workspace into settings"
-  echo " ws-reverse-add       reverse merge adding new properties"
-  echo " create-script        create vscode-${WORKSPACE} script if not already exists"
-  echo
-  echo "Options:"
+  echo " --all                          if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                          setup VSCode (install or update)"
+  echo " add-plugin «id»                install an additional plugin (extension)"
+  echo " run | start                    launch VSCode IDE (default if no argument is given)"
+  echo " ws-up[date]                    update VSCode workspace"
+  echo " ws-re[verse]                   reverse merge changes from workspace into settings"
+  echo " ws-reverse-add                 reverse merge adding new properties"
+  echo " create-script                  create vscode-${WORKSPACE} script if not already exists"
   exit
 fi
-VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
 if [ -z "${1}" ]
 then
   doSetup

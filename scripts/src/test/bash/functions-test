@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function doCommandTest()  {
+  cd ../test-setup
+  CLI="${PWD}/scripts/devon"
+  "${CLI}" "${1}" --batch setup
+  exit "${?}"
+}
+
+# $@: success message
+function doSuccess() {
+  echo -e "\033[92m${*}\033[39m"
+}
+
+# $@: warning message
+function doWarning() {
+  echo -e "\033[93m${*}\033[39m"
+}
+
+# $@: messages to output
+function doError() {
+  echo -e "\033[91m${1}\033[39m"
+}
