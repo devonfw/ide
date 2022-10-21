@@ -1211,8 +1211,8 @@ function doInstall() {
       doEcho "Updating ${software} from version ${current_version} to version ${version}..."
     fi
   fi
-  local dir=${target_path/*\//}
-  mkdir -p "${DEVON_IDE_HOME}/software"
+  local dir="${target_path/*\//}"
+  doRunCommand "mkdir -p '${target_path%/*}'"
   local repo="default"
   if [ -z "${repository}" ]
   then
@@ -1253,35 +1253,15 @@ function doInstall() {
     rm "${target_path}"
   fi
   local install_path="${target_path}"
-  if [ -n "${DEVON_SOFTWARE_PATH}" ] && [ "${target_path}" != "${DEVON_IDE_HOME}" ]
+  if [ -n "${DEVON_SOFTWARE_PATH}" ] && ( [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ] || [ "${target_path}" = "${DEVON_IDE_HOME}/software/extra/${dir}" ] )
   then
-    local symlink="yes"
-    local software_path="${DEVON_IDE_HOME}/software/"
-    if doIsPrefix "${software_path}" "${target_path}"
-    then
-      local rest="${target_path:${#software_path}}"
-      local folder="${rest%%/*}"
-      if [ "${folder}" == "extra" ]
-      then
-        rest="${rest:6}"
-        folder="${rest%%/*}"
-      fi
-      if [ "${rest/\//}" != "${folder}" ]
-      then
-        symlink="no"
-      fi
-    fi
-    if [ "${symlink}" = "yes" ]
-    then
-      install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
-      version_file="${install_path}/.devon.software.version"
-    fi
+    install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
+    version_file="${install_path}/.devon.software.version"
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
     doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}"
     doDebug "Received download file ${DOWNLOAD_FILENAME}"
-    
     if [ -n "${noUnpack}" ]
     then
       doDebug "Download shall not be extracted, hence copying ${DOWNLOAD_FILENAME} to ${install_path}"
