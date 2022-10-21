@@ -76,7 +76,7 @@ function doRunCommand() {
   fi
   if [ -z "${message}" ]
   then
-    doDebug "Trying to runn command ${command}"
+    doDebug "Trying to run command ${command}"
     message="run command ${command/ */}"
   else
     doDebug "Trying to ${message} (${command})"

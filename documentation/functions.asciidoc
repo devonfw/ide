@@ -213,7 +213,7 @@ Then the right tool is selected based on the file extension and the file is unzi
 Function for additional custom logic when resolving the download URL.
 The xref:doDownload[] function resolves standard variables like `version`, `os`, `arch`, and `ext` automatically in URLs from `mirrors` repository config.
 However, for special cases this is insufficient as some tools do not follow best-pratices for consistent and systematic download URLs.
-Therefire xref:doDownload[] will call this function to further resolve the computed download URL.
+Therefore xref:doDownload[] will call this function to further resolve the computed download URL.
 By default this function does nothing but echoing the given URL (`$1`).
 However, a commandlet may override this function after souring `functions` in order to define custom logic for URL resolving.
 When required, we typically resolve a `code` variable that can be derived from the arguments given to this function.
