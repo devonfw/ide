@@ -1253,7 +1253,7 @@ function doInstall() {
     rm "${target_path}"
   fi
   local install_path="${target_path}"
-  if [ -n "${DEVON_SOFTWARE_PATH}" ] && ( [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ] || [ "${target_path}" = "${DEVON_IDE_HOME}/software/extra/${dir}" ] )
+  if [ -n "${DEVON_SOFTWARE_PATH}" ] && { [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ] || [ "${target_path}" = "${DEVON_IDE_HOME}/software/extra/${dir}" ] }
   then
     install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
     version_file="${install_path}/.devon.software.version"
