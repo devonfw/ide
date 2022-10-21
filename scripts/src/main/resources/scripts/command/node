@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup version create generate db cicd help"
+    echo "setup version create generate db help"
   fi
   exit
 fi
@@ -58,7 +58,6 @@ case ${1} in
   echo " create «name» [«args»]         create a new devon4node application (same as devon4node new)"
   echo " generate «s» [«args»]          generate devon4node components using the schematic «s» (same as devon4node generate)"
   echo " db «c» [«args»]                execute a TypeORM command «c» (same as devon4node db)"
-  echo " cicd «args»                    generate cicd files for the current devon4node project: $PWD"
   echo " «args»                         call NodeJS with the specified arguments"
   exit
 ;;
@@ -77,10 +76,6 @@ case ${1} in
 "db")
   doSetupDevon4node
   devon4node "${@}"
-;;
-"cicd")
-  shift
-  doDevonCommand cicdgen node "${*}"
 ;;
 *)
   doRun "${@}"

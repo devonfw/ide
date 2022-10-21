@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup create cicd help"
+    echo "setup create help"
   fi
   exit
 fi
@@ -42,7 +42,6 @@ then
   echo "Arguments:"
   echo "setup                 setup angular-cli (install and verify)"
   echo "create                create a new devon4ng project"
-  echo "cicd «args»           generate cicd files for the current devon4ng project: $PWD"
   echo "«args»                call ng with the specified arguments"
   exit
 fi
@@ -60,10 +59,6 @@ then
   shift
   doSetup silent
   ng new "${@}"
-elif [ "${1}" = "cicd" ]
-then
-  shift
-  doDevonCommand cicdgen ng "${*}"
 else
   doSetup silent
   "${NG_CMD}" "${@}"
