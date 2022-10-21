@@ -408,6 +408,10 @@ If this is the case, the function ends with the return value 0, otherwise with 1
 Checks whether the module passed with the first parameter is contained in the package package.json.
 If so, then it ends with the return value 0 otherwise with a message and the return value 255.
 
+=== doIsPrefix
+Checks if the first arg is a prefix of the second arg.
+E.g. `doIsPrefix "foo/bar" "foo/bar/some"` will be true but `doIsPrefix "/foo/bar" "foo/bar/some"` will be false.
+
 === doParseOption
 Checks whether the parameter passed to it 
 

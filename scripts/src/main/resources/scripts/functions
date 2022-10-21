@@ -1255,8 +1255,27 @@ function doInstall() {
   local install_path="${target_path}"
   if [ -n "${DEVON_SOFTWARE_PATH}" ] && [ "${target_path}" != "${DEVON_IDE_HOME}" ]
   then
-    install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
-    version_file="${install_path}/.devon.software.version"
+    local symlink="yes"
+    local software_path="${DEVON_IDE_HOME}/software/"
+    if doIsPrefix "${software_path}" "${target_path}"
+    then
+      local rest="${target_path:${#software_path}}"
+      local folder="${rest%%/*}"
+      if [ "${folder}" == "extra" ]
+      then
+        rest="${rest:6}"
+        folder="${rest%%/*}"
+      fi
+      if [ "${rest/\//}" != "${folder}" ]
+      then
+        symlink="no"
+      fi
+    fi
+    if [ "${symlink}" = "yes" ]
+    then
+      install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
+      version_file="${install_path}/.devon.software.version"
+    fi
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
@@ -1288,10 +1307,6 @@ function doInstall() {
     then
       doFail "Installation corrupt at ${install_path}\nDetected version: ${current_version}\nExpected version: ${version}"
     fi
-  fi
-  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
-  then
-    doExtendPath "${target_path}"
   fi
   if [ "${install_path}" != "${target_path}" ]
   then
@@ -1356,6 +1371,10 @@ function doInstall() {
       doRunCommand "ln -sf 'macos/${dir}/Contents/${app_folder}' '${target_path}'"
       doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
     fi
+  fi
+  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  then
+    doExtendPath "${target_path}"
   fi
   if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
   then
@@ -1590,6 +1609,16 @@ function doIsWindows() {
   then
     return
   fi
+  return 255
+}
+
+# $1: prefic to check
+# $2: string potentially containing the prefix
+function doIsPrefix() {
+  case "${2}" in
+  "${1}"*)
+    return 0;;
+  esac
   return 255
 }
 
