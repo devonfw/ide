@@ -1295,7 +1295,7 @@ function doInstall() {
     doEcho "Linking ${install_path} to ${target_path}"
     if doIsWindows
     then
-      cmd //c mklink "${install_path}" "${target_path}"
+      doRunCommand "cmd //c 'mklink /D $(cygpath -w ${target_path}) $(cygpath -w ${install_path})'"
       if [ "${?}" != 0 ]
       then
         doFail "Creating symbolic links is not supported on your windows operating system.\nPlease read the documentation how to properly configure your OS or disable this feature by removing the DEVON_SOFTWARE_PATH variable."
