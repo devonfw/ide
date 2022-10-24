@@ -76,10 +76,17 @@ function doSetup() {
       doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
     fi
   else
+    # workaround as we are downloading the installer and not installing the software itself
+    TOOL_VERSION_COMMAND="-"
     doInstall "aws" "${AWS_VERSION}" "${1}" "" "${DEVON_IDE_HOME}/updates/install/aws"
     if [ "${?}" = 0 ]
     then
       doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
+      findAws
+      if [ "${1}" != "silent" ] && ! doIsQuiet
+      then
+        doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
+      fi
     fi
     doRunCommand "rm -rf ${DEVON_IDE_HOME}/updates/install/aws"
   fi
