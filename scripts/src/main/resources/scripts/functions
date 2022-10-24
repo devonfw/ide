@@ -1044,7 +1044,7 @@ function doUpgradeMavenArtifact() {
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
   url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-" "" "" "" "${repository}"
+  doInstall "${artifact_id}" "${target_version}" "" "" "${1}" "-" "" "${repository}" "${url}"
 }
 
 # $1: target
@@ -1135,6 +1135,7 @@ function doResolveDownloadUrl() {
 # $6: optional OS indicator ('-' if OS independent)
 # $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
 # $8: optional software repository
+# $9: optional download URL
 function doInstall() {
   doDebug "doInstall ${*}"
   local software="${1}"
@@ -1145,12 +1146,12 @@ function doInstall() {
   local os="${6}"
   local noUnpack="${7}"
   local repository="${8}"
+  local url="${9}"
   if [ -z "${target_path}" ]
   then
     target_path="${DEVON_IDE_HOME}/software/${software}"
   fi
   local ext
-  local url
   local arch
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   if [ -z "${software}" ]

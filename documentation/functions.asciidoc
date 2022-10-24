@@ -250,6 +250,7 @@ In case the software is already installed in the resolved version, return `1`.
 |`$6`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
 |`$7`   |noUnpack|The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
 |`$8`   |repo    |The optional software repository.
+|`$9`   |url     |The optional download URL.
 |=======================
 
 === doInstallWithPackageManager
