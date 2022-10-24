@@ -45,11 +45,6 @@ then
   echo "«args»                call ng with the specified arguments"
   exit
 fi
-NG_CMD="${DEVON_IDE_HOME}/software/node/ng"
-if [ ! -x "${NG_CMD}" ]
-then
-  NG_CMD="${DEVON_IDE_HOME}/software/node/bin/ng"
-fi
 
 if [ -z "${1}" ] || [ "${1}" = "setup" ]
 then
@@ -61,5 +56,5 @@ then
   ng new "${@}"
 else
   doSetup silent
-  "${NG_CMD}" "${@}"
+  ng "${@}"
 fi

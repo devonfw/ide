@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
 TOOL_VERSION_COMMAND="npm -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -81,9 +82,9 @@ function doRunBuild() {
   doEcho "Running: npm ${*}"
   if doIsQuiet
   then
-    "${NPM_CMD}" --quiet "${@}"
+    npm --quiet "${@}"
   else
-    "${NPM_CMD}" "${@}"
+    npm "${@}"
   fi
 }
 
@@ -109,17 +110,6 @@ then
   echo " release                        start a clean deploy release build"
   echo " «args»                         run NPM with the given arguments"
   exit
-fi
-
-if [ -z "${NODE_HOME}" ]
-then
-  NODE_HOME="${DEVON_IDE_HOME}/software/node"
-fi
-
-NPM_CMD="${DEVON_IDE_HOME}/software/node/npm"
-if [ ! -x "${NPM_CMD}" ]
-then
-  NPM_CMD="${DEVON_IDE_HOME}/software/node/bin/npm"
 fi
 
 if [ -z "${1}" ] || [ "${1}" = "build" ]
