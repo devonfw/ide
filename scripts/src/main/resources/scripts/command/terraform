@@ -11,6 +11,7 @@ then
 fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
 TOOL_VERSION_COMMAND="terraform version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
@@ -31,8 +32,6 @@ function doSetup() {
     fi
   fi
 }
-
-TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
 
 # CLI
 case ${1} in 
