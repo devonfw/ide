@@ -1310,34 +1310,38 @@ function doInstall() {
   then
     doDebug "Found MacOS app in ${target_path}"
     local app_folder="-"
-    local folder
-    while IFS= read -r -d '' folder
-    do
-      folder="${folder/*\//}"
-      doDebug "Checking app sub-folder ${folder}"
-      if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
-      then
-        if [ -d "${target_path}/Contents/${folder}/bin" ]
+    if [ -d "${target_path}/Contents/Resources/app/bin" ]
+    then
+      app_folder="Resources/app"
+    else
+      local folder
+      while IFS= read -r -d '' folder
+      do
+        folder="${folder/*\//}"
+        doDebug "Checking app sub-folder ${folder}"
+        if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
         then
-          app_folder="${folder/*\//}"
-          doDebug "App folder with bin detected as ${app_folder}"
-          break
-        else
-          doDebug "Looking for executable in ${folder}"
-          local file
-          while IFS= read -r -d '' file
-          do
-            if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
-            then
-              app_folder="${folder/*\//}"
-              doDebug "App folder with executable detected as ${app_folder}"
-              break
-            fi
-            done < <(find "${target_path}/Contents/${folder}/" -maxdepth 1 -type f -print0)
+          if [ -d "${target_path}/Contents/${folder}/bin" ]
+          then
+            app_folder="${folder/*\//}"
+            doDebug "App folder with bin detected as ${app_folder}"
+            break
+          else
+            doDebug "Looking for executable in ${folder}"
+            local file
+            while IFS= read -r -d '' file
+            do
+              if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
+              then
+                app_folder="${folder/*\//}"
+                doDebug "App folder with executable detected as ${app_folder}"
+                break
+              fi
+              done < <(find "${target_path}/Contents/${folder}/" -maxdepth 1 -type f -print0)
+          fi
         fi
-      fi
-    done < <(find "${target_path}/Contents" -maxdepth 1 -type d -print0)
-
+      done < <(find "${target_path}/Contents" -maxdepth 1 -type d -print0)
+    fi
     if [ "${app_folder}" != "-" ] && [ -d "${target_path}/Contents/${app_folder}" ]
     then
       doEcho "Creating symlink as workaround for ${software} on MacOS"
