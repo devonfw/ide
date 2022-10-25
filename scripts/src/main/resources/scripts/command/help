@@ -21,7 +21,6 @@ echo
 # shellcheck disable=SC2007,SC2154
 doSuccess "Current version of devon-scripts is $[devon_ide_version]"
 echo
-echo $@
 if [ -z "${1}" ]
 then
   echo "usage: devon [command [args]]"
