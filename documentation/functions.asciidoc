@@ -205,6 +205,12 @@ If this does not happen, the name is determined from the URL.
 If the file exists and the force option was not specified, the function ends with a corresponding message and the return value 255.
 Otherwise the file is downloaded and, if successful, moved to the target directory.
 
+=== doEnvironmentProject
+Loads all `devon.properties` via xref:doLoadProperties[]. 
+If the first argument is not empty (set to `export`) it will export all the properties.
+Also it sets the environment variables `DEVON_HOME_DIR`, `WORKSPACE`, and `WORKSPACE_PATH`.
+Finally, it updates the `PATH` variable via xref:doUpdatePath[] and exports it.
+
 === doExtract
 Takes the file to be extracted and possibly a path to where it should be extracted.
 Then the right tool is selected based on the file extension and the file is unzipped.
