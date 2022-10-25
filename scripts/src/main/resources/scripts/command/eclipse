@@ -16,6 +16,11 @@ fi
 
 if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
+ECLIPSE="${ECLIPSE_HOME}/eclipse"
+if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # cannot use doIsWindows here
+then
+  ECLIPSE="${ECLIPSE_HOME}/eclipsec"
+fi
 ECLIPSE_JAVA_HOME="${JAVA_HOME}"
 if [ -n "${EXTRA_JAVA_VERSION}" ]
 then
@@ -57,14 +62,13 @@ function doInstallEclipsePlugin() {
   local debug_info_file
   debug_info_file=$(mktemp)
   # get only !MESSAGE lines from the debug info
-  "${ECLIPSE_HOME}/eclipse" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}" > "${debug_info_file}" 2>&1
+  "${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${2}" -installIU "${1}" -vmargs "${ECLIPSE_VMARGS}"  | grep '^!MESSAGE' | sed 's/^!MESSAGE //' > "${debug_info_file}" 2>&1
   local exit_code=$?
-  # Overwrite file with lines containing !MESSAGE
-  sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
-
-  if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]; then
+  if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]
+  then
     return 0
-  elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]; then
+  elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]
+  then
     doError "The given repository ${2} is not a correct update site."
     return 1
   else
@@ -289,10 +293,10 @@ function doStartEclipse() {
   if doIsWindows
   then
     # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE_HOME}/eclipsec" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
   else
     # shellcheck disable=SC2086
-    "${ECLIPSE_HOME}/eclipse" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
   fi
 }
 
@@ -321,7 +325,7 @@ function doImportEclipse() {
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS} 
 }
 
 # $1: id
@@ -341,8 +345,8 @@ function doMirrorUpdateSite() {
   fi
   local timestamp
   timestamp=$(date +'%Y-%m-%d')
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
-  "${ECLIPSE_HOME}/eclipse" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${1}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
   local result="${?}"
   if [ "${result}" != 0 ]
   then
