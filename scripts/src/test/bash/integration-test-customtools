@@ -1,0 +1,25 @@
+#!/bin/bash
+
+cd ../test-setup
+CLI="${PWD}/scripts/devon"
+
+REPO_URL="https://repo1.maven.org/maven2/com/palantir/launching"
+TOOL_A="go-init"
+TOOL_VERSION_A="1.22.0"
+TOOL_PATH_A="${PWD}/software/${TOOL_A}/service/bin/darwin-amd64/${TOOL_A}"
+TOOL_B="go-java-launcher"
+TOOL_VERSION_B="1.34.0"
+TOOL_PATH_B="${PWD}/software/${TOOL_B}/service/bin/darwin-amd64/${TOOL_B}"
+
+CUSTOM_TOOLS="DEVON_IDE_CUSTOM_TOOLS=(${TOOL_A}:${TOOL_VERSION_A}:all:${REPO_URL} ${TOOL_B}:${TOOL_VERSION_B}:all:)"
+
+echo -e "\n${CUSTOM_TOOLS}" >> "${PWD}/settings/devon.properties"
+
+"${CLI}" ide update
+
+if [[ -f "${TOOL_PATH_A}" && -f "${TOOL_PATH_B}" ]]
+then
+  exit 0
+else
+  exit 1
+fi
