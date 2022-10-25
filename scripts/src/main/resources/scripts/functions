@@ -1312,7 +1312,7 @@ function doInstall() {
     if ! [ -d "${target_path}/${contents}" ]
     then
       pushd "${target_path}" > /dev/null || exit 255
-      # function does not have options
+      # doGetFirstExistingPath does not have options
       # shellcheck disable=SC2035
       contents="$(doGetFirstExistingPath *.app/Contents)"
       popd > /dev/null || exit 255 
