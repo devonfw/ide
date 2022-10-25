@@ -11,9 +11,8 @@ then
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 
-# shellcheck source=scripts/environment-project
-source "${DEVON_IDE_HOME}/scripts/environment-project" export
-DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
+# shellcheck source=scripts/functions-core
+source "${DEVON_IDE_HOME}/scripts/functions-core"
 
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
@@ -859,10 +858,6 @@ function doMavenGetLatestVersion() {
 function doIsDevVersion() {
   [ "${1}" = "dev-SNAPSHOT" ] || [ "${1}" = "0-SNAPSHOT" ]
 }
-
-# defaults, may be overridden before calling doMavenArchetype
-ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
-ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
 
 # ${1}-${n-1}: array
 # ${n}: prefix to check if array contains element starting with
@@ -1773,14 +1768,9 @@ function doListSoftwareVersions() {
 # $@: CLI args
 # returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
 function doParseOption() {
-  if [ -n "${end_options}" ]
-  then
-    return 255
-  fi
   if [ "${1}" = "--" ]
   then
-    end_options="true"
-    return
+    return 1
   elif [ "${1}" = "-b" ] || [ "${1}" = "--batch" ]
   then
     batch="${1}"
@@ -1819,13 +1809,3 @@ function doParseOption() {
   fi
   return 255
 }
-
-end_options=""
-batch=""
-force=""
-quiet=""
-debug=""
-while [ -n "${1}" ] && doParseOption "${@}"
-do
-  shift
-done

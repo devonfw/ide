@@ -10,17 +10,17 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-OPENSHIFT_HOME="${DEVON_IDE_HOME}/software/oc"
-TOOL_VERSION_COMMAND="-"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-
+OC_HOME="${DEVON_IDE_HOME}/software/oc"
+TOOL_VERSION_COMMAND="-"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # Call oc with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${OPENSHIFT_HOME}/oc ${*}"
+  doRunCommand "${OC_HOME}/oc ${*}"
 }
 
 # openshift installation

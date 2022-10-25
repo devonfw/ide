@@ -10,11 +10,12 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
-TOOL_VERSION_COMMAND="python --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+PYTHON_HOME="${DEVON_IDE_HOME}/software/python"
+TOOL_VERSION_COMMAND="python --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 function doSetup() {
   doInstall "python" "${PYTHON_VERSION}" "${1}"

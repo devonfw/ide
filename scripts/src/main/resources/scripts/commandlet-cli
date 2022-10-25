@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Will be sourced, hash bang only for filetype detection and editor syntax support
+
+doEnvironmentProject export
+DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
+# defaults, may be overridden before calling doMavenArchetype
+ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
+ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
+
+batch=""
+force=""
+quiet=""
+debug=""
+while [ -n "${1}" ]
+do
+  doParseOption "${@}"
+  status_code="${?}"
+  if [ "${status_code}" = 0 ]
+  then
+    shift
+  elif [ "${status_code}" = 1 ]
+  then
+    shift
+    break
+  else
+    break
+  fi
+done

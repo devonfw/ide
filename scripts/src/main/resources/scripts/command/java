@@ -17,16 +17,12 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="java -version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-
+TOOL_VERSION_COMMAND="java -version"
 # $1: URL
 # $2: resolved version
 # $3: resolved os
-# $4: resolved arch
-# $5: optional software edition
 function doResolveDownloadUrl() {
   local url="${1}"
   local version="${2}"
@@ -40,6 +36,8 @@ function doResolveDownloadUrl() {
   fi
   echo "${url//\$\{code\}/${code}}"
 }
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional silent mode
 function doSetup() {

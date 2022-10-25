@@ -14,11 +14,13 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
-TOOL_VERSION_COMMAND="code -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+TOOL_VERSION_COMMAND="code -v"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {

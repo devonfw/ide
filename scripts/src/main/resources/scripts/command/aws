@@ -10,7 +10,9 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
 # OS independent check if aws is installed.
 function findAws() {
   AWS="aws"
@@ -18,7 +20,7 @@ function findAws() {
   if command -v aws &> /dev/null
   then
     AWS_INSTALLED="yes"
-  elif [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # we can not use doIsWindows here as called before functions
+  elif doIsWindows
   then
     local aws_win
     aws_win="${PROGRAMFILES}"
@@ -26,16 +28,16 @@ function findAws() {
     aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
     if [ -f "${aws_win}" ]
     then
-      AWS="${aws_win}"
       AWS_INSTALLED="yes"
     fi
+    AWS="${aws_win}"
   fi
   TOOL_VERSION_COMMAND="'${AWS}' --version"
 }
 
 findAws
-# shellcheck source=scripts/functions
-source "$(dirname "${0}")"/../functions
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # Call aws with specified arguments.
 function doRun() {

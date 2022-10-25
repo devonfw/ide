@@ -14,10 +14,11 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
 ECLIPSE="${ECLIPSE_HOME}/eclipse"
-if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ] # cannot use doIsWindows here
+if doIsWindows
 then
   ECLIPSE="${ECLIPSE_HOME}/eclipsec"
 fi
@@ -27,13 +28,14 @@ then
   ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
 fi
 ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
-if [ "${OSTYPE:0:6}" = "darwin" ] # cannot use doIsMacOs here
+if doIsMacOs
 then
   ECLIPSE_PRODUCT="${DEVON_IDE_HOME}/software/macos/eclipse/Eclipse.app/Contents/Eclipse/.eclipseproduct"
 fi
 TOOL_VERSION_COMMAND="cat '${ECLIPSE_PRODUCT}'"
-# shellcheck source=scripts/functions
-source "$(dirname "${0}")"/../functions
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
 L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
 

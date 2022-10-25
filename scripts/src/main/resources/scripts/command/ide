@@ -24,10 +24,11 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND=
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND=
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 DEVON_IDE_REPO_URL="https://repo.maven.apache.org/maven2/com/devonfw/tools/ide"
 
 function doUpdateMetaFile() {

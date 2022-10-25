@@ -9,10 +9,12 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="dotnet --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND="dotnet --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doExists() {

@@ -10,16 +10,18 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND=
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND=
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 echo
 doLogo
 echo
 # shellcheck disable=SC2007,SC2154
 doSuccess "Current version of devon-scripts is $[devon_ide_version]"
 echo
+echo $@
 if [ -z "${1}" ]
 then
   echo "usage: devon [command [args]]"

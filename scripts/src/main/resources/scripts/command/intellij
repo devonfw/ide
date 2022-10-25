@@ -14,16 +14,18 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
 IDEA_HOME="${DEVON_IDE_HOME}/software/intellij"
-if [ "${OSTYPE:0:6}" = "darwin" ]
+if doIsMacOs
 then
-  TOOL_VERSION_COMMAND="head -n 6 '${DEVON_IDE_HOME}/software/macos/intellij/Contents/Resources/product-info.json'"
+  # TODO path needs to be fixed...
+  TOOL_VERSION_COMMAND="cd '${DEVON_IDE_HOME}/software/macos/intellij'/*.app && head -n 6 'Contents/Resources/product-info.json'"
 else
   TOOL_VERSION_COMMAND="head -n 6 '${IDEA_HOME}/product-info.json'"
 fi
-# shellcheck source=scripts/functions
-source "$(dirname "${0}")"/../functions
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
