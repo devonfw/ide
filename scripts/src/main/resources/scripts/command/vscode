@@ -47,7 +47,7 @@ function cleanupPlugins() {
 
 function doAddPlugins() {
   local file
-  local pluginsToInstall
+  local pluginsToInstall=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -60,20 +60,30 @@ function doAddPlugins() {
         doWarning "Invalid vscode plugin config: ${file}"
       elif [ "${plugin_active}" = "true" ]
       then
-        pluginsToInstall="${pluginsToInstall} --install-extension ${plugin_id}"
+        pluginsToInstall+=("${plugin_id}")
       fi
     fi
   done
-  doAddPlugin "${pluginsToInstall}"
+  if [ "${#pluginsToInstall}" -gt 0 ]
+  then
+    doAddPlugin "${pluginsToInstall[@]}"
+  fi
 }
 
 function doAddPlugin() {
-  if [ -n "${1}" ]
+  local plugins="${*}"
+  local args=()
+  while [ -n "${1}" ]
+  do
+    args+=("--install-extension" "${1}")
+    shift
+  done
+  if [ "${#args}" = 0 ]
   then
-    doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
-    doRunVsCode --force "${1}"
-  else
     doEcho "No plugins to be installed / uninstalled"
+  else
+    doEchoAttention "Starting installation of the following plugins into VS code:\n${plugins}\nPlease wait until VSCode has successfully installed all plugins."
+    doRunVsCode --force "${args[@]}"
   fi
 }
 
@@ -150,6 +160,7 @@ while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
+    shift
     doSetup silent
     doStartVsCode "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
@@ -166,7 +177,8 @@ do
     doCreateIdeScript vscode
   elif [ "${1}" = "add-plugin" ]
   then
-    doAddPlugin "--install-extension ${2}"
+    shift
+    doAddPlugin "${@}"
     exit ${?}
   else
     doFail "Undefined argument: ${1}"
