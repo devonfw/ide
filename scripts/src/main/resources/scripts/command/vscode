@@ -151,7 +151,7 @@ do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
     doSetup silent
-    doStartVsCode
+    doStartVsCode "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
     doConfigureVsCode -u
@@ -166,8 +166,7 @@ do
     doCreateIdeScript vscode
   elif [ "${1}" = "add-plugin" ]
   then
-    shift
-    doAddPlugin "${@}"
+    doAddPlugin "--install-extension ${2}"
     exit ${?}
   else
     doFail "Undefined argument: ${1}"
