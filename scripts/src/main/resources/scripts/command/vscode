@@ -25,12 +25,6 @@ function doSetup() {
   doInstall "vscode" "${VSCODE_VERSION}" "${1}"
   if [ "${?}" = 0 ]
   then
-    if doIsMacOs
-    then
-      mkdir "${VSCODE_HOME}/bin"
-      echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
-      chmod a+x "${VSCODE_HOME}/bin/code"
-    fi
     cleanupPlugins
     doAddPlugins
   fi

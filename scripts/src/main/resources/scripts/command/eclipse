@@ -21,10 +21,10 @@ if [ -n "${EXTRA_JAVA_VERSION}" ]
 then
   ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
 fi
-ECLIPSE_PRODUCT="${ECLIPSE_HOME}/Eclipse.app/Contents/Eclipse/.eclipseproduct"
-if [ ! -e "${ECLIPSE_PRODUCT}" ]
+ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
+if [ "${OSTYPE:0:6}" = "darwin" ] # cannot use doIsMacOs here
 then
-  ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
+  ECLIPSE_PRODUCT="${DEVON_IDE_HOME}/software/macos/eclipse/Eclipse.app/Contents/Eclipse/.eclipseproduct"
 fi
 TOOL_VERSION_COMMAND="cat '${ECLIPSE_PRODUCT}'"
 # shellcheck source=scripts/functions

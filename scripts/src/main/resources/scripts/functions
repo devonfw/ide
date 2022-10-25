@@ -812,7 +812,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local target_dir="${2}"
   local backup_dir="${3}"
   shift 3
-  if [ "${#*}" = 1 ] && [ -d "${1}" ]
+  if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
     source_dir="${1}"
@@ -1206,6 +1206,10 @@ function doInstall() {
       if [ -z "${silent}" ]
       then
         doEcho "Version ${version} of ${software} is already installed."
+        if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
+        then
+          doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+        fi
       fi
       return 1
     else
@@ -1307,55 +1311,65 @@ function doInstall() {
   fi
 
   # macos workaround
-  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/" ]
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs
   then
-    doDebug "Found MacOS app in ${target_path}"
-    local app_folder="-"
-    if [ -d "${target_path}/Contents/Resources/app/bin" ]
+    local contents="Contents"
+    if ! [ -d "${target_path}/${contents}" ]
     then
-      app_folder="Resources/app"
-    else
-      local folder
-      while IFS= read -r -d '' folder
-      do
-        folder="${folder/*\//}"
-        doDebug "Checking app sub-folder ${folder}"
-        if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
-        then
-          if [ -d "${target_path}/Contents/${folder}/bin" ]
-          then
-            app_folder="${folder/*\//}"
-            doDebug "App folder with bin detected as ${app_folder}"
-            break
-          else
-            doDebug "Looking for executable in ${folder}"
-            local file
-            while IFS= read -r -d '' file
-            do
-              if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
-              then
-                app_folder="${folder/*\//}"
-                doDebug "App folder with executable detected as ${app_folder}"
-                break
-              fi
-              done < <(find "${target_path}/Contents/${folder}/" -maxdepth 1 -type f -print0)
-          fi
-        fi
-      done < <(find "${target_path}/Contents" -maxdepth 1 -type d -print0)
+      pushd "${target_path}" > /dev/null || exit 255
+      contents="$(doGetFirstExistingPath *.app/Contents)"
+      popd > /dev/null || exit 255 
     fi
-    if [ "${app_folder}" != "-" ] && [ -d "${target_path}/Contents/${app_folder}" ]
+    if [ -d "${target_path}/${contents}" ]
     then
-      doEcho "Creating symlink as workaround for ${software} on MacOS"
-      local target_software_macos=${target_path%\/*}/macos
-      if [ ! -d "${target_software_macos}" ]
+      doDebug "Found MacOS app in ${target_path}/${contents}"
+      local app_folder="-"
+      if [ -d "${target_path}/${contents}/Resources/app/bin" ]
       then
-        mkdir -p "${target_software_macos}"
+        app_folder="Resources/app"
+      else
+        local folder
+        while IFS= read -r -d '' folder
+        do
+          folder="${folder/*\//}"
+          doDebug "Checking app sub-folder ${folder}"
+          if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
+          then
+            if [ -d "${target_path}/${contents}/${folder}/bin" ]
+            then
+              app_folder="${folder}"
+              doDebug "App folder with bin detected as ${app_folder}"
+              break
+            else
+              doDebug "Looking for executable in ${folder}"
+              local file
+              while IFS= read -r -d '' file
+              do
+                if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
+                then
+                  app_folder="${folder/*\//}"
+                  doDebug "App folder with executable detected as ${app_folder}"
+                  break
+                fi
+                done < <(find "${target_path}/${contents}/${folder}/" -maxdepth 1 -type f -print0)
+            fi
+          fi
+        done < <(find "${target_path}/${contents}" -maxdepth 1 -type d -print0)
       fi
-      local target_software_software=${target_software_macos}/${dir}
-      doRunCommand "rm -rf '${target_software_software}'"
-      doRunCommand "mv '${target_path}' '${target_software_software}'"
-      doRunCommand "ln -sf 'macos/${dir}/Contents/${app_folder}' '${target_path}'"
-      doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+      if [ "${app_folder}" != "-" ] && [ -d "${target_path}/${contents}/${app_folder}" ]
+      then
+        doEcho "Creating symlink as workaround for ${software} on MacOS"
+        local target_software_macos=${target_path%\/*}/macos
+        if [ ! -d "${target_software_macos}" ]
+        then
+          mkdir -p "${target_software_macos}"
+        fi
+        local target_software_software=${target_software_macos}/${dir}
+        doRunCommand "rm -rf '${target_software_software}'"
+        doRunCommand "mv '${target_path}' '${target_software_software}'"
+        doRunCommand "ln -sf 'macos/${dir}/${contents}/${app_folder}' '${target_path}'"
+        doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+      fi
     fi
   fi
   if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
