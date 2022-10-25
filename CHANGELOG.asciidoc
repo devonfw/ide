@@ -13,6 +13,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/940[#940]: Make doInstall even more generic
 * https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
 * https://github.com/devonfw/ide/issues/905[#905]: Better error handling when installing Eclipse plugins
+* https://github.com/devonfw/ide/issues/960[#960]: openshift version check fails
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
