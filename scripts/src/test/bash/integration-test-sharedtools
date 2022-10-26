@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd ../test-setup
+CLI="${PWD}/scripts/devon"
+SHARED_DIR="${PWD}/shared"
+echo -e "\nDEVON_SOFTWARE_PATH=${SHARED_DIR}" >> "${PWD}/conf/devon.properties"
+rm -fR "${PWD}/software/java"
+"${CLI}" java setup
+JAVA_DIR=$(which java)
+
+if [ "${SHARED_DIR}/default/java/bin/java" = "${JAVA_DIR}" ]
+then
+  exit 0
+else
+  exit 1
+fi
