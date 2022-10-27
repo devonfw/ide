@@ -3,6 +3,7 @@
 function doCommandTest()  {
   cd ../test-setup
   CLI="${PWD}/scripts/devon"
+  rm -fR "${PWD}/software/*"
   "${CLI}" "${1}" --batch setup
   exit "${?}"
 }
