@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cd ../test-setup
+CLI="${PWD}/scripts/devon"
+EXTRA_VERSION=$(head -n 1 "${PWD}"/mirrors/java/available-versions)
+
+rm "${PWD}/conf/devon.properties"
+echo "EXTRA_JAVA_VERSION=${EXTRA_VERSION}" >> "${PWD}/conf/devon.properties"
+"${CLI}" java setup
+
+if [ -x "${PWD}/software/extra/java/bin/java" ]
+then
+  exit 0
+else
+  exit 1
+fi
