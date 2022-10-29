@@ -2,6 +2,7 @@
 
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
+rm -fR "${PWD}/software"
 
 REPO_URL="https://repo1.maven.org/maven2/com/palantir/launching"
 TOOL_A="go-init"

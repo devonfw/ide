@@ -25,7 +25,7 @@ do
     let "failure++"
     doError "[ERROR LOG] ${testcase}" >> ../errorLogs
     echo -e "$(cat errorLog)\n" >> ../errorLogs
-    echo -e "\n[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}" >> ../logList
+    echo -e "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}" >> ../errorList
   fi
   let "total++"
   cd ..
@@ -49,6 +49,6 @@ then
 else
   doWarning "There are test failures! Please check the logs and fix errors.\n"
   cat errorLogs
-  cat logList
+  cat errorList
   exit 1
 fi

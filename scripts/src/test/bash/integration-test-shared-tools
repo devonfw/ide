@@ -2,8 +2,9 @@
 
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
-SHARED_DIR="${PWD}/shared"
+rm -fR "${PWD}/software"
 
+SHARED_DIR="${PWD}/shared"
 echo "DEVON_SOFTWARE_PATH=${SHARED_DIR}" >> "${PWD}/conf/devon.properties"
 "${CLI}" java setup
 JAVA_DIR=$(which java)
