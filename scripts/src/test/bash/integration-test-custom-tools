@@ -21,5 +21,6 @@ then
   rm "${PWD}/settings/devon.properties"
   exit 0
 else
+  rm "${PWD}/settings/devon.properties"
   exit 1
 fi

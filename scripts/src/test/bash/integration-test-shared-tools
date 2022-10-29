@@ -14,5 +14,6 @@ then
   rm "${PWD}/conf/devon.properties"
   exit 0
 else
+  rm "${PWD}/conf/devon.properties"
   exit 1
 fi
