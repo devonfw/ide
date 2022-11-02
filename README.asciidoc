@@ -1,5 +1,5 @@
 //center image https://devonfw.com/images/Logo_devonfw.svg
-image:https://devonfw.com/images/Logo_devonfw.svg["",align="center"]
+image:https://devonfw.com/images/Logo_devonfw.svg["",align="center",width=100%]
 
 Tool to automate setup and update of development environment.
 
