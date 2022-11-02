@@ -1,4 +1,5 @@
-= devonfw-ide
+//center image https://devonfw.com/images/Logo_devonfw.svg
+image:https://devonfw.com/images/Logo_devonfw.svg["",align="center"]
 
 Tool to automate setup and update of development environment.
 
