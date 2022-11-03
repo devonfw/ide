@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd ../test-setup
 CLI="${PWD}/scripts/devon"
 JAVA_VERSION=11*
 EXTRA_VERSION=$(head -n 1 "${PWD}"/mirrors/java/available-versions)
@@ -11,6 +10,5 @@ echo -e "\nEXTRA_JAVA_VERSION=${EXTRA_VERSION}" >> "${PWD}/conf/devon.properties
 JAVA_TEST=$(cat "${PWD}"/software/java/.devon.software.version)
 EXTRA_TEST=$(cat "${PWD}"/software/extra/java/.devon.software.version)
 
-rm "${PWD}/conf/devon.properties"
-[[ JAVA_VERSION == JAVA_TEST && EXTRA_VERSION == EXTRA_TEST ]]
+[[ $JAVA_TEST == $JAVA_VERSION && $EXTRA_TEST == $EXTRA_VERSION ]]
 exit ${?}

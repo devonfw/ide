@@ -1,9 +1,6 @@
 #!/bin/bash
 
-cd ../test-setup
 CLI="${PWD}/scripts/devon"
-rm -fR "${PWD}/software"
-
 REPO_URL="https://repo1.maven.org/maven2/com/palantir/launching"
 TOOL_A="go-init"
 TOOL_VERSION_A="1.22.0"
@@ -16,6 +13,5 @@ CUSTOM_TOOLS="DEVON_IDE_CUSTOM_TOOLS=(${TOOL_A}:${TOOL_VERSION_A}:all:${REPO_URL
 echo -e "\n${CUSTOM_TOOLS}" >> "${PWD}/settings/devon.properties"
 "${CLI}" ide update
 
-rm "${PWD}/settings/devon.properties"
 [[ -f "${TOOL_PATH_A}" && -f "${TOOL_PATH_B}" ]]
 exit ${?}

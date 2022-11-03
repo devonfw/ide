@@ -11,9 +11,17 @@ for testpath in "$(dirname $0)"/"${1}"-*
 do
   testcase="${testpath/*\//}"
   echo "Running test #${total}: ${testcase}"
-  mkdir -p "${testcase}/conf"
-  cd "${testcase}"
-  echo "export M2_REPO=~/.m2/repository" > "conf/devon.properties"
+  if [[ $testcase == integration* ]]
+  then
+    cd test-setup
+    rm -fR "${PWD}/software"
+    rm -f "${PWD}/conf/devon.properties"
+    rm -f "${PWD}/settings/devon.properties"
+  else
+    mkdir -p "${testcase}/conf"
+    cd "${testcase}"
+    echo "export M2_REPO=~/.m2/repository" > "conf/devon.properties"
+  fi
   "${testpath}" &> errorLog
   result=${?}
   if [ "${result}" == 0 ]
