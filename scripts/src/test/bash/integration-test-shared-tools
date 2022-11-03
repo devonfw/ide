@@ -5,7 +5,7 @@ CLI="${PWD}/scripts/devon"
 rm -fR "${PWD}/software"
 
 SHARED_DIR="${PWD}/shared"
-echo "DEVON_SOFTWARE_PATH=${SHARED_DIR}" >> "${PWD}/conf/devon.properties"
+echo -e "\nDEVON_SOFTWARE_PATH=${SHARED_DIR}" >> "${PWD}/conf/devon.properties"
 "${CLI}" java setup
 
 rm "${PWD}/conf/devon.properties"
