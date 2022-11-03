@@ -1317,7 +1317,7 @@ function doInstall() {
       contents="$(doGetFirstExistingPath *.app/Contents)"
       popd > /dev/null || exit 255 
     fi
-    if [ -d "${target_path}/${contents}" ]
+    if [ -n "${contents}" ] && [ -d "${target_path}/${contents}" ]
     then
       doDebug "Found MacOS app in ${target_path}/${contents}"
       local app_folder="-"
