@@ -48,7 +48,8 @@ The installation of Rancher Desktop will be handled with the help of a graphical
 
 image::images/RDInstallerInfoWindow.png[]
 
-After that you may need to wait for around half a minute until the installer of Rancher Desktop pops up. Then, when you accepted the Licence Agreement 
+After that you may need to wait for around half a minute until the installer of Rancher Desktop pops up.
+Then, when you accepted the Licence Agreement 
 
 image::images/RDInstallPic1.png[]
 
@@ -57,7 +58,8 @@ the installation process starts, which will look like this:
 image::images/RDInstallPic2.png[]
 
 
-After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings". Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
+After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings".
+Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
 
 image::images/EnablingDockerd.png[]
 
@@ -85,10 +87,20 @@ or, when using Windows, untill you see a small blue Rancher Desktop icon in your
 
 image::images/RDCompletedIconNotificArea.png[]
 
-After that you can reconnect to your VPN. If you still run into problems, while using Kubernetes, one possible workaround with git-bash in Windows is to use a wsl-distribution. For this you can download and install the wsl distribution Ubuntu 20.04 LTS and then prefix troublesome commands with `wsl -d ubuntu20.04`. So to run `kubectl get pods` you can execute `wsl -d ubuntu20.04 kubectl get pods`. 
+After that you can reconnect to your VPN.
+If you still run into problems, while using Kubernetes, one possible workaround with git-bash in Windows is to use a wsl-distribution.
+For this you can download and install the wsl distribution Ubuntu (latest LTS version, in the following example `20.04 LTS`) and then prefix troublesome commands with `wsl -d ubuntu20.04`.
+So to run `kubectl get pods` you can execute `wsl -d ubuntu20.04 kubectl get pods`.
 If you set this distribution as main wsl-distribution via "wsl --set-default ubuntu20.04",
-then you will only need "wsl " as prefix afterwards. So `wsl -d ubuntu20.04 kubectl get pods` reduces to "wsl kubectl get pods". 
-
+then you will only need "wsl " as prefix afterwards.
+So `wsl -d ubuntu20.04 kubectl get pods` reduces to "wsl kubectl get pods".
+If you have to deal with this for multiple commands, simply start a shell inside ubuntu via WSL and keep working there:
+```
+wsl -d ubuntu20.04
+devon
+kubectl get pods
+...
+```
 
 === requirements
 Running Docker and especially link:kubectl.asciidoc[Kubernetes] on your machine in the background will require quite some resources.
