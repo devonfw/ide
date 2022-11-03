@@ -16,11 +16,6 @@ CUSTOM_TOOLS="DEVON_IDE_CUSTOM_TOOLS=(${TOOL_A}:${TOOL_VERSION_A}:all:${REPO_URL
 echo "${CUSTOM_TOOLS}" >> "${PWD}/settings/devon.properties"
 "${CLI}" ide update
 
-if [[ -f "${TOOL_PATH_A}" && -f "${TOOL_PATH_B}" ]]
-then
-  rm "${PWD}/settings/devon.properties"
-  exit 0
-else
-  rm "${PWD}/settings/devon.properties"
-  exit 1
-fi
+rm "${PWD}/settings/devon.properties"
+[[ -f "${TOOL_PATH_A}" && -f "${TOOL_PATH_B}" ]]
+exit ${?}

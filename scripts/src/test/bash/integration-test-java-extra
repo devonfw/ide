@@ -2,16 +2,15 @@
 
 cd ../test-setup
 CLI="${PWD}/scripts/devon"
+JAVA_VERSION=11*
 EXTRA_VERSION=$(head -n 1 "${PWD}"/mirrors/java/available-versions)
 
+echo "JAVA_VERSION=${JAVA_VERSION}" >> "${PWD}/conf/devon.properties"
 echo "EXTRA_JAVA_VERSION=${EXTRA_VERSION}" >> "${PWD}/conf/devon.properties"
 "${CLI}" java setup
+JAVA_TEST=$(cat "${PWD}"/software/java/.devon.software.version)
+EXTRA_TEST=$(cat "${PWD}"/software/extra/java/.devon.software.version)
 
-if [ -x "${PWD}/software/extra/java/bin/java" ]
-then
-  rm "${PWD}/conf/devon.properties"
-  exit 0
-else
-  rm "${PWD}/conf/devon.properties"
-  exit 1
-fi
+rm "${PWD}/conf/devon.properties"
+[[ JAVA_VERSION == JAVA_TEST && EXTRA_VERSION == EXTRA_TEST ]
+exit ${?}

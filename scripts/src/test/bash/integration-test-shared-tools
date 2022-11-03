@@ -8,11 +8,6 @@ SHARED_DIR="${PWD}/shared"
 echo "DEVON_SOFTWARE_PATH=${SHARED_DIR}" >> "${PWD}/conf/devon.properties"
 "${CLI}" java setup
 
-if [ -d "${SHARED_DIR}/default/java" ]
-then
-  rm "${PWD}/conf/devon.properties"
-  exit 0
-else
-  rm "${PWD}/conf/devon.properties"
-  exit 1
-fi
+rm "${PWD}/conf/devon.properties"
+[ -d "${SHARED_DIR}/default/java" ]
+exit ${?}
