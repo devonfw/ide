@@ -18,7 +18,9 @@ TOOL_VERSION_COMMAND="python --version"
 source "$(dirname "${0}")"/../commandlet-cli
 
 function doSetup() {
+  TOOL_VERSION_COMMAND="-"
   doInstall "python" "${PYTHON_VERSION}" "${1}"
+  TOOL_VERSION_COMMAND="python --version"
   if [ "${?}" = 0 ]
   then
     if doIsMacOs
