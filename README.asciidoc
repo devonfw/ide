@@ -46,7 +46,7 @@ sudo yum install git-core curl
 +
 A command prompt will open and the setup will start. When the setup is asking for a settings url, you can just press enter to use the default settings.
 ** After the setup is finished, you can close the command prompt and open a new one.
-** *Youre done! You can now use the `devon` command in your terminal to use the devonfw-ide.*
+** *You are done! You can now use the `devon` command in your terminal to use the devonfw-ide.*
 
 ==== Video Tutorial
 ifdef::env-github[]
