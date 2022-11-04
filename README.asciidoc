@@ -1,6 +1,9 @@
-= devonfw-ide
+:toc: macro
 
-Tool to automate setup and update of development environment.
+image::documentation/images/devonfwidelogo.png["Logo",align="center",width=100%]
+
+
+A tool designed to help developers setting up an development environment with the ability to share the same project settings across the team.
 
 image:https://img.shields.io/github/license/devonfw/ide.svg?label=License["Apache License, Version 2.0",link=https://github.com/devonfw/ide/blob/master/LICENSE]
 image:https://img.shields.io/maven-central/v/com.devonfw.tools.ide/devonfw-ide-scripts.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:com.devonfw.tools.ide]
@@ -10,30 +13,74 @@ image:https://github.com/devonfw/ide/actions/workflows/test-windows.yml/badge.sv
 image:https://github.com/devonfw/ide/actions/workflows/test-ubuntu.yml/badge.svg["Ubuntu",link="https://github.com/devonfw/ide/actions/workflows/test-ubuntu.yml"]
 image:https://github.com/devonfw/ide/actions/workflows/test-macos.yml/badge.svg["MacOS",link="https://github.com/devonfw/ide/actions/workflows/test-macos.yml"]
 
+toc::[]
 
-== Introduction
+== Setup
 
-Watch our introduction video to get started:
+=== Prerequisites
+** Windows
 
-image:https://img.youtube.com/vi/NG6TAmksBGI/0.jpg["",link="https://www.youtube.com/watch?v=NG6TAmksBGI"]
+*** On Windows you need to  *download and install* https://git-scm.com/download/win[git for windows].
 
-// tag::you[]
+*** You need a tool to extract `*.tar.gz` files (`tar` and `gzip`).
++
+For example https://www.7-zip.org/[7-zip] or https://www.win-rar.com/[WinRar]. 
+** Linux
+*** On Linux you need to install `curl` and `git` if you don't have them already
++
+[source,terminal, .text-center]
+----
+sudo apt-get install git curl 
+or
+sudo yum install git-core curl
+----
+
+** MacOS
+*** On MacOS you only need to download and install https://git-scm.com/download/mac[git for mac].
+
+=== Install
+** Download the latest version of `devonfw-ide` from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] and extract it to a folder of your choice.
++
+(You can find all Releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[Maven Central])
+** Run the `setup` in this folder (On Windows you can double click on `setup.bat`)
++
+A command prompt will open and the setup will start. When the setup is asking for a settings url, you can just press enter to use the default settings.
+** After the setup is finished, you can close the command prompt and open a new one.
+** *You are done! You can now use the `devon` command in your terminal to use the devonfw-ide.*
+
+==== Video Tutorial
+ifdef::env-github[]
+image:https://img.youtube.com/vi/NG6TAmksBGI/0.jpg[link=https://www.youtube.com/watch?v=NG6TAmksBGI, width=640, height =360]
+endif::[]
+
+ifndef::env-github[]
 video::NG6TAmksBGI[youtube]
+endif::[]
+//video::NG6TAmksBGI[youtube, width=640, height=360]
 // end::you[]
+
 
 == Documentation
 
-* link:documentation/Home.asciidoc[Home]
 * link:documentation/features.asciidoc[Features]
 * link:documentation/setup.asciidoc[Download & Setup]
 * link:documentation/usage.asciidoc[Usage]
-* link:documentation/LICENSE.asciidoc[License]
+* link:documentation/devonfw-ide-contribution-getting-started.asciidoc[Contribution]
+* link:documentation/configuration.asciidoc[Configuration]
 * link:documentation/structure.asciidoc[Structure]
 * link:documentation/cli.asciidoc[Command Line Interface]
 * link:documentation/variables.asciidoc[Variables]
-* link:documentation/configuration.asciidoc[Configuration]
 * link:documentation/scripts.asciidoc[Scripts]
 * link:documentation/settings.asciidoc[Settings]
-* link:documentation/software.asciidoc[Software]
+* link:documentation/software.asciidoc[Software Folder]
 * link:documentation/integration.asciidoc[Integration]
 * link:documentation/advanced-tooling.asciidoc[Advanced-tooling]
+* link:documentation/[Documentation]
+
+== Contribution Guidelines
+*If you want to contribute to `devon-ide` please read our https://github.com/devonfw/ide/blob/master/documentation/devonfw-ide-contribution-getting-started.asciidoc[Contribution Guidelines].*
+
+*We use https://github.com/devonfw/ide/issues[GitHub Issues] to track bugs and submit feature requests.*
+
+== License 
+* link:documentation/LICENSE.asciidoc[License]
