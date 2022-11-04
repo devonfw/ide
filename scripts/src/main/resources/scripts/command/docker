@@ -59,7 +59,9 @@ function doSetup() {
       else
         doRequireNotBatch
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
-        doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}" 
+        TOOL_VERSION_COMMAND="-"
+        doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
+        TOOL_VERSION_COMMAND="docker version"
         if doIsWindows
         then
           doSetVpnKitStartupInstaller
