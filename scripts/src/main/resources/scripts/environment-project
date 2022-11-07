@@ -99,6 +99,8 @@ function doUpdatePath() {
   fi
   # Setup path
   SOFTWARE_PATH=${DEVON_IDE_HOME}/software
+  if [ -d "${SOFTWARE_PATH}" ]
+  then
   for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
   do
     if [ "${SOFTWARE_FOLDER}" != "${SOFTWARE_PATH}/extra" ]
@@ -117,6 +119,7 @@ function doUpdatePath() {
       fi
     fi
   done
+  fi
   
   # node.js support
   if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
