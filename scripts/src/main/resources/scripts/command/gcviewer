@@ -10,23 +10,18 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
-TOOL_VERSION_COMMAND="-"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
+TOOL_VERSION_COMMAND="-"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${GCVIEWER_HOME}" ]
+  doInstall "gcviewer" "${GCVIEWER_VERSION}" "${1}" "" "${GCVIEWER_HOME}" "" "noUnpack"
+  if [ "${?}" = 0 ]
   then
-    if [ -z "${GCVIEWER_VERSION}" ]
-    then
-      doEcho "Getting the latest release of GCViewer..."
-      GCVIEWER_VERSION=$(curl "https://github.com/chewiebug/GCViewer/tags" | awk -F "/tag/" '/GCViewer/ {print $2}' | sort -r | head -1 | awk -F "\">" '{print $1}')
-    fi 
-    do_not_extract="Not Empty"
-    doInstall "-" "${GCVIEWER_HOME}" "gcviewer" "${GCVIEWER_VERSION}" "" "" "" "" "" "" "${do_not_extract}"
     doCreateGCViewerScript
   fi
 }
@@ -38,10 +33,8 @@ function doStart() {
 }
 
 doCreateGCViewerScript() {
-  cd "${GCVIEWER_HOME}" || exit
-  touch gcviewer
-  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" >> gcviewer
-  chmod +x gcviewer
+  echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" > "${GCVIEWER_HOME}/gcviewer"
+  chmod a+x "${GCVIEWER_HOME}/gcviewer"
 }
 
 # CLI
@@ -54,12 +47,7 @@ case ${1} in
   echo " start                          launch GCViewer App."
 ;;
 "setup" | "s")
-  if [ "${2}" == "silent" ]
-  then
-    doSetup silent
-  else
-    doSetup
-  fi
+  doSetup "${2}"
 ;;
 "start" | "")
   doStart

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPTS_PATH="../../../../scripts/src/main/resources/scripts"
-( set -o pipefail; grep "function " "${SCRIPTS_PATH}/functions" "${SCRIPTS_PATH}/environment-project" | sed 's/.*function //' | sed 's/() {//' | sort -u > functions.list ) || exit 1
+( set -o pipefail; grep "function " "${SCRIPTS_PATH}/functions" "${SCRIPTS_PATH}/functions-core" | sed 's/.*function //' | sed 's/() {//' | sort -u > functions.list ) || exit 1
 ( set -o pipefail; grep "=== " "../../../../documentation/functions.asciidoc"  | sed 's/=== //' | sort -u > functions.adoc.list ) || exit 1
 
 diff functions.list functions.adoc.list

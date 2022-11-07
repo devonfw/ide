@@ -26,22 +26,24 @@ This subfolder needs to contain the tool in that version for every operating sys
 By default, each installation of `devonfw-ide` has its own physical installations of the required tools in the desired versions stored in its local `software` folder.
 While this is great for isolation of `devonfw-ide` installations and to prevent side-effects, it can cause a huge waste of disc resources in case you are having many installations of `devonfw-ide`.
 If you are a power-user of `devonfw-ide` with more then ten or even up to hundreds of installations on your machine, you might love to share installations of a software tool in a particular version between multiple `devonfw-ide` installations.
+In order to do so, you only need to link:configuration.asciidoc[configure] the variable `DEVON_SOFTWARE_PATH` in your `~/devon.properties` pointing to an existing absolute directory on your disc (e.g. `/projects/software` or `C:\projects\software`).
 
-CAUTION: If you use this power-feature you are taking responsibility for side-effects and should not expect support. Also if you are using Windows please read https://www.joshkel.com/2018/01/18/symlinks-in-windows/[Symlinks in Windows] and make your mind if you really want to do so. You might also use this link:advanced-tooling-windows.asciidoc#create-symbolic-links[hint] and maintain it manually without enabling the following feature.
+CAUTION: DEVON_SOFTWARE_PATH must be an absolte path that is an existing directory. On windows it has to be on the same drive as your IDE installations. If you use this power-feature you are taking responsibility for side-effects and should not expect support. You might also use this link:advanced-tooling-windows.asciidoc#create-symbolic-links[hint] and maintain it manually without enabling the following feature.
 
-In order to do so, you only need to link:configuration.asciidoc[configure] the variable `DEVON_SOFTWARE_PATH` in your `~/devon.properties` pointing to an existing directory on your disc (e.g. `/projects/software` or `C:\projects\software`).
 Then `devonfw-ide` will install required software into `${DEVON_SOFTWARE_PATH}/${software_name}/${software_version}` as needed and create a symbolic link to it in `${DEVON_IDE_HOME}/software/${software_name}`.
 
-As a benefit, another `devonfw-ide` installation will using the same software with the same version can re-use the existing installation and only needs to create the symbolic link. No more waste of having many identical JDK installations on your disc.
+As a benefit, another `devonfw-ide` installation will using the same software with the same version can re-use the existing installation and only needs to create the symbolic link.
+No more waste of having many identical JDK installations on your disc.
 
 As a drawback, you need to be aware that specific tools may be "manipulated" after installation.
-The most common case is that a tool allows to install plugins or extensions such as all IDEs do. Such "manipulations" will cause side-effects between the different `devonfw-ide` installations sharing the same version of that tool.
+The most common case is that a tool allows to install plugins or extensions such as all IDEs do.
+Such "manipulations" will cause side-effects between the different `devonfw-ide` installations sharing the same version of that tool.
 While this can also be a benefit it may also cause trouble.
 If you have a sensitive project that should not be affected by such side-effects, you may again override the `DEVON_SOFTWARE_PATH` variable to the empty value in your `${DEVON_IDE_HOME}/conf/devon.properties` of that sensitive installation:
 ```
 DEVON_SOFTWARE_PATH=
 ```
-This will disable this feature particularly for that specific sensitive `devonfw-ide` installation but let you use it for all other ones.
+This will disable this feature particularly for that specific sensitive `devonfw-ide` installation but let you use it for other ones.
 
 == Custom
 

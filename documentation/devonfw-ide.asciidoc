@@ -1,4 +1,4 @@
-= devonfw-ide
+image::images/devonfwidelogo.png["Logo",align="center",width=100%]
 
 include::devonfw-ide-introduction.asciidoc[leveloffset=1]
 

@@ -11,9 +11,8 @@ then
   echo "DEVON_IDE_HOME variable set to ${DEVON_IDE_HOME}"
 fi
 
-# shellcheck source=scripts/environment-project
-source "${DEVON_IDE_HOME}/scripts/environment-project" export
-DEVON_DOWNLOAD_DIR="${DEVON_HOME_DIR}/Downloads/devonfw-ide"
+# shellcheck source=scripts/functions-core
+source "${DEVON_IDE_HOME}/scripts/functions-core"
 
 # $1: message (may contain newlines with \n)
 # $2: optional exit code
@@ -62,29 +61,31 @@ function doResult() {
 # $2: message
 # $3: optional working directory
 function doRunCommand() {
-  local cwd=${PWD}
-  if [ -n "${3}" ]
+  local command="${1}"
+  local message="${2}"
+  local dir="${3}"
+  if [ -n "${dir}" ]
   then
-    if [ -d "${3}" ]
+    if [ -d "${dir}" ]
     then
-      cd "${3}" || exit 1
+      pushd "${dir}" > /dev/null || exit 255
     else
       doFail "Working directory ${3} does not exist."
     fi
   fi
-  local message
-  if [ -z "${2}" ]
+  if [ -z "${message}" ]
   then
-    message="run command ${1/ */}"
+    doDebug "Trying to run command ${command}"
+    message="run command ${command/ */}"
   else
-    message="${2} (${1})"
+    doDebug "Trying to ${message} (${command})"
+    message="${message} (${command/ */})"
   fi
-  doDebug "Trying to ${message}"
-  eval "${1}"
+  eval "${command}"
   result=${?}
-  if [ -n "${3}" ]
+  if [ -n "${dir}" ]
   then
-    cd "${cwd}" || exit 1
+    popd > /dev/null || exit 255 
   fi
   doResult "${message}" ${result}
 }
@@ -385,23 +386,22 @@ function doUpdateMirrors() {
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
 # $4: the version of the software to download
 # $5: the optional edition (e.g. "enterprise" or "community")
-# $6: the optional code (magic value to avoid tool specific quirks in general functions)
-# $7: operating system name
-# $8: the optional architecture (e.g. x64 or x86_64)
-# $9: the optional extension (e.g. 'tar.gz' or 'zip')
-# $10: the optional filename to download to
+# $6: operating system name
+# $7: the optional architecture (e.g. x64 or x86_64)
+# $8: the optional extension (e.g. 'tar.gz' or 'zip')
+# $9: the optional filename to download to
 function doDownload() {
+  doDebug "doDownload ${*}"
   doLicenseAgreement
   local url="${1}"
   local target_dir="${2}"
   local software="${3}"
   local version="${4}"
   local edition="${5}"
-  local code="${6}"
-  local os="${7}"
-  local arch="${8}"
-  local ext="${9}"
-  local filename="${10}"
+  local os="${6}"
+  local arch="${7}"
+  local ext="${8}"
+  local filename="${9}"
   if [ -z "${target_dir}" ]
   then
     target_dir="${DEVON_DOWNLOAD_DIR}"
@@ -545,7 +545,7 @@ function doDownload() {
       mirror_url="${mirror_url//\$\{ext\}/${ext}}"
       mirror_url="${mirror_url//\$\{edition\}/${edition}}"
       mirror_url="${mirror_url//\$\{major\}/${major}}"
-      mirror_url="${mirror_url//\$\{code\}/${code}}"
+      mirror_url="$(doResolveDownloadUrl "${mirror_url}" "${version}" "${os_new}" "${arch_new}" "${edition}")"
 
       if [ -z "${filename}" ]
       then
@@ -673,6 +673,7 @@ function doGetFirstExistingPath() {
 function doExtract() {
   local target_dir=${DEVON_IDE_HOME}/updates/extracted
   local filename=${1/*\//}
+  local extracted="yes"
   rm -rf "${target_dir}"
   if [ -n "${2}" ]
   then
@@ -701,10 +702,16 @@ function doExtract() {
   elif doIsInstallerExtension "${filename}"
   then
      doRunCommand "mv \"${1}\" \"${target_dir}\""
+    extracted="no"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
-  doSuccess "Successfully extracted/moved archive ${filename} to updates/extracted"
+  if [ "${extracted}" = "no" ]
+  then
+    doSuccess "Successfully moved archive ${filename} to ${target_dir}"
+  else
+    doSuccess "Successfully extracted archive ${filename} to ${target_dir}"
+  fi
 }
 
 # $1: the file to unzip
@@ -804,8 +811,9 @@ function doReplaceExtractedSkipSingleFolder() {
   local target_dir="${2}"
   local backup_dir="${3}"
   shift 3
-  if [ "${#*}" = 1 ] && [ -d "${1}" ] && [[ ! "${1}" =~ .*\.app ]]
+  if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
+    doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
     source_dir="${1}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
@@ -850,10 +858,6 @@ function doMavenGetLatestVersion() {
 function doIsDevVersion() {
   [ "${1}" = "dev-SNAPSHOT" ] || [ "${1}" = "0-SNAPSHOT" ]
 }
-
-# defaults, may be overridden before calling doMavenArchetype
-ARCHETYPE_GROUP_ID="com.devonfw.java.templates"
-ARCHETYPE_ARTIFACT_ID="devon4j-template-server"
 
 # ${1}-${n-1}: array
 # ${n}: prefix to check if array contains element starting with
@@ -1035,7 +1039,7 @@ function doUpgradeMavenArtifact() {
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
   url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
-  doInstall "${url}" "${1}" "${artifact_id}" "${target_version}" "${suffix}" "-" "" "" "" "${repository}"
+  doInstall "${artifact_id}" "${target_version}" "" "" "${1}" "-" "" "${repository}" "${url}"
 }
 
 # $1: target
@@ -1060,7 +1064,7 @@ function doGitPullOrClone() {
   fi
   if [ -d "${dir}/.git" ]
   then
-    pushd "${dir}" > /dev/null || exit 255 
+    pushd "${dir}" > /dev/null || exit 255
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
@@ -1109,39 +1113,83 @@ function doGitPullOrClone() {
   fi
 }
 
-# $1: download URL
-# $2: absolute target path where to install
-# $3: name of software
-# $4: version of software
-# $5: the optional edition (e.g. "enterprise" or "community")
-# $6: optional code (for tool specific quirks)
-# $7: optional OS indicator ('-' if OS independent)
-# $8: optional architecture (e.g. x86_64)
-# $9: optional extension (e.g. 'tar.gz' or 'zip')
-# $10: optional software repo
-# $11: optional to ignore extracting downloaded files (must not be empty to ignore extracting!)
+# $1: URL
+# $2: resolved version
+# $3: resolved os
+# $4: resolved arch
+# $5: optional software edition
+function doResolveDownloadUrl() {
+  echo "${1}"
+}
+
+# $1: name of software
+# $2: version of software
+# $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
+# $4: optional edition (e.g. "enterprise" or "community")
+# $5: optional absolute target path where to install
+# $6: optional OS indicator ('-' if OS independent)
+# $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+# $8: optional software repository
+# $9: optional download URL
 function doInstall() {
-  local url="${1}"
-  local target_path="${2}"
-  local software="${3}"
-  local version="${4}"
-  local edition="${5}"
-  local code="${6}"
-  local os="${7}"
-  local arch="${8}"
-  local ext="${9}"
-  local repository="${10}"
-  local ignore_extract="${11}"
-  local download_dir="${DEVON_DOWNLOAD_DIR}"
-  if [ -z "${target_path}" ] || [ -z "${url}" ] || [ -z "${software}" ]
+  doDebug "doInstall ${*}"
+  local software="${1}"
+  local version="${2}"
+  local silent="${3}"
+  local edition="${4}"
+  local target_path="${5}"
+  local os="${6}"
+  local noUnpack="${7}"
+  local repository="${8}"
+  local url="${9}"
+  if [ -z "${target_path}" ]
   then
-    doFail "Missing arguments for doInstall: ${*}"
+    target_path="${DEVON_IDE_HOME}/software/${software}"
+  fi
+  local ext
+  local arch
+  local download_dir="${DEVON_DOWNLOAD_DIR}"
+  if [ -z "${software}" ]
+  then
+    doFail "Missing software argument for doInstall: ${*}"
   fi
   local result=0
   if [ "${url/.git/}" != "${url}" ]
   then
     doGitPullOrClone "${target_path}" "${url}"
     return
+  fi
+  if [ -z "${version}" ]
+  then
+    doUpdateMirrors
+    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+    if [ -e "${available_versions}" ]
+    then
+      version="$(head -n 1 "${available_versions}")"
+      doDebug "Resolved latest version of ${software} to ${version} from ${available_versions}"
+    else
+      doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
+    fi
+  elif [ "${version:${#version}-1}" = "*" ]
+  then
+    doDebug "Resolving version prefix ${version}"
+    local version_prefix="${version:0:${#version}-1}"
+    doUpdateMirrors
+    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+    if [ -e "${available_versions}" ]
+    then
+      local resolved_version
+      resolved_version="$(grep "^${version_prefix}[^0-9]" "${available_versions}" | head -n 1)"
+      if [ -n "${resolved_version}" ]
+      then
+        doDebug "Resolved version prefix ${version} to ${resolved_version}"
+        version="${resolved_version}"
+      else
+        doFail "Could not resolve version prefix ${version} : no matching version found in ${available_versions}"
+      fi
+    else
+      doFail "Could not resolve version prefix ${version} : missing file ${available_versions}"
+    fi
   fi
   local version_file="${target_path}/.devon.software.version"
   local current_version=
@@ -1150,17 +1198,21 @@ function doInstall() {
     current_version="$(cat "${version_file}")"
     if [ "${current_version}" == "${version}" ]
     then
-      doEcho "Version ${version} of ${software} is already installed."
+      if [ -z "${silent}" ]
+      then
+        doEcho "Version ${version} of ${software} is already installed."
+        if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
+        then
+          doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+        fi
+      fi
       return 1
     else
       doEcho "Updating ${software} from version ${current_version} to version ${version}..."
     fi
   fi
-  local dir=${target_path/*\//}
-  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
-  then
-    mkdir -p "${DEVON_IDE_HOME}/software"
-  fi
+  local dir="${target_path/*\//}"
+  doRunCommand "mkdir -p '${target_path%/*}'"
   local repo="default"
   if [ -z "${repository}" ]
   then
@@ -1201,20 +1253,21 @@ function doInstall() {
     rm "${target_path}"
   fi
   local install_path="${target_path}"
-  if [ -n "${DEVON_SOFTWARE_PATH}" ] && [ "${target_path}" != "${DEVON_IDE_HOME}" ]
+  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ] || [ "${target_path}" = "${DEVON_IDE_HOME}/software/extra/${dir}" ] && [ -n "${DEVON_SOFTWARE_PATH}" ]
   then
     install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
     version_file="${install_path}/.devon.software.version"
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    if [ -n "${ignore_extract}" ]
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}"
+    doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    if [ -n "${noUnpack}" ]
     then
-      doDownload "${url}" "${target_path}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-      doDebug "Received download file ${DOWNLOAD_FILENAME}"
+      doDebug "Download shall not be extracted, hence copying ${DOWNLOAD_FILENAME} to ${install_path}"
+      doRunCommand "mkdir -p '${install_path}'"
+      doRunCommand "cp '${download_dir}/${DOWNLOAD_FILENAME}' '${install_path}'"
     else
-      doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${code}" "${os}" "${arch}" "${ext}"
-      doDebug "Received download file ${DOWNLOAD_FILENAME}"
       doExtract "${download_dir}/${DOWNLOAD_FILENAME}" "${dir}"
       doReplaceExtracted "${DEVON_IDE_HOME}/updates/extracted/${dir}" "${install_path}"
     fi
@@ -1236,17 +1289,13 @@ function doInstall() {
       doFail "Installation corrupt at ${install_path}\nDetected version: ${current_version}\nExpected version: ${version}"
     fi
   fi
-  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
-  then
-    doExtendPath "${target_path}"
-  fi
   if [ "${install_path}" != "${target_path}" ]
   then
     doBackup "${target_path}"
     doEcho "Linking ${install_path} to ${target_path}"
     if doIsWindows
     then
-      cmd //c mklink "${install_path}" "${target_path}"
+      doRunCommand "cmd //c 'mklink /d /j $(cygpath -w "${target_path}") $(cygpath -w "${install_path}")'"
       if [ "${?}" != 0 ]
       then
         doFail "Creating symbolic links is not supported on your windows operating system.\nPlease read the documentation how to properly configure your OS or disable this feature by removing the DEVON_SOFTWARE_PATH variable."
@@ -1257,21 +1306,77 @@ function doInstall() {
   fi
 
   # macos workaround
-  if [ ! -d "${target_path}/bin" ] && doIsMacOs && [ -d "${target_path}/Contents/Home/bin" ]
+  if [ ! -d "${target_path}/bin" ] && doIsMacOs
   then
-    doEcho "Creating symlink as workaround for ${software} on MacOS"
-    local target_software_macos=${target_path%\/*}/macos
-    if [ ! -d "${target_software_macos}" ]
+    local contents="Contents"
+    if ! [ -d "${target_path}/${contents}" ]
     then
-      mkdir -p "${target_software_macos}"
+      pushd "${target_path}" > /dev/null || exit 255
+      # doGetFirstExistingPath does not have options
+      # shellcheck disable=SC2035
+      contents="$(doGetFirstExistingPath *.app/Contents)"
+      popd > /dev/null || exit 255 
     fi
-    local target_software_software=${target_software_macos}/${dir}
-    doRunCommand "rm -rf '${target_software_software}'"
-    doRunCommand "mv '${target_path}' '${target_software_software}'"
-    doRunCommand "ln -sf 'macos/${dir}/Contents/Home' '${target_path}'"
-    doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+    if [ -n "${contents}" ] && [ -d "${target_path}/${contents}" ]
+    then
+      doDebug "Found MacOS app in ${target_path}/${contents}"
+      local app_folder="-"
+      if [ -d "${target_path}/${contents}/Resources/app/bin" ]
+      then
+        app_folder="Resources/app"
+      else
+        local folder
+        while IFS= read -r -d '' folder
+        do
+          folder="${folder/*\//}"
+          doDebug "Checking app sub-folder ${folder}"
+          if [ "${folder}" != "Contents" ] && [ "${folder}" != "Resources" ] && [ "${folder}" != "bin" ] && [ "${folder:0:1}" != "_" ]
+          then
+            if [ -d "${target_path}/${contents}/${folder}/bin" ]
+            then
+              app_folder="${folder}"
+              doDebug "App folder with bin detected as ${app_folder}"
+              break
+            else
+              doDebug "Looking for executable in ${folder}"
+              local file
+              while IFS= read -r -d '' file
+              do
+                if [ -x "${file}" ] && [ "${file:(-4)}" != ".txt" ]
+                then
+                  app_folder="${folder/*\//}"
+                  doDebug "App folder with executable detected as ${app_folder}"
+                  break
+                fi
+                done < <(find "${target_path}/${contents}/${folder}/" -maxdepth 1 -type f -print0)
+            fi
+          fi
+        done < <(find "${target_path}/${contents}" -maxdepth 1 -type d -print0)
+      fi
+      if [ "${app_folder}" != "-" ] && [ -d "${target_path}/${contents}/${app_folder}" ]
+      then
+        doEcho "Creating symlink as workaround for ${software} on MacOS"
+        local target_software_macos=${target_path%\/*}/macos
+        if [ ! -d "${target_software_macos}" ]
+        then
+          mkdir -p "${target_software_macos}"
+        fi
+        local target_software_software=${target_software_macos}/${dir}
+        doRunCommand "rm -rf '${target_software_software}'"
+        doRunCommand "mv '${target_path}' '${target_software_software}'"
+        doRunCommand "ln -sf 'macos/${dir}/${contents}/${app_folder}' '${target_path}'"
+        doRunCommand "cp '${target_software_software}/.devon.software.version' '${target_path}'"
+      fi
+    fi
   fi
-
+  if [ "${target_path}" = "${DEVON_IDE_HOME}/software/${dir}" ]
+  then
+    doExtendPath "${target_path}"
+  fi
+  if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
+  then
+    doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+  fi
   return ${result}
 }
 
@@ -1336,7 +1441,7 @@ function doRunConfigurator() {
       classpath="${classpath}:${file}"
     fi
   done
-  doRunCommand "java -cp '${classpath}' ${*}"
+  doRunCommand "java -cp '${classpath}' ${*}" "Configure workspace"
 }
 
 # $1: name of ide
@@ -1406,8 +1511,8 @@ function doVersionCompare() {
           n2="${r2//[^0-9]/}"
           local x1="${r1:0:(${#r1}-${#n1})}"
           local x2="${r2:0:(${#r2}-${#n2})}"
-          x1="${x1//[-_+]/}"
-          x2="${x2//[-_+]/}"
+          x1="${x1//[-_+*]/}"
+          x2="${x2//[-_+*]/}"
           if [ "${x1}" = "${x2}" ]
           then
             if [ -z "${n1}" ]
@@ -1504,6 +1609,16 @@ function doIsWindows() {
   return 255
 }
 
+# $1: prefic to check
+# $2: string potentially containing the prefix
+function doIsPrefix() {
+  case "${2}" in
+  "${1}"*)
+    return 0;;
+  esac
+  return 255
+}
+
 # $1: dirctory
 function doIsEmptyDirectory() {
   local dir="${1}"
@@ -1562,6 +1677,9 @@ function doGetToolFolderName() {
   elif [ "${tool}" = "sonar" ]
   then
     tool="sonarqube"
+  elif [ "${tool}" = "cobigen" ]
+  then
+    tool="cobigen-cli"
   fi
   echo "${tool}"
 }
@@ -1650,14 +1768,9 @@ function doListSoftwareVersions() {
 # $@: CLI args
 # returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
 function doParseOption() {
-  if [ -n "${end_options}" ]
-  then
-    return 255
-  fi
   if [ "${1}" = "--" ]
   then
-    end_options="true"
-    return
+    return 1
   elif [ "${1}" = "-b" ] || [ "${1}" = "--batch" ]
   then
     batch="${1}"
@@ -1696,13 +1809,3 @@ function doParseOption() {
   fi
   return 255
 }
-
-end_options=""
-batch=""
-force=""
-quiet=""
-debug=""
-while [ -n "${1}" ] && doParseOption "${@}"
-do
-  shift
-done

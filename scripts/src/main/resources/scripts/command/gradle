@@ -10,23 +10,19 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="gradle -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
+GRADLE="${GRADLE_HOME}/bin/gradle"
+TOOL_VERSION_COMMAND="${GRADLE} -v"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${GRADLE_HOME}" ]
-  then
-    local version="${GRADLE_VERSION:-5.5.1}"
-    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "" "" "-"
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "'${GRADLE}' -v" "verify installation of gradle"
-  fi
+  doInstall "gradle" "${GRADLE_VERSION}" "${1}" "" "${GRADLE_HOME}" "-"
+  return 0
 }
 
 function doGetProjectVersion() {
@@ -89,8 +85,6 @@ then
   echo " «args»                         call gradle with the specified arguments"
   exit
 fi
-GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
-GRADLE="${GRADLE_HOME}/bin/gradle"
 if [ -z "${1}" ]
 then
   # shellcheck disable=SC2086

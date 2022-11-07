@@ -10,24 +10,18 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-SONARQUBE_HOME="${DEVON_IDE_HOME}/software/sonarqube"
-TOOL_VERSION_COMMAND="ls '${SONARQUBE_HOME}/lib/sonar-application'-*.jar | sed 's/.*sonar-application-//' | sed 's/\.jar//'"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+SONARQUBE_HOME="${DEVON_IDE_HOME}/software/sonarqube"
+TOOL_VERSION_COMMAND="ls '${SONARQUBE_HOME}/lib/sonar-application'-*.jar | sed 's/.*sonar-application-//' | sed 's/\.jar//'"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  if [ "${1}" != "silent" ] || [ ! -d "${SONARQUBE_HOME}" ]
-  then
-    local version="${SONARQUBE_VERSION:-9.4.0.54424}"
-    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "" "" "-"
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    echo doRunCommand "'${SONAR}' -v" "verify installation of sonarqube"
-  fi
+  doInstall "sonarqube" "${SONARQUBE_VERSION}" "${1}" "" "${SONARQUBE_HOME}" "-"
+  return 0
 }
 
 function doStart() {

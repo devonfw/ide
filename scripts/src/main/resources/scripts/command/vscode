@@ -14,27 +14,19 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
-TOOL_VERSION_COMMAND="code -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+TOOL_VERSION_COMMAND="code -v"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
-  if [ "${1}" != "silent" ] || [ ! -d "${VSCODE_HOME}" ]
+  doInstall "vscode" "${VSCODE_VERSION}" "${1}"
+  if [ "${?}" = 0 ]
   then
-    local version="${VSCODE_VERSION:-1.71.0}"
-    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
-    if [ "${?}" = 0 ]
-    then
-      if doIsMacOs
-      then
-        mkdir "${VSCODE_HOME}/bin"
-        echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
-        chmod a+x "${VSCODE_HOME}/bin/code"
-      fi
-    fi
     cleanupPlugins
     doAddPlugins
   fi
@@ -55,7 +47,7 @@ function cleanupPlugins() {
 
 function doAddPlugins() {
   local file
-  local pluginsToInstall
+  local pluginsToInstall=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -68,20 +60,30 @@ function doAddPlugins() {
         doWarning "Invalid vscode plugin config: ${file}"
       elif [ "${plugin_active}" = "true" ]
       then
-        pluginsToInstall="${pluginsToInstall} --install-extension ${plugin_id}"
+        pluginsToInstall+=("${plugin_id}")
       fi
     fi
   done
-  doAddPlugin "${pluginsToInstall}"
+  if [ "${#pluginsToInstall}" -gt 0 ]
+  then
+    doAddPlugin "${pluginsToInstall[@]}"
+  fi
 }
 
 function doAddPlugin() {
-  if [ -n "${1}" ]
+  local plugins="${*}"
+  local args=()
+  while [ -n "${1}" ]
+  do
+    args+=("--install-extension" "${1}")
+    shift
+  done
+  if [ "${#args}" = 0 ]
   then
-    doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
-    doRunVsCode --force "${1}"
-  else
     doEcho "No plugins to be installed / uninstalled"
+  else
+    doEchoAttention "Starting installation of the following plugins into VS code:\n${plugins}\nPlease wait until VSCode has successfully installed all plugins."
+    doRunVsCode --force "${args[@]}"
   fi
 }
 
@@ -158,8 +160,9 @@ while [ -n "${1}" ]
 do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
+    shift
     doSetup silent
-    doStartVsCode
+    doStartVsCode "${@}"
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
     doConfigureVsCode -u
