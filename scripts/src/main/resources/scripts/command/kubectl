@@ -10,10 +10,11 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND=
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND=
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
@@ -26,12 +27,7 @@ function doSetup() {
     fi
     return
   fi
-  if doIsWindows || doIsMacOs
-  then
-    doDevonCommand docker setup silent
-  else
-    doFail "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
-  fi
+  doDevonCommand docker setup silent
 }
 
 

@@ -10,23 +10,17 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-NODE_HOME="${DEVON_IDE_HOME}/software/node"
-TOOL_VERSION_COMMAND="node -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
+TOOL_VERSION_COMMAND="node -v"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
-  if [ "${1}" != "silent" ] || [ ! -d "${NODE_HOME}" ]
-  then
-    local version="${NODE_VERSION:-v14.17.6}"
-    doInstall "-" "${NODE_HOME}" "nodejs" "${version}"
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "${TOOL_VERSION_COMMAND}"
-  fi
+  doInstall "nodejs" "${NODE_VERSION}" "${1}" "" "${NODE_HOME}"
+  return 0
 }
 
 function doSetupDevon4node() {

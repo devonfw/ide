@@ -10,32 +10,20 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="npm -v"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
+TOOL_VERSION_COMMAND="npm -v"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
-  local software_version=${NPM_VERSION}
-  local installed_version
-  if [ -x "${NPM_CMD}" ]
+  doDevonCommand node setup silent
+  local software_dir="${NODE_HOME}/node_modules/npm"
+  doInstall "npm" "${NPM_VERSION}" "${1}" "" "${software_dir}"
+  if [ "${?}" = 0 ]
   then
-    installed_version=$(${NPM_CMD} -version)
-  else 
-    doDevonCommand node setup silent
-    installed_version=$(${NPM_CMD} -version)
-  fi
-
-  if [ -z "${software_version}" ] || [ "${installed_version}" == "${software_version}" ] 
-  then
-    if [ "${1}" != "silent" ]
-    then
-      doEcho "Version ${installed_version} of npm is already installed at ${NPM_CMD}"
-    fi
-  else
-    local software_dir="${NODE_HOME}/node_modules/npm"
-    doInstall "-" "${software_dir}" "npm" "${software_version}"
     if [ -f "${NODE_HOME}/npm" ]
     then 
       rm "${NODE_HOME}/npm"
@@ -56,7 +44,7 @@ function doSetup() {
     cp "${software_dir}/bin/npm.cmd" "${NODE_HOME}"
     cp "${software_dir}/bin/npx" "${NODE_HOME}"
     cp "${software_dir}/bin/npx.cmd" "${NODE_HOME}"
-  fi    
+  fi
 }
 
 function doGetProjectVersion() {
@@ -95,9 +83,9 @@ function doRunBuild() {
   doEcho "Running: npm ${*}"
   if doIsQuiet
   then
-    "${NPM_CMD}" --quiet "${@}"
+    npm --quiet "${@}"
   else
-    "${NPM_CMD}" "${@}"
+    npm "${@}"
   fi
 }
 
@@ -123,17 +111,6 @@ then
   echo " release                        start a clean deploy release build"
   echo " «args»                         run NPM with the given arguments"
   exit
-fi
-
-if [ -z "${NODE_HOME}" ]
-then
-  NODE_HOME="${DEVON_IDE_HOME}/software/node"
-fi
-
-NPM_CMD="${DEVON_IDE_HOME}/software/node/npm"
-if [ ! -x "${NPM_CMD}" ]
-then
-  NPM_CMD="${DEVON_IDE_HOME}/software/node/bin/npm"
 fi
 
 if [ -z "${1}" ] || [ "${1}" = "build" ]
