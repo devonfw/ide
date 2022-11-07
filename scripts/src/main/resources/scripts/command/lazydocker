@@ -10,10 +10,11 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="lazydocker --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND="lazydocker --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
 # Call lazydocker with specified arguments.
 function doRun() {
@@ -30,22 +31,9 @@ function doSetup() {
   if [ ! -d "${LAZYDOCKER_HOME}" ] || [ "${1}" != "silent" ]
   then
     doDevonCommand docker setup silent
-    local version="${LAZYDOCKER_VERSION}"
-    # Get latest release
-    if [ -z "${version}" ]
-    then 
-      version="0.18.1"
-      doEcho "Getting latest release..."
-      local latestversion
-      latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/jesseduffield/lazydocker/releases/latest | sed 's/^.*\///' | sed 's/^v//')
-      doVersionCompare "${latestversion}" "${version}"
-      if [ "${?}" = 1 ]
-      then
-        version=${latestversion}
-      fi
-    fi
     doCheckDockerVersions
-    doInstall "-" "${LAZYDOCKER_HOME}" "lazydocker" "${version}"
+    doInstall "lazydocker" "${LAZYDOCKER_VERSION}" "${1}"
+    return 0
   fi
 }
 
@@ -95,8 +83,7 @@ case ${1} in
   echo "                                call lazydocker by executing the command 'devon lazydocker'. Call lazydocker --help for details or use lazydocker directly as preferred."
 ;;
 "setup" | "s" )
-  doEcho "Installing lazydocker..."
-  doSetup
+  doSetup "${2}"
 ;;
 "version" | "v" )
   lazydversion=$(cat "${LAZYDOCKER_HOME}"/.devon.software.version)

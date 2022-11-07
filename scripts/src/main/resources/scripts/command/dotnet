@@ -9,10 +9,12 @@ then
   exit
 fi
 
-if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
-TOOL_VERSION_COMMAND="dotnet --version"
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND="dotnet --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doExists() {
@@ -25,19 +27,12 @@ function doExists() {
 }
 
 function doSetup() {
-  if [ "${1}" != "silent" ] || [ ! -d "${DOTNET_HOME}" ]
+  doInstall "dotnet" "${DOTNET_VERSION}" "${1}"
+  if doExists ~/.templateengine/packages/Devon4Net.WebAPI.Template*
   then
-    doInstall "-" "${DOTNET_HOME}" "dotnet" "${DOTNET_VERSION:-6.0.300}"
-    if doExists ~/.templateengine/packages/Devon4Net.WebAPI.Template*
-    then
-      doDebug "Devon4net template already installed."
-    else
-      doRun new -i devon4net.WebApi.Template
-    fi
-  fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
-  then
-    doRunCommand "'${DOTNET}' --version" "verify installation of dotnet"
+    doDebug "Devon4net template already installed."
+  else
+    doRun new -i devon4net.WebApi.Template
   fi
 }
 
@@ -65,7 +60,7 @@ case ${1} in
   exit
 ;;
 "setup" | "s")
-  doSetup setup
+  doSetup "${2}"
 ;;
 "create" | "c")
   doRun new Devon4NetAPI
