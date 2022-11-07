@@ -26,12 +26,7 @@ function doSetup() {
     fi
   else
     doDevonCommand npm setup silent
-    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
-    if [ ! -x "${npm_command}" ]
-    then
-      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
-    fi
-    doRunCommand "'${npm_command}' install -g @ionic/cli@latest --unsafe" "install ionic-cli"
+    doDevonCommand npm install -g @ionic/cli@latest --unsafe
   fi
 }
 
