@@ -10,5 +10,13 @@ echo -e "\nEXTRA_JAVA_VERSION=${EXTRA_VERSION}" >> "${PWD}/conf/devon.properties
 JAVA_TEST=$(cat "${PWD}"/software/java/.devon.software.version)
 EXTRA_TEST=$(cat "${PWD}"/software/extra/java/.devon.software.version)
 
-[[ $JAVA_TEST == $JAVA_VERSION && $EXTRA_TEST == $EXTRA_VERSION ]]
-exit ${?}
+if [ "${JAVA_TEST::3}" != "11." ]
+then
+  echo "ERROR: Expected Java 11 but found version ${JAVA_TEST}"
+  exit 1
+fi
+if [ "${EXTRA_TEST}" != "${EXTRA_VERSION}" ]
+then
+  echo "ERROR: Expected Java extra version ${EXTRA_VERSION} but found version ${EXTRA_TEST}"
+  exit 1
+fi
