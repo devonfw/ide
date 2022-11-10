@@ -21,7 +21,8 @@ git fetch upstream
 Whenever you want to implement a new change first do the following things:
 ```
 git checkout master
-git pull upstream/master
+git pull upstream master
+git push
 git checkout -b feature/«issue-id»-«brief-feature-description»
 ```
 Now you can do the changes, improvements, and fixes.
