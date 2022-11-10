@@ -29,7 +29,7 @@ Now you can do the changes, improvements, and fixes.
 Once they are tested and seem to work, you can commit them (`git commit -m "#«issue-id»: «description»"`).
 If some days have passed meanwhile you should merge changes that meanwhile happened on the offical `ide` repo:
 ```
-git pull upstream/master
+git pull upstream master
 ```
 Once you are complete and everything is merged and comitted, you can push your local feature branch and make it a remote branch of your fork on github:
 ```
