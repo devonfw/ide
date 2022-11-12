@@ -28,8 +28,8 @@ for %%f in (devon.bat) do set "p=%%~$PATH:f"
 if not defined p (
   echo Adding %USERPROFILE%\scripts to your users system PATH
   for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
-  if "%USER_PATH:~-1,1%" == ";" (
-    set "USER_PATH=%USER_PATH:~0,-1%"
+  if "!USER_PATH:~-1,1!" == ";" (
+    set "USER_PATH=!USER_PATH:~0,-1!"
   )
   if "!USER_PATH!" == "" (
     setx PATH "%%USERPROFILE%%\scripts"
