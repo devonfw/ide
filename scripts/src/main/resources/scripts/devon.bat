@@ -31,7 +31,7 @@ if not defined p (
   if "%USER_PATH:~-1,1%" == ";" (
     set "USER_PATH=%USER_PATH:~0,-1%"
   )
-  if "%USER_PATH%" == "" (
+  if "!USER_PATH!" == "" (
     setx PATH "%%USERPROFILE%%\scripts"
     echo %_fBYellow%"ATTENTION:"%_RESET%
     echo "Your user PATH environment variable has not been previously set."
@@ -39,12 +39,12 @@ if not defined p (
     echo "Otherwise you may get errors that devon command has not been found."
     pause
   ) else (
-    setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+    setx PATH "!USER_PATH!;%%USERPROFILE%%\scripts"
   )
-  if "%PATH:~-1,1%" == ";" (
-    set "PATH=%PATH%%USERPROFILE%\scripts"
+  if "!PATH:~-1,1!" == ";" (
+    set "PATH=!PATH!%USERPROFILE%\scripts"
   ) else (
-    set "PATH=%PATH%;%USERPROFILE%\scripts"
+    set "PATH=!PATH!;%USERPROFILE%\scripts"
   )
   echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
   echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
