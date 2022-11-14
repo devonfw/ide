@@ -3,30 +3,31 @@ if [ -n "${DEVON_IDE_TRACE}" ]
 then 
   set -vx; 
 fi
-# Script with fundamental functions already needed by devon command.
+# Script with fundamental functions already needed by devon command. 
 # Will be sourced, hash bang only for filetype detection and editor syntax support
 
 # $1: path of properties file to load
 # $2: optional prefix to add to variables
-# $3: optional arg to export all variables if not empty
+# $3: optional arg to export all variables if not empty 
 function doLoadProperties() {
   if ! [ -f "${1}" ]
   then
     return
   fi
   if test "$(tail -c 1 "${1}" | wc -l)" -eq 0
-   then
+  then
     echo "Appending missing newline to ${1}"
-    echo >>"${1}"
+    echo >> "${1}"
   fi
   local key
   local value
   local export_key
-  while IFS='=' read -r key value; do
+  while IFS='=' read -r key value
+  do
     if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
-     then
-      key="${key//$'\r'/}"
-      value="${value//$'\r'/}"
+    then
+      key="${key//$'\r'}"
+      value="${value//$'\r'}"
       export_key=""
       if [ "${value:0:1}" = "~" ]
       then
@@ -50,7 +51,8 @@ function doLoadProperties() {
       else
         if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
         then
-          if [[ "${value}" =~ ^[A-Za-z]:[\\/] ]]; then
+          if [[ "${value}" =~ ^[A-Za-z]:[\\/] ]]
+          then
             value="$(cygpath "${value}")"
           fi
         fi
@@ -66,7 +68,7 @@ function doLoadProperties() {
         fi
       fi
     fi
-  done <"${1}"
+  done < "${1}"
 }
 
 function doUpdatePath() {
@@ -80,7 +82,8 @@ function doUpdatePath() {
       DEVON_OLD_PATH=
       IFS=':'
       set -f
-      for dir in ${PATH}; do
+      for dir in ${PATH}
+      do
         if [[ "${dir}" != "${DEVON_IDE_HOME}"* ]]
         then
           if [ -z "${DEVON_OLD_PATH}" ]
@@ -99,32 +102,40 @@ function doUpdatePath() {
   fi
   # Setup path
   SOFTWARE_PATH=${DEVON_IDE_HOME}/software
-  if [ -d "${SOFTWARE_PATH}" ]; then
-    for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*; do
-      if [ "${SOFTWARE_FOLDER}" != "${SOFTWARE_PATH}/extra" ] && [ -d "${SOFTWARE_FOLDER}" ]; then
-        if [ -d "${SOFTWARE_FOLDER}/bin" ]; then
+  if [ -d "${SOFTWARE_PATH}" ]
+  then
+    for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
+    do
+      if [ "${SOFTWARE_FOLDER}" != "${SOFTWARE_PATH}/extra" ] && [ -d "${SOFTWARE_FOLDER}" ]
+      then
+        if [ -d "${SOFTWARE_FOLDER}/bin" ]
+        then
           PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
         else
           PATH="${SOFTWARE_FOLDER}:${PATH}"
         fi
         # Load custom configuration of software
-        if [ -e "${SOFTWARE_FOLDER}/ide-config" ]; then
+        if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
+        then
           # shellcheck disable=SC1090,SC1091
           source "${SOFTWARE_FOLDER}/ide-config"
         fi
       fi
     done
   fi
+  
   # node.js support
-  if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]; then
-    PATH="${PATH}:$(npm bin -g 2>/dev/null)"
+  if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
+  then
+    PATH="${PATH}:$(npm bin -g 2> /dev/null)"
   fi
 }
 
 function doEnvironmentProject() {
   # determine proper home directory
   DEVON_HOME_DIR=~
-  if [ "${OSTYPE}" = "cygwin" ]; then
+  if [ "${OSTYPE}" = "cygwin" ]
+  then
     DEVON_HOME_DIR="$(cygpath "${USERPROFILE}")"
   fi
   # load and setup configuration
@@ -132,13 +143,16 @@ function doEnvironmentProject() {
   doLoadProperties "${DEVON_HOME_DIR}/devon.properties" "" "${@}"
   doLoadProperties "${DEVON_IDE_HOME}/devon.properties" "" "${@}"
   doLoadProperties "${SETTINGS_PATH}/devon.properties" "" "${@}"
-  if [ -z "${WORKSPACE}" ]; then
+  if [ -z "${WORKSPACE}" ]
+  then
     WORKSPACE=main
   fi
   export WORKSPACE
   export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
-  if [ ! -d "${WORKSPACE_PATH}" ]; then
-    if [ "${WORKSPACE}" = "main" ]; then
+  if [ ! -d "${WORKSPACE_PATH}" ]
+  then
+    if [ "${WORKSPACE}" = "main" ]
+    then
       echo "Creating main workspace directory"
       mkdir -p "${WORKSPACE_PATH}"
     else
