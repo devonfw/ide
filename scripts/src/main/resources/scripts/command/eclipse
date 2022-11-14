@@ -430,15 +430,18 @@ do
   elif [ "${1}" = "add-plugin" ]
   then
     shift
+    doSetup silent
     doAddPlugin "${@}"
     exit ${?}
   elif [ "${1}" = "import" ] 
   then
+    doSetup silent
     doImportEclipse "${2}" "${3}"
     exit ${?}
   elif [ "${1}" = "mirror" ]
   then
     shift
+    doSetup silent
     doMirrorUpdateSite "${@}"
     exit ${?}
   else
