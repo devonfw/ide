@@ -2,9 +2,9 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.08.004
+== 2022.11.001
 
-New release with various improvements and bugfixes:
+New release with awesome new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
 * https://github.com/devonfw/ide/issues/878[#878]: Use default tool version from `available-versions`
