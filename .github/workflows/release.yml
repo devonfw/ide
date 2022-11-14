@@ -36,7 +36,7 @@ jobs:
           git add -f .mvn/maven.config
           git commit -m "set release version to ${next_version}"
           git tag -a "release/${next_version}" -m "tagged version ${next_version}"
-          export GPG_TTY=$(tty)
+          export GPG_TTY=$TTY
           mvn --settings .mvn/settings.xml -B -ntp deploy -Pdeploy -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
