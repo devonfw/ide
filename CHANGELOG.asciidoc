@@ -2,9 +2,9 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2022.08.004
+== 2022.11.001
 
-New release with various improvements and bugfixes:
+New release with awesome new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
 * https://github.com/devonfw/ide/issues/878[#878]: Use default tool version from `available-versions`
@@ -13,6 +13,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/940[#940]: Make doInstall even more generic
 * https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
 * https://github.com/devonfw/ide/issues/905[#905]: Better error handling when installing Eclipse plugins
+* https://github.com/devonfw/ide/issues/976[#976]: Eclipse project import fails
 * https://github.com/devonfw/ide/issues/960[#960]: openshift version check fails
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
 
