@@ -36,9 +36,9 @@ function doSetup() {
     doDevonCommand npm setup silent
     if command -v npm &> /dev/null
     then
-      doRunCommand "npm install -g yarn@${version}"
+      doDevonCommand npm install -g yarn@${version}
     else
-      doRunCommand "brew install yarn@${version}"
+      doDevonCommand brew install yarn@${version}
     fi
   fi
 }
