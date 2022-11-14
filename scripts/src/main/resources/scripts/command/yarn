@@ -38,7 +38,7 @@ function doSetup() {
     then
       doDevonCommand npm install -g yarn@${version}
     else
-      doDevonCommand brew install yarn@${version}
+      doRunCommand "brew install yarn@${version}"
     fi
   fi
 }
