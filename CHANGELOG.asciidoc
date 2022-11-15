@@ -16,6 +16,7 @@ New release with awesome new features and bugfixes:
 * https://github.com/devonfw/ide/issues/976[#976]: Eclipse project import fails
 * https://github.com/devonfw/ide/issues/960[#960]: openshift version check fails
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
+* https://github.com/devonfw/ide/issues/954[#954]: Fixed devon.bat with delayed expansion
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
 
