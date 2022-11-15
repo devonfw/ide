@@ -60,43 +60,44 @@ function doCreateProperties() {
 
 
 function doInstallEclipsePlugin() {
-  local doinstall_Plugin_Id="${1}"
-  local doinstall_Plugin_Url="${2}" #Update site
-  local doinstall_Plugin_Name="${3}" # if specified, the plugin will be installed and a properties file will be created with the name specified
-  if [ -z "${doinstall_Plugin_Name}" ]
+  local pluginId="${1}"
+  local pluginUrl="${2}" #Update site
+  local pluginName="${3}" # if specified, the plugin will be installed and a properties file will be created with the name specified
+  if [ -z "${pluginName}" ]
   then
-    doinstall_Plugin_Name="${doinstall_Plugin_Id}"
+    pluginName="${pluginId}"
   fi
-  echo "Installing Eclipse plugin '${doinstall_Plugin_Name}' from URL ${doinstall_Plugin_Url}..."
+  echo "Installing Eclipse plugin '${pluginName}' from URL ${pluginUrl}..."
 
   local plugin_dependencies
-  plugin_dependencies=$(doCheckPluginsInstalled "${doinstall_Plugin_Id}")
+  plugin_dependencies=$(doCheckPluginsInstalled "${pluginId}")
 
   # Install plugins and write debug info into temp file
   local debug_info_file
   debug_info_file=$(mktemp)
   # get only !MESSAGE lines from the debug info
-  "${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${doinstall_Plugin_Url}" -installIU "${doinstall_Plugin_Id}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //' >"${debug_info_file}" 2>&1
+  set -o pipefail
+  "${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${pluginUrl}" -installIU "${pluginId}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //' >"${debug_info_file}" 2>&1
   local exit_code=$?
   if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]
   then
     #If plugin name was specified, create a properties file for an easier remove plugin process.
     if [ -n "${3}" ]
     then
-      doCreateProperties "${doinstall_Plugin_Id}" "${doinstall_Plugin_Url}" "${doinstall_Plugin_Name}"
+      doCreateProperties "${pluginId}" "${pluginUrl}" "${pluginName}"
     fi
     return 0
   elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]
   then
-    doError "The given repository ${doinstall_Plugin_Url} is not a correct update site."
+    doError "The given repository ${pluginUrl} is not a correct update site."
     return 1
   else
     echo
-    doError "Installation of plugin '${doinstall_Plugin_Name}' failed: \n$(cat "${debug_info_file}")"
+    doError "Installation of plugin '${pluginName}' failed: \n$(cat "${debug_info_file}")"
     if [ -n "${plugin_dependencies}" ]
     then
       plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
-      doWarning "Plugin '${doinstall_Plugin_Name}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
+      doWarning "Plugin '${pluginName}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
     fi
     return 1
   fi
@@ -142,50 +143,46 @@ function doCheckPluginsInstalled() {
   echo -e "${plugin_dependencies}" | sort -u
 }
 
-# Remove plugins from Eclipse by feature group ID
+# Remove plugins from Eclipse
 function doRemovePlugin() {
-  local rm_plugin_id="${1}"
-  if [ -z "${rm_plugin_id}" ]
+  local pluginId="${1}"
+  if [ -z "${pluginId}" ]
   then
     doError "No plugin was specified for removal."
-    return 1
   fi
-  doLoadPluginProperties "${rm_plugin_id}"
+  doLoadPluginProperties "${pluginId}"
   if [ -z "${plugin_id}" ]
    then
-    #if $1 contains dots, we can be quite sure that it is a viable plugin_id, 
-    if [[ "${rm_plugin_id}" == *.* ]]
+    # if pluginId contains dots, we can be quite sure that it is a viable plugin_id
+    if [[ "${pluginId}" == *.* ]]
     then
-      plugin_id="${rm_plugin_id}"
+      plugin_id="${pluginId}"
     else
-      doError "Plugin ${rm_plugin_id} is not installed.\nMake sure you provided the correct plugin.properties name or plugin id."
+      doError "Plugin ${pluginId} can not be installed.\nMake sure to provide the correct plugin name or id."
     fi
   fi
-    doEcho "Removing plugin ${plugin_id}..."
-    local debug_info_file
-    debug_info_file=$(mktemp)
-    "${ECLIPSE}" -nosplash -clean -consoleLog -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -uninstallIU "${plugin_id}" -vmargs "${ECLIPSE_VMARGS}" >"${debug_info_file}" 2>&1
-    local exit_code=$?
-    # Overwrite file with lines containing !MESSAGE
-    sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
-
-    plugin_dependencies=$(doCheckPluginsInstalled "${plugin_id}")
-    plugin_id="${plugin_id// /}"
-    IFS=',' read -ra plugin_id_arr <<<"${plugin_id}"
-    for plugin in "${plugin_id_arr[@]}"; do
-      # If debug info contains words The installable unit could not be found, then the plugin was not uninstalled correctly
-      if [[ $(grep "The installable unit ${plugin} has not been found" "${debug_info_file}") != "" ]]
-       then
-        doError "Plugin ${plugin} couldn't be removed from your Eclipse installation as it was not found. Please check if the plugin exists and try to remove it manually."
-        if [ -n "${plugin_dependencies}" ]
-        then
-          doWarning "If the problem persists, try removing the following dependencies: ${plugin_dependencies}"
-        fi
-        return 1
+  doEcho "Removing plugin ${plugin_id}..."
+  local debug_info_file
+  debug_info_file=$(mktemp)
+  set -o pipefail
+  "${ECLIPSE}" -nosplash -clean -consoleLog -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -uninstallIU "${plugin_id}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //' >"${debug_info_file}" 2>&1
+  local exit_code=$?
+  plugin_dependencies=$(doCheckPluginsInstalled "${plugin_id}")
+  plugin_id="${plugin_id// /}"
+  IFS=',' read -ra plugin_id_arr <<<"${plugin_id}"
+  for plugin in "${plugin_id_arr[@]}"; do
+    # If debug info contains words The installable unit could not be found, then the plugin was not uninstalled correctly
+    if [[ $(grep "The installable unit ${plugin} has not been found" "${debug_info_file}") != "" ]]
+     then
+      doError "Plugin ${plugin} couldn't be removed from your Eclipse installation as it was not found. Please check if the plugin exists and try to remove it manually."
+      if [ -n "${plugin_dependencies}" ]
+      then
+        doWarning "If the problem persists, try removing the following dependencies: ${plugin_dependencies}"
       fi
-    done
-    doSuccess "Plugin ${plugin_id} removed successfully."
-  
+      return 1
+    fi
+  done
+  doSuccess "Plugin ${plugin_id} removed successfully."
 }
 
 function doSetup() {
@@ -288,18 +285,18 @@ function doConfigureEclipse() {
 
 
 function doAddPlugin() {
-  local doadd_Plugin_Id="${1}"
-  local doadd_Plugin_Url="${2}"
-  local doadd_Plugin_Name="${3}" #optional
-  if [ -z "${doadd_Plugin_Url}" ] 
+  local pluginId="${1}"
+  local pluginUrl="${2}"
+  local pluginName="${3}" #optional
+  if [ -z "${pluginUrl}" ] 
   then
-    doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${doadd_Plugin_Id}.properties" "true"
+    doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${pluginId}.properties" "true"
     if [ ! "${?}" = 0 ]
     then
-      doError "Plugin '${doadd_Plugin_Id}' not found in ${SETTINGS_PATH}/eclipse/plugins. Please try add-plugin again with parameters: «id» [«url»] «plugin name»"
+      doError "Plugin '${pluginId}' not found in ${SETTINGS_PATH}/eclipse/plugins. Please try add-plugin again with parameters: «id» [«url»] «plugin name»"
     fi
   else
-    doInstallEclipsePlugin "${doadd_Plugin_Id}" "${doadd_Plugin_Url}" "${doadd_Plugin_Name}"
+    doInstallEclipsePlugin "${pluginId}" "${pluginUrl}" "${pluginName}"
   fi
 }
 
