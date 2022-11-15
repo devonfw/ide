@@ -50,17 +50,12 @@ function doCreateProperties() {
   then
     pluginStatus="false"
   fi
-  local propertiesFile="${propertiesPath}/${pluginName}.properties"
   if [ -z "${pluginName}" ]
   then
     pluginName="${pluginId}"
-    propertiesFile="${propertiesPath}/${pluginId}.properties"
   fi
-  if [ -f "${propertiesFile}" ]
-  then
-    rm "${propertiesFile}"
-  fi
-  echo -e "plugin_url=${pluginUrl}\nplugin_id=${pluginId}\nplugin_active=${pluginStatus}" >>"${propertiesFile}"
+  local propertiesFile="${propertiesPath}/${pluginName}.properties"
+  echo -e "plugin_url=${pluginUrl}\nplugin_id=${pluginId}\nplugin_active=${pluginStatus}" > "${propertiesFile}"
 }
 
 
