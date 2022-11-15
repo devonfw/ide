@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-if [ -n "${DEVON_IDE_TRACE}" ]
-then 
-  set -vx; 
-fi
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 # Script with fundamental functions already needed by devon command. 
 # Will be sourced, hash bang only for filetype detection and editor syntax support
 
