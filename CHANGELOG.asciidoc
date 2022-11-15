@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2022.11.002
+
+WIP: Release with small but important bugfixes:
+
+* TODO: replace me
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
+
 == 2022.11.001
 
 New release with awesome new features and bugfixes:
@@ -18,7 +26,7 @@ New release with awesome new features and bugfixes:
 * https://github.com/devonfw/ide/issues/929[#929]: Ensure function documentation is in sync
 * https://github.com/devonfw/ide/issues/954[#954]: Fixed devon.bat with delayed expansion
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.08.004].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/34?closed=1[milestone 2022.11.001].
 
 == 2022.08.003
 
