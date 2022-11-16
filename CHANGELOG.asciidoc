@@ -7,6 +7,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 WIP: Release with small but important bugfixes:
 
 * https://github.com/devonfw/ide/issues/903[#903]: Eclipse plugin removal is now possible via remove-plugin command
+* https://github.com/devonfw/ide/issues/903[#966]: Fixxed some issues with the npm detection.
+* https://github.com/devonfw/ide/issues/956[#956]: Fixxed an issue that caused an error when you had no software folder.
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
 
