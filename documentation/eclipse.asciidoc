@@ -15,8 +15,8 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 |*Argument(s)*   |*Meaning*
 |`--all`                  |if provided as first arg then to command will be invoked for each workspace
 |`setup`                  |setup Eclipse (install or update)
-|`add-plugin «id» [«url»]`|install an additional plugin
-|`remove-plugin «id»`     |remove an installed plugin with given id
+|`add-plugin «id» [«url»] «plugin name» [optional, creates properties file with given name]`| install an additional plugin
+|`remove-plugin «id»[or .properties filename, if exists]`|remove an installed plugin with given id
 |`run`                    |launch Eclipse (default if no argument is given)
 |`start`                  |same as `run`
 |`ws-up[date]`            |update workspace

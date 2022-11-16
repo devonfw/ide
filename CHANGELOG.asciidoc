@@ -6,7 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 WIP: Release with small but important bugfixes:
 
-* TODO: replace me
+* https://github.com/devonfw/ide/issues/903[#903]: Eclipse plugin removal is now possible via remove-plugin command
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
 
