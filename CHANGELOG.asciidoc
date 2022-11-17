@@ -7,6 +7,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 Release with small but important bugfixes:
 
 * https://github.com/devonfw/ide/issues/956[#956]: no matches found error if software folder missing
+* https://github.com/devonfw/ide/issues/986[#986]: eclipse commandlet ignores EXTRA_JAVA_VERSION
 * https://github.com/devonfw/ide/issues/974[#974]: Fix dotnet command for nightly test
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
