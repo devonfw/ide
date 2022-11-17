@@ -32,7 +32,7 @@ function doSetup() {
   then
     doDebug "Devon4net template already installed."
   else
-    doRun new -i devon4net.WebApi.Template
+    doRunCommand "'${DOTNET}' new -i devon4net.WebApi.Template"
   fi
 }
 
