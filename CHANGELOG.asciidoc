@@ -4,9 +4,10 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2022.11.002
 
-WIP: Release with small but important bugfixes:
+Release with small but important bugfixes:
 
-* https://github.com/devonfw/ide/issues/956[#956]: Fixxed an issue that caused an error when you had no software folder.
+* https://github.com/devonfw/ide/issues/956[#956]: Fixed an issue that caused an error when you had no software folder.
+* https://github.com/devonfw/ide/issues/974[#974]: Fixed dotnet command
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
 
