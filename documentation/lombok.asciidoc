@@ -26,6 +26,6 @@ However, to avoid manual extra effort for lombok based projects you only need to
 
 == Lombok for IntelliJ
 
-For IntelliJ there is a plugin to activate https://projectlombok.org/setup/intellij[lombok support in IntelliJ].
-Currently we have not yet configured or automated this in `devonfw-ide`.
-Please contribute to change this. See issues https://github.com/devonfw/ide/issues/453[#453] and https://github.com/devonfw/ide/issues/491[#491].
+According to official Lombok page for IntelliJ, for IntelliJ version 2020.3 and above are compatible with Lombok without plugins. 
+https://projectlombok.org/setup/intellij
+
