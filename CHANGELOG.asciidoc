@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with small but important bugfixes:
 
+* https://github.com/devonfw/ide/issues/966[#966]: npm detection not reliable and redundant
 * https://github.com/devonfw/ide/issues/954[#954]: First install removes all folders from user path
 * https://github.com/devonfw/ide/issues/956[#956]: no matches found error if software folder missing
 * https://github.com/devonfw/ide/issues/986[#986]: eclipse commandlet ignores EXTRA_JAVA_VERSION
