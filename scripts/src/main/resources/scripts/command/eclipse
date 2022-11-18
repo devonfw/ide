@@ -22,11 +22,6 @@ if doIsWindows
 then
   ECLIPSE="${ECLIPSE_HOME}/eclipsec"
 fi
-ECLIPSE_JAVA_HOME="${JAVA_HOME}"
-if [ -n "${EXTRA_JAVA_VERSION}" ]
-then
-  ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
-fi
 ECLIPSE_PRODUCT="${ECLIPSE_HOME}/.eclipseproduct"
 if doIsMacOs
 then
@@ -35,6 +30,11 @@ fi
 TOOL_VERSION_COMMAND="cat '${ECLIPSE_PRODUCT}'"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
+ECLIPSE_JAVA_HOME="${JAVA_HOME}"
+if [ -n "${EXTRA_JAVA_VERSION}" ]
+then
+  ECLIPSE_JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+fi
 
 L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
