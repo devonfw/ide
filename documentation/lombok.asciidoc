@@ -26,6 +26,6 @@ However, to avoid manual extra effort for lombok based projects you only need to
 
 == Lombok for IntelliJ
 
-According to official Lombok page for IntelliJ, for IntelliJ version 2020.3 and above are compatible with Lombok without plugins. 
-https://projectlombok.org/setup/intellij
+According to the https://projectlombok.org/setup/intellij[official Lombok page for IntelliJ], no plugins are required for Lombok support as of IntelliJ version 2020.3 and above.
+
 
