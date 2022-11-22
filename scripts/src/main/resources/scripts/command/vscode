@@ -25,7 +25,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   doInstall "vscode" "${VSCODE_VERSION}" "${1}"
-  if [ "${?}" = 0 ]
+  if [ "${?}" = 0 ] && [ "${1}" != "clean" ] 
   then
     cleanupPlugins
     doAddPlugins
@@ -48,16 +48,22 @@ function cleanupPlugins() {
 function doAddPlugins() {
   local file
   local pluginsToInstall=()
+  local pluginsToRecommend=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
     then
       plugin_id=""
       plugin_active="true"
+      plugin_recommend="true"
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ]
       then
         doWarning "Invalid vscode plugin config: ${file}"
+      elif [ "${plugin_recommend}" = "true" ]
+      then
+        local IFS=,
+        pluginsToRecommend+=("\"${plugin_id}\"")
       elif [ "${plugin_active}" = "true" ]
       then
         pluginsToInstall+=("${plugin_id}")
@@ -67,6 +73,10 @@ function doAddPlugins() {
   if [ "${#pluginsToInstall}" -gt 0 ]
   then
     doAddPlugin "${pluginsToInstall[@]}"
+  fi
+  if [ "${#pluginsToRecommend}" -gt 0 ]
+  then
+    doAddRecommendations "${pluginsToRecommend[*]}"
   fi
 }
 
@@ -126,6 +136,11 @@ function doStartVsCode() {
   doRunVsCode "${WORKSPACE_PATH}"
 }
 
+function doAddRecommendations() {
+  doEcho "add recommendations..."
+  echo "{\"recommendations\":[${1}]}" > "${WORKSPACE_PATH}/.vscode/extensions.json"
+}
+  
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
@@ -134,6 +149,7 @@ then
   echo "Arguments:"
   echo " --all                          if provided as first arg then to command will be invoked for each workspace"
   echo " setup                          setup VSCode (install or update)"
+  echo " setup clean                    setup VSCode without plugins and recommendations"
   echo " add-plugin «id»                install an additional plugin (extension)"
   echo " run | start                    launch VSCode IDE (default if no argument is given)"
   echo " ws-up[date]                    update VSCode workspace"
