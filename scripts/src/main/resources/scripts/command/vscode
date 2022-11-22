@@ -55,12 +55,12 @@ function doAddPlugins() {
     then
       plugin_id=""
       plugin_active="true"
-      plugin_recommend="true"
+      plugin_recommended="true"
       doLoadProperties "${file}"
       if [ -z "${plugin_id}" ]
       then
         doWarning "Invalid vscode plugin config: ${file}"
-      elif [ "${plugin_recommend}" = "true" ]
+      elif [ "${plugin_recommended}" = "true" ]
       then
         local IFS=,
         pluginsToRecommend+=("\"${plugin_id}\"")
