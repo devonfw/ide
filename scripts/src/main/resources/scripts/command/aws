@@ -52,8 +52,10 @@ function doPackageInstall() {
   if doIsWindows
   then
     doEcho "Installing AWS for Windows..."
-    windows_path_to_package=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-*-windows.msi /quiet'"
+    msifilename=$(ls ${path_to_package} | grep ".msi" | head -1)
+    path_to_file=${path_to_package}/${msifilename}
+    windows_path_to_file=$(cygpath -w "${path_to_file}")
+    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/i ${windows_path_to_file} /quiet'"
   elif doIsMacOs
   then
     doEcho "Installing AWS for MacOS..."
