@@ -158,13 +158,13 @@ then
   echo "Arguments:"
   echo " --all                          if provided as first arg then to command will be invoked for each workspace"
   echo " setup                          setup VSCode (install or update)"
-  echo " clean-setup                    clean setup VSCode without plugins and recommendations"
   echo " add-plugin «id»                install an additional plugin (extension)"
   echo " run | start                    launch VSCode IDE (default if no argument is given)"
   echo " ws-up[date]                    update VSCode workspace"
   echo " ws-re[verse]                   reverse merge changes from workspace into settings"
   echo " ws-reverse-add                 reverse merge adding new properties"
   echo " create-script                  create vscode-${WORKSPACE} script if not already exists"
+  echo " clean-setup                    clean setup VSCode without plugins and recommendations"
   exit
 fi
 if [ -z "${1}" ]
