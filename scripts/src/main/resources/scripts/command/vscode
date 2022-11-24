@@ -143,7 +143,7 @@ function doAddRecommendations() {
   local extensions="${WORKSPACE_PATH}/.vscode/extensions.json"
   if [ -f "${extensions}" ]
   then
-    rm -fR "${extensions}"
+    rm "${extensions}"
     echo "{\"recommendations\":[${1}]}" >> "${extensions}"
   else
     echo "{\"recommendations\":[${1}]}" >> "${extensions}"
