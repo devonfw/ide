@@ -1,4 +1,6 @@
 @echo off
+setlocal ENABLEDELAYEDEXPANSION
+
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 if "%1%" == "-v" (
   goto :print_version
@@ -26,10 +28,10 @@ for %%f in (devon.bat) do set "p=%%~$PATH:f"
 if not defined p (
   echo Adding %USERPROFILE%\scripts to your users system PATH
   for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
-  if "%USER_PATH:~-1,1%" == ";" (
-    set "USER_PATH=%USER_PATH:~0,-1%"
+  if "!USER_PATH:~-1,1!" == ";" (
+    set "USER_PATH=!USER_PATH:~0,-1!"
   )
-  if "%USER_PATH%" == "" (
+  if "!USER_PATH!" == "" (
     setx PATH "%%USERPROFILE%%\scripts"
     echo %_fBYellow%"ATTENTION:"%_RESET%
     echo "Your user PATH environment variable has not been previously set."
@@ -37,12 +39,12 @@ if not defined p (
     echo "Otherwise you may get errors that devon command has not been found."
     pause
   ) else (
-    setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+    setx PATH "!USER_PATH!;%%USERPROFILE%%\scripts"
   )
-  if "%PATH:~-1,1%" == ";" (
-    set "PATH=%PATH%%USERPROFILE%\scripts"
+  if "!PATH:~-1,1!" == ";" (
+    set "PATH=!PATH!%USERPROFILE%\scripts"
   ) else (
-    set "PATH=%PATH%;%USERPROFILE%\scripts"
+    set "PATH=!PATH!;%USERPROFILE%\scripts"
   )
   echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
   echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
