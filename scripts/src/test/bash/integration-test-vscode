@@ -1,4 +1,6 @@
 #!/bin/bash
 
 source "$(dirname "${0}")"/functions-test
+#workaround for nightly-tests
+echo "plugin_active=false" >> settings/vscode/plugins/devonfw-extension-pack.properties
 doCommandTest vscode

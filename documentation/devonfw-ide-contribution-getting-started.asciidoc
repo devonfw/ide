@@ -140,7 +140,7 @@ Install https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html[lin
 Later on you can make symbolic links of files or folder from your "git folder" and add them into the folder in which the testing is supposed to take place:
 
 So select the folder `${DEVON_IDE_HOME}/workspaces/ide/scripts/src/main/resources/scripts/command/` and choose `Pick Link Source` and then go to `${DEVON_IDE_HOME}/scripts/` delete the `command` folder and re-create it as symbolic link via `Drop as... > Symbolic link`.
-Do the same also for `functions`, `environment-project`, `environment-project.bat`, `devon`, `devon.bat`, `autocomplete`, and `devon-autocomplete`.
+Do the same also for `functions`, `functions-core`, `commandlet-cli`, `environment-project`, `environment-project.bat`, `devon`, `devon.bat`, `autocomplete`, and `devon-autocomplete`.
 Now changes you make in the first mentioned file  will directly be available in your testing environment through the created file-link in the testing environment.
 
 === developer tools
