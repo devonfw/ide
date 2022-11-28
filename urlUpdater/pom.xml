@@ -37,7 +37,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>com.devonfw.tools.ide.url-updater.Url-updater</mainClass>
+              <mainClass>com.devonfw.tools.ide.url.folderhandling.UrlRepository</mainClass>
             </manifest>
           </archive>
         </configuration>
