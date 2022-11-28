@@ -1,12 +1,17 @@
 #!/bin/bash
 
 SCRIPTS_PATH="../../../../scripts/src/main/resources/scripts"
-( set -o pipefail; grep "function " "${SCRIPTS_PATH}/functions" "${SCRIPTS_PATH}/functions-core" | sed 's/.*function //' | sed 's/() {//' | sort -u > functions.list ) || exit 1
-( set -o pipefail; grep "=== " "../../../../documentation/functions.asciidoc"  | sed 's/=== //' | sort -u > functions.adoc.list ) || exit 1
+(
+  set -o pipefail
+  grep "function " "${SCRIPTS_PATH}/functions" "${SCRIPTS_PATH}/functions-core" | sed 's/.*function //' | sed 's/() {//' | sort -u >functions.list
+) || exit 1
+(
+  set -o pipefail
+  grep "=== " "../../../../documentation/functions.asciidoc" | sed 's/=== //' | sort -u >functions.adoc.list
+) || exit 1
 
 diff functions.list functions.adoc.list
-if [ "$?" = 0 ]
-then
+if [ "$?" = 0 ]; then
   echo "Documentation of functions and function declarations are in sync."
   echo "Awesome!"
 else
@@ -14,3 +19,13 @@ else
   echo "Please keep function documentation and declarations in sync!"
   exit 1
 fi
+#grep all unique strings in the SCRIPTS_PATH/functions file that follow the pattern do[A-Z][a-zA-Z]*. Then check for each if there is a corresponding function in the SCRIPTS_PATH/functions file
+(
+  set -o pipefail
+  grep -o -E "do[A-Z][a-zA-Z]*" $SCRIPTS_PATH/functions | sort | uniq |
+    while read -r line; do
+      if ! grep -q "$line" "./functions.list"; then
+        echo "Missing decleration for function $line"
+      fi
+    done
+) || exit 1
