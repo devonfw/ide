@@ -1,8 +1,10 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
 
 public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
 
@@ -32,6 +34,18 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
 		Path filePath = getPath().resolve("urls");
 		if (!Files.exists(filePath)) {
 			Files.createFile(filePath);
+		}
+	}
+
+	@Override
+	public void getChildrenInDirectory() {
+		File[] directories = new File(path.toString()).listFiles(File::isFile);
+		int l = directories.length;
+		System.out.println(l);
+		LinkedList<String> listOfChildrenInDir = new LinkedList<>();
+		for (int i=0; i<l; i++) {
+			listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
+			System.out.println(listOfChildrenInDir.get(i));
 		}
 	}
 
