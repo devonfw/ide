@@ -2,7 +2,11 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import java.nio.file.Path;
 
-public class UrlRepository extends UrlHasChildArtifact<UrlRepository, UrlTool> {
+/**
+ * An instance of this class represents the folder that starts an url-file repository, having UrlTool objects as children.
+ *
+ */
+public class UrlRepository extends UrlHasChildArtifact<UrlTool> {
 
   Path path;
 
@@ -17,6 +21,10 @@ public class UrlRepository extends UrlHasChildArtifact<UrlRepository, UrlTool> {
 
   }
 
+  /**
+   * This method is used to add new children to the children collection of an instance from this class.
+   * @param name The name of the tool object that should be created.
+   */
   @Override
   protected UrlTool newChild(String name) {
 

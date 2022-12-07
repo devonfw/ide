@@ -6,6 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 
+/**
+*
+* An instance of this class represents a version folder, like version 1.6.2 of rancher-desktop (as edition of the tool docker).
+* It offers a method to create a file named in accordance with the structure discussed in issue #941.
+*
+*/
 public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
 
 	public UrlVersion(UrlEdition parent, String name) {
@@ -37,6 +43,10 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
 		}
 	}
 
+	/**
+	 * Open to discussion if this method is needed. Differs from the method with similar name in class
+	 * UrlHasChildParentArtifact by giving out files instead of directories.
+	 */
 	@Override
 	public void getChildrenInDirectory() {
 		File[] directories = new File(path.toString()).listFiles(File::isFile);
