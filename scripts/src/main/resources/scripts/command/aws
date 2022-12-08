@@ -46,15 +46,15 @@ function doSetup() {
   then
     if [ "${ERR}" = 0 ]
     then
-      mv ${AWS_HOME}/Amazon/AWSCLIV2/* ${AWS_HOME}
-      rm -rf ${AWS_HOME}/Amazon/
+      mv "${AWS_HOME}"/Amazon/AWSCLIV2/* "${AWS_HOME}"
+      rm -rf "${AWS_HOME}"/Amazon/
     fi
   elif doIsMacOs
   then
     if [ "${ERR}" = 0 ]
     then
-      cd "${AWS_HOME}"
-      xar -xf "${AWS_HOME}"/aws-*-mac.pkg
+      version_to_install="$(cat ${AWS_HOME}/.devon.software.version)"
+      xar -C "${AWS_HOME}" -xf "${AWS_HOME}"/aws-"${version_to_install}"-mac.pkg
       tar -xzvf "${AWS_HOME}"/aws-cli.pkg/Payload
       rm -rf Distribution Resources aws-cli.pkg
       [ ! -h "${AWS_HOME}/aws" ] && ln -s "${AWS_HOME}"/aws-cli/aws aws
@@ -65,7 +65,7 @@ function doSetup() {
     if [ "${ERR}" = 0 ]
     then
      doRunCommand "sudo ${AWS_HOME}/install -i ${AWS_HOME} -b ${AWS_HOME}"
-     rm -rf ${AWS_HOME}/README.md ${AWS_HOME}/THIRD_PARTY_LICENSES ${AWS_HOME}/install ${AWS_HOME}/dist
+     rm -rf "${AWS_HOME}"/README.md "${AWS_HOME}"/THIRD_PARTY_LICENSES "${AWS_HOME}"/install "${AWS_HOME}"/dist
     fi
   fi
   if [ "${ERR}" = 0 ]
