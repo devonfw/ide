@@ -12,85 +12,70 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+AWS_HOME="${DEVON_IDE_HOME}/software/aws"
+TOOL_VERSION_COMMAND="${DEVON_IDE_HOME}/software/aws/aws --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
 
-# OS independent check if aws is installed.
-function findAws() {
-  AWS="aws"
-  AWS_INSTALLED="no"
-  if command -v aws &> /dev/null
+function setConfig() {
+  local aws_config_file="${DEVON_IDE_HOME}/conf/.aws"
+  local aws_config_export="export AWS_CONFIG_FILE=${aws_config_file}"
+  if ! grep -q "${aws_config_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
   then
-    AWS_INSTALLED="yes"
-  elif doIsWindows
-  then
-    local aws_win
-    aws_win="${PROGRAMFILES}"
-    aws_win="$(cygpath "${aws_win}")"
-    aws_win="${aws_win}/Amazon/AWSCLIV2/aws"
-    if [ -f "${aws_win}" ]
-    then
-      AWS_INSTALLED="yes"
-    fi
-    AWS="${aws_win}"
+    doRunCommand "${aws_config_export}"
+    echo -e "\n${aws_config_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+    doEcho "Location of AWS's configuration file is set to ${aws_config_file}"
   fi
-  TOOL_VERSION_COMMAND="'${AWS}' --version"
 }
 
-findAws
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
 # Call aws with specified arguments.
 function doRun() {
   doSetup silent
-  findAws
-  doRunCommand "'${AWS}' ${*}"
-}
-
-# $1: path_to_package
-function doPackageInstall() {
-  local path_to_package="${1}"
-  if doIsWindows
-  then
-    doEcho "Installing AWS for Windows..."
-    windows_path_to_package=$(cygpath -w "${path_to_package}")
-    powershell.exe -Command "Start-Process msiexec.exe -verb runas -Wait -ArgumentList '/I ${windows_path_to_package}\aws-*-windows.msi /quiet'"
-  elif doIsMacOs
-  then
-    doEcho "Installing AWS for MacOS..."
-    sudo installer -pkg "${path_to_package}"/aws-"${version}"-mac.pkg -target /
-  else
-    doEcho "Installating AWS for Linux..."
-    if [ -L "/usr/local/bin/aws" ]
-    then
-      doRunCommand "sudo ${path_to_package}/install -u"
-    else
-      doRunCommand "sudo ${path_to_package}/install"
-    fi
-  fi
+  doRunCommand "${AWS_HOME}/aws ${*}"
 }
 
 function doSetup() {
-  if [ "${AWS_INSTALLED}" == "yes" ]
+  # workaround as we are downloading the installer and not installing the software itself
+  TOOL_VERSION_COMMAND="-"
+  doInstall "aws" "${AWS_VERSION}" "${1}" "" "${AWS_HOME}"
+  ERR="${?}"
+  if doIsWindows
   then
-    if [ -z "${1}" ]
+    if [ "${ERR}" = 0 ]
     then
-      doEcho "Aws already installed in version ${AWS_VERSION:-latest}"
-      doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
+      mv ${AWS_HOME}/Amazon/AWSCLIV2/* ${AWS_HOME}
+      rm -rf ${AWS_HOME}/Amazon/
+    fi
+  elif doIsMacOs
+  then
+    if [ "${ERR}" = 0 ]
+    then
+      cd "${AWS_HOME}"
+      xar -xf "${AWS_HOME}"/aws-*-mac.pkg
+      tar -xzvf "${AWS_HOME}"/aws-cli.pkg/Payload
+      rm -rf Distribution Resources aws-cli.pkg
+      [ ! -h "${AWS_HOME}/aws" ] && ln -s "${AWS_HOME}"/aws-cli/aws aws
+      [ ! -h "${AWS_HOME}/aws_completer" ] && ln -s "${AWS_HOME}"/aws-cli/aws_completer aws_completer
+      [ -f "${AWS_HOME}"/aws-*-mac.pkg ] && rm aws-*-mac.pkg
     fi
   else
-    # workaround as we are downloading the installer and not installing the software itself
-    TOOL_VERSION_COMMAND="-"
-    doInstall "aws" "${AWS_VERSION}" "${1}" "" "${DEVON_IDE_HOME}/updates/install/aws"
-    if [ "${?}" = 0 ]
+    if [ "${ERR}" = 0 ]
     then
-      doPackageInstall "${DEVON_IDE_HOME}/updates/install/aws"
-      findAws
-      if [ "${1}" != "silent" ] && ! doIsQuiet
-      then
-        doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
-      fi
+     doRunCommand "sudo ${AWS_HOME}/install -i ${AWS_HOME} -b ${AWS_HOME}"
+     rm -rf ${AWS_HOME}/README.md ${AWS_HOME}/THIRD_PARTY_LICENSES ${AWS_HOME}/install ${AWS_HOME}/dist
     fi
-    doRunCommand "rm -rf ${DEVON_IDE_HOME}/updates/install/aws"
+  fi
+  if [ "${ERR}" = 0 ]
+  then
+    setConfig
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      TOOL_VERSION_COMMAND="${DEVON_IDE_HOME}/software/aws/aws --version"
+      doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of aws"
+    fi
   fi
 }
 
