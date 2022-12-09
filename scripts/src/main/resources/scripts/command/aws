@@ -53,13 +53,14 @@ function doSetup() {
   then
     if [ "${ERR}" = 0 ]
     then
-      version_to_install="$(cat ${AWS_HOME}/.devon.software.version)"
+      local version_to_install
+      version_to_install=$(cat "${AWS_HOME}"/.devon.software.version)
       xar -C "${AWS_HOME}" -xf "${AWS_HOME}"/aws-"${version_to_install}"-mac.pkg
-      tar -xzvf "${AWS_HOME}"/aws-cli.pkg/Payload
-      rm -rf Distribution Resources aws-cli.pkg
-      [ ! -h "${AWS_HOME}/aws" ] && ln -s "${AWS_HOME}"/aws-cli/aws aws
-      [ ! -h "${AWS_HOME}/aws_completer" ] && ln -s "${AWS_HOME}"/aws-cli/aws_completer aws_completer
-      [ -f "${AWS_HOME}"/aws-*-mac.pkg ] && rm aws-*-mac.pkg
+      tar -C "${AWS_HOME}" -xzvf "${AWS_HOME}"/aws-cli.pkg/Payload
+      rm -rf "${AWS_HOME}"/Distribution "${AWS_HOME}"/Resources "${AWS_HOME}"/aws-cli.pkg
+      [ ! -h "${AWS_HOME}/aws" ] && ln -s "${AWS_HOME}"/aws-cli/aws "${AWS_HOME}"/aws
+      [ ! -h "${AWS_HOME}/aws_completer" ] && ln -s "${AWS_HOME}"/aws-cli/aws_completer "${AWS_HOME}"/aws_completer
+      [ -f "${AWS_HOME}"/aws-"${version_to_install}"-mac.pkg ] && rm "${AWS_HOME}"/aws-"${version_to_install}"-mac.pkg
     fi
   else
     if [ "${ERR}" = 0 ]
