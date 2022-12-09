@@ -709,9 +709,9 @@ function doExtract() {
     windows_download_file=$(cygpath -w "${1}")
     local windows_target_dir
     windows_target_dir=$(cygpath -w "${target_dir}")
-    echo "Start-Process powershell.exe -ArgumentList \"msiexec /a ${windows_download_file} /qn TARGETDIR=${windows_target_dir}\" -Wait -NoNewWindow" >./test.ps1
-    < ./test.ps1 powershell.exe
-    rm ./test.ps1
+    echo "Start-Process powershell.exe -ArgumentList \"msiexec /a ${windows_download_file} /qn TARGETDIR=${windows_target_dir}\" -Wait -NoNewWindow" >"${TMP}"/test.ps1
+    < "${TMP}"/test.ps1 powershell.exe
+    [ -f "${TMP}"/test.ps1 ] && rm "${TMP}"/test.ps1
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
