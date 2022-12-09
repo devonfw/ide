@@ -24,23 +24,21 @@ public class UrlFileTest {
 	public void test() throws IOException {
 		Path pathToRepo = Paths
 				.get("C:\\projects\\Mirrors-IDE\\workspaces\\ide-urls\\url-updater\\src\\test\\resources\\urlsRepo");
-		UrlRepository UrlRepoObj = new UrlRepository(pathToRepo);
-		assertNotNull(UrlRepoObj.getPath());
-		UrlTool UrlToolObj = new UrlTool(UrlRepoObj, "docker");
-		assertNotNull(UrlToolObj.getPath());
-		UrlTool UrlToolObj2 = new UrlTool(UrlRepoObj, "vscode");
-		assertNotNull(UrlToolObj2.getPath());
-
-		UrlEdition UrlEditionObj = new UrlEdition(UrlToolObj, "rancher");
-		assertNotNull(UrlEditionObj.getPath());
+		UrlRepository urlRepoObj = new UrlRepository(pathToRepo);
+		assertThat(urlRepoObj.getPath()).isNotNull();
+		UrlTool urlToolObj = new UrlTool(urlRepoObj, "docker");
+		assertThat(urlToolObj.getPath()).isNotNull();
+		UrlTool UrlToolObj2 = new UrlTool(urlRepoObj, "vscode");
+		assertThat(UrlToolObj2.getPath()).isNotNull();
+		UrlEdition UrlEditionObj = new UrlEdition(urlToolObj, "rancher");
+		assertThat(UrlEditionObj.getPath()).isNotNull();
 
 		UrlVersion UrlVersionObj0 = new UrlVersion(UrlEditionObj, "1.6.1");
-		assertNotNull(UrlVersionObj0.getPath());
+		assertThat(UrlVersionObj0.getPath()).isNotNull();
 		UrlVersion UrlVersionObj = new UrlVersion(UrlEditionObj, "1.6.2");
-		assertNotNull(UrlVersionObj.getPath());
+		assertThat(UrlVersionObj.getPath()).isNotNull();
 
 		UrlFile UrlFileObj = new UrlFile(UrlVersionObj, "linux.urls");
-		System.out.println(UrlFileObj.getPath());
 
 
 		UrlFileObj.addToObjectsList("url/3");
@@ -57,7 +55,7 @@ public class UrlFileTest {
 
 		int lengthOfList = currentList.size();
 		for (int i=0; i<lengthOfList; i++) {
-			assertTrue(currentList.get(i).equals(allLines.get(i)));
+			assertThat(currentList.get(i)).isEqualTo(allLines.get(i));
 		}
 
 		UrlFileObj.removeLineFromObjectsList("url/0");
@@ -70,10 +68,10 @@ public class UrlFileTest {
 
 		lengthOfList = currentList.size();
 		for (int i=0; i<lengthOfList; i++) {
-			assertTrue(currentList.get(i).equals(allLines.get(i)));
+			assertThat(currentList.get(i)).isEqualTo(allLines.get(i));
 		}
 
-		assertTrue((UrlFileObj instanceof UrlFile));
+		assertThat(UrlFileObj).isInstanceOf(UrlFile.class);
 
 
 

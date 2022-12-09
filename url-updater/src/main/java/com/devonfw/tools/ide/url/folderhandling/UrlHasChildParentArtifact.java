@@ -54,11 +54,9 @@ public abstract class UrlHasChildParentArtifact<P extends UrlArtifact, C extends
 	public void getChildrenInDirectory() {
 		File[] directories = new File(path.toString()).listFiles(File::isDirectory);
 		int l = directories.length;
-		System.out.println(l);
 		LinkedList<String> listOfChildrenInDir = new LinkedList<>();
 		for (int i=0; i<l; i++) {
 			listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
-			System.out.println(listOfChildrenInDir.get(i));
 		}
 	}
 

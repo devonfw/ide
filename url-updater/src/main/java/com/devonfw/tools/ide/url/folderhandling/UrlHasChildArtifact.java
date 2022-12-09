@@ -52,7 +52,6 @@ extends UrlArtifact {
 		LinkedList<String> listOfChildrenInDir = new LinkedList<>();
 		for (int i = 0; i < l; i++) {
 			listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
-			System.out.println(listOfChildrenInDir.get(i));
 		}
 
 	}

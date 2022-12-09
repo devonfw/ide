@@ -2,7 +2,7 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 /**
  *
- * An instance of this class represents an tool folder, like "docker" or "vscode".
+ * An instance of this class represents a tool folder, like "docker" or "vscode".
  *
  */
 public class UrlTool extends UrlHasChildParentArtifact<UrlRepository, UrlEdition> {

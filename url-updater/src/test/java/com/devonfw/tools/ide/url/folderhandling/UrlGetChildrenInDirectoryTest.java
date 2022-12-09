@@ -1,5 +1,6 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 
 import java.io.BufferedInputStream;
@@ -33,31 +34,29 @@ public class UrlGetChildrenInDirectoryTest {
 	@Test
 	public void test() throws IOException {
 
-//		Path pathToRepo = Paths
-//				.get("C:\\projects\\Mirrors-IDE\\workspaces\\ide-urls\\url-updater\\src\\test\\resources\\urlsRepo");
-		Path pathToRepo = Paths.get("Hier deinen Pfad, der Form dem obigen auskommentierten Beispiel nach, einfügen");
+		Path pathToRepo = Paths.get("C:\\projects\\Issue941newMirrors\\workspaces\\newMirrors281122\\ide\\url-updater\\src\\test\\resources\\UrlGetChildrenInDirectoryTest\\");
+		File f = new File(pathToRepo.toString());
+		f.mkdirs();
 
-//		Path pathToRepo = Paths
-//				.get("C:\\projects\\Mirrors-IDE\\workspaces\\ide-urls\\url-updater\\src\\test\\resources\\testpath");
 
 		// Erzeugen der Beispielobjekte, welche die Ordner repräsentieren
 		// (wenn Ordnerstruktur bereits existiert, kann später eine bereits lokal implementierte
 		// Methode zum Einlesen der Ordnerstruktur, mit entsprechender Erzeugung der
 		// Objekte, genutzt werden).
 		UrlRepository UrlRepoObj = new UrlRepository(pathToRepo);
-		assertNotNull(UrlRepoObj.getPath());
+		assertThat(UrlRepoObj.getPath()).isNotNull();
 		UrlTool UrlToolObj = new UrlTool(UrlRepoObj, "docker");
-		assertNotNull(UrlToolObj.getPath());
+		assertThat(UrlToolObj.getPath()).isNotNull();
 		UrlTool UrlToolObj2 = new UrlTool(UrlRepoObj, "vscode");
-		assertNotNull(UrlToolObj2.getPath());
+		assertThat(UrlToolObj2.getPath()).isNotNull();
 
 		UrlEdition UrlEditionObj = new UrlEdition(UrlToolObj, "rancher");
-		assertNotNull(UrlEditionObj.getPath());
+		assertThat(UrlEditionObj.getPath()).isNotNull();
 
 		UrlVersion UrlVersionObj = new UrlVersion(UrlEditionObj, "1.6.1");
-		assertNotNull(UrlVersionObj.getPath());
+		assertThat(UrlVersionObj.getPath()).isNotNull();
 		UrlVersion UrlVersionObj2 = new UrlVersion(UrlEditionObj, "1.6.2");
-		assertNotNull(UrlVersionObj2.getPath());
+		assertThat(UrlVersionObj2.getPath()).isNotNull();
 
 		// Erzeugen der Ordnerstruktur, basierend auf den zuvor erzeugten Objekten.
 		UrlFile UrlFileObj = new UrlFile(UrlVersionObj, "linux.urls");
@@ -73,11 +72,12 @@ public class UrlGetChildrenInDirectoryTest {
 		// lock-Dateien oder andere Konfigurationsdateien sich in dem selben Ordner wie
 		// die Versionen befinden, so sollen diese entsprechend nicht ausgegeben werden.
 		// Andererseits wurde Rücksicht darauf genommen, dass in einem Versionsordner selbst
-		// lediglich Dateien enthalten sind (ggf. werden hier später lock-Dateien o.ä. ignoriert)
+		// lediglich Dateien enthalten sind (ggf. werden hier später lock-Dateien o.ä. ignoriert).
 		UrlRepoObj.getChildrenInDirectory();
 		UrlToolObj.getChildrenInDirectory();
 		UrlEditionObj.getChildrenInDirectory();
 		UrlVersionObj.getChildrenInDirectory();
+		// TO DO: Diese Methoden müssen wohl noch durch Asserts abgefangen werden.
 
 	}
 }
