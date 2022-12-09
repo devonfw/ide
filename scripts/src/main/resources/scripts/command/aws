@@ -65,7 +65,7 @@ function doSetup() {
   else
     if [ "${ERR}" = 0 ]
     then
-     doRunCommand "sudo ${AWS_HOME}/install -i ${AWS_HOME} -b ${AWS_HOME}"
+     doRunCommand "${AWS_HOME}/install -i ${AWS_HOME} -b ${AWS_HOME}"
      rm -rf "${AWS_HOME}"/README.md "${AWS_HOME}"/THIRD_PARTY_LICENSES "${AWS_HOME}"/install "${AWS_HOME}"/dist
     fi
   fi
