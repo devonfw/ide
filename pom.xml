@@ -40,6 +40,7 @@
     <module>configurator</module>
     <module>scripts</module>
     <module>settings</module>
+    <module>url-updater</module>
   </modules>
 
   <build>
