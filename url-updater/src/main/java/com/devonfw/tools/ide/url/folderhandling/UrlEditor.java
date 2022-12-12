@@ -163,9 +163,15 @@ public class UrlEditor {
 	}
 
 
-
+	/**
+	 * Load file content into set of object, add possibly new urls to set and overwrite file content
+	 * with the content of the objects set.
+	 * @param urlsList
+	 * @param urlFile
+	 */
 	public void addUrls(Set<String> urlsList, UrlFile urlFile) {
 		try {
+			urlFile.loadLinesOfFileIntoObject();
 			urlFile.addToObjectsList(urlsList);
 			urlFile.saveListFromObjectIntoFile();
 		} catch (IOException e) {
@@ -174,8 +180,15 @@ public class UrlEditor {
 
 	}
 
+	/**
+	 * Load file content into set of object, add possibly new urls to set and overwrite file content
+	 * with the content of the objects set.
+	 * @param url
+	 * @param urlFile
+	 */
 	public void addUrls(String url, UrlFile urlFile) {
 		try {
+			urlFile.loadLinesOfFileIntoObject();
 			urlFile.addToObjectsList(url);
 			urlFile.saveListFromObjectIntoFile();
 		} catch (IOException e) {
@@ -184,8 +197,15 @@ public class UrlEditor {
 
 	}
 
+	/**
+	 * Load file content into set of object, remove urls from set and overwrite file content
+	 * with the content of the objects set.
+	 * @param urlsList
+	 * @param urlFile
+	 */
 	public void removeUrls(Set<String> urlsList, UrlFile urlFile) {
 		try {
+			urlFile.loadLinesOfFileIntoObject();
 			urlFile.removeLineFromObjectsList(urlsList);
 			urlFile.saveListFromObjectIntoFile();
 		} catch (IOException e) {
@@ -194,8 +214,15 @@ public class UrlEditor {
 
 	}
 
+	/**
+	 * Load file content into set of object, remove urls from set and overwrite file content
+	 * with the content of the objects set.
+	 * @param url
+	 * @param urlFile
+	 */
 	public void removeUrls(String url, UrlFile urlFile) {
 		try {
+			urlFile.loadLinesOfFileIntoObject();
 			urlFile.removeLineFromObjectsList(url);
 			urlFile.saveListFromObjectIntoFile();
 		} catch (IOException e) {
