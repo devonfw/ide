@@ -5,6 +5,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 == 2022.12.001
 
 Release with new features and bugfixes:
+* https://github.com/devonfw/ide/issues/939[#939]: Consider extending test-functions-doc with invocation of undeclared functions
 
 * TODO
 
@@ -14,7 +15,6 @@ The full list of changes for this release can be found in https://github.com/dev
 
 Release with small but important bugfixes:
 
-* https://github.com/devonfw/ide/issues/939[#939]: Consider extending test-functions-doc with invocation of undeclared functions
 * https://github.com/devonfw/ide/issues/966[#966]: npm detection not reliable and redundant
 * https://github.com/devonfw/ide/issues/954[#954]: First install removes all folders from user path
 * https://github.com/devonfw/ide/issues/956[#956]: no matches found error if software folder missing
