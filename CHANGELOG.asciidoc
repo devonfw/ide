@@ -6,7 +6,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
-* TODO
+* https://github.com/devonfw/ide/issues/903[#903]: Uninstall Eclipse plugins
+* https://github.com/devonfw/ide/issues/904[#904]: Remove the hard-coded Eclipse plugins from eclipse commandlet
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/37?closed=1[milestone 2022.12.001].
 
@@ -19,8 +20,7 @@ Release with small but important bugfixes:
 * https://github.com/devonfw/ide/issues/956[#956]: no matches found error if software folder missing
 * https://github.com/devonfw/ide/issues/986[#986]: eclipse commandlet ignores EXTRA_JAVA_VERSION
 * https://github.com/devonfw/ide/issues/974[#974]: Fix dotnet command for nightly test
-* https://github.com/devonfw/ide/issues/903[#903]: Uninstall Eclipse plugins
-* https://github.com/devonfw/ide/issues/904[#904]: Remove the hard-coded Eclipse plugins from eclipse commandlet
+
 
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/35?closed=1[milestone 2022.11.002].
