@@ -21,17 +21,17 @@ else
   exit 1
 fi
 
-#For every file in SCRIPTS_PATH/command, check for functions that follow the pattern do[A-Z][a-zA-Z]*. 
+#For every file in SCRIPTS_PATH/command and SCRIPTS_PATH/function and SCRIPTS_PATH/function-core, check for functions that follow the pattern do[A-Z][a-zA-Z]*. 
 #Then check if there is a corresponding function declared in the same file or in functions.list file
 #which contains every function declared in functions and functions-core files.
 
-for file in "$SCRIPTS_PATH"/command/*; do
+for file in "$SCRIPTS_PATH"/command/* "$SCRIPTS_PATH/functions" "$SCRIPTS_PATH/functions-core"; do
   (
     set -o pipefail
     grep -o -E "do[A-Z][a-zA-Z]*" "$file" | sort | uniq |
-      while read -r line; do
-        if ! grep -q "function $line" "$file" && ! grep -q "$line" "$TEST_PATH/functions.list"; then
-          echo "Function $line is neither declared in $file nor in Devon Functions Files!"
+      while read -r functionName; do
+        if ! grep -q "function $functionName" "$file" && ! grep -q "$functionName" "$TEST_PATH/functions.list"; then
+          echo "Function $functionName is neither declared in $file nor in Devon Functions Files!"
         fi
       done
   ) || exit 1
