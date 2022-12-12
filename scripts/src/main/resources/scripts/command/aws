@@ -42,19 +42,20 @@ function doSetup() {
   TOOL_VERSION_COMMAND="-"
   doInstall "aws" "${AWS_VERSION}" "${1}" "" "${AWS_HOME}"
   ERR="${?}"
+  local version_to_install
+  version_to_install=$(cat "${AWS_HOME}"/.devon.software.version)
   if doIsWindows
   then
     if [ "${ERR}" = 0 ]
     then
       mv "${AWS_HOME}"/Amazon/AWSCLIV2/* "${AWS_HOME}"
-      rm -rf "${AWS_HOME}"/Amazon/
+      [ -d "${AWS_HOME}"//Amazon/ ] && rm -rf "${AWS_HOME}"/Amazon/
+      [ -f "${AWS_HOME}"/aws-"${version_to_install}"-windows.msi ] && rm -rf "${AWS_HOME}"/aws-"${version_to_install}"-windows.msi
     fi
   elif doIsMacOs
   then
     if [ "${ERR}" = 0 ]
     then
-      local version_to_install
-      version_to_install=$(cat "${AWS_HOME}"/.devon.software.version)
       xar -C "${AWS_HOME}" -xf "${AWS_HOME}"/aws-"${version_to_install}"-mac.pkg
       tar -C "${AWS_HOME}" -xzvf "${AWS_HOME}"/aws-cli.pkg/Payload
       rm -rf "${AWS_HOME}"/Distribution "${AWS_HOME}"/Resources "${AWS_HOME}"/aws-cli.pkg
