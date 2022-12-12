@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Class to enable easier usage of download-url-folders-structure by handling technicalities in the background.
  * Supposed to be used to interact with crawler class to get or remove download-urls.
  * Gives a method to create a folder or file, while objects are created in the background,
- * as well as a method for getting an object representing a folder or a file. 
+ * as well as a method for getting an object representing a folder or a file.
  * Also a method for adding and removing urls is given.
  */
 public class UrlEditor {
@@ -92,13 +93,8 @@ public class UrlEditor {
 		}
 	}
 
-
-	//TO DO: *Doku zu Methodendefinition aktualisieren, nach schreiben der finalen Version.
-	//		 *Ggf. in folgenden Methoden von getChild zu getOrCreateChild wechseln, oder klären wie
-	//		  Fall zu behandeln in dem ein Kindobjekt garnicht existiert.
 	/**
-	 * The methods definition isn't final yet and just for temporary use to get the path to a specific folder
-	 * in accordance with the url-repository structure faster. Please feel free to communicate that other types are needed.
+	 * Get the Folders object representation of type UrlTool.
 	 * @param Tool
 	 * @return
 	 */
@@ -107,10 +103,23 @@ public class UrlEditor {
 
 	}
 
+	/**
+	 * Get the Folders object representation of type UrlEdition.
+	 * @param Tool
+	 * @param Edition
+	 * @return
+	 */
 	public UrlEdition getFolder(String Tool, String Edition) {
 		return urlRepoObject.getChild(Tool).getChild(Edition);
 	}
 
+	/**
+	 * Get the Folders object representation of type UrlVersion.
+	 * @param Tool
+	 * @param Edition
+	 * @param Version
+	 * @return
+	 */
 	public UrlVersion getFolder(String Tool, String Edition, String Version) {
 		return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version);
 	}
@@ -128,17 +137,34 @@ public class UrlEditor {
 		return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild("urls");
 	}
 
+	/**
+	 * Returns an UrlFile object that represents the file named ${os}.urls.
+	 * @param Tool
+	 * @param Edition
+	 * @param Version
+	 * @param os
+	 * @return
+	 */
 	public UrlFile getFile(String Tool, String Edition, String Version, String os) {
 		return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + ".urls");
 	}
 
+	/**
+	 * Returns an UrlFile object that represents the file named ${os}_%{arch}.urls.
+	 * @param Tool
+	 * @param Edition
+	 * @param Version
+	 * @param os
+	 * @param arch
+	 * @return
+	 */
 	public UrlFile getFile(String Tool, String Edition, String Version, String os, String arch) {
 		return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + "_" + arch + ".urls");
 	}
 
 
 
-	public void addUrls(ArrayList<String> urlsList, UrlFile urlFile) {
+	public void addUrls(Set<String> urlsList, UrlFile urlFile) {
 		try {
 			urlFile.addToObjectsList(urlsList);
 			urlFile.saveListFromObjectIntoFile();
@@ -158,7 +184,7 @@ public class UrlEditor {
 
 	}
 
-	public void removeUrls(ArrayList<String> urlsList, UrlFile urlFile) {
+	public void removeUrls(Set<String> urlsList, UrlFile urlFile) {
 		try {
 			urlFile.removeLineFromObjectsList(urlsList);
 			urlFile.saveListFromObjectIntoFile();

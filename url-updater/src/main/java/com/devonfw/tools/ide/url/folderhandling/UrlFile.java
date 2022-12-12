@@ -10,8 +10,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 
-	ArrayList<String> linesOfFile = new ArrayList<>();
+	Set<String> linesOfFile = new HashSet<>();
 
 	public UrlFile(UrlVersion parent, String name) {
 		super(parent, name);
@@ -34,7 +36,7 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 
 	}
 
-	public ArrayList<String> loadLinesOfFileIntoObject() throws IOException {
+	public Set<String> loadLinesOfFileIntoObject() throws IOException {
 		String line;
 		BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(path.toString()));
 		while ((line = bufferedReaderObj.readLine()) != null) {
@@ -45,16 +47,16 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 
 	}
 
-	
+
 	/**
 	 * Only intended for debugging and testing purposes to get content of file easily for comparison.
 	 * @return
 	 * @throws IOException
 	 */
-	public ArrayList<String> debugLoadFileContent() throws IOException {
+	public Set<String> debugLoadFileContent() throws IOException {
 		String line;
 		BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(path.toString()));
-		ArrayList<String> debugLinesOfFile = new ArrayList<>();
+		Set<String> debugLinesOfFile = new HashSet<>();
 		while ((line = bufferedReaderObj.readLine()) != null) {
 			debugLinesOfFile.add(line);
 		}
@@ -62,7 +64,7 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 		return debugLinesOfFile;
 	}
 
-	public ArrayList<String> getObjectsList() {
+	public Set<String> getObjectsSet() {
 		return this.linesOfFile;
 	}
 
@@ -70,13 +72,12 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 		if (!linesOfFile.contains(urlToAdd)) {
 			linesOfFile.add(urlToAdd);
 		}
-
 	}
 
-	public void addToObjectsList(ArrayList<String> urlsList) throws IOException {
+	public void addToObjectsList(Set<String> urlsList) throws IOException {
 		for (String url: urlsList) {
 		// System.out.println("result of '!urlsList.contains('" + url + "): " + (!urlsList.contains(url)));
-			if (!urlsList.contains(url)) {
+			if (!linesOfFile.contains(url)) {
 				linesOfFile.add(url);
 		}
 		}
@@ -86,7 +87,7 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 		linesOfFile.remove(urlToRemove);
 	}
 
-	public void removeLineFromObjectsList(ArrayList<String> urlsList) throws IOException {
+	public void removeLineFromObjectsList(Set<String> urlsList) throws IOException {
 		for (String url: urlsList) {
 			linesOfFile.remove(url);
 		}
