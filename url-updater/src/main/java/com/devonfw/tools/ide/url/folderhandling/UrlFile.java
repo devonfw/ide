@@ -18,8 +18,13 @@ import java.util.stream.Collectors;
 
 /**
  * An instance of this class represents a file given by the files folder path and the files name. The instance can read
- * the files content, edit the content taken out and write it back into the file by methods defined in this class.
- *
+ * the files content, edit the content taken out and write it back into the file by the methods defined in this class.
+ * The idea of this class is to modify the files content in the last step, to avoid fallacious content in the file.
+ * To do so, at first the files content is read into a set of the object.
+ * Then the set is manipulated by adding and removing URL's. Finally, if nothing went wrong,
+ * the sets content is written into the file as new content.
+ * @see {@link UrlEditor} for the methods addUrls and removeUrls. They are based on methods from the class {@link UrlFile} and implement
+ * the above mentioned idea, by combining this classes methods.
  */
 public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 
@@ -71,14 +76,14 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
     return this.linesOfFile;
   }
 
-  public void addToObjectsList(String urlToAdd) throws IOException {
+  public void addToObjectsSet(String urlToAdd) throws IOException {
 
     if (!linesOfFile.contains(urlToAdd)) {
       linesOfFile.add(urlToAdd);
     }
   }
 
-  public void addToObjectsList(Set<String> urlsList) throws IOException {
+  public void addToObjectsSet(Set<String> urlsList) throws IOException {
 
     for (String url : urlsList) {
       if (!linesOfFile.contains(url)) {
@@ -87,19 +92,19 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
     }
   }
 
-  public void removeLineFromObjectsList(String urlToRemove) throws IOException {
+  public void removeLineFromObjectsSet(String urlToRemove) throws IOException {
 
     linesOfFile.remove(urlToRemove);
   }
 
-  public void removeLineFromObjectsList(Set<String> urlsList) throws IOException {
+  public void removeLineFromObjectsSet(Set<String> urlsList) throws IOException {
 
     for (String url : urlsList) {
       linesOfFile.remove(url);
     }
   }
 
-  public void saveListFromObjectIntoFile() throws IOException {
+  public void saveSetFromObjectIntoFile() throws IOException {
 
     Files.delete(path);
     BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.APPEND, StandardOpenOption.CREATE);

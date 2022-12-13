@@ -7,10 +7,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Set;
 
+// TO DO: Füge später Link für Crawler-Klasse in Doc zu UrlEditor hinzu.
 /**
  * Class to enable easier usage of download-url-folders-structure by handling technicalities in the background. Supposed
  * to be used to interact with crawler class to get or remove download-urls. Gives a method to create a folder or file,
- * while objects are created in the background, as well as a method for getting an object representing a folder or a
+ * while their representing objects are created in the background, as well as a method for getting an object representing a folder or a
  * file. Also a method for adding and removing urls is given.
  */
 public class UrlEditor {
@@ -104,7 +105,7 @@ public class UrlEditor {
   }
 
   /**
-   * Get the Folders object representation of type UrlTool.
+   * Get the Folders object representation of type {@link UrlTool}.
    *
    * @param Tool
    * @return
@@ -116,7 +117,7 @@ public class UrlEditor {
   }
 
   /**
-   * Get the Folders object representation of type UrlEdition.
+   * Get the Folders object representation of type {@link UrlEdition}.
    *
    * @param Tool
    * @param Edition
@@ -128,7 +129,7 @@ public class UrlEditor {
   }
 
   /**
-   * Get the Folders object representation of type UrlVersion.
+   * Get the Folders object representation of type {@link UrlVersion}.
    *
    * @param Tool
    * @param Edition
@@ -141,7 +142,7 @@ public class UrlEditor {
   }
 
   /**
-   * Returns an UrlFile object that represents the file with urls called "urls". The method without os or arch
+   * Returns an {@link UrlFile} object that represents the file with urls called "urls". The method without os or arch
    * parameters should only be used if there are no distinctions to be made regarding an users operating system or
    * system architecture.
    *
@@ -156,7 +157,7 @@ public class UrlEditor {
   }
 
   /**
-   * Returns an UrlFile object that represents the file named ${os}.urls.
+   * Returns an {@link UrlFile} object that represents the file named ${os}.urls.
    *
    * @param Tool
    * @param Edition
@@ -170,7 +171,7 @@ public class UrlEditor {
   }
 
   /**
-   * Returns an UrlFile object that represents the file named ${os}_%{arch}.urls.
+   * Returns an {@link UrlFile} object that represents the file named ${os}_${arch}.urls.
    *
    * @param Tool
    * @param Edition
@@ -195,8 +196,8 @@ public class UrlEditor {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
-      urlFile.addToObjectsList(urlsList);
-      urlFile.saveListFromObjectIntoFile();
+      urlFile.addToObjectsSet(urlsList);
+      urlFile.saveSetFromObjectIntoFile();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -214,8 +215,8 @@ public class UrlEditor {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
-      urlFile.addToObjectsList(url);
-      urlFile.saveListFromObjectIntoFile();
+      urlFile.addToObjectsSet(url);
+      urlFile.saveSetFromObjectIntoFile();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -233,8 +234,8 @@ public class UrlEditor {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
-      urlFile.removeLineFromObjectsList(urlsList);
-      urlFile.saveListFromObjectIntoFile();
+      urlFile.removeLineFromObjectsSet(urlsList);
+      urlFile.saveSetFromObjectIntoFile();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -252,8 +253,8 @@ public class UrlEditor {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
-      urlFile.removeLineFromObjectsList(url);
-      urlFile.saveListFromObjectIntoFile();
+      urlFile.removeLineFromObjectsSet(url);
+      urlFile.saveSetFromObjectIntoFile();
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -9,7 +9,8 @@ import java.util.LinkedList;
 /**
  *
  * An instance of this class represents a version folder, like version 1.6.2 of rancher-desktop (as edition of the tool
- * docker). It offers a method to create a file named in accordance with the structure discussed in issue #941.
+ * docker). It offers a method to create a file named in accordance with the structure discussed in issue #941 and issue
+ * #1007.
  *
  */
 public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
@@ -45,7 +46,7 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
 
   /**
    * Open to discussion if this method is needed. Differs from the method with similar name in class
-   * UrlHasChildParentArtifact by giving out files instead of directories.
+   * {@link UrlHasChildParentArtifact} by giving out files instead of directories.
    */
   @Override
   public void getChildrenInDirectory() {
@@ -60,6 +61,11 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
     }
   }
 
+  /**
+   * This method is used to add new children to the children collection of an instance from this class.
+   *
+   * @param name The name of the {@link UrlFile} object that should be created.
+   */
   @Override
   protected UrlFile newChild(String name) {
 

@@ -15,7 +15,7 @@ public class UrlTool extends UrlHasChildParentArtifact<UrlRepository, UrlEdition
   /**
    * This method is used to add new children to the children collection of an instance from this class.
    *
-   * @param name The name of the edition object that should be created.
+   * @param name The name of the {@link UrlEdition} object that should be created.
    */
   @Override
   protected UrlEdition newChild(String name) {

@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 /**
- * Class from which UrlFile inherits, as its instances each have a parent, but no children. It definies a method for
+ * Class from which {@link UrlFile} inherits, as its instances each have a parent, but no children. It definies a method for
  * getting parent objects and the name variable.
  *
  * @param <P> The parent object to use.

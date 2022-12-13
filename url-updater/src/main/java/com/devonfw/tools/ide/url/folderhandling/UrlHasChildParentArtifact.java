@@ -8,8 +8,9 @@ import java.util.Map;
 
 /**
  *
- * Class from which UrlTool, UrlEdition and UrlVersion inherit, as their objects have both parent and eventually child
- * objects. It mainly gives methods to read a parent object or to create or read child objects.
+ * Class from which {@link UrlTool}, {@link UrlEdition} and {@link UrlVersion} inherit, as their objects have both
+ * parent and eventually child objects. It mainly gives methods to read a parent object or to create or read child
+ * objects.
  *
  * @param <P> Type of the parent object
  * @param <C> Type of the child objects
@@ -26,8 +27,8 @@ public abstract class UrlHasChildParentArtifact<P extends UrlArtifact, C extends
    * name variable and set the children variable as a hashmap for later use.
    *
    * @param parent Parent object to be used
-   * @param name The name of the child, e.g. if of the child is of type UrlEdition the name could be rancher-desktop, if
-   *        the object of type UrlTool has docker as name.
+   * @param name The name of the child, e.g. if the child is of type {@link UrlEdition}, then the name could be
+   *        rancher-desktop, if the object is of type {@link UrlTool}, then the object has docker as name.
    */
   public UrlHasChildParentArtifact(P parent, String name) {
 

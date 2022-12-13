@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class from which UrlRepository inherits, as its objects don't have a parent, but possibly child objects of the class
- * UrlTool.
+ * Class from which {@link UrlRepository} inherits, as its objects don't have a parent, but possibly child objects of
+ * the class {@link UrlTool}.
  *
  * @param <C> Type of the child object.
  */
@@ -17,7 +17,7 @@ public abstract class UrlHasChildArtifact<C extends UrlHasChildParentArtifact<?,
   protected Map<String, C> children;
 
   /**
-   * Set the children variable as a hashmap for later use.
+   * Set the children variable as a hashmap to store child elements inside and analyze or manipulate this child mapping.
    *
    * @param path
    */
@@ -43,14 +43,13 @@ public abstract class UrlHasChildArtifact<C extends UrlHasChildParentArtifact<?,
   }
 
   /**
-   * Returns a LinkedList of directories that are inside the directory given by the current objects path. Open for
-   * debate if this method is necessary.
+   * Returns a LinkedList of directories (may be useful for {@link UrlVersion}) that are inside the directory given by
+   * the current objects path. Open for debate if this method is necessary.
    */
   public void getChildrenInDirectory() {
 
     File[] directories = new File(path.toString()).listFiles(File::isDirectory);
     int l = directories.length;
-    // System.out.println(l);
     LinkedList<String> listOfChildrenInDir = new LinkedList<>();
     for (int i = 0; i < l; i++) {
       listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
