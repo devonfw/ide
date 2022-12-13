@@ -203,6 +203,9 @@ public class Migrations {
         .replaceProperty("guava.version", "31.1-jre") //
         .replaceProperty("cxf.version", "3.5.2") //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2022.12.001")).pom() //
+        .replaceProperty("devon4j.version", "2022.12.001") //
+        .and() //
         .next().build();
   }
 
