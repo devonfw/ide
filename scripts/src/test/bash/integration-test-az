@@ -5,6 +5,6 @@ if doIsWindows
 then
   doCommandTest az
 else
-  echo "The integration-test for az is disabled for MacOS and Linux systems"
+  echo "The integration-test for az is currently disabled for MacOS and Linux systems"
   exit 0
 fi
