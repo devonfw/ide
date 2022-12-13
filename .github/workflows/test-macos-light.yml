@@ -1,6 +1,6 @@
 name: Integration Test MacOS
 on: 
-  workflow_dispatch
+  push
 jobs:
   test:
     name: Integration test MacOS
