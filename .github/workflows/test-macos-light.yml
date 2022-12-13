@@ -5,8 +5,6 @@ jobs:
   test:
     name: Integration test MacOS
     runs-on: macos-latest
-    needs: verify_commit
-    if: ${{ needs.verify_commit.outputs.RUN_BUILD == 'true' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
