@@ -7,20 +7,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The abstract class from which UrlHasChildArtifact, UrlHasChildParentArtifact and UrlHasParentArtifact
- * and because of that UrlRepository, UrlTool, UrlEdition, UrlVersion and UrlFile indirectly inherit.
+ * The abstract class from which UrlHasChildArtifact, UrlHasChildParentArtifact and UrlHasParentArtifact and because of
+ * that UrlRepository, UrlTool, UrlEdition, UrlVersion and UrlFile indirectly inherit.
+ *
  * @param <P> Parent type
  * @param <C> Child type
  */
 public abstract class UrlArtifact {
-	protected final Path path;
+  protected final Path path;
 
-	public UrlArtifact(Path path) {
-		this.path = path;
-	}
+  public UrlArtifact(Path path) {
 
-	public Path getPath() {
-		return this.path;
-	}
+    this.path = path;
+  }
+
+  public Path getPath() {
+
+    return this.path;
+  }
 
 }

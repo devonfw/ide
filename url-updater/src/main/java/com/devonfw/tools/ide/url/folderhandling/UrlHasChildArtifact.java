@@ -8,53 +8,55 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class from which UrlRepository inherits, as its objects don't have a parent, but possibly child objects of the class UrlTool.
+ * Class from which UrlRepository inherits, as its objects don't have a parent, but possibly child objects of the class
+ * UrlTool.
  *
  * @param <C> Type of the child object.
  */
-public abstract class UrlHasChildArtifact<C extends UrlHasChildParentArtifact<?,?>>
-extends UrlArtifact {
-	protected Map<String, C> children;
+public abstract class UrlHasChildArtifact<C extends UrlHasChildParentArtifact<?, ?>> extends UrlArtifact {
+  protected Map<String, C> children;
 
-	/**
-	 * Set the children variable as a hashmap for later use.
-	 * @param path
-	 */
-	public UrlHasChildArtifact(Path path) {
-		super(path);
-		this.children = new HashMap<>();
-	}
+  /**
+   * Set the children variable as a hashmap for later use.
+   *
+   * @param path
+   */
+  public UrlHasChildArtifact(Path path) {
 
-	public int getChildCount() {
+    super(path);
+    this.children = new HashMap<>();
+  }
 
-		return this.children.size();
-	}
+  public int getChildCount() {
 
-	public C getChild(String name) {
+    return this.children.size();
+  }
 
-		return this.children.get(name);
-	}
+  public C getChild(String name) {
 
-	public C getOrCreateChild(String name) {
+    return this.children.get(name);
+  }
 
-		return this.children.computeIfAbsent(name, p -> newChild(name));
-	}
+  public C getOrCreateChild(String name) {
 
-	/**
-	 * Returns a LinkedList of directories that are
-	 * inside the directory given by the current objects path.
-	 * Open for debate if this method is necessary.
-	 */
-	public void getChildrenInDirectory() {
-		File[] directories = new File(path.toString()).listFiles(File::isDirectory);
-		int l = directories.length;
-//		System.out.println(l);
-		LinkedList<String> listOfChildrenInDir = new LinkedList<>();
-		for (int i = 0; i < l; i++) {
-			listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
-		}
+    return this.children.computeIfAbsent(name, p -> newChild(name));
+  }
 
-	}
+  /**
+   * Returns a LinkedList of directories that are inside the directory given by the current objects path. Open for
+   * debate if this method is necessary.
+   */
+  public void getChildrenInDirectory() {
 
-	protected abstract C newChild(String name);
+    File[] directories = new File(path.toString()).listFiles(File::isDirectory);
+    int l = directories.length;
+    // System.out.println(l);
+    LinkedList<String> listOfChildrenInDir = new LinkedList<>();
+    for (int i = 0; i < l; i++) {
+      listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
+    }
+
+  }
+
+  protected abstract C newChild(String name);
 }

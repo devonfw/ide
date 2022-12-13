@@ -4,29 +4,31 @@ import java.nio.file.Path;
 import java.util.Map;
 
 /**
- * Class from which UrlFile inherits, as its instances each have a parent, but no children.
- * It definies a method for getting parent objects and the name variable.
+ * Class from which UrlFile inherits, as its instances each have a parent, but no children. It definies a method for
+ * getting parent objects and the name variable.
  *
  * @param <P> The parent object to use.
  */
 public abstract class UrlHasParentArtifact<P extends UrlArtifact> extends UrlArtifact {
-	protected final P parent;
-	protected final String name;
+  protected final P parent;
 
-	public UrlHasParentArtifact(P parent, String name) {
-		super(parent.getPath().resolve(name));
-		this.parent = parent;
-		this.name = name;
-	}
+  protected final String name;
 
-	public P getParent() {
+  public UrlHasParentArtifact(P parent, String name) {
 
-		return this.parent;
-	}
+    super(parent.getPath().resolve(name));
+    this.parent = parent;
+    this.name = name;
+  }
 
-	public String getName() {
+  public P getParent() {
 
-		return this.name;
-	}
+    return this.parent;
+  }
+
+  public String getName() {
+
+    return this.name;
+  }
 
 }
