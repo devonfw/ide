@@ -6,7 +6,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
-* TODO
+* https://github.com/devonfw/ide/issues/992[#992]: aws does not install a different version
+* https://github.com/devonfw/ide/issues/964[#964]: make aws config local
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/37?closed=1[milestone 2022.12.001].
 

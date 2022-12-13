@@ -701,8 +701,15 @@ function doExtract() {
     fi
   elif doIsInstallerExtension "${filename}"
   then
-     doRunCommand "mv \"${1}\" \"${target_dir}\""
+    doRunCommand "mv \"${1}\" \"${target_dir}\""
     extracted="no"
+  elif [ "${ext}" = ".msi" ]
+  then
+    local windows_download_file
+    windows_download_file=$(cygpath -w "${1}")
+    local windows_target_dir
+    windows_target_dir=$(cygpath -w "${target_dir}")
+    msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
@@ -744,7 +751,7 @@ function doInstallWithPackageManager() {
 # $1: filename (e.g. ${filename})
 function doIsInstallerExtension() {
   local myext="${1/*\./.}"
-  if [ "${myext}" = ".msi" ] || [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
+  if [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
     return
   fi
