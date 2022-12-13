@@ -46,11 +46,14 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
   /**
    * Open to discussion if this method is needed. Differs from the method with similar name in class
    * UrlHasChildParentArtifact by giving out files instead of directories.
+   *
+   * @deprecated
    */
+  @Deprecated
   @Override
   public void getChildrenInDirectory() {
 
-    File[] directories = new File(path.toString()).listFiles(File::isFile);
+    File[] directories = new File(getPath().toString()).listFiles(File::isFile);
     int l = directories.length;
     System.out.println(l);
     LinkedList<String> listOfChildrenInDir = new LinkedList<>();

@@ -1,7 +1,6 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -55,7 +54,7 @@ public abstract class UrlHasChildParentArtifact<P extends UrlArtifact, C extends
    */
   public void getChildrenInDirectory() {
 
-    File[] directories = new File(path.toString()).listFiles(File::isDirectory);
+    File[] directories = new File(getPath().toString()).listFiles(File::isDirectory);
     int l = directories.length;
     LinkedList<String> listOfChildrenInDir = new LinkedList<>();
     for (int i = 0; i < l; i++) {

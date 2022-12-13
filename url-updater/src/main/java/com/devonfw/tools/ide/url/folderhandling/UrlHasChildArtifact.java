@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,10 +44,13 @@ public abstract class UrlHasChildArtifact<C extends UrlHasChildParentArtifact<?,
   /**
    * Returns a LinkedList of directories that are inside the directory given by the current objects path. Open for
    * debate if this method is necessary.
+   *
+   * @deprecated
    */
+  @Deprecated
   public void getChildrenInDirectory() {
 
-    File[] directories = new File(path.toString()).listFiles(File::isDirectory);
+    File[] directories = new File(getPath().toString()).listFiles(File::isDirectory);
     int l = directories.length;
     // System.out.println(l);
     LinkedList<String> listOfChildrenInDir = new LinkedList<>();

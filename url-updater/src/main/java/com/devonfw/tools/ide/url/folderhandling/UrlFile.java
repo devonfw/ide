@@ -2,19 +2,12 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * An instance of this class represents a file given by the files folder path and the files name. The instance can read
@@ -23,28 +16,26 @@ import java.util.stream.Collectors;
  */
 public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
 
-  Set<String> linesOfFile = new HashSet<>();
+  private final Set<String> linesOfFile = new HashSet<>();
 
   public UrlFile(UrlVersion parent, String name) {
 
     super(parent, name);
-    try {
-      loadLinesOfFileIntoObject();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public Set<String> loadLinesOfFileIntoObject() throws IOException {
 
     String line;
-    BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(path.toString()));
+    BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(getPath().toString()));
     while ((line = bufferedReaderObj.readLine()) != null) {
-      linesOfFile.add(line);
+      this.linesOfFile.add(line);
     }
     bufferedReaderObj.close();
-    return linesOfFile;
+    return this.linesOfFile;
 
   }
 
@@ -53,11 +44,13 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
    *
    * @return
    * @throws IOException
+   * @deprecated
    */
+  @Deprecated
   public Set<String> debugLoadFileContent() throws IOException {
 
     String line;
-    BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(path.toString()));
+    BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(getPath().toString()));
     Set<String> debugLinesOfFile = new HashSet<>();
     while ((line = bufferedReaderObj.readLine()) != null) {
       debugLinesOfFile.add(line);
@@ -66,44 +59,68 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
     return debugLinesOfFile;
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public Set<String> getObjectsSet() {
 
     return this.linesOfFile;
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public void addToObjectsList(String urlToAdd) throws IOException {
 
-    if (!linesOfFile.contains(urlToAdd)) {
-      linesOfFile.add(urlToAdd);
+    if (!this.linesOfFile.contains(urlToAdd)) {
+      this.linesOfFile.add(urlToAdd);
     }
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public void addToObjectsList(Set<String> urlsList) throws IOException {
 
     for (String url : urlsList) {
-      if (!linesOfFile.contains(url)) {
-        linesOfFile.add(url);
+      if (!this.linesOfFile.contains(url)) {
+        this.linesOfFile.add(url);
       }
     }
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public void removeLineFromObjectsList(String urlToRemove) throws IOException {
 
-    linesOfFile.remove(urlToRemove);
+    this.linesOfFile.remove(urlToRemove);
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public void removeLineFromObjectsList(Set<String> urlsList) throws IOException {
 
     for (String url : urlsList) {
-      linesOfFile.remove(url);
+      this.linesOfFile.remove(url);
     }
   }
 
+  /**
+   * @deprecated
+   */
+  @Deprecated
   public void saveListFromObjectIntoFile() throws IOException {
 
-    Files.delete(path);
-    BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
-    for (String line : linesOfFile) {
+    Files.delete(getPath());
+    BufferedWriter bw = Files.newBufferedWriter(getPath(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+    for (String line : this.linesOfFile) {
       bw.write(line + "\n");
     }
     bw.close();

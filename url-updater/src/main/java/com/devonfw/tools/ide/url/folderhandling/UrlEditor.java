@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -12,7 +11,10 @@ import java.util.Set;
  * to be used to interact with crawler class to get or remove download-urls. Gives a method to create a folder or file,
  * while objects are created in the background, as well as a method for getting an object representing a folder or a
  * file. Also a method for adding and removing urls is given.
+ *
+ * @deprecated use {@link UrlRepository} and its children directly.
  */
+@Deprecated
 public class UrlEditor {
 
   protected Path repoPath;
@@ -23,9 +25,9 @@ public class UrlEditor {
 
     this.repoPath = Paths.get(PathToUrlRepo);
 
-    this.urlRepoObject = new UrlRepository(repoPath);
+    this.urlRepoObject = new UrlRepository(this.repoPath);
     UrlReader<UrlArtifact> urlReaderObject = new UrlReader<UrlArtifact>();
-    urlReaderObject.readFolderStructure(urlRepoObject);
+    urlReaderObject.readFolderStructure(this.urlRepoObject);
   }
 
   // TO DO: Womöglich sollte der zweite Konstruktor entfernt werden,
@@ -46,29 +48,30 @@ public class UrlEditor {
 
   public void createFolder(String Tool) {
 
-    urlRepoObject.getOrCreateChild(Tool);
-    File f = new File(repoPath + File.separator + Tool);
+    this.urlRepoObject.getOrCreateChild(Tool);
+    File f = new File(this.repoPath + File.separator + Tool);
     f.mkdirs();
   }
 
   public void createFolder(String Tool, String Edition) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition);
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition);
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition);
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition);
     f.mkdirs();
   }
 
   public void createFolder(String Tool, String Edition, String Version) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version);
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version);
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version);
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version);
     f.mkdirs();
   }
 
   public void createFile(String Tool, String Edition, String Version) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version).getOrCreateChild("urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateChild("urls");
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + "urls");
     try {
       f.createNewFile();
@@ -79,9 +82,9 @@ public class UrlEditor {
 
   public void createFile(String Tool, String Edition, String Version, String os) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
         .getOrCreateChild(os + ".urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + os + ".urls");
     try {
       f.createNewFile();
@@ -92,9 +95,9 @@ public class UrlEditor {
 
   public void createFile(String Tool, String Edition, String Version, String os, String arch) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
         .getOrCreateChild(os + "_" + arch + ".urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + os + "_" + arch + ".urls");
     try {
       f.createNewFile();
@@ -111,7 +114,7 @@ public class UrlEditor {
    */
   public UrlTool getFolder(String Tool) {
 
-    return urlRepoObject.getChild(Tool);
+    return this.urlRepoObject.getChild(Tool);
 
   }
 
@@ -124,7 +127,7 @@ public class UrlEditor {
    */
   public UrlEdition getFolder(String Tool, String Edition) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition);
+    return this.urlRepoObject.getChild(Tool).getChild(Edition);
   }
 
   /**
@@ -137,7 +140,7 @@ public class UrlEditor {
    */
   public UrlVersion getFolder(String Tool, String Edition, String Version) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version);
+    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version);
   }
 
   /**
@@ -152,7 +155,7 @@ public class UrlEditor {
    */
   public UrlFile getFile(String Tool, String Edition, String Version) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild("urls");
+    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild("urls");
   }
 
   /**
@@ -166,7 +169,7 @@ public class UrlEditor {
    */
   public UrlFile getFile(String Tool, String Edition, String Version, String os) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + ".urls");
+    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + ".urls");
   }
 
   /**
@@ -181,7 +184,7 @@ public class UrlEditor {
    */
   public UrlFile getFile(String Tool, String Edition, String Version, String os, String arch) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + "_" + arch + ".urls");
+    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + "_" + arch + ".urls");
   }
 
   /**
