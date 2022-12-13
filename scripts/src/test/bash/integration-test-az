@@ -1,4 +1,10 @@
 #!/bin/bash
 
 source "$(dirname "${0}")"/functions-test
-doCommandTest az
+if doIsWindows
+then
+  doCommandTest az
+else
+  echo "The integration-test for az is disabled for MacOS and Linux systems"
+  exit 0
+fi
