@@ -30,7 +30,7 @@ public class UrlFileTest extends Assertions {
     UrlVersion UrlVersionObj = new UrlVersion(UrlEditionObj, "1.6.2");
     assertThat(UrlVersionObj.getPath()).isNotNull();
 
-    UrlFile UrlFileObj = new UrlFile(UrlVersionObj, "linux.urls");
+    UrlDownloadFile UrlFileObj = new UrlDownloadFile(UrlVersionObj, "linux.urls");
 
     UrlFileObj.addToObjectsList("url/3");
     UrlFileObj.addToObjectsList("url/2");
@@ -47,15 +47,13 @@ public class UrlFileTest extends Assertions {
 
     UrlFileObj.removeLineFromObjectsList("url/0");
 
-    currentList.forEach(line -> System.out.println(line));
-
     UrlFileObj.saveListFromObjectIntoFile();
 
     allLines = Files.readAllLines(UrlFileObj.getPath());
 
     assertThat(currentList).containsExactlyInAnyOrder(allLines.toArray(new String[allLines.size()]));
 
-    assertThat(UrlFileObj).isInstanceOf(UrlFile.class);
+    assertThat(UrlFileObj).isInstanceOf(UrlDownloadFile.class);
 
   }
 

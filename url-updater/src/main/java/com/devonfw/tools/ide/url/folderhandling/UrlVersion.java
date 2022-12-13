@@ -7,13 +7,17 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 
 /**
- *
- * An instance of this class represents a version folder, like version 1.6.2 of rancher-desktop (as edition of the tool
- * docker). It offers a method to create a file named in accordance with the structure discussed in issue #941.
- *
+ * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
+ * name} of such version could be "1.6.2" or "17.0.5_8".
  */
-public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
+public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile> {
 
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   * @param name the {@link #getName() filename}.
+   */
   public UrlVersion(UrlEdition parent, String name) {
 
     super(parent, name);
@@ -63,9 +67,35 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
     }
   }
 
+  public UrlDownloadFile getOrCreateUrls() {
+
+    return (UrlDownloadFile) getOrCreateChild("urls");
+  }
+
+  public UrlDownloadFile getOrCreateUrls(String os, String arch) {
+
+    return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");
+  }
+
+  public UrlDownloadFile getOrCreateUrls(String os) {
+
+    return (UrlDownloadFile) getOrCreateChild(os + ".urls");
+  }
+
+  /**
+   * @return the {@link UrlStatusFile}.
+   */
+  public UrlStatusFile getOrCreateStatus() {
+
+    return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
+  }
+
   @Override
   protected UrlFile newChild(String name) {
 
-    return new UrlFile(this, name);
+    if (UrlStatusFile.STATUS_JSON.equals(name)) {
+      return new UrlStatusFile(this);
+    }
+    return new UrlDownloadFile(this, name);
   }
 }

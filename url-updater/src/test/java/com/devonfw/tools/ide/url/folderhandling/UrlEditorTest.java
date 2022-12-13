@@ -75,9 +75,9 @@ public class UrlEditorTest extends Assertions {
     assertThat(urlEditorObject.getFile(tool, edition, version, os, arch).equals(urlEditorObject.getUrlRepositoryObject()
         .getChild(tool).getChild(edition).getChild(version).getChild(os + "_" + arch + ".urls")));
 
-    UrlFile fileNamedUrls = urlEditorObject.getFile(tool, edition, version);
-    UrlFile fileForOs = urlEditorObject.getFile(tool, edition, version, os);
-    UrlFile fileForOsArch = urlEditorObject.getFile(tool, edition, version, os, arch);
+    UrlDownloadFile fileNamedUrls = urlEditorObject.getFile(tool, edition, version);
+    UrlDownloadFile fileForOs = urlEditorObject.getFile(tool, edition, version, os);
+    UrlDownloadFile fileForOsArch = urlEditorObject.getFile(tool, edition, version, os, arch);
 
     String urlToAdd = "url/without/os/Or/arch2";
     urlEditorObject.addUrls("url/without/os/Or/arch2", fileNamedUrls);

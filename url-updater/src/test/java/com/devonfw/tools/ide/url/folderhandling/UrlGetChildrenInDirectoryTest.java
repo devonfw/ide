@@ -44,9 +44,9 @@ public class UrlGetChildrenInDirectoryTest extends Assertions {
     assertThat(UrlVersionObj2.getPath()).isNotNull();
 
     // Erzeugen der Ordnerstruktur, basierend auf den zuvor erzeugten Objekten.
-    UrlFile UrlFileObj = new UrlFile(UrlVersionObj, "linux.urls");
+    UrlDownloadFile UrlFileObj = new UrlDownloadFile(UrlVersionObj, "linux.urls");
     Files.createDirectories(UrlVersionObj2.getPath());
-    Files.createDirectories(UrlFileObj.parent.getPath());
+    Files.createDirectories(UrlFileObj.getParent().getPath());
     if (!Files.exists(UrlFileObj.getPath())) {
       Files.createFile(UrlFileObj.getPath());
     }

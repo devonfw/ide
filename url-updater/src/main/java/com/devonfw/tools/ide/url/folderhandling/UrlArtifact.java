@@ -3,23 +3,23 @@ package com.devonfw.tools.ide.url.folderhandling;
 import java.nio.file.Path;
 
 /**
- * The abstract class from which UrlHasChildArtifact, UrlHasChildParentArtifact and UrlHasParentArtifact and because of
- * that UrlRepository, UrlTool, UrlEdition, UrlVersion and UrlFile indirectly inherit.
+ * An {@link UrlArtifact} represents a file or folder in the directory structure of an devonfw-ide urls repository.
  *
- * @param <P> Parent type
- * @param <C> Child type
+ * @see UrlRepository
+ * @see UrlTool
+ * @see UrlEdition
+ * @see UrlVersion
+ * @see UrlDownloadFile
  */
-public abstract class UrlArtifact {
-  private final Path path;
+public interface UrlArtifact {
 
-  public UrlArtifact(Path path) {
+  /**
+   * @return the {@link Path} to this {@link AbstractUrlArtifact} as folder or file on the disc.
+   */
+  Path getPath();
 
-    this.path = path;
-  }
-
-  public Path getPath() {
-
-    return this.path;
-  }
-
+  /**
+   * @return name the file-name of this {@link AbstractUrlArtifact}.
+   */
+  String getName();
 }

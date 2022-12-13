@@ -26,7 +26,7 @@ public class UrlEditor {
     this.repoPath = Paths.get(PathToUrlRepo);
 
     this.urlRepoObject = new UrlRepository(this.repoPath);
-    UrlReader<UrlArtifact> urlReaderObject = new UrlReader<UrlArtifact>();
+    UrlReader<AbstractUrlArtifact> urlReaderObject = new UrlReader<AbstractUrlArtifact>();
     urlReaderObject.readFolderStructure(this.urlRepoObject);
   }
 
@@ -36,7 +36,7 @@ public class UrlEditor {
 
     // this.repoPath = Paths.get(PathToUrlRepo);
     this.repoPath = urlRepoObject.getPath();
-    UrlReader<UrlArtifact> urlReaderObject = new UrlReader<UrlArtifact>();
+    UrlReader<AbstractUrlArtifact> urlReaderObject = new UrlReader<AbstractUrlArtifact>();
     urlReaderObject.readFolderStructure(urlRepoObject);
 
   }
@@ -153,9 +153,10 @@ public class UrlEditor {
    * @param Version
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version) {
 
-    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild("urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls();
   }
 
   /**
@@ -167,9 +168,10 @@ public class UrlEditor {
    * @param os
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version, String os) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version, String os) {
 
-    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + ".urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls(os);
   }
 
   /**
@@ -182,9 +184,10 @@ public class UrlEditor {
    * @param arch
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version, String os, String arch) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version, String os, String arch) {
 
-    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + "_" + arch + ".urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls(os, arch);
   }
 
   /**
@@ -194,7 +197,7 @@ public class UrlEditor {
    * @param urlsList
    * @param urlFile
    */
-  public void addUrls(Set<String> urlsList, UrlFile urlFile) {
+  public void addUrls(Set<String> urlsList, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -213,7 +216,7 @@ public class UrlEditor {
    * @param url
    * @param urlFile
    */
-  public void addUrls(String url, UrlFile urlFile) {
+  public void addUrls(String url, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -232,7 +235,7 @@ public class UrlEditor {
    * @param urlsList
    * @param urlFile
    */
-  public void removeUrls(Set<String> urlsList, UrlFile urlFile) {
+  public void removeUrls(Set<String> urlsList, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -251,7 +254,7 @@ public class UrlEditor {
    * @param url
    * @param urlFile
    */
-  public void removeUrls(String url, UrlFile urlFile) {
+  public void removeUrls(String url, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
