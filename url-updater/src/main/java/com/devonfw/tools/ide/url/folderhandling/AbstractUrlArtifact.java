@@ -44,7 +44,7 @@ public abstract class AbstractUrlArtifact implements UrlArtifact {
   /**
    * Saves this artifact to the disc. Will recursively save its children. Unchanged files remain untouched.
    */
-  protected abstract void save();
+  public abstract void save();
 
   @Override
   public String toString() {

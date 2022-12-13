@@ -96,7 +96,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   }
 
   @Override
-  protected void save() {
+  public void save() {
 
     for (C child : this.children.values()) {
       ((AbstractUrlArtifact) child).save();

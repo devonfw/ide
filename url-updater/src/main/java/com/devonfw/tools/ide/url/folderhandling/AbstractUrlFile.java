@@ -35,7 +35,7 @@ public abstract class AbstractUrlFile extends AbstractUrlArtifactWithParent<UrlV
   protected abstract void doLoad();
 
   @Override
-  protected void save() {
+  public void save() {
 
     if (this.modified) {
       doSave();
