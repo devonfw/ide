@@ -1,6 +1,6 @@
 name: Integration Test Ubuntu
 on: 
-  workflow_dispatch
+  push
 jobs:
   test:
     name: Integration test Ubuntu
