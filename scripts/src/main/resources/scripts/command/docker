@@ -36,6 +36,10 @@ function doResolveDownloadUrl() {
 
 # $1: optional setup
 function doSetup() {  
+  if doIsWsl1Used; then
+    #update from wsl1 to wsl2, else the following docker editions won't work
+    wsl --update
+  fi
   if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
@@ -116,6 +120,26 @@ function doRun() {
   doSetup silent
   doEcho "Running: docker ${*}"
   docker "${@}"
+}
+
+function doIsWsl1Used() {
+{
+  echo '@echo off'
+  echo 'ver > tmp-kernel-versiontest-result.txt'
+} > tmp-kernel-versiontest.bat
+
+cmd "/C tmp-kernel-versiontest.bat"
+
+groupVersion=$(cat tmp-kernel-versiontest-result.txt | sed 's/^.*[^0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\)\.[0-9][0-9]*.*$/\1/')
+
+rm tmp-kernel-versiontest.bat
+rm tmp-kernel-versiontest-result.txt
+
+if [ "${groupVersion}" -lt 18917 ]; then
+  return 0
+else 
+  return 1
+fi
 }
 
 # OS independent check if docker is installed.
