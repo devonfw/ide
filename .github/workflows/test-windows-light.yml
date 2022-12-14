@@ -1,6 +1,5 @@
 name: Integration Test Windows
-on:
-  workflow_dispatch
+on: push
 jobs:
   test:
     name: Integration test Windows
