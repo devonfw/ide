@@ -1,6 +1,5 @@
 name: Integration Test MacOS
-on: 
-  push
+on: push
 jobs:
   test:
     name: Integration test MacOS
