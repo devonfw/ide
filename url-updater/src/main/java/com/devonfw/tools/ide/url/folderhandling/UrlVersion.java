@@ -23,6 +23,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     super(parent, name);
   }
 
+  /**
+   * @deprecated use {@link #getOrCreateUrls(String, String)}
+   */
+  @Deprecated
   protected void makeFile(String os, String arch) throws IOException {
 
     Path filePath = getPath().resolve(os + "_" + arch + ".urls");
@@ -31,6 +35,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     }
   }
 
+  /**
+   * @deprecated use {@link #getOrCreateUrls(String)}
+   */
+  @Deprecated
   protected void makeFile(String os) throws IOException {
 
     Path filePath = getPath().resolve(os + ".urls");
@@ -39,6 +47,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     }
   }
 
+  /**
+   * @deprecated use {@link #getOrCreateUrls()}
+   */
+  @Deprecated
   protected void makeFile() throws IOException {
 
     Path filePath = getPath().resolve("urls");
@@ -67,19 +79,32 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     }
   }
 
+  /**
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
+   */
   public UrlDownloadFile getOrCreateUrls() {
 
     return (UrlDownloadFile) getOrCreateChild("urls");
   }
 
-  public UrlDownloadFile getOrCreateUrls(String os, String arch) {
-
-    return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");
-  }
-
+  /**
+   * @param os the name of the operating system ("windows", "linux", "mac").
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
+   */
   public UrlDownloadFile getOrCreateUrls(String os) {
 
     return (UrlDownloadFile) getOrCreateChild(os + ".urls");
+  }
+
+  /**
+   * @param os the name of the operating system ("windows", "linux", "mac").
+   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
+   *         exist.
+   */
+  public UrlDownloadFile getOrCreateUrls(String os, String arch) {
+
+    return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");
   }
 
   /**
@@ -97,5 +122,17 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
       return new UrlStatusFile(this);
     }
     return new UrlDownloadFile(this, name);
+  }
+
+  @Override
+  public void save() {
+
+    Path path = getPath();
+    try {
+      Files.createDirectories(path);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create directory " + path, e);
+    }
+    super.save();
   }
 }
