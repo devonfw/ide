@@ -6,7 +6,7 @@ set _RESET=[0m
 
 echo "%PSModulePath%" | findstr "%USERPROFILE%" >NUL
 if "%ERRORLEVEL%" == "0" (
-  set PSModulePath="%PSModulePath:*;=%"
+  set PSModulePath=
   start "CMD window" "%~f0"
   goto :EOF
 )
