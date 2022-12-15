@@ -55,7 +55,6 @@ if "%1%" == "" (
   goto :setup_env
 )
 
-:git_installation
 rem Search GitForWindows Installation - prefer user over machine result
 for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\GitForWindows" /v "InstallPath" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set GIT_HOME=%%P
 
@@ -88,7 +87,6 @@ echo %_fBYellow%*** ATTENTION ***%_RESET%
 echo %_fBRed%ERROR: Could not find bash. It seems git for windows is not installed on your machine%_RESET%
 echo %_fBRed%Please download and install git for windows from the following URL and after that rerun devonfw-ide setup:%_RESET%
 echo %_fBRed%https://git-scm.com/download/win%_RESET%
-pause
 goto :eof
 
 :bash_detected
@@ -123,7 +121,6 @@ if not "%DEVON_PATH%" == "" (
   set "PATH=%DEVON_PATH%"
   set "DEVON_PATH="
 )
-pause
 goto :eof
 
 :setup_env
@@ -135,12 +132,11 @@ if exist scripts\environment-project.bat (
   call scripts\environment-project.bat
   echo devonfw-ide environment variables have been set for %CD% in workspace %WORKSPACE%
   popd
-  goto :git_installation
+  goto :eof
 )
 if "%CD%" == "%CD:~0,3%" (
   popd
   echo You are not inside a devon IDE installation: %CD%
-  pause
   goto :eof
 )
 set last_folder=%folder%
@@ -152,7 +148,6 @@ if "%folder%" == "workspaces" (
 )
 cd ..  
 goto :iterate_backwards
-pause
 goto :eof
 
 rem subroutine to print version
