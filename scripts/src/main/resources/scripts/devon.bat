@@ -65,6 +65,8 @@ if exist "%GIT_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 
+echo %_fBYellow%WARNING: Git-bash is required but was not found at GIT_HOME=%GIT_HOME%.%_RESET%
+
 rem If bash in GitForWindows could not be found search Cygwin Installation - prefer user over machine result
 for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
 
