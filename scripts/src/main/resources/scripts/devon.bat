@@ -87,7 +87,7 @@ echo %_fBYellow%*** ATTENTION ***%_RESET%
 echo %_fBRed%ERROR: Could not find bash. It seems git for windows is not installed on your machine%_RESET%
 echo %_fBRed%Please download and install git for windows from the following URL and after that rerun devonfw-ide setup:%_RESET%
 echo %_fBRed%https://git-scm.com/download/win%_RESET%
-goto :eof
+exit /b 5
 
 :bash_detected
 if not "%DEVON_OLD_PATH%" == "" (
