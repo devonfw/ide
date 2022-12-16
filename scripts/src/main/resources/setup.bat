@@ -4,8 +4,9 @@ if NOT "%DEVON_IDE_TRACE%"=="" echo on
 set _fBGreen=[92m
 set _RESET=[0m
 
-echo "%PSModulePath%" | findstr "%USERPROFILE%" >NUL
+echo "%PSModulePath%" | findstr "%USERPROFILE%\Documents\WindowsPowerShell" >NUL
 if "%ERRORLEVEL%" == "0" (
+  echo Starting CMD window as workaround since setup has been called from powershell...
   set PSModulePath=
   start "CMD window" "%~f0"
   goto :EOF
