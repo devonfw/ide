@@ -1,4 +1,10 @@
 #!/bin/bash
 
 source "$(dirname "${0}")"/functions-test
-doCommandTest python
+if doIsWindows
+then
+  doCommandTest python
+else
+  echo "The integration-test for python is currently disabled for MacOS and Linux systems"
+  exit 0
+fi
