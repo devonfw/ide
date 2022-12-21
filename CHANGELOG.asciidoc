@@ -8,6 +8,9 @@ Release with new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/992[#992]: aws does not install a different version
 * https://github.com/devonfw/ide/issues/964[#964]: make aws config local
+* https://github.com/devonfw/ide/issues/1020[#1020]: Windows bat error handling broken and odd effects
+* https://github.com/devonfw/ide/issues/1005[#1005]: Proper error message if bash is not found
+* https://github.com/devonfw/ide/issues/1017[#1017]: infinity loop opening windows in setup.bat
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/37?closed=1[milestone 2022.12.001].
 
