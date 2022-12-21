@@ -15,7 +15,6 @@ function doGetVersion() {
 }
 
 doExtract ../../devonfw-ide-scripts-*.tar.gz
-"JAVA_VERSION=17*" >> "\n${PWD}/conf/devon.properties"
 ./setup "-" || exit 1
 CLI="${PWD}/scripts/devon"
 cd workspaces/main
