@@ -10,11 +10,10 @@ then
   exit
 fi
 
-GCLOUD_HOME="${DEVON_IDE_HOME}/software/gcloud"
-TOOL_VERSION_COMMAND="${GCLOUD_HOME}/bin/gcloud.cmd --version"
-
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+GCLOUD_HOME="${DEVON_IDE_HOME}/software/gcloud"
+TOOL_VERSION_COMMAND="${GCLOUD_HOME}/bin/gcloud.cmd --version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
@@ -44,21 +43,13 @@ function doRun() {
 
 function doSetup() {
   doSetRun
+  doConfig
   if doIsWindows
   then
     doInstall "gcloud" "${GCLOUD_VERSION}" "${1}" "" "${GCLOUD_HOME}"
     ERR="${?}"
   else
     doEchoAttention "GCloud is currently not supported for your operation system."
-  fi
-  if [ "${ERR}" = 0 ]
-  then
-    doConfig
-    if [ "${1}" != "silent" ] && ! doIsQuiet
-    then
-      TOOL_VERSION_COMMAND="${GCLOUD_RUN} --version"
-      doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of gcloud"
-    fi
   fi
 }
 
