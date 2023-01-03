@@ -4,6 +4,7 @@ import com.devonfw.tools.ide.url.Updater.Mappings;
 import com.devonfw.tools.ide.url.Updater.UpdateManager;
 import com.devonfw.tools.ide.url.Updater.aws.AWSCrawler;
 import com.devonfw.tools.ide.url.Updater.az.AzureCrawler;
+import com.devonfw.tools.ide.url.Updater.cobigen.CobigenUpdater;
 import com.devonfw.tools.ide.url.Updater.docker.DockerCrawler;
 import com.devonfw.tools.ide.url.Updater.dotnet.DotNetCrawler;
 import com.devonfw.tools.ide.url.Updater.eclipse.EclipseCrawler;
@@ -37,8 +38,10 @@ public class Main {
     public static void main(String[] args) {
         String pathToRepo ="I:\\UrlRepoTest";
         UrlRepository urlRepository = new UrlRepository(Path.of(pathToRepo));
-        UpdateManager updateManager = new UpdateManager(urlRepository);
-        updateManager.doUpdateAll();
+//        UpdateManager updateManager = new UpdateManager(urlRepository);
+//        updateManager.doUpdateAll();
+        CobigenUpdater cobigenUpdater = new CobigenUpdater();
+        cobigenUpdater.doUpdate(urlRepository);
 
 
 

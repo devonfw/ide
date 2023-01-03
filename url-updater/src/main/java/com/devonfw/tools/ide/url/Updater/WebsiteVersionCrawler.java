@@ -2,8 +2,13 @@ package com.devonfw.tools.ide.url.Updater;
 
 import com.devonfw.tools.ide.url.Updater.githubapiclasses.GithubJsonItem;
 import com.devonfw.tools.ide.url.Updater.githubapiclasses.GithubJsonObject;
+import com.devonfw.tools.ide.url.Updater.mavenapiclasses.Metadata;
 import com.devonfw.tools.ide.url.folderhandling.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+import org.apache.logging.log4j.core.jackson.Log4jXmlObjectMapper;
+import org.asynchttpclient.uri.Uri;
 
 import java.io.IOException;
 import java.net.URI;
@@ -47,7 +52,26 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
         return versions;
     }
 
-    private List<String> doGetVersionsFromGithubApi(String url) {
+    private List<String> doGetVersionsFromMavenApi(String url) {
+        List<String> versions = new ArrayList<>();
+        try {
+            String response = doGetResponseBody(url);
+            XmlMapper mapper = new XmlMapper();
+            Metadata metaData = mapper.readValue(response, Metadata.class);
+            for (String version : metaData.versioning().versions()) {
+                if (!versions.contains(version)) {
+                    versions.add(version);
+                }
+            }
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error while getting versions", e);
+        }
+        logger.log(Level.INFO, "Found  versions : " + versions);
+
+        return versions;
+    }
+
+    private List<String> doGetVersionsFromGitHubApi(String url) {
         List<String> versions = new ArrayList<>();
         try {
             String response = doGetResponseBody(url);
@@ -71,23 +95,31 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
         return versions;
     }
 
-    protected List<String> doGetVersions(String url) {
-        if(Objects.equals(URI.create(url).getHost(), "api.github.com")) {
-            return doGetVersionsFromGithubApi(url);
-        }
-        String responseBody = doGetResponseBody(url);
-        //TODO: check only for versions that are non existent. If they exist, then skip them.
 
-        return doGetRegexMatchesAsList(responseBody);
+    protected List<String> doGetVersions(String url) {
+        if (isGitHubUrl(url)) {
+            return doGetVersionsFromGitHubApi(url);
+        }
+        if (isMavenUrl(url)) {
+            return doGetVersionsFromMavenApi(url);
+        }
+        return doGetRegexMatchesAsList(doGetResponseBody(url));
     }
 
+    private boolean isGitHubUrl(String url) {
+        return Objects.equals(URI.create(url).getHost(), "api.github.com");
+    }
+
+    private boolean isMavenUrl(String url) {
+        return Uri.create(url).getHost().contains("maven.org");
+    }
     protected Result<Integer> doCheckIfDownloadUrlWorks(String downloadUrl) {
         // Do Head request to check if the download url works and if the file is available for download
         try {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(downloadUrl))
-                .method("HEAD", HttpRequest.BodyPublishers.noBody())
-                .build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(downloadUrl))
+                    .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                    .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             // Return the success or failure result
