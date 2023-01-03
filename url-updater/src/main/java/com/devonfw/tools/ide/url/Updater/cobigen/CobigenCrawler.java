@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class CobigenUpdater extends WebsiteVersionCrawler {
+public class CobigenCrawler extends WebsiteVersionCrawler {
     @Override
     protected Pattern getVersionPattern() {
         return null;

@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.url.Updater;
 
 import com.devonfw.tools.ide.url.Updater.aws.AWSCrawler;
 import com.devonfw.tools.ide.url.Updater.az.AzureCrawler;
+import com.devonfw.tools.ide.url.Updater.cobigen.CobigenCrawler;
 import com.devonfw.tools.ide.url.Updater.docker.DockerCrawler;
 import com.devonfw.tools.ide.url.Updater.dotnet.DotNetCrawler;
 import com.devonfw.tools.ide.url.Updater.eclipse.*;
@@ -36,6 +37,8 @@ public class UpdateManager {
 
     private AWSCrawler awsCrawler = new AWSCrawler();
     private AzureCrawler azureCrawler = new AzureCrawler();
+
+    private CobigenCrawler cobigenCrawler = new CobigenCrawler();
     private DotNetCrawler dotNetCrawler = new DotNetCrawler();
 
     private DockerCrawler dockerCrawler = new DockerCrawler();
@@ -103,6 +106,7 @@ public class UpdateManager {
     public void doUpdateAll() {
         awsCrawler.doUpdate(urlRepository);
         azureCrawler.doUpdate(urlRepository);
+        cobigenCrawler.doUpdate(urlRepository);
         dotNetCrawler.doUpdate(urlRepository);
         dockerCrawler.doUpdate(urlRepository);
         eclipseCommitersCrawler.doUpdate(urlRepository);
