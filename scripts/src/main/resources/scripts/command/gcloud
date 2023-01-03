@@ -13,7 +13,7 @@ fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 GCLOUD_HOME="${DEVON_IDE_HOME}/software/gcloud"
-TOOL_VERSION_COMMAND="${GCLOUD_HOME}/bin/gcloud.cmd --version"
+TOOL_VERSION_COMMAND="${GCLOUD_HOME}/bin/gcloud --version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
@@ -28,26 +28,32 @@ function doConfig() {
   fi
 }
 
-function doSetRun() {
+# the path of gcloud modules must be added to python's sys.path via .pth file
+function doSetPth() {
+  local wsl_path="${GCLOUD_HOME}/lib"
+  local win_path="$(cygpath -w ${wsl_path})"
+  local pth_file="${DEVON_IDE_HOME}/software/python/ext_modules.pth"
   if doIsWindows
   then
-    GCLOUD_RUN="${GCLOUD_HOME}/bin/gcloud.cmd"
-    # toDo: add other OS's after Python has been fixed for them
+    if ! grep -Fq "${win_path}" "${pth_file}"
+    then
+      echo -e "\n${win_path}" >> "${pth_file}"
+    fi
   fi
 }
 
 function doRun() {
   doSetup silent
-  doRunCommand "${GCLOUD_RUN} ${*}"
+  doRunCommand "${GCLOUD_HOME}/bin/gcloud ${*}"
 }
 
 function doSetup() {
-  doSetRun
+  doDevonCommand python setup silent
+  doSetPth
   doConfig
   if doIsWindows
   then
     doInstall "gcloud" "${GCLOUD_VERSION}" "${1}" "" "${GCLOUD_HOME}"
-    ERR="${?}"
   else
     doEchoAttention "GCloud is currently not supported for your operation system."
   fi
