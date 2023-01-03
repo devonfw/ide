@@ -100,7 +100,7 @@ public class UrlFile extends UrlHasParentArtifact<UrlVersion> {
   }
 
   public void saveListFromObjectIntoFile() throws IOException {
-
+    //TODO: Handle Potential NoSuchFileException, if there is no file to delete
     Files.delete(path);
     BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.APPEND, StandardOpenOption.CREATE);
     for (String line : linesOfFile) {
