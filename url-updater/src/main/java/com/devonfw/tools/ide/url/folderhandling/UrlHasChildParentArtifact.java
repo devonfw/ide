@@ -2,9 +2,7 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -54,14 +52,17 @@ public abstract class UrlHasChildParentArtifact<P extends UrlArtifact, C extends
    * differ from the folders content, due to manipulation but not yet saved changes. It is open for debate if this
    * method is necessary, as it was used for the structures development and may not be needed later on.
    */
-  public void getChildrenInDirectory() {
-
+  public List<String> getChildrenInDirectory() {
+    //Get all directory names in current directory as List of Strings
     File[] directories = new File(path.toString()).listFiles(File::isDirectory);
-    int l = directories.length;
-    LinkedList<String> listOfChildrenInDir = new LinkedList<>();
-    for (int i = 0; i < l; i++) {
-      listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
+    ArrayList<String> listOfChildrenInDir = new ArrayList<>();
+    if(directories != null) {
+      for (File directory : directories) {
+        listOfChildrenInDir.add(directory.getName());
+      }
     }
+    return listOfChildrenInDir;
+
   }
 
   public int getChildCount() {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -49,7 +50,7 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
    * {@link UrlHasChildParentArtifact} by giving out files instead of directories.
    */
   @Override
-  public void getChildrenInDirectory() {
+  public List<String> getChildrenInDirectory() {
 
     File[] directories = new File(path.toString()).listFiles(File::isFile);
     int l = directories.length;
@@ -59,6 +60,7 @@ public class UrlVersion extends UrlHasChildParentArtifact<UrlEdition, UrlFile> {
       listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
       System.out.println(listOfChildrenInDir.get(i));
     }
+    return listOfChildrenInDir;
   }
 
   /**
