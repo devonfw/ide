@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.devonfw.tools.ide.dev</groupId>
-    <artifactId>devonfw-ide</artifactId>
-    <version>dev-SNAPSHOT</version>
-  </parent>
-  <groupId>com.devonfw.tools.ide</groupId>
-  <artifactId>devonfw-ide-url-updater</artifactId>
-  <packaging>jar</packaging>
-  <version>${revision}</version>
-  <name>${project.artifactId}</name>
-  <description>Code for maintenance of download urls of IDEs tools (Eclipse, Docker, etc.).</description>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.devonfw.tools.ide.dev</groupId>
+		<artifactId>devonfw-ide</artifactId>
+		<version>dev-SNAPSHOT</version>
+	</parent>
+	<groupId>com.devonfw.tools.ide</groupId>
+	<artifactId>devonfw-ide-url-updater</artifactId>
+	<packaging>jar</packaging>
+	<version>${revision}</version>
+	<name>${project.artifactId}</name>
+	<description>Code for maintenance of download urls of IDEs tools (Eclipse, Docker, etc.).</description>
 
   <dependencies>
     <dependency>
@@ -32,6 +31,25 @@
       <version>2.14.1</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.19.0</version>
+    </pendency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.3</version>
+    <dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.10.0</version>
+		</dependency>
+    <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
       <version>4.7.2</version>
@@ -41,43 +59,29 @@
       <artifactId>jackson-dataformat-xml</artifactId>
       <version>2.14.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <version>2.19.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>2.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>2.0.5</version>
     </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+    -->
+	</dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.devonfw.tools.ide.url.folderhandling.UrlRepository</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
-      </plugin>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.devonfw.tools.ide.url.folderhandling.UrlRepository</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -86,7 +90,7 @@
           <target>16</target>
         </configuration>
       </plugin>
-    </plugins>
-  </build>
+		</plugins>
+	</build>
 
 </project>

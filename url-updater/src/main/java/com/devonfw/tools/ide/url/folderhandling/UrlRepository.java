@@ -1,26 +1,25 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import java.io.File;
 import java.nio.file.Path;
+
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolder;
 
 /**
  * An instance of this class represents the folder that starts an url-file repository, having {@link UrlTool} objects as
  * children.
  *
  */
-public class UrlRepository extends UrlHasChildArtifact<UrlTool> {
-
-  Path path;
+public class UrlRepository extends AbstractUrlFolder<UrlTool> {
 
   /**
+   * The constructor.
    *
-   * @param path Enter the path to the url folder structure in which the tool folders are supposed to be later on in the
-   *        creation process.
+   * @param path the {@link #getPath() path}.
    */
   public UrlRepository(Path path) {
 
-    super(path);
-    this.path = path;
-
+    super(path, "urls");
   }
 
   /**
@@ -32,6 +31,17 @@ public class UrlRepository extends UrlHasChildArtifact<UrlTool> {
   protected UrlTool newChild(String name) {
 
     return new UrlTool(this, name);
+  }
+
+  /**
+   * @param path the {@link #getPath() path} of the {@link UrlRepository} to load.
+   * @return the {@link UrlRepository} with all its children loaded from the given {@link Path}.
+   */
+  public static UrlRepository load(Path path) {
+
+    UrlRepository repository = new UrlRepository(path);
+    repository.load();
+    return repository;
   }
 
 }

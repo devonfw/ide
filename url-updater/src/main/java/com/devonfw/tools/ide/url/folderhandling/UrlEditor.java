@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Set;
 
 // TO DO: Füge später Link für Crawler-Klasse in Doc zu UrlEditor hinzu.
@@ -13,7 +12,10 @@ import java.util.Set;
  * to be used to interact with crawler class to get or remove download-urls. Gives a method to create a folder or file,
  * while their representing objects are created in the background, as well as a method for getting an object representing a folder or a
  * file. Also a method for adding and removing urls is given.
+ *
+ * @deprecated use {@link UrlRepository} and its children directly.
  */
+@Deprecated
 public class UrlEditor {
 
   protected Path repoPath;
@@ -24,9 +26,9 @@ public class UrlEditor {
 
     this.repoPath = Paths.get(PathToUrlRepo);
 
-    this.urlRepoObject = new UrlRepository(repoPath);
-    UrlReader<UrlArtifact> urlReaderObject = new UrlReader<UrlArtifact>();
-    urlReaderObject.readFolderStructure(urlRepoObject);
+    this.urlRepoObject = new UrlRepository(this.repoPath);
+    UrlReader<AbstractUrlArtifact> urlReaderObject = new UrlReader<AbstractUrlArtifact>();
+    urlReaderObject.readFolderStructure(this.urlRepoObject);
   }
 
   // TO DO: Womöglich sollte der zweite Konstruktor entfernt werden,
@@ -35,7 +37,7 @@ public class UrlEditor {
 
     // this.repoPath = Paths.get(PathToUrlRepo);
     this.repoPath = urlRepoObject.getPath();
-    UrlReader<UrlArtifact> urlReaderObject = new UrlReader<UrlArtifact>();
+    UrlReader<AbstractUrlArtifact> urlReaderObject = new UrlReader<AbstractUrlArtifact>();
     urlReaderObject.readFolderStructure(urlRepoObject);
 
   }
@@ -47,29 +49,30 @@ public class UrlEditor {
 
   public void createFolder(String Tool) {
 
-    urlRepoObject.getOrCreateChild(Tool);
-    File f = new File(repoPath + File.separator + Tool);
+    this.urlRepoObject.getOrCreateChild(Tool);
+    File f = new File(this.repoPath + File.separator + Tool);
     f.mkdirs();
   }
 
   public void createFolder(String Tool, String Edition) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition);
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition);
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition);
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition);
     f.mkdirs();
   }
 
   public void createFolder(String Tool, String Edition, String Version) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version);
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version);
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version);
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version);
     f.mkdirs();
   }
 
   public void createFile(String Tool, String Edition, String Version) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version).getOrCreateChild("urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateChild("urls");
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + "urls");
     try {
       f.createNewFile();
@@ -80,9 +83,9 @@ public class UrlEditor {
 
   public void createFile(String Tool, String Edition, String Version, String os) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
         .getOrCreateChild(os + ".urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + os + ".urls");
     try {
       f.createNewFile();
@@ -93,9 +96,9 @@ public class UrlEditor {
 
   public void createFile(String Tool, String Edition, String Version, String os, String arch) {
 
-    urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+    this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
         .getOrCreateChild(os + "_" + arch + ".urls");
-    File f = new File(repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
+    File f = new File(this.repoPath + File.separator + Tool + File.separator + Edition + File.separator + Version
         + File.separator + os + "_" + arch + ".urls");
     try {
       f.createNewFile();
@@ -112,7 +115,7 @@ public class UrlEditor {
    */
   public UrlTool getFolder(String Tool) {
 
-    return urlRepoObject.getChild(Tool);
+    return this.urlRepoObject.getChild(Tool);
 
   }
 
@@ -125,7 +128,7 @@ public class UrlEditor {
    */
   public UrlEdition getFolder(String Tool, String Edition) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition);
+    return this.urlRepoObject.getChild(Tool).getChild(Edition);
   }
 
   /**
@@ -138,7 +141,7 @@ public class UrlEditor {
    */
   public UrlVersion getFolder(String Tool, String Edition, String Version) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version);
+    return this.urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version);
   }
 
   /**
@@ -151,9 +154,10 @@ public class UrlEditor {
    * @param Version
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild("urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls();
   }
 
   /**
@@ -165,9 +169,10 @@ public class UrlEditor {
    * @param os
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version, String os) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version, String os) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + ".urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls(os);
   }
 
   /**
@@ -180,9 +185,10 @@ public class UrlEditor {
    * @param arch
    * @return
    */
-  public UrlFile getFile(String Tool, String Edition, String Version, String os, String arch) {
+  public UrlDownloadFile getFile(String Tool, String Edition, String Version, String os, String arch) {
 
-    return urlRepoObject.getChild(Tool).getChild(Edition).getChild(Version).getChild(os + "_" + arch + ".urls");
+    return this.urlRepoObject.getOrCreateChild(Tool).getOrCreateChild(Edition).getOrCreateChild(Version)
+        .getOrCreateUrls(os, arch);
   }
 
   /**
@@ -192,7 +198,7 @@ public class UrlEditor {
    * @param urlsList
    * @param urlFile
    */
-  public void addUrls(Set<String> urlsList, UrlFile urlFile) {
+  public void addUrls(Set<String> urlsList, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -211,7 +217,7 @@ public class UrlEditor {
    * @param url
    * @param urlFile
    */
-  public void addUrls(String url, UrlFile urlFile) {
+  public void addUrls(String url, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -230,7 +236,7 @@ public class UrlEditor {
    * @param urlsList
    * @param urlFile
    */
-  public void removeUrls(Set<String> urlsList, UrlFile urlFile) {
+  public void removeUrls(Set<String> urlsList, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();
@@ -249,7 +255,7 @@ public class UrlEditor {
    * @param url
    * @param urlFile
    */
-  public void removeUrls(String url, UrlFile urlFile) {
+  public void removeUrls(String url, UrlDownloadFile urlFile) {
 
     try {
       urlFile.loadLinesOfFileIntoObject();

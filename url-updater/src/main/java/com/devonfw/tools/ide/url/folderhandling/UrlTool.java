@@ -1,12 +1,20 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
-/**
- *
- * An instance of this class represents a tool folder, like "docker" or "vscode".
- *
- */
-public class UrlTool extends UrlHasChildParentArtifact<UrlRepository, UrlEdition> {
+import java.io.File;
 
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+
+/**
+ * An {@link UrlFolder} representing the actual software tool like "docker" or "vscode".
+ */
+public class UrlTool extends AbstractUrlFolderWithParent<UrlRepository, UrlEdition> {
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   * @param name the {@link #getName() filename}.
+   */
   public UrlTool(UrlRepository parent, String name) {
 
     super(parent, name);
