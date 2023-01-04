@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.url.folderhandling;
+package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
+import com.devonfw.tools.ide.url.folderhandling.UrlFolder;
 
 /**
  * Class from which UrlRepository inherits, as its objects don't have a parent, but possibly child objects of the class

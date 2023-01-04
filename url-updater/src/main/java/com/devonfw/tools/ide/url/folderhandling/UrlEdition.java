@@ -1,5 +1,9 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import java.io.File;
+
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+
 /**
  * An {@link UrlFolder} representing the actual edition of a {@link UrlTool}. The default edition may have the same
  * {@link #getName() name} as the {@link UrlTool} itself. However, tools like "intellij" may have editions like

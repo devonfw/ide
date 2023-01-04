@@ -1,6 +1,9 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import java.io.File;
 import java.nio.file.Path;
+
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolder;
 
 /**
  * An instance of this class represents the folder that starts an url-file repository, having {@link UrlTool} objects as

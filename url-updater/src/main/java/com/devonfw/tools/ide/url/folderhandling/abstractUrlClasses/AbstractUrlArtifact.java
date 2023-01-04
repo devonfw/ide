@@ -1,6 +1,8 @@
-package com.devonfw.tools.ide.url.folderhandling;
+package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
 
 import java.nio.file.Path;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlArtifact;
 
 /**
  * Abstract base implementation of {@link UrlArtifact}.

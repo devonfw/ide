@@ -1,4 +1,7 @@
-package com.devonfw.tools.ide.url.folderhandling;
+package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
+import com.devonfw.tools.ide.url.folderhandling.UrlFolder;
 
 /**
  * Abstract base implementation of {@link UrlFolder} and {@link UrlArtifactWithParent}.

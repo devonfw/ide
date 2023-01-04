@@ -1,5 +1,7 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlArtifact;
+
 /**
  * Interface for an {@link UrlArtifact} representing a folder containing other {@link UrlArtifact artifacts} as
  * children.

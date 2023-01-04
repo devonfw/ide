@@ -2,14 +2,19 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFile;
 
 /**
  * {@link UrlFile} with the download URLs. Its {@link #getName() name} has to follow one of the following conventions:
@@ -53,6 +58,12 @@ public class UrlDownloadFile extends AbstractUrlFile {
     }
   }
 
+
+  public Set<String> getUrls() {
+
+    return urls;
+  }
+
   /**
    * @param url the download URL to remove.
    */
@@ -62,6 +73,31 @@ public class UrlDownloadFile extends AbstractUrlFile {
     if (removed) {
       this.modified = true;
     }
+  }
+
+  public Set<Double> generateUrlHashes() {
+
+    Set<String> urlsSet = this.getUrls();
+    Set<Double> urlHashes = new HashSet<>();
+    for (String url: urlsSet) {
+      double urlHash = url.hashCode();
+      urlHashes.add(urlHash);
+
+    }
+    return urlHashes;
+
+  }
+
+  public String getDateLastModified() {
+    BasicFileAttributes attributes = null;
+    try {
+      attributes = Files.readAttributes(getPath(), BasicFileAttributes.class);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    FileTime dateLastModified = attributes.lastModifiedTime();
+    return dateLastModified.toString();
   }
 
   @Override

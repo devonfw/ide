@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
 
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+
 /**
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
  * name} of such version could be "1.6.2" or "17.0.5_8".
@@ -139,5 +141,49 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
       throw new IllegalStateException("Failed to create directory " + path, e);
     }
     super.save();
+  }
+
+  public void createFile() {
+
+    File f = new File(this.getPath() + File.separator + "urls");
+    try {
+      f.createNewFile();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create file " + getPath(), e);
+    }
+
+  }
+
+  public void createFile(String os) {
+
+    File f = new File(this.getPath() + File.separator + os + ".urls");
+    try {
+      f.createNewFile();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create file " + getPath(), e);
+    }
+
+  }
+
+  public void createFile(String os, String arch) {
+
+    File f = new File(this.getPath() + File.separator + os + "_" + arch + ".urls");
+    try {
+      f.createNewFile();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create file " + getPath(), e);
+    }
+
+  }
+
+  // For development
+  public void createJson() {
+
+    File f = new File(this.getPath() + File.separator + "status.json");
+    try {
+      f.createNewFile();
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create file " + getPath(), e);
+    }
   }
 }

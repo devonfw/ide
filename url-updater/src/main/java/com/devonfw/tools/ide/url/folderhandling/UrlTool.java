@@ -1,5 +1,9 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
+import java.io.File;
+
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+
 /**
  * An {@link UrlFolder} representing the actual software tool like "docker" or "vscode".
  */

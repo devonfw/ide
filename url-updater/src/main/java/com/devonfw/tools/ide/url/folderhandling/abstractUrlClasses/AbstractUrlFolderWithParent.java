@@ -1,7 +1,9 @@
-package com.devonfw.tools.ide.url.folderhandling;
+package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
 
 import java.io.File;
 import java.util.LinkedList;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
 
 /**
  *
