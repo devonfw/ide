@@ -1,6 +1,5 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
-import java.io.File;
 import java.nio.file.Path;
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolder;

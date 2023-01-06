@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
+
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
 
@@ -60,27 +59,6 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     if (!Files.exists(filePath)) {
       Files.createFile(filePath);
     }
-  }
-
-  /**
-   * Open to discussion if this method is needed. Differs from the method with similar name in class
-   * UrlHasChildParentArtifact by giving out files instead of directories.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  @Override
-  public List<String> getChildrenInDirectory() {
-
-    File[] directories = new File(getPath().toString()).listFiles(File::isFile);
-    int l = directories.length;
-    System.out.println(l);
-    LinkedList<String> listOfChildrenInDir = new LinkedList<>();
-    for (int i = 0; i < l; i++) {
-      listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
-      System.out.println(listOfChildrenInDir.get(i));
-    }
-    return listOfChildrenInDir;
   }
 
   /**

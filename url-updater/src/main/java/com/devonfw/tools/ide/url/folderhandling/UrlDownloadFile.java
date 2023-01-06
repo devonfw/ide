@@ -2,15 +2,10 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,20 +83,8 @@ public class UrlDownloadFile extends AbstractUrlFile {
 
   }
 
-  public String getDateLastModified() {
-    BasicFileAttributes attributes = null;
-    try {
-      attributes = Files.readAttributes(getPath(), BasicFileAttributes.class);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    FileTime dateLastModified = attributes.lastModifiedTime();
-    return dateLastModified.toString();
-  }
-
   @Override
-  protected void doLoad() {
+  public void doLoad() {
 
     this.urls.clear();
     Path path = getPath();
@@ -119,7 +102,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
   }
 
   @Override
-  protected void doSave() {
+  public void doSave() {
 
     Path path = getPath();
     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
@@ -132,94 +115,6 @@ public class UrlDownloadFile extends AbstractUrlFile {
     }
   }
 
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public Set<String> loadLinesOfFileIntoObject() throws IOException {
 
-    if (this.modified) {
-      load();
-    }
-    return Collections.unmodifiableSet(this.urls);
-  }
-
-  /**
-   * Only intended for debugging and testing purposes to get content of file easily for comparison.
-   *
-   * @return
-   * @throws IOException
-   * @deprecated
-   */
-  @Deprecated
-  public Set<String> debugLoadFileContent() throws IOException {
-
-    String line;
-    BufferedReader bufferedReaderObj = new BufferedReader(new FileReader(getPath().toString()));
-    Set<String> debugLinesOfFile = new HashSet<>();
-    while ((line = bufferedReaderObj.readLine()) != null) {
-      debugLinesOfFile.add(line);
-    }
-    bufferedReaderObj.close();
-    return debugLinesOfFile;
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public Set<String> getObjectsSet() {
-
-    return Collections.unmodifiableSet(this.urls);
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public void addToObjectsList(String urlToAdd) throws IOException {
-
-    addUrl(urlToAdd);
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public void addToObjectsList(Set<String> urlsList) throws IOException {
-
-    for (String url : urlsList) {
-      addUrl(url);
-    }
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public void removeLineFromObjectsList(String urlToRemove) throws IOException {
-
-    removeUrl(urlToRemove);
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public void removeLineFromObjectsList(Set<String> urlsList) throws IOException {
-
-    for (String url : urlsList) {
-      removeUrl(url);
-    }
-  }
-
-  /**
-   * @deprecated
-   */
-  @Deprecated
-  public void saveListFromObjectIntoFile() throws IOException {
-
-    save();
-  }
 
 }

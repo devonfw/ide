@@ -1,12 +1,13 @@
 package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
@@ -53,25 +54,12 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
     return this.children.computeIfAbsent(name, p -> newChild(name));
   }
 
-  /**
-   * Returns a LinkedList of directories that are inside the directory given by the current objects path. Open for
-   * debate if this method is necessary.
-   *
-   * @deprecated
-   */
-  @Deprecated
-  public void getChildrenInDirectory() {
+  public List<String> getListOfAllChildren() {
 
-    File[] directories = new File(getPath().toString()).listFiles(File::isDirectory);
-    int l = directories.length;
-    // System.out.println(l);
-    LinkedList<String> listOfChildrenInDir = new LinkedList<>();
-    for (int i = 0; i < l; i++) {
-      listOfChildrenInDir.add(directories[i].toPath().getFileName().toString());
-    }
-
+	Set<String> setOfKeys = this.children.keySet();
+	List<String> ListOfChildNames = new ArrayList<String>(setOfKeys);
+	return ListOfChildNames;
   }
-
   /**
    * @param name the {@link #getName() name} of the requested child.
    * @return the new child object.

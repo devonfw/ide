@@ -4,75 +4,63 @@ import java.io.IOException;
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFile;
 import com.devonfw.tools.ide.url.folderhandling.jsonfile.UrlJsonCompleteDataBlock;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 /**
  * {@link UrlFile} for the "status.json" file.
  */
 public class UrlStatusFile extends AbstractUrlFile {
 
-  /** Constant {@link UrlStatusFile#getName() filename}. */
-  static final String STATUS_JSON = "status.json";
-  private UrlJsonCompleteDataBlock jsonFileData;
+	/** Constant {@link UrlStatusFile#getName() filename}. */
+	static final String STATUS_JSON = "status.json";
+	private UrlJsonCompleteDataBlock jsonFileData;
 
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent folder}.
-   */
-  public UrlStatusFile(UrlVersion parent) {
+	private static final ObjectMapper MAPPER;
+	static {
+		MAPPER = new ObjectMapper();
+		MAPPER.registerModule(new JavaTimeModule());
+		MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+	}
 
-    super(parent, STATUS_JSON);
-  }
+	/**
+	 * The constructor.
+	 *
+	 * @param parent the {@link #getParent() parent folder}.
+	 */
+	public UrlStatusFile(UrlVersion parent) {
 
-  public UrlJsonCompleteDataBlock getJsonFileData() {
+		super(parent, STATUS_JSON);
+	}
 
-    return jsonFileData;
-  }
+	public UrlJsonCompleteDataBlock getJsonFileData() {
 
-  public void setJsonFileData(UrlJsonCompleteDataBlock jsonFileData) {
+		return jsonFileData;
+	}
 
-    this.jsonFileData = jsonFileData;
-  }
+	public void setJsonFileData(UrlJsonCompleteDataBlock jsonFileData) {
 
-  @Override
-  protected void doLoad() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    try {
-      this.jsonFileData = mapper.readValue(this.getPath().toFile(), UrlJsonCompleteDataBlock.class);
-    } catch (JsonParseException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+		this.jsonFileData = jsonFileData;
+	}
 
-  @Override
-  protected void doSave() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.enable(SerializationFeature.INDENT_OUTPUT);
-    try {
-      mapper.writeValue(this.getPath().toFile(), this.jsonFileData);
-    } catch (JsonGenerationException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+	@Override
+	public void doLoad() {
+		try {
+			this.jsonFileData = MAPPER.readValue(getPath().toFile(), UrlJsonCompleteDataBlock.class);
+		} catch (IOException e) {
+			throw new IllegalStateException("Failed to load file " + getPath(), e);
+		}
+	}
+
+	@Override
+	public void doSave() {
+
+		try {
+			MAPPER.writeValue(getPath().toFile(), this.jsonFileData);
+		} catch (IOException e ) {
+			throw new IllegalStateException("Failed to write into file " + getPath(), e);
+		}
+	}
 
 }

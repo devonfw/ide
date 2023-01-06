@@ -1,51 +1,49 @@
 package com.devonfw.tools.ide.url.folderhandling.jsonfile;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class UrlJsonCompleteDataBlock {
 
-  private Manual manual;
+  private Boolean manual;
 
-  private Set<UrlJsonDataBlockForSpecificUrlFile> dataBlocks = new HashSet<UrlJsonDataBlockForSpecificUrlFile>();
+  private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<JsonDataBlockForSpecificUrl>();
 
 
   public UrlJsonCompleteDataBlock() {
     super();
   }
 
-  public UrlJsonCompleteDataBlock(Manual manual, Set<UrlJsonDataBlockForSpecificUrlFile> dataBlocks) {
+  public UrlJsonCompleteDataBlock(boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
     this.manual = manual;
-    this.dataBlocks = dataBlocks;
+    this.urls = dataBlocks;
   }
 
-  public Manual getManual() {
+  public boolean getManual() {
 
     return manual;
   }
 
-  public Set<UrlJsonDataBlockForSpecificUrlFile> getDataBlocks() {
+  public Set<JsonDataBlockForSpecificUrl> getUrls() {
 
-    return dataBlocks;
+    return urls;
   }
 
-  public void setManual(Manual manual) {
+  public void setManual(Boolean manual) {
 
     this.manual = manual;
   }
 
-  public void setDataBlocks(Set<UrlJsonDataBlockForSpecificUrlFile> dataBlocks) {
+  public void setUrls(Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
-    this.dataBlocks = dataBlocks;
+    this.urls = dataBlocks;
   }
 
   //Question if this method is necessary?
-  public void addSingleDataBlock(UrlJsonDataBlockForSpecificUrlFile dataBlockToAdd) {
+  public void addSingleDataBlock(JsonDataBlockForSpecificUrl dataBlockToAdd) {
 
-    this.dataBlocks.add(dataBlockToAdd);
+    this.urls.add(dataBlockToAdd);
 
   }
 }
