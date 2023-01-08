@@ -46,7 +46,14 @@ function doUpdateMetaFile() {
 
 function doUpdateScripts() {
   # shellcheck disable=SC2007,SC2154
-  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
+  local update_version
+  if [ -z "${1}" ]
+  then 
+    update_version="LATEST"
+  else 
+    update_version=${1}
+  fi
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${update_version}" ".tar.gz" "${devon_ide_version}"
   if [ "${?}" = 0 ]
   then
     if [ "${target_version}" = "LATEST" ]
@@ -236,10 +243,74 @@ function doSetup() {
   doUpdateCli
   doUpdateMetaFile
   doUpdateSettings "${@}"
+  local current_devon_version
+  local min_devon_ide_version_month
+  local current_devon_version_month
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
     doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
     doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon.properties" "${SETTINGS_PATH}"
+  else
+    current_devon_version="$("${DEVON_HOME_DIR}/scripts/devon.bat" -v)"
+    min_devon_ide_version_month=${DEVON_IDE_MIN_VERSION##${DEVON_IDE_MIN_VERSION%%.*}.} 
+    current_devon_version_month=${current_devon_version##${current_devon_version%%.*}.} 
+    if [[ ${DEVON_IDE_MIN_VERSION%%.*} -gt ${current_devon_version%%.*} ]]
+    then    
+      doEcho "\nYour version of devonfw-ide is currently '${current_devon_version}'"
+      doEcho "However, your project requires at least version '${DEVON_IDE_MIN_VERSION}'."
+      doEcho "Newer features will be required for your project so you need to update your devonfw-ide via the following command:"
+      doEcho "'devon ide update scripts'"
+      doEcho "Do you want to run the update now, so you can rerun 'devon ide setup' after that?"
+      read -r -p "(yes/no): " answer
+      if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+      then
+        doUpdateScripts "${DEVON_IDE_MIN_VERSION}"
+        doEcho "Version ${target_version} had been successfully downloaded. Please rerun 'devon ide setup' to complete the setup."
+        return 0
+      elif [ "${answer}" = "no" ]
+      then
+        doEcho "\nUpdate to the minimum required version is aborted.\nTo complete the setup, please run 'devon ide update scripts' then rerun 'devon ide setup'."
+        return 1
+      fi
+    fi
+    if [ ${min_devon_ide_version_month%%.${DEVON_IDE_MIN_VERSION##*.}} -gt ${current_devon_version_month%%.${current_devon_version##*.}} ]
+    then 
+      doEcho "\nYour version of devonfw-ide is currently '${current_devon_version}'"
+      doEcho "However, your project requires at least version '${DEVON_IDE_MIN_VERSION}'."
+      doEcho "Newer features will be required for your project so you need to update your devonfw-ide via the following command:"
+      doEcho "'devon ide update scripts'"
+      doEcho "Do you want to run the update now, so you can rerun 'devon ide setup' after that?"
+      read -r -p "(yes/no): " answer
+      if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+      then
+        doUpdateScripts "${DEVON_IDE_MIN_VERSION}"
+        doEcho "Version ${target_version} had been successfully downloaded. Please rerun 'devon ide setup' to complete the setup."
+        return 0
+      elif [ "${answer}" = "no" ]
+      then
+        doEcho "\nUpdate to the minimum required version is aborted.\nTo complete the setup, please run 'devon ide update scripts' then rerun 'devon ide setup'."
+        return 1
+      fi
+    fi
+    if [ ${DEVON_IDE_MIN_VERSION##*.} -gt ${current_devon_version##*.} ]
+    then    
+      doEcho "\nYour version of devonfw-ide is currently '${current_devon_version}'"
+      doEcho "However, your project requires at least version '${DEVON_IDE_MIN_VERSION}'."
+      doEcho "Newer features will be required for your project so you need to update your devonfw-ide via the following command:"
+      doEcho "'devon ide update scripts'"
+      doEcho "Do you want to run the update now, so you can rerun 'devon ide setup' after that?"
+      read -r -p "(yes/no): " answer
+      if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+      then
+        doUpdateScripts "${DEVON_IDE_MIN_VERSION}"
+        doEcho "Version ${target_version} had been successfully downloaded. Please rerun 'devon ide setup' to complete the setup."
+        return 0
+      elif [ "${answer}" = "no" ]
+      then
+        doEcho "\nUpdate to the minimum required version is aborted.\nTo complete the setup, please run 'devon ide update scripts' then rerun 'devon ide setup'."
+        return 1
+      fi
+    fi
   fi
   if [ ! -d "${SETTINGS_PATH}/devon" ]
   then
