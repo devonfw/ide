@@ -106,7 +106,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
 
     Path path = getPath();
     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
-        StandardOpenOption.WRITE)) {
+        StandardOpenOption.WRITE,StandardOpenOption.CREATE)) {
       for (String line : this.urls) {
         bw.write(line + "\n");
       }

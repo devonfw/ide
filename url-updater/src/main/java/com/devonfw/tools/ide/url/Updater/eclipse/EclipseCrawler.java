@@ -2,7 +2,7 @@ package com.devonfw.tools.ide.url.Updater.eclipse;
 
 
 import com.devonfw.tools.ide.url.Updater.Mappings;
-import com.devonfw.tools.ide.url.Updater.OSTypes;
+import com.devonfw.tools.ide.url.Updater.OSType;
 import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
 
 
@@ -15,17 +15,17 @@ public abstract class EclipseCrawler extends WebsiteVersionCrawler {
 
     @Override
     public Mappings getMappings() {
-        HashMap<OSTypes, String> oses = new HashMap<>();
-        oses.put(OSTypes.WINDOWS, "win32");
-        oses.put(OSTypes.LINUX, "linux-gtk");
-        oses.put(OSTypes.MAC, "macosx-cocoa");
+        HashMap<OSType, String> oses = new HashMap<>();
+        oses.put(OSType.WINDOWS, "win32");
+        oses.put(OSType.LINUX, "linux-gtk");
+        oses.put(OSType.MAC, "macosx-cocoa");
         HashMap<String, String> architectures = new HashMap<>();
         architectures.put("x64", "x86_64");
         architectures.put("arm64", "aarch64");
-        HashMap<OSTypes, String> extension = new HashMap<>();
-        extension.put(OSTypes.WINDOWS, "zip");
-        extension.put(OSTypes.LINUX, "tar.gz");
-        extension.put(OSTypes.MAC, "dmg");
+        HashMap<OSType, String> extension = new HashMap<>();
+        extension.put(OSType.WINDOWS, "zip");
+        extension.put(OSType.LINUX, "tar.gz");
+        extension.put(OSType.MAC, "dmg");
         Mappings mappings = new Mappings(oses, architectures, extension);
         mappings.releases.add("R");
         mappings.releases.add("M1");

@@ -1,16 +1,12 @@
 package com.devonfw.tools.ide.url.Updater.intellij;
 
 import com.devonfw.tools.ide.url.Updater.Mappings;
-import com.devonfw.tools.ide.url.Updater.OSTypes;
+import com.devonfw.tools.ide.url.Updater.OSType;
 import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public abstract class IntelliJCrawler extends WebsiteVersionCrawler {
@@ -49,9 +45,9 @@ public abstract class IntelliJCrawler extends WebsiteVersionCrawler {
     @Override
     protected Mappings getMappings() {
         Mappings mappings = new Mappings();
-        mappings.extensions.put(OSTypes.WINDOWS, "exe");
-        mappings.extensions.put(OSTypes.LINUX, "tar.gz");
-        mappings.extensions.put(OSTypes.MAC, "dmg");
+        mappings.extensions.put(OSType.WINDOWS, "exe");
+        mappings.extensions.put(OSType.LINUX, "tar.gz");
+        mappings.extensions.put(OSType.MAC, "dmg");
         return mappings;
     }
 }

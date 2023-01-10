@@ -74,8 +74,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
    */
   public UrlDownloadFile getOrCreateUrls(String os) {
-
-    return (UrlDownloadFile) getOrCreateChild(os + ".urls");
+    return  getOrCreateUrls(os, null);
   }
 
   /**
@@ -85,7 +84,9 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    *         exist.
    */
   public UrlDownloadFile getOrCreateUrls(String os, String arch) {
-
+    if(arch== null){
+      arch = "x64";
+    }
     return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");
   }
 

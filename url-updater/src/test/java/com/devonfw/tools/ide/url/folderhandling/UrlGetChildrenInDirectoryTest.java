@@ -53,15 +53,15 @@ public class UrlGetChildrenInDirectoryTest extends Assertions {
 
     // Nutzen der neuen Methode, um Ordnerinhalt anzuzeigen. Dabei wurden
     // entweder nur Ordner oder Dateien ausgegeben.
-    // Begründung: Jede Version wird durch einen Ordner repräsentiert. Falls
+    // Begründung: Jede JavaJsonVersion wird durch einen Ordner repräsentiert. Falls
     // lock-Dateien oder andere Konfigurationsdateien sich in dem selben Ordner wie
     // die Versionen befinden, so sollen diese entsprechend nicht ausgegeben werden.
     // Andererseits wurde Rücksicht darauf genommen, dass in einem Versionsordner selbst
     // lediglich Dateien enthalten sind (ggf. werden hier später lock-Dateien o.ä. ignoriert).
-    UrlRepoObj.getChildrenInDirectory();
-    UrlToolObj.getChildrenInDirectory();
-    UrlEditionObj.getChildrenInDirectory();
-    UrlVersionObj.getChildrenInDirectory();
+    UrlRepoObj.getListOfAllChildren();
+    UrlToolObj.getListOfAllChildren();
+    UrlEditionObj.getListOfAllChildren();
+    UrlVersionObj.getListOfAllChildren();
     // TO DO: Diese Methoden müssen wohl noch durch Asserts abgefangen werden.
 
   }

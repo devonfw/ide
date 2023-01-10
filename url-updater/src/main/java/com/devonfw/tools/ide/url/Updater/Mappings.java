@@ -7,31 +7,31 @@ import java.util.HashMap;
 public class Mappings {
 
 
-    public Mappings(HashMap<OSTypes, String> oses, HashMap<String, String> architectures, HashMap<OSTypes, String> extensions) {
+    public Mappings(HashMap<OSType, String> oses, HashMap<String, String> architectures, HashMap<OSType, String> extensions) {
         this.releases.add(""); //Mandatory
-        this.architectures = architectures;
         this.architectures.put("x64", "x64"); //Mandatory
+        this.architectures = architectures;
         this.oses = oses;
         this.extensions = extensions;
     }
     public Mappings(){
         this.releases.add("");
-        this.architectures.put("x64", "x64");
-        this.oses.put(OSTypes.WINDOWS, "");
-        this.oses.put(OSTypes.LINUX, "");
-        this.oses.put(OSTypes.MAC, "");
+        this.architectures.put("x64", "x64"); //Mandatory
+        this.oses.put(OSType.WINDOWS, "");
+        this.oses.put(OSType.LINUX, "");
+        this.oses.put(OSType.MAC, "");
     }
 
-    public Mappings(HashMap<OSTypes, String> oses) {
+    public Mappings(HashMap<OSType, String> oses) {
         this.releases.add("");//Mandatory
         this.architectures.put("x64", "x64");
         this.oses = oses;
     }
 
-    public HashMap<OSTypes, String> oses = new HashMap<>();
+    public HashMap<OSType, String> oses = new HashMap<>();
 
     public HashMap<String, String> architectures = new HashMap<>();
-    public HashMap<OSTypes, String> extensions = new HashMap<>();
+    public HashMap<OSType, String> extensions = new HashMap<>();
     public ArrayList<String> releases = new ArrayList<>();
 
 }

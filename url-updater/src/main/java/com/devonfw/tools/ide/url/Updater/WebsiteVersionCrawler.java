@@ -12,8 +12,6 @@ import org.asynchttpclient.uri.Uri;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
@@ -25,9 +23,6 @@ import java.util.regex.Pattern;
 public abstract class WebsiteVersionCrawler extends AbstractCrawler {
     protected abstract Pattern getVersionPattern();
 
-    protected abstract String getToolName();
-
-    protected abstract String getEdition();
 
     protected abstract String getVersionUrl();
 
@@ -48,7 +43,7 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
                 versions.add(match);
             }
         }
-        logger.log(Level.INFO, "Found  versions : " + versions);
+        logger.log(Level.INFO, "Found  javaJsonVersions : " + versions);
         return versions;
     }
 
@@ -64,9 +59,9 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error while getting versions", e);
+            logger.log(Level.SEVERE, "Error while getting javaJsonVersions", e);
         }
-        logger.log(Level.INFO, "Found  versions : " + versions);
+        logger.log(Level.INFO, "Found  javaJsonVersions : " + versions);
 
         return versions;
     }
@@ -88,9 +83,9 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error while getting versions from github api", e);
+            logger.log(Level.SEVERE, "Error while getting javaJsonVersions from github api", e);
         }
-        logger.log(Level.INFO, "Found  versions : " + versions);
+        logger.log(Level.INFO, "Found  javaJsonVersions : " + versions);
 
         return versions;
     }
@@ -113,30 +108,14 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
     private boolean isMavenUrl(String url) {
         return Uri.create(url).getHost().contains("maven.org");
     }
-    protected Result<Integer> doCheckIfDownloadUrlWorks(String downloadUrl) {
-        // Do Head request to check if the download url works and if the file is available for download
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(downloadUrl))
-                    .method("HEAD", HttpRequest.BodyPublishers.noBody())
-                    .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            // Return the success or failure result
-            return response.statusCode() >= 200 && response.statusCode() < 400
-                    ? new Result<>(true, response.statusCode())
-                    : new Result<>(false, response.statusCode());
-        } catch (IOException | InterruptedException e) {
-            return new Result<>(false, -404);
-        }
-    }
 
     public void doUpdate(UrlRepository urlRepository) {
         UrlTool tool = urlRepository.getOrCreateChild(getToolName());
         UrlEdition edition = tool.getOrCreateChild(getEdition());
         List<String> versions = doGetVersions(getVersionUrl());
         List<String> existingVersions = edition.getListOfAllChildren();
-        //get the versions that are not in the existing versions
+        //get the javaJsonVersions that are not in the existing javaJsonVersions
         versions.removeAll(existingVersions);
         for (String version : versions) {
             Map<String, Set<String>> fileNameWithUrls = doGetWorkingDownloadUrlsForGivenVersion(version);
@@ -144,16 +123,13 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
             for (Map.Entry<String, Set<String>> entry : fileNameWithUrls.entrySet()) {
                 String fileName = entry.getKey();
                 Set<String> urls = entry.getValue();
+                //TODO:Check dass nur Versionen bzw urls erzeugt werden die es auch gibt
                 UrlDownloadFile urlFile = (UrlDownloadFile) urlVersion.getOrCreateChild(fileName);
-                Path pathToFile = urlFile.getPath();
-                //The following method could go into the UrlDownloadFile path.
-                doCreatePathAndFileIfNonexistent(pathToFile);
-                urlFile.doLoad();
                 for (String url : urls) {
                     urlFile.addUrl(url);
                 }
-                urlFile.doSave();
             }
+            urlVersion.save();
 
 
         }
@@ -215,7 +191,7 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
                         combination = sb.toString();
                         if (doCheckIfDownloadUrlWorks(combination).isSuccess()) {
                             logger.info("Found working URL for ARCH " + o + arch + " " + combination);
-                            String fileName = oskey + "_" + archkey;
+                            String fileName = oskey + "_" + archkey + ".urls";
                             Set<String> urlsForOsAndArch = doGetOrCreateUrlsForOsAndArch(urlsByOsAndArch, fileName);
                             urlsForOsAndArch.add(combination);
                         }

@@ -1,12 +1,15 @@
 package com.devonfw.tools.ide.url.Updater;
 
-public class Result<A>  {
+public class Result  {
     private final boolean success;
-    private final A value;
+    private final int httpStatusCode;
 
-    public Result(boolean success, A value) {
+    private final String url;
+
+    public Result(boolean success, int value, String url) {
         this.success = success;
-        this.value = value;
+        this.httpStatusCode = value;
+        this.url = url;
     }
 
     public boolean isSuccess() {
@@ -17,7 +20,11 @@ public class Result<A>  {
         return !this.success;
     }
 
-    public A getValue() {
-        return this.value;
+    public int getHttpStatusCode() {
+        return this.httpStatusCode;
+    }
+
+    public String getUrl() {
+        return this.url;
     }
 }

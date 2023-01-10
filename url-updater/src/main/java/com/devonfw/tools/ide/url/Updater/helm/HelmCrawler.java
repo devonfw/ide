@@ -1,18 +1,10 @@
 package com.devonfw.tools.ide.url.Updater.helm;
 
-import com.devonfw.tools.ide.url.Updater.Mappings;
-import com.devonfw.tools.ide.url.Updater.OSTypes;
-import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
+import com.devonfw.tools.ide.url.Updater.GithubCrawler;
+import com.devonfw.tools.ide.url.Updater.OSType;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-public class HelmCrawler extends WebsiteVersionCrawler {
-    @Override
-    protected Pattern getVersionPattern() {
-        return Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+)");
-    }
+public class HelmCrawler extends GithubCrawler {
 
     @Override
     protected String getToolName() {
@@ -20,31 +12,41 @@ public class HelmCrawler extends WebsiteVersionCrawler {
     }
 
     @Override
-    protected String getEdition() {
+    protected void updateVersion(UrlVersion urlVersion) {
+        doUpdateVersion(urlVersion,"https://get.helm.sh/helm-${version}-windows-amd64.zip", OSType.WINDOWS);
+        doUpdateVersion(urlVersion,"https://get.helm.sh/helm-${version}-linux-amd64.tar.gz", OSType.LINUX);
+        doUpdateVersion(urlVersion,"https://get.helm.sh/helm-${version}-darwin-amd64.tar.gz", OSType.MAC);
+    }
+
+    @Override
+    protected String getOrganizationName() {
         return "helm";
     }
 
     @Override
-    protected String getVersionUrl() {
-        return "https://api.github.com/repos/helm/helm/git/refs/tags";
+    protected String mapVersion(String version) {
+        if(version.startsWith("v")){
+         version = version.substring(1);
+        }
+        return version;
     }
 
-    @Override
-    protected List<String> getDownloadUrls() {
-        ArrayList<String> downloadUrls = new ArrayList<>();
-        downloadUrls.add("https://get.helm.sh/helm-${version}-${os}.${ext}");
-        return downloadUrls;
-    }
-
-    @Override
-    protected Mappings getMappings() {
-        Mappings mappings = new Mappings();
-        mappings.extensions.put(OSTypes.WINDOWS, "zip");
-        mappings.extensions.put(OSTypes.LINUX, "tar.gz");
-        mappings.extensions.put(OSTypes.MAC, "tar.gz");
-        mappings.oses.put(OSTypes.WINDOWS, "windows-amd64");
-        mappings.oses.put(OSTypes.LINUX, "linux-amd64");
-        mappings.oses.put(OSTypes.MAC, "darwin-amd64");
-        return mappings;
-    }
+//    @Override
+//    protected List<String> getDownloadUrls() {
+//        ArrayList<String> downloadUrls = new ArrayList<>();
+//        downloadUrls.add("https://get.helm.sh/helm-${version}-${os}.${ext}");
+//        return downloadUrls;
+//    }
+//
+//    @Override
+//    protected Mappings getMappings() {
+//        Mappings mappings = new Mappings();
+//        mappings.extensions.put(OSType.WINDOWS, "zip");
+//        mappings.extensions.put(OSType.LINUX, "tar.gz");
+//        mappings.extensions.put(OSType.MAC, "tar.gz");
+//        mappings.oses.put(OSType.WINDOWS, "windows-amd64");
+//        mappings.oses.put(OSType.LINUX, "linux-amd64");
+//        mappings.oses.put(OSType.MAC, "darwin-amd64");
+//        return mappings;
+//    }
 }

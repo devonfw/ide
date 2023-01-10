@@ -1,14 +1,11 @@
 package com.devonfw.tools.ide.url.Updater.gradle;
 
-import com.devonfw.tools.ide.url.Updater.Mappings;
-import com.devonfw.tools.ide.url.Updater.OSTypes;
-import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
+import com.devonfw.tools.ide.url.Updater.WebsiteCrawler;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 
-import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GradleCrawler extends WebsiteVersionCrawler {
+public class GradleCrawler extends WebsiteCrawler {
     @Override
     protected Pattern getVersionPattern() {
         return Pattern.compile("(\\d\\.\\d[\\.\\d]*)");
@@ -20,26 +17,15 @@ public class GradleCrawler extends WebsiteVersionCrawler {
     }
 
     @Override
-    protected String getEdition() {
-        return "Gradle";
-    }
+    protected void updateVersion(UrlVersion urlVersion) {
+        doUpdateVersion(urlVersion, "https://services.gradle.org/distributions/gradle-${version}-bin.zip");
 
+    }
     @Override
     protected String getVersionUrl() {
         return "https://gradle.org/releases/";
     }
 
-    @Override
-    protected List<String> getDownloadUrls() {
-        ArrayList<String> downloadUrls = new ArrayList<>();
-        downloadUrls.add("https://services.gradle.org/distributions/gradle-${version}-bin.zip");
-        return downloadUrls;
-    }
-
-    @Override
-    protected Mappings getMappings() {
-        return new Mappings();
-    }
 
 //    @Override
 //    protected Map<String, Set<String>> doGetWorkingDownloadUrlsForGivenVersion(String version) {

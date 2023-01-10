@@ -1,6 +1,6 @@
 package com.devonfw.tools.ide.url.Updater;
 
-public enum OSTypes {
+public enum OSType {
     WINDOWS,MAC,LINUX;
     @Override
     public String toString(){
