@@ -136,7 +136,6 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
         UrlEdition edition = tool.getOrCreateChild(getEdition());
         List<String> versions = doGetVersions(getVersionUrl());
         List<String> existingVersions = edition.getChildrenInDirectory();
-        //get the versions that are not in the existing versions
         versions.removeAll(existingVersions);
         for (String version : versions) {
             Map<String, Set<String>> fileNameWithUrls = doGetWorkingDownloadUrlsForGivenVersion(version);
