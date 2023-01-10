@@ -2,7 +2,6 @@ package com.devonfw.tools.ide.url.Updater;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class Mappings {

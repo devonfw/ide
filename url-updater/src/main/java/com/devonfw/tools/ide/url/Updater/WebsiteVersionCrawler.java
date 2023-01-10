@@ -1,20 +1,20 @@
 package com.devonfw.tools.ide.url.Updater;
 
-import com.devonfw.tools.ide.url.Updater.githubapiclasses.GithubJsonItem;
+import com.devonfw.tools.ide.url.Updater.githubapiclasses.*;
 import com.devonfw.tools.ide.url.Updater.githubapiclasses.GithubJsonObject;
 import com.devonfw.tools.ide.url.Updater.mavenapiclasses.Metadata;
 import com.devonfw.tools.ide.url.folderhandling.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-import org.apache.logging.log4j.core.jackson.Log4jXmlObjectMapper;
 import org.asynchttpclient.uri.Uri;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,7 +135,8 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
         UrlTool tool = urlRepository.getOrCreateChild(getToolName());
         UrlEdition edition = tool.getOrCreateChild(getEdition());
         List<String> versions = doGetVersions(getVersionUrl());
-        List<String> existingVersions = edition.getChildrenInDirectory();
+        List<String> existingVersions = edition.getListOfAllChildren();
+        //get the versions that are not in the existing versions
         versions.removeAll(existingVersions);
         for (String version : versions) {
             Map<String, Set<String>> fileNameWithUrls = doGetWorkingDownloadUrlsForGivenVersion(version);
@@ -143,14 +144,32 @@ public abstract class WebsiteVersionCrawler extends AbstractCrawler {
             for (Map.Entry<String, Set<String>> entry : fileNameWithUrls.entrySet()) {
                 String fileName = entry.getKey();
                 Set<String> urls = entry.getValue();
-                UrlFile urlFile = urlVersion.getOrCreateChild(fileName);
-                try {
-                    urlFile.addToObjectsList(urls);
-                    urlFile.saveListFromObjectIntoFile();
-                } catch (IOException e) {
-                    logger.log(Level.SEVERE, "Failed to save url into file", e);
-                    //TODO: Christian - add a way to handle this exception
+                UrlDownloadFile urlFile = (UrlDownloadFile) urlVersion.getOrCreateChild(fileName);
+                Path pathToFile = urlFile.getPath();
+                //The following method could go into the UrlDownloadFile path.
+                doCreatePathAndFileIfNonexistent(pathToFile);
+                urlFile.doLoad();
+                for (String url : urls) {
+                    urlFile.addUrl(url);
                 }
+                urlFile.doSave();
+            }
+
+
+        }
+    }
+
+    protected void doCreatePathAndFileIfNonexistent(Path pathToFile) {
+    	File f = new File(pathToFile.toString());
+        File parentFolder = f.getParentFile();
+        if ( !parentFolder.exists() ) {
+            parentFolder.mkdirs();
+        }
+        if (!f.exists()) {
+            try {
+                f.createNewFile();
+            } catch (IOException e) {
+                throw new IllegalStateException("The file " + f.getPath() + "doesn't exist." ,e);
             }
 
 

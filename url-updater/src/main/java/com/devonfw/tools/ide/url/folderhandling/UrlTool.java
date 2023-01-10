@@ -1,12 +1,18 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
-/**
- *
- * An instance of this class represents a tool folder, like "docker" or "vscode".
- *
- */
-public class UrlTool extends UrlHasChildParentArtifact<UrlRepository, UrlEdition> {
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
 
+/**
+ * An {@link UrlFolder} representing the actual software tool like "docker" or "vscode".
+ */
+public class UrlTool extends AbstractUrlFolderWithParent<UrlRepository, UrlEdition> {
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   * @param name the {@link #getName() filename}.
+   */
   public UrlTool(UrlRepository parent, String name) {
 
     super(parent, name);
@@ -15,7 +21,7 @@ public class UrlTool extends UrlHasChildParentArtifact<UrlRepository, UrlEdition
   /**
    * This method is used to add new children to the children collection of an instance from this class.
    *
-   * @param name The name of the edition object that should be created.
+   * @param name The name of the {@link UrlEdition} object that should be created.
    */
   @Override
   protected UrlEdition newChild(String name) {
