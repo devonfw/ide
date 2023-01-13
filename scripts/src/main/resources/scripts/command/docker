@@ -38,47 +38,43 @@ function doResolveDownloadUrl() {
 function doSetup() {  
   if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
   then
-    echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
     then 
       doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
-      if doIsRancherInstalled
+      if doIsDockerInstalled
       then
-        if [ "${1}" != "silent" ] && ! doIsQuiet
+        if doIsRancherInstalled 
         then
-          #give the User the installation location when using linux or mac
-          if doIsWindows
+          if [ "${1}" != "silent" ] && ! doIsQuiet
           then
-            doEnsureVpnKitInstallation
-            doEcho "Rancher Desktop is already installed"
-          else
-            doEcho "Rancher Desktop is already installed at $(command -v docker)"
+            #give the User the installation location when using linux or mac
+            if doIsWindows
+            then
+              doEnsureVpnKitInstallation
+              doEcho "Rancher Desktop is already installed"
+            else
+              doEcho "Rancher Desktop is already installed at $(command -v docker)"
+            fi
+          fi
+        else
+          if [ "${1}" != "silent" ] && ! doIsQuiet
+          then
+            doEcho "Docker is already installed at $(command -v docker)"
+            docker version
+  	        doEcho "\nDo you want to install Rancher Desktop?"
+            read -r -p "(yes/no): " answer
+            if [ "${answer}" = "yes" ] || [ -z "${answer}" ]
+            then
+              doInstallRancherDesktop
+            elif [ "${answer}" = "no" ]
+            then
+              doEcho "For more information please refer to https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup."
+            fi
           fi
         fi
       else
-        doRequireNotBatch
-        local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
-        TOOL_VERSION_COMMAND="-"
-        doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
-        TOOL_VERSION_COMMAND="docker version"
-        if doIsWindows
-        then
-          doSetVpnKitStartupInstaller
-          doEcho "Installing Rancher Desktop for Windows..."
-          # ensures installation of vpnkit if user directly restarts computer for enabling wsl
-          doRunCommand "${rancher_install_dir}/rancher-*-windows.exe" 
-          #check if vpnkit is already installed
-          doEnsureVpnKitInstallation
-        elif doIsMacOs
-        then
-          # shellcheck disable=SC2016
-          doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
-        else
-          doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
-          doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
-        fi
-        read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+        doInstallRancherDesktop
       fi
     fi
   else
@@ -86,7 +82,7 @@ function doSetup() {
     then
       if [ "${1}" != "silent" ] && ! doIsQuiet
       then
-        doEcho "docker is already installed at $(command -v docker)"
+        doEcho "Docker is already installed at $(command -v docker)"
         docker version
       fi
     else
@@ -95,7 +91,7 @@ function doSetup() {
       if doIsWindows
       then
         doEchoStep "Installing Docker Desktop for Windows..."
-        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-windows.exe"
       elif doIsMacOs
       then
         doEchoStep "Installing Docker Desktop for MacOS..."
@@ -105,11 +101,44 @@ function doSetup() {
         doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
         doRunCommand "hdiutil detach -force '${mount_dir}'"
       fi
-      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer     
+      kill -9 $PPID
     fi
   fi
 }
 
+function doInstallRancherDesktop() {
+  echo "Rancher Desktop set as option"
+  doRequireNotBatch
+  local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
+  TOOL_VERSION_COMMAND="-"
+  doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
+  local install_file_exists=${?}
+  if [ "${install_file_exists}" == "1" ]
+  then 
+    echo "rancher desktop exists in ${rancher_install_dir} but it is not installed."
+  fi
+  TOOL_VERSION_COMMAND="docker version"
+  if doIsWindows
+  then
+    doSetVpnKitStartupInstaller
+    doEcho "Installing Rancher Desktop for Windows..."
+    # ensures installation of vpnkit if user directly restarts computer for enabling wsl
+    doRunCommand "${rancher_install_dir}/rancher-*-windows.exe" 
+    #check if vpnkit is already installed
+    doEnsureVpnKitInstallation
+  elif doIsMacOs
+  then
+    # shellcheck disable=SC2016
+    doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
+  else
+    doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
+    doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
+  fi
+  echo "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details."
+  read -r -p "Terminal will now close. Please reopen your terminal to use devon... Press any key to continue" answer
+  kill -9 $PPID
+}
 
 # Call Docker with specified arguments.   
 function doRun() {
