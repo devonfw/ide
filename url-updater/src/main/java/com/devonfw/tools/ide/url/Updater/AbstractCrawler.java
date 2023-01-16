@@ -26,9 +26,12 @@ public abstract class AbstractCrawler implements Updater {
             return client.send(request1, HttpResponse.BodyHandlers.ofString()).body();
         } catch (IOException | InterruptedException exception) {
             throw new IllegalStateException("Failed to retrieve response body from url: " + url, exception);
+        }catch (IllegalArgumentException e){
+            logger.error("Error while getting response body from url {}",url, e);
+            return "";
         }
     }
-    protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OSType os, String arch){
+    protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OSType os, String arch, String edition){
         String version = urlVersion.getName();
         String osString = null;
         downloadUrl = downloadUrl.replace("${version}", version);
@@ -39,6 +42,9 @@ public abstract class AbstractCrawler implements Updater {
         if(arch!=null) {
             downloadUrl = downloadUrl.replace("${arch}", arch);
         }
+        if(edition!=null) {
+            downloadUrl = downloadUrl.replace("${edition}", edition);
+        }
         Result resultOfHttpRequest= doCheckIfDownloadUrlWorks(downloadUrl);
         if(resultOfHttpRequest.isSuccess()){
             UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(osString,arch);
@@ -46,9 +52,11 @@ public abstract class AbstractCrawler implements Updater {
             urlVersion.save();
             return true;
         }else {
-
             return false;
         }
+    }
+    protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OSType os, String arch){
+       return doUpdateVersion(urlVersion,downloadUrl,os,arch,null);
     }
     protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OSType os) {
         return doUpdateVersion(urlVersion, downloadUrl, os, null);

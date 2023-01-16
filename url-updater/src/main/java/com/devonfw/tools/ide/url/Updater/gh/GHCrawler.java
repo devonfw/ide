@@ -1,35 +1,38 @@
-//package com.devonfw.tools.ide.url.Updater.gh;
-//
-//import com.devonfw.tools.ide.url.Updater.Mappings;
-//import com.devonfw.tools.ide.url.Updater.OSType;
-//import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.regex.Pattern;
-//
-//public class GHCrawler extends WebsiteVersionCrawler {
-//    @Override
-//    protected Pattern getVersionPattern() {
-//        return Pattern.compile("(\\d+\\.\\d+\\.\\d+)");
-//    }
-//    @Override
-//    protected String getToolName() {
-//        return "gh";
-//    }
-//
-//    @Override
-//    protected String getEdition() {
-//        return "gh";
-//    }
-//
-//    @Override
-//    protected String getVersionUrl() {
-//        return "https://api.github.com/repos/cli/cli/git/refs/tags";
-//    }
-//
-//    @Override
-//    protected List<String> getDownloadUrls() {
+package com.devonfw.tools.ide.url.Updater.gh;
+
+import com.devonfw.tools.ide.url.Updater.GithubCrawler;
+import com.devonfw.tools.ide.url.Updater.OSType;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
+
+public class GHCrawler extends GithubCrawler {
+    @Override
+    protected String getToolName() {
+        return "gh";
+    }
+
+    @Override
+    protected void updateVersion(UrlVersion urlVersion) {
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_windows_amd64.zip", OSType.WINDOWS,"x64");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz", OSType.LINUX,"x64");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_arm64.tar.gz", OSType.LINUX,"arm64");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_386.tar.gz", OSType.LINUX,"i386");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_arm64.tar.gz", OSType.MAC,"arm64");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_amd64.tar.gz", OSType.MAC,"x64");
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_386.tar.gz", OSType.MAC,"i386");
+
+
+    }
+
+    @Override
+    protected String mapVersion(String version) {
+        String version2= version.replaceAll("v", "");
+        //filter out pre releases
+        if(version2.contains("-")){
+            return version2.substring(0, version2.indexOf("-"));
+        }
+        return version2;
+    }
+    //    protected List<String> getDownloadUrls() {
 //        ArrayList<String> downloadUrls = new ArrayList<>();
 //        downloadUrls.add("https://github.com/cli/cli/releases/download/v${version}/gh_${version}_${os}_${arch}.${ext}");
 //        return downloadUrls;
@@ -49,4 +52,14 @@
 //        mappings.extensions.put(OSType.MAC, "tar.gz");
 //        return mappings;
 //    }
-//}
+
+    @Override
+    protected String getOrganizationName() {
+        return "cli";
+    }
+
+    @Override
+    protected String getRepository() {
+        return "cli";
+    }
+}

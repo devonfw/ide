@@ -1,47 +1,25 @@
-//package com.devonfw.tools.ide.url.Updater.gcviewer;
-//
-//import com.devonfw.tools.ide.url.Updater.Mappings;
-//import com.devonfw.tools.ide.url.Updater.OSType;
-//import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.regex.Pattern;
-//
-//public class GCViewerCrawler extends WebsiteVersionCrawler {
-//    @Override
-//    protected Pattern getVersionPattern() {
-//        return Pattern.compile("(\\d+\\.\\d+(?:\\.\\d+)?)");
-//    }
-//
-//    @Override
-//    protected String getToolName() {
-//        return "gcviewer";
-//    }
-//
-//    @Override
-//    protected String getEdition() {
-//        return "gcviewer";
-//    }
-//
-//    @Override
-//    protected String getVersionUrl() {
-//        return "https://api.github.com/repos/chewiebug/GCViewer/git/refs/tags";
-//    }
-//
-//    @Override
-//    protected List<String> getDownloadUrls() {
-//        ArrayList<String> downloadUrls = new ArrayList<>();
-//        downloadUrls.add("https://sourceforge.net/projects/gcviewer/files/gcviewer-${version}.${ext}");
-//        return downloadUrls;
-//    }
-//
-//    @Override
-//    protected Mappings getMappings() {
-//        Mappings mappings = new Mappings();
-//        mappings.extensions.put(OSType.WINDOWS, "jar");
-//        mappings.extensions.put(OSType.LINUX, "jar");
-//        mappings.extensions.put(OSType.MAC, "jar");
-//        return mappings;
-//    }
-//}
+package com.devonfw.tools.ide.url.Updater.gcviewer;
+
+import com.devonfw.tools.ide.url.Updater.GithubCrawler;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
+
+public class GCViewerCrawler extends GithubCrawler {
+    @Override
+    protected String getToolName() {
+        return "gcviewer";
+    }
+
+    @Override
+    protected void updateVersion(UrlVersion urlVersion) {
+        doUpdateVersion(urlVersion, "https://sourceforge.net/projects/gcviewer/files/gcviewer-${version}.jar");
+    }
+    @Override
+    protected String getOrganizationName() {
+        return "chewiebug";
+    }
+
+    @Override
+    protected String getRepository() {
+        return "GCViewer";
+    }
+}

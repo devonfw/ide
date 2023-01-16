@@ -84,7 +84,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    *         exist.
    */
   public UrlDownloadFile getOrCreateUrls(String os, String arch) {
-    if(arch== null){
+    if(os == null && arch == null){
+      return getOrCreateUrls();
+    }
+    if(arch ==null){
       arch = "x64";
     }
     return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");

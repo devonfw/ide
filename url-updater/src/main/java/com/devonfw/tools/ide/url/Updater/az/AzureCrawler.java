@@ -1,48 +1,26 @@
-//package com.devonfw.tools.ide.url.Updater.az;
-//
-//import com.devonfw.tools.ide.url.Updater.Mappings;
-//import com.devonfw.tools.ide.url.Updater.OSType;
-//import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
-//
-//import java.util.ArrayList;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.regex.Pattern;
-//
-//public class AzureCrawler extends WebsiteVersionCrawler {
-//    @Override
-//    protected Pattern getVersionPattern() {
-//        return Pattern.compile("(\\d+\\.\\d+\\.\\d+)");
-//    }
-//
-//    @Override
-//    protected String getToolName() {
-//        return "azure";
-//    }
-//
-//    @Override
-//    protected String getEdition() {
-//        return "azure";
-//    }
-//
-//    @Override
-//    protected String getVersionUrl() {
-//        return "https://api.github.com/repos/Azure/azure-cli/git/refs/tags";
-//    }
-//
-//    @Override
-//    protected List<String> getDownloadUrls() {
-//        ArrayList<String> downloadUrls = new ArrayList<>();
-//        downloadUrls.add("https://azcliprod.blob.core.windows.net/msi/azure-cli-${version}.${ext}");
-//        return downloadUrls;
-//    }
-//
-//    @Override
-//    protected Mappings getMappings() {
-//        HashMap<OSType,String> extensions = new HashMap<>();
-//        extensions.put(OSType.WINDOWS, "msi");
-//        Mappings mappings = new Mappings();
-//        mappings.extensions = extensions;
-//        return mappings;
-//    }
-//}
+package com.devonfw.tools.ide.url.Updater.az;
+
+import com.devonfw.tools.ide.url.Updater.GithubCrawler;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
+
+public class AzureCrawler extends GithubCrawler {
+    @Override
+    protected String getToolName() {
+        return "Azure";
+    }
+
+    @Override
+    protected void updateVersion(UrlVersion urlVersion) {
+       doUpdateVersion(urlVersion, "https://azcliprod.blob.core.windows.net/msi/azure-cli-${version}.msi");
+    }
+
+
+    @Override
+    protected String getOrganizationName() {
+        return "Azure";
+    }
+    @Override
+    protected String getRepository(){
+        return "azure-cli";
+    }
+}

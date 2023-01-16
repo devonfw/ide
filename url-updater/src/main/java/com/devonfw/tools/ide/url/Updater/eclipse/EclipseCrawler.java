@@ -1,37 +1,21 @@
 package com.devonfw.tools.ide.url.Updater.eclipse;
 
-
-import com.devonfw.tools.ide.url.Updater.Mappings;
 import com.devonfw.tools.ide.url.Updater.OSType;
-import com.devonfw.tools.ide.url.Updater.WebsiteVersionCrawler;
+import com.devonfw.tools.ide.url.Updater.WebsiteCrawler;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 
-
-import java.util.*;
 import java.util.regex.Pattern;
 
+public abstract class EclipseCrawler extends WebsiteCrawler {
 
-public abstract class EclipseCrawler extends WebsiteVersionCrawler {
-
+        @Override
+        protected String getToolName() {
+            return "eclipse";
+        }
 
     @Override
-    public Mappings getMappings() {
-        HashMap<OSType, String> oses = new HashMap<>();
-        oses.put(OSType.WINDOWS, "win32");
-        oses.put(OSType.LINUX, "linux-gtk");
-        oses.put(OSType.MAC, "macosx-cocoa");
-        HashMap<String, String> architectures = new HashMap<>();
-        architectures.put("x64", "x86_64");
-        architectures.put("arm64", "aarch64");
-        HashMap<OSType, String> extension = new HashMap<>();
-        extension.put(OSType.WINDOWS, "zip");
-        extension.put(OSType.LINUX, "tar.gz");
-        extension.put(OSType.MAC, "dmg");
-        Mappings mappings = new Mappings(oses, architectures, extension);
-        mappings.releases.add("R");
-        mappings.releases.add("M1");
-        mappings.releases.add("M2");
-        mappings.releases.add("M3");
-        return mappings;
+    protected String getVersionUrl() {
+        return "https://www.eclipse.org/downloads/packages/release";
     }
 
     @Override
@@ -40,23 +24,36 @@ public abstract class EclipseCrawler extends WebsiteVersionCrawler {
     }
 
     @Override
-    public String getToolName() {
-        return "Eclipse";
-    }
+    protected void updateVersion(UrlVersion urlVersion) {
 
-    @Override
-    public String getVersionUrl() {
-        return "https://www.eclipse.org/downloads/packages/release";
-    }
+        //utwente
+        boolean success = doUpdateVersion(urlVersion, "https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-win32-x86_64.zip", OSType.WINDOWS,"x64",getEdition());
+        if(!success) return;
+        doUpdateVersion(urlVersion, "https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-aarch64.tar.gz", OSType.MAC,"arm64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-x86_64.tar.gz", OSType.MAC,"x64",getEdition());
 
-    @Override
-    public List<String> getDownloadUrls() {
-        ArrayList<String> downloadUrls = new ArrayList<>();
-        downloadUrls.add("https://ftp.snt.utwente.nl/pub/software/eclipse/technology/epp/downloads/release/${version}/${release}/eclipse-${edition}-${version}-${release}-${os}-${arch}.${ext}");
-        downloadUrls.add("https://archive.eclipse.org/technology/epp/downloads/release/${version}/${release}/eclipse-${edition}-${version}-${release}-${os}-${arch}.${ext}");
-        downloadUrls.add("https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/${release}/eclipse-${edition}-${version}-${release}-${os}-${arch}.${ext}");
-        return downloadUrls;
-    }
+        //archive
+        doUpdateVersion(urlVersion, "https://archive.eclipse.org/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-win32-x86_64.zip", OSType.WINDOWS,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://archive.eclipse.org/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://archive.eclipse.org/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+        doUpdateVersion(urlVersion, "https://archive.eclipse.org/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-x86_64.tar.gz", OSType.MAC,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://archive.eclipse.org/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-aarch64.tar.gz", OSType.MAC,"arm64",getEdition());
 
+        //osuosl
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-win32-x86_64.zip", OSType.WINDOWS,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-win32-x86_64.zip", OSType.WINDOWS,"x64",getEdition());
+
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-x86_64.tar.gz", OSType.LINUX,"x64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+        doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-aarch64.tar.gz", OSType.LINUX,"arm64",getEdition());
+        }
 
 }

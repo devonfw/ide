@@ -29,7 +29,7 @@ public abstract class JsonCrawler<J extends JsonObject> extends AbstractCrawler{
             collectVersionsFromJson(jsonObject,versions);
             logger.info("Found  javaJsonVersions : " + versions);
         } catch (IOException e) {
-            logger.error("Error while getting javaJsonVersions from Json api {}",url, e);
+            logger.error("Error while getting Versions from Json api {}",url, e);
         }
         return versions;
     }
