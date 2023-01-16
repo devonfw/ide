@@ -2,13 +2,13 @@
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-for migration in "$(dirname $0)/../migrations"/*
+for migration in "$(dirname "$0")/../migrations"/*
 do
   from_version="${1}"
   to_version="${migration/*\//}"
   doVersionCompare "${from_version}" "${to_version}"
   result="${?}"
-  if [ "${result}" -eq 0 -o "${result}" -eq 2 ]
+  if [ "${result}" -eq 0 ] || [ "${result}" -eq 2 ]
   then
     "${migration}"
   fi	
