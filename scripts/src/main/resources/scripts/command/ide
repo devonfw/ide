@@ -45,7 +45,6 @@ function doUpdateMetaFile() {
 }
 
 function doUpdateScripts() {
-  local previous_version="$("${DEVON_IDE_HOME}/scripts/devon" -v)"
   # shellcheck disable=SC2007,SC2154
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
