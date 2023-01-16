@@ -66,7 +66,6 @@ function doUpdateScripts() {
   fi
   local current_version="$("${DEVON_IDE_HOME}/scripts/devon" -v)"
   doEcho "\nRun migration scripts to version ${target_version} ..."
-  doEcho "${current_version}"
   doDevonCommand migration "${current_version}"
 }
 
