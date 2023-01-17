@@ -30,12 +30,12 @@ function doConfig() {
 
 # the path of gcloud modules must be added to python's sys.path via .pth file
 function doSetPth() {
-  local wsl_path="${GCLOUD_HOME}/lib"
+  local lib_path="${GCLOUD_HOME}/lib"
   local win_path
   local pth_file="${DEVON_IDE_HOME}/software/python/ext_modules.pth"
   if doIsWindows
   then
-    win_path="$(cygpath -w "${wsl_path}")"
+    win_path="$(cygpath -w "${lib_path}")"
     if ! grep -Fq "${win_path}" "${pth_file}" &> /dev/null
     then
       echo -e "\n${win_path}" >> "${pth_file}"
