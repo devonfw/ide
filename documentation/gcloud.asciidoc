@@ -1,0 +1,15 @@
+:toc:
+toc::[]
+
+= gcloud
+
+The gcloud commandlet allows to install and use https://cloud.google.com/sdk/gcloud[gcloud cli].
+
+The arguments (`devon gcloud «args»`) are explained by the following table:
+
+.Usage of `devon gcloud`
+[options="header"]
+|=======================
+|*Argument(s)*    |*Meaning*
+|`setup`          |install gcloud cli on your machine.
+|=======================
