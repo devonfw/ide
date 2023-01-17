@@ -28,6 +28,8 @@ include::dotnet.asciidoc[leveloffset=3]
 
 include::eclipse.asciidoc[leveloffset=3]
 
+include::gcloud.asciidoc[leveloffset=3]
+
 include::gcviewer.asciidoc[leveloffset=3]
 
 include::gh.asciidoc[leveloffset=3]
