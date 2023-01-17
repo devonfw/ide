@@ -95,7 +95,7 @@ function doSetup() {
       if doIsWindows
       then
         doEchoStep "Installing Docker Desktop for Windows..."
-        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-windows.exe"
       elif doIsMacOs
       then
         doEchoStep "Installing Docker Desktop for MacOS..."
