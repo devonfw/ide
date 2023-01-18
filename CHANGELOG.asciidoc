@@ -27,7 +27,6 @@ The full list of changes for this release can be found in https://github.com/dev
 
 Release with small but important bugfixes:
 
-* https://github.com/devonfw/ide/issues/982[#982]: Add recommendation feature and clean setup option to vscode
 * https://github.com/devonfw/ide/issues/966[#966]: npm detection not reliable and redundant
 * https://github.com/devonfw/ide/issues/954[#954]: First install removes all folders from user path
 * https://github.com/devonfw/ide/issues/956[#956]: no matches found error if software folder missing
