@@ -22,7 +22,6 @@ You may also supply additional arguments as `devon vscode «args»`. These are e
 |`ws-re[verse]`  |reverse merge changes from workspace into settings
 |`ws-reverse-add`|reverse merge adding new properties
 |`create-script` |create launch script for this IDE, your current workspace and your OS
-|`clean-setup`   |clean VSCode setup without plugins and recommendations
 |=======================
 
 

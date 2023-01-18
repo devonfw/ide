@@ -32,10 +32,6 @@ function doSetup() {
   fi
 }
 
-function doCleanSetup() {
-  doInstall "vscode" "${VSCODE_VERSION}" "${1}"
-}
-
 function cleanupPlugins() {
   clean_plugins_on_update="false"
   doLoadProperties "${SETTINGS_PATH}"/vscode/vscode.properties
@@ -78,7 +74,7 @@ function doAddPlugins() {
   if [ "${#pluginsToRecommend}" -gt 0 ]
   then
     local IFS=,
-    doAddRecommendations "${pluginsToRecommend[*]}"
+    doAddRecommendation "${pluginsToRecommend[*]}"
   fi
 }
 
@@ -138,16 +134,10 @@ function doStartVsCode() {
   doRunVsCode "${WORKSPACE_PATH}"
 }
 
-function doAddRecommendations() {
-  doEcho "add recommendations..."
+function doAddRecommendation() {
+  doEcho "add plugin recommendation..."
   local extensions="${WORKSPACE_PATH}/.vscode/extensions.json"
-  if [ -f "${extensions}" ]
-  then
-    rm "${extensions}"
-    echo "{\"recommendations\":[${1}]}" >> "${extensions}"
-  else
-    echo "{\"recommendations\":[${1}]}" >> "${extensions}"
-  fi
+  echo "{\"recommendations\":[${1}]}" >> "${extensions}"
 }
   
 # CLI
@@ -205,11 +195,6 @@ do
     shift
     doAddPlugin "${@}"
     exit ${?}
-  elif [ "${1}" = "clean-setup" ]
-  then
-    doCleanSetup "${2}"
-    doStartVsCode
-    exit
   else
     doFail "Undefined argument: ${1}"
   fi
