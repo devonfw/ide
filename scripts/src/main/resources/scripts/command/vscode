@@ -154,7 +154,6 @@ then
   echo " ws-re[verse]                   reverse merge changes from workspace into settings"
   echo " ws-reverse-add                 reverse merge adding new properties"
   echo " create-script                  create vscode-${WORKSPACE} script if not already exists"
-  echo " clean-setup                    clean VSCode setup without plugins and recommendations"
   exit
 fi
 if [ -z "${1}" ]
