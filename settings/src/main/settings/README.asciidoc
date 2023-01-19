@@ -1,0 +1,6 @@
+= ide-settings
+
+Repository for the https://github.com/devonfw/ide/blob/master/documentation/settings.asciidoc#settings[settings] of the https://devonfw.com/website/pages/docs/devonfw-ide.asciidoc.html[devonfw-ide].
+Simply fork this repository for your projects and start customizing the configuration to your needs.
+Please report issues https://github.com/devonfw/ide/issues[here] as we have closed issues in this repository itself.
+You may still provide PRs with proposed changes.
