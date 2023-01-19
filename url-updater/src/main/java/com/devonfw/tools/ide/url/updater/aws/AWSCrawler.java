@@ -13,7 +13,7 @@ public class AWSCrawler extends GithubCrawler {
 
     @Override
     protected void updateVersion(UrlVersion urlVersion) {
-        if(!urlVersion.getName().startsWith("2")) return;
+        if(!urlVersion.getName().startsWith("2")) return; // There are no valid download links for aws-cli below version 2
         boolean success = doUpdateVersion(urlVersion, "https://awscli.amazonaws.com/AWSCLIV2-${version}.msi", OSType.WINDOWS);
         if(!success){
             return;

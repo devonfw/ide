@@ -9,7 +9,7 @@ import java.nio.file.Path;
 public class UpdateInitiator {
 
     public static void main(String[] args) {
-        String pathToRepo ="../../ide-urls";
+        String pathToRepo ="./target/test/UrlRepository";
         UrlRepository urlRepository = new UrlRepository(Path.of(pathToRepo));
         UpdateManager updateManager = new UpdateManager(urlRepository);
         updateManager.updateAll();
