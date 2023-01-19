@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlArtifact;
 
 /**
- * An {@link UrlArtifact} represents a file or folder in the directory structure of an devonfw-ide urls repository.
+ * An {@link UrlArtifact} represents a file or folder in the directory structure of a devonfw-ide urls repository.
  *
  * @see UrlRepository
  * @see UrlTool

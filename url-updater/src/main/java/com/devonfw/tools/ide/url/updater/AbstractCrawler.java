@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.Set;
 
 public abstract class AbstractCrawler implements Updater {
-    protected HttpClient client = HttpClient.newBuilder().build();
+    protected final HttpClient client = HttpClient.newBuilder().build();
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractCrawler.class);
 
@@ -117,11 +117,11 @@ public abstract class AbstractCrawler implements Updater {
 
     protected abstract Set<String> getVersions();
 
+
     @Override
     public void update(UrlRepository urlRepository) {
         UrlTool tool = urlRepository.getOrCreateChild(getToolName());
         UrlEdition edition = tool.getOrCreateChild(getEdition());
-        updateExistingVersions(edition);
         Set<String> versions = getVersions();
         for (String version : versions) {
             version = mapVersion(version);
@@ -132,7 +132,10 @@ public abstract class AbstractCrawler implements Updater {
         }
     }
 
-    protected void updateExistingVersions(UrlEdition urlEdition) {//TODO};
+    protected void updateExistingVersions(UrlRepository urlRepository) {
+        UrlTool tool = urlRepository.getOrCreateChild(getToolName());
+        UrlEdition edition = tool.getOrCreateChild(getEdition());
+        edition.getListOfAllChildren().forEach(version -> updateVersion(edition.getChild(version)));
     }
 
 }

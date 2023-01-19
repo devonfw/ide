@@ -21,7 +21,7 @@ public class DockerCrawler extends WebsiteCrawler {
         String regex = "<h2 id=\""+version+"\".*?https://desktop\\.docker\\.com.*?(\\d{5})\\.exe(?!.<h2 id=)";
         Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(body);
-        String code = "";
+        String code;
         if(matcher.find()){
             code = matcher.group(1);
             boolean success = doUpdateVersion(urlVersion, "https://desktop.docker.com/win/main/amd64/"+code+"/Docker%20Desktop%20Installer.exe", OSType.WINDOWS);

@@ -36,57 +36,56 @@ public class UpdateManager {
         this.urlRepository = urlRepository;
     }
 
-    private AWSCrawler awsCrawler = new AWSCrawler();
-    private AzureCrawler azureCrawler = new AzureCrawler();
+    private final AWSCrawler awsCrawler = new AWSCrawler();
+    private final AzureCrawler azureCrawler = new AzureCrawler();
+    private final CobigenCrawler cobigenCrawler = new CobigenCrawler();
+    private final DotNetCrawler dotNetCrawler = new DotNetCrawler();
+    private final DockerCrawler dockerCrawler = new DockerCrawler();
+    private final EclipseCppCrawler eclipseCppCrawler = new EclipseCppCrawler();
 
-    private CobigenCrawler cobigenCrawler = new CobigenCrawler();
-    private DotNetCrawler dotNetCrawler = new DotNetCrawler();
-    private DockerCrawler dockerCrawler = new DockerCrawler();
-    private EclipseCppCrawler eclipseCppCrawler = new EclipseCppCrawler();
+    private final EclipseJavaCrawler eclipseJavaCrawler = new EclipseJavaCrawler();
 
-    private EclipseJavaCrawler eclipseJavaCrawler = new EclipseJavaCrawler();
+    private final GCViewerCrawler gcViewerCrawler = new GCViewerCrawler();
 
-    private GCViewerCrawler gcViewerCrawler = new GCViewerCrawler();
+    private final GHCrawler ghCrawler = new GHCrawler();
 
-    private GHCrawler ghCrawler = new GHCrawler();
+    private final GraalVMCrawler graalvmCrawler = new GraalVMCrawler();
 
-    private GraalVMCrawler graalvmCrawler = new GraalVMCrawler();
+    private final GradleCrawler gradleCrawler = new GradleCrawler();
 
-    private GradleCrawler gradleCrawler = new GradleCrawler();
+    private final HelmCrawler helmCrawler = new HelmCrawler();
 
-    private HelmCrawler helmCrawler = new HelmCrawler();
+    private final IntelliJUltimateEditionCrawler intellijUltimateCrawler = new IntelliJUltimateEditionCrawler();
 
-    private IntelliJUltimateEditionCrawler intellijUltimateCrawler = new IntelliJUltimateEditionCrawler();
+    private final IntelliJCommunityEditionCrawler intellijCommunityEditionCrawler = new IntelliJCommunityEditionCrawler();
 
-    private IntelliJCommunityEditionCrawler intellijCommunityEditionCrawler = new IntelliJCommunityEditionCrawler();
+    private final JavaCrawler javaCrawler = new JavaCrawler();
 
-    private JavaCrawler javaCrawler = new JavaCrawler();
+    private final JenkinsCrawler jenkinsCrawler = new JenkinsCrawler();
 
-    private JenkinsCrawler jenkinsCrawler = new JenkinsCrawler();
+    private final LazyDockerCrawler lazyDockerCrawler = new LazyDockerCrawler();
 
-    private LazyDockerCrawler lazyDockerCrawler = new LazyDockerCrawler();
+    private final MavenCrawler mavenCrawler = new MavenCrawler();
 
-    private MavenCrawler mavenCrawler = new MavenCrawler();
+    private final NodeJsCrawler nodeJSCrawler = new NodeJsCrawler();
 
-    private NodeJsCrawler nodeJSCrawler = new NodeJsCrawler();
+    private final NpmCrawler npmCrawler = new NpmCrawler();
 
-    private NpmCrawler npmCrawler = new NpmCrawler();
+    private final OcCrawler ocCrawler = new OcCrawler();
 
-    private OcCrawler ocCrawler = new OcCrawler();
+    private final PipCrawler pipCrawler = new PipCrawler();
 
-    private PipCrawler pipCrawler = new PipCrawler();
+    private final PythonCrawler pythonCrawler = new PythonCrawler();
 
-    private PythonCrawler pythonCrawler = new PythonCrawler();
+    private final QuarkusCrawler quarkusCrawler = new QuarkusCrawler();
 
-    private QuarkusCrawler quarkusCrawler = new QuarkusCrawler();
+    private final RancherCrawler rancherCrawler = new RancherCrawler();
 
-    private RancherCrawler rancherCrawler = new RancherCrawler();
+    private final SonarqubeCrawler sonarqubeCrawler = new SonarqubeCrawler();
 
-    private SonarqubeCrawler sonarqubeCrawler = new SonarqubeCrawler();
+    private final TerraformCrawler terraformCrawler = new TerraformCrawler();
 
-    private TerraformCrawler terraformCrawler = new TerraformCrawler();
-
-    private VSCodeCrawler vsCodeCrawler = new VSCodeCrawler();
+    private final VSCodeCrawler vsCodeCrawler = new VSCodeCrawler();
 
     public void updateAll() {
         awsCrawler.update(urlRepository);
@@ -117,6 +116,37 @@ public class UpdateManager {
         sonarqubeCrawler.update(urlRepository);
         terraformCrawler.update(urlRepository);
         vsCodeCrawler.update(urlRepository);
+    }
+
+    public void updateOnlyExistingVersions() {
+        awsCrawler.updateExistingVersions(urlRepository);
+        azureCrawler.updateExistingVersions(urlRepository);
+        cobigenCrawler.updateExistingVersions(urlRepository);
+        dotNetCrawler.updateExistingVersions(urlRepository);
+        dockerCrawler.updateExistingVersions(urlRepository);
+        eclipseCppCrawler.updateExistingVersions(urlRepository);
+        eclipseJavaCrawler.updateExistingVersions(urlRepository);
+        gcViewerCrawler.updateExistingVersions(urlRepository);
+        ghCrawler.updateExistingVersions(urlRepository);
+        graalvmCrawler.updateExistingVersions(urlRepository);
+        gradleCrawler.updateExistingVersions(urlRepository);
+        helmCrawler.updateExistingVersions(urlRepository);
+        javaCrawler.updateExistingVersions(urlRepository);
+        intellijUltimateCrawler.updateExistingVersions(urlRepository);
+        intellijCommunityEditionCrawler.updateExistingVersions(urlRepository);
+        jenkinsCrawler.updateExistingVersions(urlRepository);
+        lazyDockerCrawler.updateExistingVersions(urlRepository);
+        mavenCrawler.updateExistingVersions(urlRepository);
+        nodeJSCrawler.updateExistingVersions(urlRepository);
+        npmCrawler.updateExistingVersions(urlRepository);
+        ocCrawler.updateExistingVersions(urlRepository);
+        pipCrawler.updateExistingVersions(urlRepository);
+        pythonCrawler.updateExistingVersions(urlRepository);
+        quarkusCrawler.updateExistingVersions(urlRepository);
+        rancherCrawler.updateExistingVersions(urlRepository);
+        sonarqubeCrawler.updateExistingVersions(urlRepository);
+        terraformCrawler.updateExistingVersions(urlRepository);
+        vsCodeCrawler.updateExistingVersions(urlRepository);
     }
 
 }

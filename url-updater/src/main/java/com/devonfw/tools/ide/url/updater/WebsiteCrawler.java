@@ -27,9 +27,7 @@ public abstract class WebsiteCrawler extends AbstractCrawler {
         while (matcher.find()) {
             MatchResult result = matcher.toMatchResult();
             String match = result.group();
-            if (!versions.contains(match)) {
-                versions.add(match);
-            }
+            versions.add(match);
         }
         logger.log(Level.INFO, "Found  versions : " + versions);
         return versions;

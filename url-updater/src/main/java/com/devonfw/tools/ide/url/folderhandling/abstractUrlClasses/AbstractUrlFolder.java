@@ -22,7 +22,7 @@ import com.devonfw.tools.ide.url.folderhandling.UrlFolder;
 public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> extends AbstractUrlArtifact
     implements UrlFolder<C> {
 
-  private Map<String, C> children;
+  private final Map<String, C> children;
 
   /**
    * The constructor.
@@ -57,8 +57,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   public List<String> getListOfAllChildren() {
 
 	Set<String> setOfKeys = this.children.keySet();
-	List<String> ListOfChildNames = new ArrayList<String>(setOfKeys);
-	return ListOfChildNames;
+    return new ArrayList<String>(setOfKeys);
   }
   /**
    * @param name the {@link #getName() name} of the requested child.
