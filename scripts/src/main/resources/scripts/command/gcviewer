@@ -32,7 +32,7 @@ function doStart() {
   "${GCVIEWER_HOME}/gcviewer"
 }
 
-doCreateGCViewerScript() {
+function doCreateGCViewerScript() {
   echo -e "#!/usr/bin/env bash\ncd \${0%/*}\njava -jar gcviewer*.jar&" > "${GCVIEWER_HOME}/gcviewer"
   chmod a+x "${GCVIEWER_HOME}/gcviewer"
 }
