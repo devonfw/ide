@@ -57,6 +57,7 @@ The following commandlets are currently available:
 * link:docker.asciidoc[docker]
 * link:dotnet.asciidoc[dotnet]
 * link:eclipse.asciidoc[eclipse]
+* link:gcloud.asciidoc[gcloud]
 * link:gcviewer.asciidoc[gcviewer]
 * link:gh.asciidoc[gh]
 * link:graalvm.asciidoc[graalvm]
