@@ -37,7 +37,6 @@ public class UrlRepository extends AbstractUrlFolder<UrlTool> {
    * @return the {@link UrlRepository} with all its children loaded from the given {@link Path}.
    */
   public static UrlRepository load(Path path) {
-
     UrlRepository repository = new UrlRepository(path);
     repository.load();
     return repository;

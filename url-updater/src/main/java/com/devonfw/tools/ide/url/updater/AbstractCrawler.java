@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AbstractCrawler implements Updater {
@@ -132,9 +133,11 @@ public abstract class AbstractCrawler implements Updater {
         }
     }
 
-    protected void updateExistingVersions(UrlRepository urlRepository) {
+    public void updateExistingVersions(UrlRepository urlRepository) {
         UrlTool tool = urlRepository.getOrCreateChild(getToolName());
         UrlEdition edition = tool.getOrCreateChild(getEdition());
+        List<String> existingVersions = edition.getListOfAllChildren();
+
         edition.getListOfAllChildren().forEach(version -> updateVersion(edition.getChild(version)));
     }
 

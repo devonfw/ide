@@ -29,11 +29,13 @@ import com.devonfw.tools.ide.url.updater.terraform.TerraformCrawler;
 import com.devonfw.tools.ide.url.updater.vscode.VSCodeCrawler;
 import com.devonfw.tools.ide.url.folderhandling.UrlRepository;
 
+import java.nio.file.Path;
+
 public class UpdateManager {
     private final UrlRepository urlRepository;
 
-    public UpdateManager(UrlRepository urlRepository) {
-        this.urlRepository = urlRepository;
+    public UpdateManager(Path pathToRepository) {
+        this.urlRepository = UrlRepository.load(pathToRepository);
     }
 
     private final AWSCrawler awsCrawler = new AWSCrawler();

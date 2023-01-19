@@ -72,6 +72,4 @@ public class JavaCrawler extends JsonCrawler<JavaJsonObject> {
         }
 
     }
-
-    //  https://api.adoptium.net/v3/info/release_versions?architecture=x64&heap_size=normal&image_type=jdk&jvm_impl=hotspot&page=0&page_size=50&project=jdk&release_type=ga&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse
 }
