@@ -1,2 +1,0 @@
-This folder contains configurations for projects you whish to import into your IDE during setup.
-Details can be found https://github.com/devonfw/ide/blob/master/documentation/projects.asciidoc[here].
