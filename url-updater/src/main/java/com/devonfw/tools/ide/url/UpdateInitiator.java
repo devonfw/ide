@@ -6,7 +6,7 @@ import com.devonfw.tools.ide.url.folderhandling.UrlRepository;
 
 import java.nio.file.Path;
 
-public class Main {
+public class UpdateInitiator {
 
     public static void main(String[] args) {
         String pathToRepo ="../../ide-urls";
