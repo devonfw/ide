@@ -1,5 +1,6 @@
 package com.devonfw.tools.ide.url.updater;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public abstract class JsonCrawler<J extends JsonObject> extends AbstractCrawler{
         Set<String> versions = new HashSet<>();
         try {
             String response = doGetResponseBody(url);
-            ObjectMapper mapper = new ObjectMapper().configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             J jsonObject = mapper.readValue(response, getJsonObjectType());
             collectVersionsFromJson(jsonObject,versions);
             logger.info("Found  javaJsonVersions : " + versions);

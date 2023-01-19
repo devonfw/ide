@@ -48,7 +48,7 @@ public abstract class MavenCrawler extends AbstractCrawler {
             String response = doGetResponseBody(url);
             XmlMapper mapper = new XmlMapper();
             Metadata metaData = mapper.readValue(response, Metadata.class);
-            versions.addAll(metaData.versioning().versions());
+            versions.addAll(metaData.getVersioning().getVersions());
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error while getting javaJsonVersions", e);
         }

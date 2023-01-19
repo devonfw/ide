@@ -17,7 +17,7 @@ public abstract class GithubCrawler extends JsonCrawler<GithubJsonObject> {
     @Override
     protected void collectVersionsFromJson(GithubJsonObject jsonItem, Collection<String> versions) {
         for (GithubJsonItem item : jsonItem) {
-            String version =item.ref().replace("refs/tags/", "");
+            String version =item.getRef().replace("refs/tags/", "");
             if(version.contains("alpha") || version.contains("beta")|| version.contains("dev") || version.contains("rc") || version.contains("snapshot")){
                 continue;
             }

@@ -60,7 +60,7 @@ public class JavaCrawler extends JsonCrawler<JavaJsonObject> {
     @Override
     protected void collectVersionsFromJson(JavaJsonObject jsonItem, Collection<String> versions) {
         for (JavaJsonVersion item : jsonItem.getVersions()) {
-            String version = item.openjdk_version();
+            String version = item.getOpenjdk_version();
             version = version.replace("+", "_");
             //replace 1.8.0_ to 8u
             if(version.startsWith("1.8.0_")){

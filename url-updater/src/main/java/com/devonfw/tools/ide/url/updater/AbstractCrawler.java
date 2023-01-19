@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Set;
 
 public abstract class AbstractCrawler implements Updater {
@@ -78,7 +79,7 @@ public abstract class AbstractCrawler implements Updater {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(downloadUrl))
                     .method("HEAD", HttpRequest.BodyPublishers.noBody())
-                    .timeout(java.time.Duration.ofSeconds(5))
+                    .timeout(Duration.ofSeconds(5))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
