@@ -834,9 +834,8 @@ function doReplaceExtractedSkipSingleFolder() {
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
-#    files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}')"
-    files="$(find ./software/ -mindepth 1 -maxdepth 1 -printf "%f\n")"
-    anz_files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}' | wc -l)"
+    files="$(find "${dir}" -mindepth 1 -maxdepth 1 -printf "%f\n")"
+    anz_files="$(echo ${files} | wc -w)"
     while [ "${anz_files}" == "1" ]
     do
       if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
@@ -845,9 +844,8 @@ function doReplaceExtractedSkipSingleFolder() {
       else
         break
       fi
-#      files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}')"
-    files="$(find ./software/ -mindepth 1 -maxdepth 1 -printf "%f\n")"
-      anz_files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}' | wc -l)"
+      files="$(find "${dir}" -mindepth 1 -maxdepth 1 -printf "%f\n")"
+      anz_files="$(echo ${files} | wc -w)"
     done
     source_dir="${dir}"
   fi
