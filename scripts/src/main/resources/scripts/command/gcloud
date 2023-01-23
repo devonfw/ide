@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup version help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+GCLOUD_HOME="${DEVON_IDE_HOME}/software/gcloud"
+TOOL_VERSION_COMMAND="${GCLOUD_HOME}/bin/gcloud --version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
+function doConfig() {
+  local gcloud_config_files="${DEVON_IDE_HOME}/conf/.gcloud"
+  local gcloud_config_export="export CLOUDSDK_CONFIG=${gcloud_config_files}"
+  if ! grep -q "${gcloud_config_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
+  then
+    doRunCommand "${gcloud_config_export}"
+    echo -e "\n${gcloud_config_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+    doEcho "Location of GClouds's configuration files is set to ${gcloud_config_files}"
+  fi
+}
+
+# the path of gcloud modules must be added to python's sys.path via .pth file
+function doSetPth() {
+  local lib_path="${GCLOUD_HOME}/lib"
+  local win_path
+  local pth_file="${DEVON_IDE_HOME}/software/python/ext_modules.pth"
+  if doIsWindows
+  then
+    win_path="$(cygpath -w "${lib_path}")"
+    if ! grep -Fq "${win_path}" "${pth_file}" &> /dev/null
+    then
+      echo -e "\n${win_path}" >> "${pth_file}"
+    fi
+  fi
+}
+
+function doRun() {
+  doSetup silent
+  doRunCommand "${GCLOUD_HOME}/bin/gcloud ${*}"
+}
+
+function doSetup() {
+  doDevonCommand python setup silent
+  doSetPth
+  doConfig
+  if doIsWindows
+  then
+    doInstall "gcloud" "${GCLOUD_VERSION}" "${1}" "" "${GCLOUD_HOME}"
+  else
+    doEchoAttention "GCloud is currently not supported for your operation system."
+  fi
+}
+
+# CLI
+case ${1} in
+"help" | "-h")
+  echo "Setup or run GCloud CLI (command-line interface for Google Cloud Service)."
+  echo
+  echo "Arguments:"
+  echo " setup                          install gcloud on your machine."
+  echo " «args»                         call gcloud with the specified arguments. Call gcloud --help for details or use gcloud directly as preferred."
+  echo
+;;
+"setup" | "s" | "")
+  doSetup "${2}"
+;;
+*)
+  doRun "${@}"
+;;
+esac
