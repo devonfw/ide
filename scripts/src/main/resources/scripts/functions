@@ -703,6 +703,14 @@ function doExtract() {
   then
     doRunCommand "mv \"${1}\" \"${target_dir}\""
     extracted="no"
+  elif [ "${ext}" = ".pkg" ]
+  then
+    local macos_download_file
+    macos_download_file="${1}"
+    mkdir "${target_dir}/~tmp/"
+    xar -C "${target_dir}/~tmp/" -xf "${macos_download_file}"
+    tar -C "${target_dir}" -xzvf "${target_dir}"/~tmp/*/Payload
+    [ -d "${target_dir}/~tmp/" ] && rm -rf "${target_dir}/~tmp/"
   elif [ "${ext}" = ".msi" ]
   then
     local windows_download_file
@@ -710,6 +718,7 @@ function doExtract() {
     local windows_target_dir
     windows_target_dir=$(cygpath -w "${target_dir}")
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
+    [ -f "${target_dir}/${1/*\//}" ] && rm -rf "${target_dir}/${1/*\//}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
@@ -751,7 +760,7 @@ function doInstallWithPackageManager() {
 # $1: filename (e.g. ${filename})
 function doIsInstallerExtension() {
   local myext="${1/*\./.}"
-  if [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
+  if [ "${myext}" = ".exe" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
     return
   fi
@@ -817,13 +826,29 @@ function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
+  local root_dir="${1}"
   shift 3
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
-    source_dir="${1}"
+    local dir="${1}"
+    local files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}')"
+    local anz_files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}' | wc -l)"
+    while [ "${anz_files}" == "1" ]
+    do
+      if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
+      then
+        dir="${dir}/${files}"
+      else
+        break
+      fi
+      files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}')"
+      anz_files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}' | wc -l)"
+    done
+    source_dir="${dir}"
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
+  [ -d "${root_dir}" ] && rm -rf "${root_dir}"
 }
 
 # $1: path of the extracted name to install (move to target)
