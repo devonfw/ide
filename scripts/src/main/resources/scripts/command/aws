@@ -46,6 +46,7 @@ function doSetup() {
   version_to_install=$(cat "${AWS_HOME}"/.devon.software.version)
   if ! doIsWindows && ! doIsMacOs
   then
+echo
     if [ "${ERR}" = 0 ]
     then
      doRunCommand "${AWS_HOME}/install -i ${AWS_HOME} -b ${AWS_HOME}"
