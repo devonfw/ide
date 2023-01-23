@@ -48,7 +48,6 @@ function cleanupPlugins() {
 function doAddPlugins() {
   local file
   local pluginsToInstall=()
-  local pluginsToRecommend=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -62,19 +61,12 @@ function doAddPlugins() {
       elif [ "${plugin_active}" = "true" ]
       then
         pluginsToInstall+=("${plugin_id}")
-      else    
-        pluginsToRecommend+=("\"${plugin_id}\"")
       fi
     fi
   done
   if [ "${#pluginsToInstall}" -gt 0 ]
   then
     doAddPlugin "${pluginsToInstall[@]}"
-  fi
-  if [ "${#pluginsToRecommend}" -gt 0 ]
-  then
-    local IFS=,
-    doAddRecommendation "${pluginsToRecommend[*]}"
   fi
 }
 
@@ -130,14 +122,53 @@ function doRunVsCode() {
 
 function doStartVsCode() {
   doConfigureVsCode -u
+  doAddRecmdt
   doEcho "launching VSCode..."
   doRunVsCode "${WORKSPACE_PATH}"
 }
 
-function doAddRecommendation() {
-  doEcho "add plugin recommendation..."
-  local extensions="${WORKSPACE_PATH}/.vscode/extensions.json"
-  echo "{\"recommendations\":[${1}]}" >> "${extensions}"
+function doAddRecmdt() {
+  local recmdtJSON="${WORKSPACE_PATH}/.vscode/extensions.json"
+  local file
+  local recmdtKey
+  local recmdtValue
+  local pluginsToRecmdt=()
+  for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
+  do
+    if [ -f "${file}" ]
+    then
+      plugin_id=""
+      plugin_active="true"
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ]
+      then
+        doWarning "Invalid vscode plugin config: ${file}"
+      elif [ "${plugin_active}" = "false" ]
+      then
+        local IFS=, 
+        pluginsToRecmdt+=("\"${plugin_id}\"")
+      fi
+    fi
+  done
+  recmdtValue=${pluginsToRecmdt[*]}
+  recmdtKey="\"recommendations\": [$recmdtValue]"
+  if [ -f "${recmdtJSON}" ] && [ ! -s "${recmdtJSON}" ]
+  then 
+    if grep -q "\"recommendations\":" "${recmdtJSON}"
+    then
+      if ! grep -Fq "${recmdtKey}" "${recmdtJSON}"
+      then
+        sed -i "s/\"recommendations\": \[[^]]*\]/${recmdtKey}/g" "${recmdtJSON}"
+        doSuccess "Plugin recommendations have been updated in ${recmdtJSON}."
+      fi
+    else
+      sed -i 's/^{/{ '"$recmdtKey"', /' "${recmdtJSON}"
+      doSuccess "Plugin recommendations have been added in ${recmdtJSON}."
+    fi
+  else
+    echo "{${recmdtKey}}" > "${recmdtJSON}"
+    doSuccess "Plugin recommendations have been created in ${recmdtJSON}"
+  fi
 }
   
 # CLI
@@ -154,7 +185,6 @@ then
   echo " ws-re[verse]                   reverse merge changes from workspace into settings"
   echo " ws-reverse-add                 reverse merge adding new properties"
   echo " create-script                  create vscode-${WORKSPACE} script if not already exists"
-  echo " clean-setup                    clean VSCode setup without plugins and recommendations"
   exit
 fi
 if [ -z "${1}" ]
