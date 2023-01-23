@@ -14,7 +14,7 @@ Set _fBGreen=[92m
 Set _fBRed=[91m
 Set _RESET=[0m
 
-rem Auto-install oursevles...
+rem Auto-install ourselves...
 if not exist "%USERPROFILE%\scripts" (
   md "%USERPROFILE%\scripts"
 )
@@ -64,6 +64,8 @@ if exist "%GIT_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 
+echo %_fBYellow%WARNING: Git-bash is required but was not found at GIT_HOME=%GIT_HOME%.%_RESET%
+
 rem If bash in GitForWindows could not be found search Cygwin Installation - prefer user over machine result
 for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
 
@@ -75,17 +77,17 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
 
 rem If bash can not be autodetected allow the user to configure bash via BASH_HOME environment variable as fallback
 
-if exists "%BASH_HOME%\bin\bash.exe" (
+if exist "%BASH_HOME%\bin\bash.exe" (
   set "BASH=%BASH_HOME%\bin\bash.exe"
   set "HOME=%USERPROFILE%"
   goto :bash_detected
 )
 echo:
 echo %_fBYellow%*** ATTENTION ***%_RESET%
-echo %_fBRed%Bash has not been found on your system!%_RESET%
-echo %_fBRed%Please install git for windows on your system.%_RESET%
+echo %_fBRed%ERROR: Could not find bash. It seems git for windows is not installed on your machine%_RESET%
+echo %_fBRed%Please download and install git for windows from the following URL and after that rerun devonfw-ide setup:%_RESET%
 echo %_fBRed%https://git-scm.com/download/win%_RESET%
-goto :eof
+exit /b 5
 
 :bash_detected
 if not "%DEVON_OLD_PATH%" == "" (
@@ -146,7 +148,6 @@ if "%folder%" == "workspaces" (
 )
 cd ..  
 goto :iterate_backwards
-
 goto :eof
 
 rem subroutine to print version

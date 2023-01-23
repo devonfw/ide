@@ -17,6 +17,7 @@ do
     rm -fR "${PWD}/software"
     rm -f "${PWD}/conf/devon.properties"
     rm -f "${PWD}/settings/devon.properties"
+    echo "JAVA_VERSION=17*" >> "${PWD}/settings/devon.properties"
   else
     mkdir -p "${testcase}/conf"
     cd "${testcase}"

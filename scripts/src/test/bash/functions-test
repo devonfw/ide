@@ -20,3 +20,19 @@ function doWarning() {
 function doError() {
   echo -e "\033[91m${1}\033[39m"
 }
+
+function doIsMacOs() {
+  if [ "${OSTYPE:0:6}" = "darwin" ]
+  then
+    return
+  fi
+  return 255
+}
+
+function doIsWindows() {
+  if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
+  then
+    return
+  fi
+  return 255
+}

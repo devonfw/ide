@@ -1232,7 +1232,7 @@ function doInstall() {
     then
       if [ -z "${silent}" ]
       then
-        doEcho "Version ${version} of ${software} is already installed."
+        doEcho "Version ${version} of ${software} is already installed at ${target_path}."
         if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
         then
           doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
