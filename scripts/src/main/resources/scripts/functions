@@ -718,9 +718,9 @@ function doExtract() {
     local windows_target_dir
     windows_target_dir=$(cygpath -w "${target_dir}")
     local downloadfile
-    downloadfile="$(basename "${1}")"
+    downloadfile="${target_dir}/$(basename "${1}")"
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
-    [ -f "${target_dir}/${downloadfile}" ] && rm -rf "${target_dir}/${downloadfile}"
+    [ -f "${downloadfile}" ] && rm -rf "${downloadfile:?}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
