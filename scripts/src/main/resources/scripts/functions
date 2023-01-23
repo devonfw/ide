@@ -718,7 +718,8 @@ function doExtract() {
     local windows_target_dir
     windows_target_dir=$(cygpath -w "${target_dir}")
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
-    [ -f "${target_dir}/${1/*\//}" ] && rm -rf "${target_dir}/${1/*\//}"
+    [ -f "${target_dir}/$(basename ${1})" ] && rm -rf "${target_dir}/$(basename ${1})"
+#    [ -f "${target_dir}/${1/*\//}" ]        && rm -rf "${target_dir}/${1/*\//}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
@@ -828,12 +829,14 @@ function doReplaceExtractedSkipSingleFolder() {
   local backup_dir="${3}"
   local root_dir="${1}"
   shift 3
+  local files
+  local anz_files
+  local dir="${1}"
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
-    local dir="${1}"
-    local files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}')"
-    local anz_files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}' | wc -l)"
+    files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}')"
+    anz_files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}' | wc -l)"
     while [ "${anz_files}" == "1" ]
     do
       if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
@@ -842,8 +845,8 @@ function doReplaceExtractedSkipSingleFolder() {
       else
         break
       fi
-      files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}')"
-      anz_files="$(ls -Al ${dir} | awk ' $9 != "" {print $9}' | wc -l)"
+      files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}')"
+      anz_files="$(ls -Al "${dir}" | awk ' $9 != "" {print $9}' | wc -l)"
     done
     source_dir="${dir}"
   fi
