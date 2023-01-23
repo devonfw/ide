@@ -719,7 +719,6 @@ function doExtract() {
     windows_target_dir=$(cygpath -w "${target_dir}")
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
     [ -f "${target_dir}/$(basename ${1})" ] && rm -rf "${target_dir}/$(basename ${1})"
-#    [ -f "${target_dir}/${1/*\//}" ]        && rm -rf "${target_dir}/${1/*\//}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
