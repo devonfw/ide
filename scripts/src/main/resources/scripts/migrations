@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo "test migration to 2022.12.001"
