@@ -787,7 +787,10 @@ function doReplaceExtractedFile() {
       mkdir -p "${target_dir}"
     fi
     doRunCommand "mv '${1}' '${target}'"
-    doRunCommand "'${migration}' '${curr_version}'"
+    if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ]
+    then
+      doRunCommand "'${migration}' '${curr_version}'"
+    fi
   fi
 }
 
