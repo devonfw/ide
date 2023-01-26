@@ -1,0 +1,29 @@
+:toc:
+toc::[]
+
+= migration
+
+When we publish a new release, our users can install it to existing devonfw-ide installations via `devon ide update scripts`. 
+Sometimes we do some structural changes and "pollute" our scripts/commandlets with legacy handling code. 
+To avoid this behaviour, there is a `migration` script under `${DEVON_IDE_HOME}/scripts` which executed automatically by `devon ide update scripts` but at the end on the new release.
+The `migration` script checks the `devon version` of the updating ide and runs all xref:migrations scripts[] under `${DEVON_IDE_HOME}/scripts/migrations`.
+
+== migrations scripts
+The migrations folder has to follow this structure:
+
+.Structure of migrations folder
+[subs=+macros]
+----
+/migrations
+├──/ ...
+├──/ 2022.08.001
+├──/ 2022.08.002
+├──/ 2022.08.003
+├──/ 2022.11.001 
+├──/ 2022.11.002 
+├──/ 2022.12.001
+├──/ ...
+----
+
+As you can see, the migrations folder contains scripts with specific ide versions.
+So when the user runs `devon ide update scripts` on ide with version `2022.08.003`, the `migration` executed each script in migrations from same version to the latest version in numeric order.
