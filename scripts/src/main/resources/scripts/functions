@@ -779,7 +779,7 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'";doRunCommand "${migration}" "${curr_version}") &
+    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'";doRunCommand "'${migration}' '${curr_version}'") &
   else
     doBackup "${target}" "${3}"
     if [ ! -d "${target_dir}" ]
