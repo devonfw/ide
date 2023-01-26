@@ -787,7 +787,7 @@ function doReplaceExtractedFile() {
       mkdir -p "${target_dir}"
     fi
     doRunCommand "mv '${1}' '${target}'"
-    doRunCommand "${migration} ${curr_version}"
+    doRunCommand "'${migration}' '${curr_version}'"
   fi
 }
 
