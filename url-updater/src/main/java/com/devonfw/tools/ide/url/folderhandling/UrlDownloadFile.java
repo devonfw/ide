@@ -70,12 +70,12 @@ public class UrlDownloadFile extends AbstractUrlFile {
 		}
 	}
 
-	public Set<Double> generateUrlHashes() {
+	public Set<Integer> generateUrlHashes() {
 
 		Set<String> urlsSet = this.getUrls();
-		Set<Double> urlHashes = new HashSet<>();
+		Set<Integer> urlHashes = new HashSet<>();
 		for (String url : urlsSet) {
-			double urlHash = url.hashCode();
+			Integer urlHash = url.hashCode();
 			urlHashes.add(urlHash);
 
 		}

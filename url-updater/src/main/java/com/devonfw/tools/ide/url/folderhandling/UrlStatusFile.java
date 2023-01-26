@@ -34,11 +34,10 @@ public class UrlStatusFile extends AbstractUrlFile {
 		super(parent, STATUS_JSON);
 	}
 
+
 	/**
 	 * @return The variable {@link UrlJsonCompleteDataBlock jsonFileData}.
-	 * @see {@link #doLoad()} loads the content of the json file (represented by
-	 *      this object) into the variable {@link UrlJsonCompleteDataBlock
-	 *      jsonFileData}.
+	 * @see #doLoad()
 	 */
 	public UrlJsonCompleteDataBlock getJsonFileData() {
 
