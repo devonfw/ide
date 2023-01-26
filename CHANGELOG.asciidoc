@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/971[#971]: Ability to run "migration script" on update
 * https://github.com/devonfw/ide/issues/1004[#1004]: GCloud CLI integration for windows
 * https://github.com/devonfw/ide/issues/939[#939]: Consider extending test-functions-doc with invocation of undeclared functions
 
