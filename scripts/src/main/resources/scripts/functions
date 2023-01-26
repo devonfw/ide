@@ -720,7 +720,7 @@ function doExtract() {
     local downloadfile
     downloadfile="${target_dir}/$(basename "${1}")"
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
-    [ -f "${downloadfile}" ] && rm -rf "${downloadfile:?}"
+    [ -f "${downloadfile}" ] && rm -rf "${downloadfile}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
