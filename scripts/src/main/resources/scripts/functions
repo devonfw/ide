@@ -769,6 +769,9 @@ function doReplaceExtractedFile() {
   local filename="${1/*\//}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
+  local migration="${DEVON_IDE_HOME}/scripts/migration"
+  local curr_version
+  curr_version="$("${target_dir}/scripts/devon" -v)"
   if [ -n "${2}" ]
   then
     target="${2}"
@@ -776,7 +779,7 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
+    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'";doRunCommand "${migration}" "${curr_version}") &
   else
     doBackup "${target}" "${3}"
     if [ ! -d "${target_dir}" ]
@@ -784,6 +787,7 @@ function doReplaceExtractedFile() {
       mkdir -p "${target_dir}"
     fi
     doRunCommand "mv '${1}' '${target}'"
+    doRunCommand "${migration}" "${curr_version}"
   fi
 }
 

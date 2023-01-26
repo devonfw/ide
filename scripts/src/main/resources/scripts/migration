@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 # shellcheck source=scripts/functions
-source "$(dirname "${0}")"/../functions
-for migration in "$(dirname "$0")/../migrations"/*
+source "$(dirname "${0}")"/functions
+
+doEcho "\nRun migration scripts to version ${1}."
+migrations="$(dirname "${0}")/migrations/*"
+for migration in $(ls ${migrations} | sort -n)
 do
   from_version="${1}"
   to_version="${migration/*\//}"
