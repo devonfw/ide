@@ -4,23 +4,23 @@ import java.util.Set;
 
 public class JsonDataBlockForSpecificUrl {
 
-	private Set<Integer> urlHashes;
+  private Set<Integer> urlHashes;
 
-	public JsonDataBlockForSpecificUrl() {
+  public JsonDataBlockForSpecificUrl() {
 
-		super();
-	}
+    super();
+  }
 
-	// TODO: Make one block per url, not per file with hashes for the urls in one
-	// list.
-	public JsonDataBlockForSpecificUrl(Set<Integer> urlHashes) {
+  // TODO: Make one block per url, not per file with hashes for the urls in one
+  // list.
+  public JsonDataBlockForSpecificUrl(Set<Integer> urlHashes) {
 
-		this.urlHashes = urlHashes;
-	}
+    this.urlHashes = urlHashes;
+  }
 
-	public Set<Integer> getUrlHashes() {
+  public Set<Integer> getUrlHashes() {
 
-		return urlHashes;
-	}
+    return this.urlHashes;
+  }
 
 }

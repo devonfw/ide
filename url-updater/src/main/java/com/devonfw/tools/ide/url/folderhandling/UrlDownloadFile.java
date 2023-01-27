@@ -12,8 +12,7 @@ import java.util.Set;
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFile;
 
 /**
- * {@link UrlFile} with the download URLs. Its {@link #getName() name} has to
- * follow one of the following conventions:
+ * {@link UrlFile} with the download URLs. Its {@link #getName() name} has to follow one of the following conventions:
  * <ul>
  * <li>«os»_«arch».urls</li>
  * <li>«os».urls</li>
@@ -22,97 +21,97 @@ import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFi
  */
 public class UrlDownloadFile extends AbstractUrlFile {
 
-	private final Set<String> urls = new HashSet<>();
+  private final Set<String> urls = new HashSet<>();
 
-	/**
-	 * The constructor.
-	 *
-	 * @param parent the {@link #getParent() parent folder}.
-	 * @param name   the {@link #getName() filename}.
-	 */
-	public UrlDownloadFile(UrlVersion parent, String name) {
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   * @param name the {@link #getName() filename}.
+   */
+  public UrlDownloadFile(UrlVersion parent, String name) {
 
-		super(parent, name);
-	}
+    super(parent, name);
+  }
 
-	/**
-	 * @return the number of #getUrl
-	 */
-	public int getUrlCount() {
+  /**
+   * @return the number of #getUrl
+   */
+  public int getUrlCount() {
 
-		return this.urls.size();
-	}
+    return this.urls.size();
+  }
 
-	/**
-	 * @param url the download URL to add.
-	 */
-	public void addUrl(String url) {
+  /**
+   * @param url the download URL to add.
+   */
+  public void addUrl(String url) {
 
-		boolean added = this.urls.add(url);
-		if (added) {
-			this.modified = true;
-		}
-	}
+    boolean added = this.urls.add(url);
+    if (added) {
+      this.modified = true;
+    }
+  }
 
-	public Set<String> getUrls() {
+  public Set<String> getUrls() {
 
-		return urls;
-	}
+    return this.urls;
+  }
 
-	/**
-	 * @param url the download URL to remove.
-	 */
-	public void removeUrl(String url) {
+  /**
+   * @param url the download URL to remove.
+   */
+  public void removeUrl(String url) {
 
-		boolean removed = this.urls.remove(url);
-		if (removed) {
-			this.modified = true;
-		}
-	}
+    boolean removed = this.urls.remove(url);
+    if (removed) {
+      this.modified = true;
+    }
+  }
 
-	public Set<Integer> generateUrlHashes() {
+  public Set<Integer> generateUrlHashes() {
 
-		Set<String> urlsSet = this.getUrls();
-		Set<Integer> urlHashes = new HashSet<>();
-		for (String url : urlsSet) {
-			Integer urlHash = url.hashCode();
-			urlHashes.add(urlHash);
+    Set<String> urlsSet = getUrls();
+    Set<Integer> urlHashes = new HashSet<>();
+    for (String url : urlsSet) {
+      Integer urlHash = url.hashCode();
+      urlHashes.add(urlHash);
 
-		}
-		return urlHashes;
+    }
+    return urlHashes;
 
-	}
+  }
 
-	@Override
-	public void doLoad() {
+  @Override
+  public void doLoad() {
 
-		this.urls.clear();
-		Path path = getPath();
-		try (BufferedReader br = Files.newBufferedReader(path)) {
-			String line;
-			do {
-				line = br.readLine();
-				if (line != null) {
-					this.urls.add(line.trim());
-				}
-			} while (line != null);
-		} catch (IOException e) {
-			throw new IllegalStateException("Failed to load file " + path, e);
-		}
-	}
+    this.urls.clear();
+    Path path = getPath();
+    try (BufferedReader br = Files.newBufferedReader(path)) {
+      String line;
+      do {
+        line = br.readLine();
+        if (line != null) {
+          this.urls.add(line.trim());
+        }
+      } while (line != null);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to load file " + path, e);
+    }
+  }
 
-	@Override
-	public void doSave() {
+  @Override
+  public void doSave() {
 
-		Path path = getPath();
-		try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
-				StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
-			for (String line : this.urls) {
-				bw.write(line + "\n");
-			}
-		} catch (IOException e) {
-			throw new IllegalStateException("Failed to save file " + path, e);
-		}
-	}
+    Path path = getPath();
+    try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
+        StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
+      for (String line : this.urls) {
+        bw.write(line + "\n");
+      }
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to save file " + path, e);
+    }
+  }
 
 }

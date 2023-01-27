@@ -13,64 +13,67 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
  */
 public class UrlStatusFile extends AbstractUrlFile {
 
-	/** Constant {@link UrlStatusFile#getName() filename}. */
-	static final String STATUS_JSON = "status.json";
-	private UrlJsonCompleteDataBlock jsonFileData;
+  /**
+   * Constant {@link UrlStatusFile#getName() filename}.
+   */
+  static final String STATUS_JSON = "status.json";
 
-	private static final ObjectMapper MAPPER;
-	static {
-		MAPPER = new ObjectMapper();
-		MAPPER.registerModule(new JavaTimeModule());
-		MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-	}
+  private UrlJsonCompleteDataBlock jsonFileData;
 
-	/**
-	 * The constructor.
-	 *
-	 * @param parent the {@link #getParent() parent folder}.
-	 */
-	public UrlStatusFile(UrlVersion parent) {
+  private static final ObjectMapper MAPPER;
 
-		super(parent, STATUS_JSON);
-	}
+  static {
+    MAPPER = new ObjectMapper();
+    MAPPER.registerModule(new JavaTimeModule());
+    MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+  }
 
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   */
+  public UrlStatusFile(UrlVersion parent) {
 
-	/**
-	 * @return The variable {@link UrlJsonCompleteDataBlock jsonFileData}.
-	 * @see #doLoad()
-	 */
-	public UrlJsonCompleteDataBlock getJsonFileData() {
+    super(parent, STATUS_JSON);
+  }
 
-		return jsonFileData;
-	}
+  /**
+   * @return The variable {@link UrlJsonCompleteDataBlock jsonFileData}.
+   * @see #doLoad()
+   */
+  public UrlJsonCompleteDataBlock getJsonFileData() {
 
-	/**
-	 *
-	 * @param jsonFileData Json data to be set to be able to save this data into the
-	 *                     represented Json file with {@link #doSave()}.
-	 */
-	public void setJsonFileData(UrlJsonCompleteDataBlock jsonFileData) {
+    return this.jsonFileData;
+  }
 
-		this.jsonFileData = jsonFileData;
-	}
+  /**
+   * @param jsonFileData Json data to be set to be able to save this data into the represented Json file with
+   *        {@link #doSave()}.
+   */
+  public void setJsonFileData(UrlJsonCompleteDataBlock jsonFileData) {
 
-	@Override
-	public void doLoad() {
-		try {
-			this.jsonFileData = MAPPER.readValue(getPath().toFile(), UrlJsonCompleteDataBlock.class);
-		} catch (IOException e) {
-			throw new IllegalStateException("Failed to load file " + getPath(), e);
-		}
-	}
+    this.jsonFileData = jsonFileData;
+  }
 
-	@Override
-	public void doSave() {
+  @Override
+  public void doLoad() {
 
-		try {
-			MAPPER.writeValue(getPath().toFile(), this.jsonFileData);
-		} catch (IOException e) {
-			throw new IllegalStateException("Failed to write into file " + getPath(), e);
-		}
-	}
+    try {
+      this.jsonFileData = MAPPER.readValue(getPath().toFile(), UrlJsonCompleteDataBlock.class);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to load file " + getPath(), e);
+    }
+  }
+
+  @Override
+  public void doSave() {
+
+    try {
+      MAPPER.writeValue(getPath().toFile(), this.jsonFileData);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to write into file " + getPath(), e);
+    }
+  }
 
 }

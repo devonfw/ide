@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
 
@@ -76,7 +77,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 	@Override
 	protected UrlFile newChild(String name) {
 
-		if (UrlStatusFile.STATUS_JSON.equals(name)) {
+		if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
 			return new UrlStatusFile(this);
 		}
 		return new UrlDownloadFile(this, name);

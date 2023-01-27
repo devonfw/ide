@@ -3,46 +3,51 @@ package com.devonfw.tools.ide.url.folderhandling.jsonfile;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * Complete data block read from a status JSON file, or to be written into a status  JSON file,
+ * consisting of a manual flag as well as of data blocks for data regarding the download urls.
+ */
 public class UrlJsonCompleteDataBlock {
 
-	private Boolean manual;
+  private Boolean manual;
 
-	private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<JsonDataBlockForSpecificUrl>();
+  private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<JsonDataBlockForSpecificUrl>();
 
-	public UrlJsonCompleteDataBlock() {
-		super();
-	}
+  public UrlJsonCompleteDataBlock() {
 
-	public UrlJsonCompleteDataBlock(boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
+    super();
+  }
 
-		this.manual = manual;
-		this.urls = dataBlocks;
-	}
+  public UrlJsonCompleteDataBlock(Boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
-	public boolean getManual() {
+    this.manual = manual;
+    this.urls = dataBlocks;
+  }
 
-		return manual;
-	}
+  public boolean getManual() {
 
-	public Set<JsonDataBlockForSpecificUrl> getUrls() {
+    return this.manual;
+  }
 
-		return urls;
-	}
+  public Set<JsonDataBlockForSpecificUrl> getUrls() {
 
-	public void setManual(Boolean manual) {
+    return this.urls;
+  }
 
-		this.manual = manual;
-	}
+  public void setManual(Boolean manual) {
 
-	public void setUrls(Set<JsonDataBlockForSpecificUrl> dataBlocks) {
+    this.manual = manual;
+  }
 
-		this.urls = dataBlocks;
-	}
+  public void setUrls(Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
-	// For code testing
-	public void addSingleDataBlock(JsonDataBlockForSpecificUrl dataBlockToAdd) {
+    this.urls = dataBlocks;
+  }
 
-		this.urls.add(dataBlockToAdd);
+  // For code testing
+  public void addSingleDataBlock(JsonDataBlockForSpecificUrl dataBlockToAdd) {
 
-	}
+    this.urls.add(dataBlockToAdd);
+
+  }
 }
