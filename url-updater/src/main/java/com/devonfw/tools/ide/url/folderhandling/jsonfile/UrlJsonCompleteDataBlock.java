@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public class UrlJsonCompleteDataBlock {
 
-  private Boolean manual;
+  private boolean manual;
 
   private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<JsonDataBlockForSpecificUrl>();
 
@@ -18,13 +18,13 @@ public class UrlJsonCompleteDataBlock {
     super();
   }
 
-  public UrlJsonCompleteDataBlock(Boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
+  public UrlJsonCompleteDataBlock(boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
     this.manual = manual;
     this.urls = dataBlocks;
   }
 
-  public boolean getManual() {
+  public boolean isManual() {
 
     return this.manual;
   }
@@ -34,7 +34,7 @@ public class UrlJsonCompleteDataBlock {
     return this.urls;
   }
 
-  public void setManual(Boolean manual) {
+  public void setManual(boolean manual) {
 
     this.manual = manual;
   }
