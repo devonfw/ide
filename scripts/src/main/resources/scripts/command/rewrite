@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "version help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doRun() {
+    local recipe="${1}"
+    local tool="${2}"
+
+    doRunCommand "mvn org.openrewrite.maven:rewrite-maven-plugin:4.39.0:run \
+      -Drewrite.recipeArtifactCoordinates=${tool} \
+      -DactiveRecipes=${recipe}"
+}
+
+# CLI
+case ${1} in
+"help" | "-h")
+  echo "Use openrewrite maven-plugin."
+  echo
+  echo "Arguments:"
+  echo "«recipe-artifact» [«catalog-artifact»]            run a «recipe-artifact». If it is a non built-in tool then provide the [«catalog-artifact»]"
+;;
+*)
+  doRun "${@}"
+;;
+esac
+  
