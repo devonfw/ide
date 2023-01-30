@@ -35,28 +35,30 @@ function doResolveDownloadUrl() {
 }
 
 # $1: optional setup
-function doSetup() {  
+function doSetup() {
+  if command -v docker >/dev/null 2>&1
+  then
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      if doIsRancherInstalled && doIsWindows
+      then
+        doEnsureVpnKitInstallation
+      fi
+      doEcho "docker is already installed at $(command -v docker)"
+      # ensure docker daemon is running, if not start it
+      docker version
+    fi
+    return 0
+  fi
   if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
   then
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
-    then 
+    then
       doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
     else
-      if doIsRancherInstalled
+      if ! doIsRancherInstalled
       then
-        if [ "${1}" != "silent" ] && ! doIsQuiet
-        then
-          #give the User the installation location when using linux or mac
-          if doIsWindows
-          then
-            doEnsureVpnKitInstallation
-            doEcho "Rancher Desktop is already installed"
-          else
-            doEcho "Rancher Desktop is already installed at $(command -v docker)"
-          fi
-        fi
-      else
         doRequireNotBatch
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
         TOOL_VERSION_COMMAND="-"
@@ -67,12 +69,11 @@ function doSetup() {
           doSetVpnKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
           # ensures installation of vpnkit if user directly restarts computer for enabling wsl
-          doRunCommand "${rancher_install_dir}/rancher-*-windows.exe" 
+          doRunCommand "${rancher_install_dir}/rancher-*-windows.exe"
           #check if vpnkit is already installed
           doEnsureVpnKitInstallation
         elif doIsMacOs
         then
-          # shellcheck disable=SC2016
           doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
         else
           doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
@@ -82,14 +83,8 @@ function doSetup() {
       fi
     fi
   else
-    if doIsDockerInstalled 
+    if ! doIsDockerInstalled
     then
-      if [ "${1}" != "silent" ] && ! doIsQuiet
-      then
-        doEcho "docker is already installed at $(command -v docker)"
-        docker version
-      fi
-    else
       doRequireNotBatch
       doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}"
       if doIsWindows
