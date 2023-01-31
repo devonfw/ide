@@ -176,5 +176,5 @@ then
     result=255
   fi  
 fi
-return ${result} 2>/dev/null
+return "${result}" 2>/dev/null
 exit "${result}"
