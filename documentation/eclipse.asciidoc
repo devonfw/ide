@@ -13,16 +13,17 @@ You may also supply additional arguments as `devon eclipse «args»`. These are 
 [options="header"]
 |=======================
 |*Argument(s)*   |*Meaning*
-|`--all`                  |if provided as first arg then to command will be invoked for each workspace
-|`setup`                  |setup Eclipse (install or update)
-|`add-plugin «id» [«url»]`|install an additional plugin
-|`run`                    |launch Eclipse (default if no argument is given)
-|`start`                  |same as `run`
-|`ws-up[date]`            |update workspace
-|`ws-re[verse]`           |reverse merge changes from workspace into settings
-|`ws-reverse-add`         |reverse merge adding new properties
-|`create-script`          |create launch script for this IDE, your current workspace and your OS
-|`mirror «id» [«url»]`    |mirror the content of an update-site
+|`--all`                           |if provided as first arg then to command will be invoked for each workspace
+|`setup`                           |setup Eclipse (install or update)
+|`add-plugin «id» [«url»] [«key»]` |install an additional plugin. If only `«id»` is given, it has to be the key of a preconfigured plugin properties file. If also `«url»` is given it has to be the plugin update site and `«id»` the plugin ID(s). If an optional third argument is given, it will be the name of the plugin properties file to create in settings (for sharing or simpler uninstall).
+|`remove-plugin «id»`              |remove the specified plugin. Typically the key of a preconfigured plugin properties file should be given as `«id«`. However, also the qualified plugin ID can be specified instead.
+|`run`                             |launch Eclipse (default if no argument is given)
+|`start`                           |same as `run`
+|`ws-up[date]`                     |update workspace
+|`ws-re[verse]`                    |reverse merge changes from workspace into settings
+|`ws-reverse-add`                  |reverse merge adding new properties
+|`create-script`                   |create launch script for this IDE, your current workspace and your OS
+|`mirror «id» [«url»]`             |mirror the content of an update-site
 |=======================
 
 There are link:variables.asciidoc[variables] that can be used for Eclipse. These are explained by the following table:
