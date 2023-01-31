@@ -115,7 +115,7 @@ function doConfigureIntellij() {
   fi
   if [ -n "${mode}" ]
   then
-    doConfigureWorkspace "${SETTINGS_PATH}/intellij/workspace" "${WORKSPACE_PATH}" ${mode}
+    doConfigureWorkspace "${SETTINGS_PATH}/intellij/workspace" "${WORKSPACE_PATH}" "${mode}"
   fi
 }
 
