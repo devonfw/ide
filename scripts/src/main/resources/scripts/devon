@@ -176,7 +176,7 @@ then
     result=255
   fi  
 fi
+return "${result}" 2>/dev/null
 # can only `return' from a function or sourced script
 # shellcheck disable=SC2317
-return "${result}" 2>/dev/null
 exit "${result}"
