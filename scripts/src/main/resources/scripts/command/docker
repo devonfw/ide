@@ -74,7 +74,7 @@ function doSetup() {
           doEnsureVpnKitInstallation
         elif doIsMacOs
         then
-          doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
+          doRunCommand "cp -a ${rancher_install_dir}/*.app /Applications/"
         else
           doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
           doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
