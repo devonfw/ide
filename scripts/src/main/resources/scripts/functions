@@ -87,7 +87,7 @@ function doRunCommand() {
   then
     popd > /dev/null || exit 255 
   fi
-  doResult "${message}" ${result}
+  doResult "${message}" "${result}"
 }
 
 function doIsForce() {
@@ -579,9 +579,9 @@ function doDownload() {
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
-      return ${result}
+      return "${result}"
     fi
-    doFail "Failed to download ${filename} from ${1}" ${result}
+    doFail "Failed to download ${filename} from ${1}" "${result}"
   fi
 }
 
@@ -703,13 +703,24 @@ function doExtract() {
   then
     doRunCommand "mv \"${1}\" \"${target_dir}\""
     extracted="no"
+  elif [ "${ext}" = ".pkg" ]
+  then
+    local macos_download_file
+    macos_download_file="${1}"
+    mkdir "${target_dir}/~tmp/"
+    xar -C "${target_dir}/~tmp/" -xf "${macos_download_file}"
+    tar -C "${target_dir}" -xzvf "${target_dir}"/~tmp/*/Payload
+    [ -d "${target_dir}/~tmp/" ] && rm -rf "${target_dir}/~tmp/"
   elif [ "${ext}" = ".msi" ]
   then
     local windows_download_file
     windows_download_file=$(cygpath -w "${1}")
     local windows_target_dir
     windows_target_dir=$(cygpath -w "${target_dir}")
+    local downloadfile
+    downloadfile="${target_dir}/$(basename "${1}")"
     msiexec //a "${windows_download_file}" //qn "TARGETDIR=${windows_target_dir}"
+    [ -f "${downloadfile}" ] && rm -rf "${downloadfile}"
   else
     doFail "Unknown archive format: ${ext}. Can not extract ${1}"
   fi
@@ -751,7 +762,7 @@ function doInstallWithPackageManager() {
 # $1: filename (e.g. ${filename})
 function doIsInstallerExtension() {
   local myext="${1/*\./.}"
-  if [ "${myext}" = ".exe" ] || [ "${myext}" = ".pkg" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
+  if [ "${myext}" = ".exe" ] || [ "${myext}" = ".bat" ] || [ "${myext}" = ".py" ]
   then
     return
   fi
@@ -817,13 +828,31 @@ function doReplaceExtractedSkipSingleFolder() {
   local source_dir="${1}"
   local target_dir="${2}"
   local backup_dir="${3}"
+  local root_dir="${1}"
   shift 3
+  local files
+  local anz_files
+  local dir="${1}"
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
-    doDebug "Changing source directory from ${source_dir} to ${1} due to single folder."
-    source_dir="${1}"
+    files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
+    anz_files="$(echo "${files}" | wc -w)"
+    while [ "${anz_files}" == "1" ]
+    do
+      if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
+      then
+        dir="${dir}/${files}"
+      else
+        break
+      fi
+      files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
+      anz_files="$(echo "${files}" | wc -w)"
+    done
+    source_dir="${dir}"
+    doDebug "Changing source directory from ${root_dir} to ${source_dir} due to single folder."
   fi
   doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
+  [ -d "${root_dir}" ] && rm -rf "${root_dir}"
 }
 
 # $1: path of the extracted name to install (move to target)
@@ -1498,10 +1527,10 @@ function doVersionCompare() {
       then
         n2=0
       fi
-      if [ ${n1} -gt ${n2} ]
+      if [ "${n1}" -gt "${n2}" ]
       then
         return 1
-      elif [ ${n1} -lt ${n2} ]
+      elif [ "${n1}" -lt "${n2}" ]
       then
         return 2
       else
@@ -1530,10 +1559,10 @@ function doVersionCompare() {
             then
               n2=0
             fi
-            if [ ${n1} -gt ${n2} ]
+            if [ "${n1}" -gt "${n2}" ]
             then
               return 1
-            elif [ ${n1} -lt ${n2} ]
+            elif [ "${n1}" -lt "${n2}" ]
             then
               return 2
             fi

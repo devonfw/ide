@@ -7,7 +7,10 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 Release with new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/1004[#1004]: GCloud CLI integration for windows
+* https://github.com/devonfw/ide/issues/1010[#1010]: further improvements for extraction of MSI and PKG (improve AWS installation)
 * https://github.com/devonfw/ide/issues/939[#939]: Consider extending test-functions-doc with invocation of undeclared functions
+* https://github.com/devonfw/ide/issues/903[#903]: Uninstall Eclipse plugins
+* https://github.com/devonfw/ide/issues/904[#904]: Remove the hard-coded Eclipse plugins from eclipse commandlet
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/38?closed=1[milestone 2023.01.001].
 
