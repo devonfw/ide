@@ -32,7 +32,7 @@ if "%ERRORLEVEL%" == "0" (
 for /F "usebackq tokens=2*" %%O in (call "%SystemRoot%"\system32\reg.exe query "HKLM\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ) do set CYGWIN_HOME=%%P
 if exist "%CYGWIN_HOME%\bin\bash.exe" (
   reg import system/windows/cygwin/devon-cygwin.reg >nul 2>&1
-  "%CYGWIN_HOME%\bin\bash.exe" -l -c "cd "%CD%";./scripts/devon"
+  "%CYGWIN_HOME%\bin\bash.exe" -l -c "cd \"%CD%"\;./scripts/devon"
 )
 
 echo %_fBGreen%Setup of devonfw-ide completed%_RESET%
