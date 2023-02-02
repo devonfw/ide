@@ -87,7 +87,7 @@ function doRunCommand() {
   then
     popd > /dev/null || exit 255 
   fi
-  doResult "${message}" ${result}
+  doResult "${message}" "${result}"
 }
 
 function doIsForce() {
@@ -579,9 +579,9 @@ function doDownload() {
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
-      return ${result}
+      return "${result}"
     fi
-    doFail "Failed to download ${filename} from ${1}" ${result}
+    doFail "Failed to download ${filename} from ${1}" "${result}"
   fi
 }
 
@@ -1534,10 +1534,10 @@ function doVersionCompare() {
       then
         n2=0
       fi
-      if [ ${n1} -gt ${n2} ]
+      if [ "${n1}" -gt "${n2}" ]
       then
         return 1
-      elif [ ${n1} -lt ${n2} ]
+      elif [ "${n1}" -lt "${n2}" ]
       then
         return 2
       else
@@ -1566,10 +1566,10 @@ function doVersionCompare() {
             then
               n2=0
             fi
-            if [ ${n1} -gt ${n2} ]
+            if [ "${n1}" -gt "${n2}" ]
             then
               return 1
-            elif [ ${n1} -lt ${n2} ]
+            elif [ "${n1}" -lt "${n2}" ]
             then
               return 2
             fi

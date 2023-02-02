@@ -8,6 +8,8 @@ then
   # shellcheck disable=SC2007,SC2154
   echo "$[devon_ide_version]"
   return 0 2>/dev/null
+  # can only `return' from a function or sourced script
+  # shellcheck disable=SC2317
   exit 0
 fi
 
@@ -174,5 +176,7 @@ then
     result=255
   fi  
 fi
-return ${result} 2>/dev/null
-exit ${result}
+return "${result}" 2>/dev/null
+# can only `return' from a function or sourced script
+# shellcheck disable=SC2317
+exit "${result}"
