@@ -236,6 +236,23 @@ function doSetup() {
   doUpdateCli
   doUpdateMetaFile
   doUpdateSettings "${@}"
+
+  devon_version="$(${DEVON_IDE_HOME}/scripts/devon.bat -v)"
+  doVersionCompare "${devon_version}" "${target_version}"
+  if [ "${?}" = 1 ]
+  then
+    doWarning "Your version of devonfw-ide is currently ${devon_version}"
+    doWarning "However you Project requires the latest version ${DEVON_IDE_MIN_VERSION}"
+    doWarning "Newer features will be required for your project so you need to update your devonfw-ide via the following command:"
+    echo
+    doWarning "devon ide update scripts"
+    echo
+    doWarning "Please start the command mentioned above in your bash to get the required version of devonfw-ide"
+    echo
+    doWarning "Press Return to continue..."
+    read a
+  fi
+
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
     doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
