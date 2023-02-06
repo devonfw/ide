@@ -836,7 +836,7 @@ function doReplaceExtractedSkipSingleFolder() {
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-    anz_files="$(echo "${files}" | wc -w)"
+    anz_files="$(echo "${files}" | awk 'END{print NR}')"
     while [ "${anz_files}" == "1" ]
     do
       if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
@@ -846,7 +846,7 @@ function doReplaceExtractedSkipSingleFolder() {
         break
       fi
       files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-      anz_files="$(echo "${files}" | wc -w)"
+      anz_files="$(echo "${files}" | awk 'END{print NR}')"
     done
     source_dir="${dir}"
     doDebug "Changing source directory from ${root_dir} to ${source_dir} due to single folder."
