@@ -55,7 +55,9 @@ jobs:
           sed -i "s/${current_version}/${next_version}/" .mvn/maven.config
           git add -f .mvn/maven.config
           git commit -m "set next version to ${next_version}"
-          git push --force
+          # prevent GH006 error when pushing to protected branch
+          git remote set-url origin github.com/devonfw/ide.git
+          git push
           git push --tags
           noDotVersion="${current_version//.}"
           gh release create "release/${current_version}" --title "${current_version}" --notes "# Download
