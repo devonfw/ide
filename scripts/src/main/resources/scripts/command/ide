@@ -250,7 +250,7 @@ function doSetup() {
     doWarning "Please start the command mentioned above in your bash to get the required version of devonfw-ide"
     echo
     doWarning "Press Return to continue..."
-    read a
+   #read a
   fi
 
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
