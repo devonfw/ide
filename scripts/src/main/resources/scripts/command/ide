@@ -237,20 +237,27 @@ function doSetup() {
   doUpdateMetaFile
   doUpdateSettings "${@}"
 
-  devon_version="$(${DEVON_IDE_HOME}/scripts/devon.bat -v)"
-  doVersionCompare "${devon_version}" "${target_version}"
-  if [ "${?}" = 1 ]
+  local devon_version
+  devon_version="$("${DEVON_IDE_HOME}"/scripts/devon.bat -v)"
+  if [ ! -z ${DEVON_IDE_MIN_VERSION} ]
   then
-    doWarning "Your version of devonfw-ide is currently ${devon_version}"
-    doWarning "However you Project requires the latest version ${DEVON_IDE_MIN_VERSION}"
-    doWarning "Newer features will be required for your project so you need to update your devonfw-ide via the following command:"
-    echo
-    doWarning "devon ide update scripts"
-    echo
-    doWarning "Please start the command mentioned above in your bash to get the required version of devonfw-ide"
-    echo
-    doWarning "Press Return to continue..."
-   #read a
+    doVersionCompare "${DEVON_IDE_MIN_VERSION}" "${devon_version}"
+    if [ "${?}" = 1 ]
+    then
+      local postmessages="${DEVON_IDE_HOME}/postmessages_$(date "+%Y-%m-%d")"
+      echo -e "#!/usr/bin/env bash\n" > "${postmessages}"
+      echo "# shellcheck source=scripts/functions" >> "${postmessages}"
+      echo -e "source \"$(dirname "${0}")/../functions\"\n" >> "${postmessages}"
+      echo "doWarning \"Important messages to print out after installation or update\"" >> "${postmessages}"
+      echo "echo" >> "${postmessages}"
+      echo "doWarning \"Your version of devonfw-ide is currently ${devon_version}\"" >> "${postmessages}"
+      echo "doWarning \"However you Project requires the latest version ${DEVON_IDE_MIN_VERSION}\"" >> "${postmessages}"
+      echo -e "doWarning \"Newer features will be required for your project so you need to update your devonfw-ide via the following command:\"" >> "${postmessages}"
+      echo "echo" >> "${postmessages}"
+      echo -e "doWarning \"devon ide update scripts\"" >> "${postmessages}"
+      echo "echo" >> "${postmessages}"
+      echo -e "doWarning \"Please start the command mentioned above in your bash to get the required version of devonfw-ide\"\n" >> "${postmessages}"
+    fi
   fi
 
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
