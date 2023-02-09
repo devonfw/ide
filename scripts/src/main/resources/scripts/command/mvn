@@ -227,7 +227,6 @@ function doSetPomVersion() {
   if [ "${?}" != 0 ] && doIsDevVersion "${maven_project_version}"
   then
     doFail "Version ${2} not found in POM ${PWD}/pom.xml\nCurrent version detected as ${maven_project_version} and target version is ${1}"
-    exit 255
   fi
   if [[ "${pom_elements}" == *$'\n'* ]]
   then
