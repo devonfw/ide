@@ -4,6 +4,8 @@ import com.devonfw.tools.ide.url.updater.GithubCrawler;
 import com.devonfw.tools.ide.url.updater.OSType;
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 
+import java.util.Objects;
+
 public class DotNetCrawler extends GithubCrawler {
     @Override
     protected String getToolName() {

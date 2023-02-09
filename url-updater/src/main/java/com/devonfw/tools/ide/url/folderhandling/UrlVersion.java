@@ -7,6 +7,9 @@ import java.nio.file.Path;
 
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+import io.netty.util.internal.logging.Slf4JLoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
@@ -100,7 +103,6 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    * @return the {@link UrlStatusFile}.
    */
   public UrlStatusFile getOrCreateStatus() {
-
     return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
   }
 

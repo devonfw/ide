@@ -58,19 +58,20 @@ public abstract class AbstractCrawler implements Updater {
         if (resultOfHttpRequest.isSuccess()) {
             UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(osString, arch);
             urlDownloadFile.addUrl(downloadUrl);
-            doRefreshStatusJson(resultOfHttpRequest,urlVersion);
+            doCreateOrRefreshStatusJson(resultOfHttpRequest,urlVersion);
             urlVersion.save();
             return true;
         } else {
             //check if folder of urlVersion exists
             Path folderPath = Paths.get(urlVersion.getPath().toString());
-            if (Files.exists(folderPath)) {
-                doRefreshStatusJson(resultOfHttpRequest,urlVersion);
+            if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
+                doCreateOrRefreshStatusJson(resultOfHttpRequest,urlVersion);
+                urlVersion.save();
             }
             return false;
         }
     }
-    private void doRefreshStatusJson(Result result, UrlVersion urlVersion){
+    private void doCreateOrRefreshStatusJson(Result result, UrlVersion urlVersion){
         UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
 
         StatusJson statusJson = urlStatusFile.getJsonFileData();
@@ -176,7 +177,7 @@ public abstract class AbstractCrawler implements Updater {
         Set<String> versions = getVersions();
         for (String version : versions) {
             version = mapVersion(version);
-            if (version != null && edition.getChild(version) == null) {
+            if (version != null && edition.getChild(version) == null && !version.isEmpty()) {
                 UrlVersion urlVersion = edition.getOrCreateChild(version);
                 updateVersion(urlVersion);
                 if(urlVersion.getChildCount()!=0){
@@ -191,6 +192,7 @@ public abstract class AbstractCrawler implements Updater {
         edition.getListOfAllChildren().stream().filter(existingVersions::contains).forEach(version -> {
             UrlVersion urlVersion = edition.getChild(version);
             UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
+            logger.info("Getting or creating Status for version {}", version);
             if(urlStatusFile.getJsonFileData().isManual()){
                 logger.atInfo().log("Version {} is manual, skipping update", version);
                 return;
