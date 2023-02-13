@@ -55,8 +55,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
 
 
   public Set<String> getUrls() {
-
-    return urls;
+    return this.urls;
   }
 
   /**
@@ -69,6 +68,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
       this.modified = true;
     }
   }
+
 
   public Set<Double> generateUrlHashes() {
     Set<Double> urlHashes = new HashSet<>();
@@ -103,7 +103,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
 
     Path path = getPath();
     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
-        StandardOpenOption.WRITE,StandardOpenOption.CREATE)) {
+        StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
       for (String line : this.urls) {
         bw.write(line + "\n");
       }
@@ -111,7 +111,4 @@ public class UrlDownloadFile extends AbstractUrlFile {
       throw new IllegalStateException("Failed to save file " + path, e);
     }
   }
-
-
-
 }

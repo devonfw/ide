@@ -58,6 +58,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 	Set<String> setOfKeys = this.children.keySet();
     return new ArrayList<String>(setOfKeys);
   }
+
   /**
    * @param name the {@link #getName() name} of the requested child.
    * @return the new child object.
@@ -72,6 +73,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
       childStream
               .filter(Files::isDirectory)
               .forEach(this::loadChild);
+
     } catch (IOException e) {
       throw new IllegalStateException("Failed to list children of directory " + path, e);
     }

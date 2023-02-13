@@ -32,7 +32,5 @@ public abstract class AbstractUrlFolderWithParent<P extends AbstractUrlFolder<?>
 
     return this.parent;
   }
-
-
-
+ 
 }

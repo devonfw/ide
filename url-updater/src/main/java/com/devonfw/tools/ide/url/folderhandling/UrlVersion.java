@@ -11,6 +11,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
  * name} of such version could be "1.6.2" or "17.0.5_8".
@@ -29,42 +30,8 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
   }
 
   /**
-   * @deprecated use {@link #getOrCreateUrls(String, String)}
-   */
-  @Deprecated
-  protected void makeFile(String os, String arch) throws IOException {
 
-    Path filePath = getPath().resolve(os + "_" + arch + ".urls");
-    if (!Files.exists(filePath)) {
-      Files.createFile(filePath);
-    }
-  }
 
-  /**
-   * @deprecated use {@link #getOrCreateUrls(String)}
-   */
-  @Deprecated
-  protected void makeFile(String os) throws IOException {
-
-    Path filePath = getPath().resolve(os + ".urls");
-    if (!Files.exists(filePath)) {
-      Files.createFile(filePath);
-    }
-  }
-
-  /**
-   * @deprecated use {@link #getOrCreateUrls()}
-   */
-  @Deprecated
-  protected void makeFile() throws IOException {
-
-    Path filePath = getPath().resolve("urls");
-    if (!Files.exists(filePath)) {
-      Files.createFile(filePath);
-    }
-  }
-
-  /**
    * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
    */
   public UrlDownloadFile getOrCreateUrls() {
@@ -90,14 +57,22 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     if(os == null && arch == null){
       return getOrCreateUrls();
     }
-    if(arch ==null){
-      arch = "x64";
-    }
-    return (UrlDownloadFile) getOrCreateChild(os + "_" + arch + ".urls");
+    return (UrlDownloadFile) getOrCreateChild(os + "_" + getArchOrDefault(arch) + ".urls");
   }
+  
   public UrlDownloadFile getUrlFile(String name){
     return (UrlDownloadFile) getChild(name);
   }
+
+
+  private String getArchOrDefault(String arch) {
+    if (arch == null) {
+      return "x64";
+    }
+    return arch;
+ }
+
+  
 
   /**
    * @return the {@link UrlStatusFile}.
@@ -155,8 +130,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
   }
 
   public void createFile(String os, String arch) {
-
-    File f = new File(this.getPath() + File.separator + os + "_" + arch + ".urls");
+    File f = new File(getPath() + File.separator + os + "_" + arch + ".urls");
     try {
       f.createNewFile();
     } catch (IOException e) {
@@ -167,8 +141,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 
   // For development
   public void createJson() {
-
-    File f = new File(this.getPath() + File.separator + "status.json");
+    File f = new File(getPath() + File.separator + "status.json");
     try {
       f.createNewFile();
     } catch (IOException e) {

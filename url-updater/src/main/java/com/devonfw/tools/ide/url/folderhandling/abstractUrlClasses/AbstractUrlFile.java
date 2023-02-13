@@ -8,7 +8,10 @@ import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
  */
 public abstract class AbstractUrlFile extends AbstractUrlArtifactWithParent<UrlVersion> implements UrlFile {
 
-  /** {@code true} if modified and changes are unsaved, {@code false} otherwise. */
+
+  /**
+   * {@code true} if modified and changes are unsaved, {@code false} otherwise.
+   */
   protected boolean modified;
 
   /**

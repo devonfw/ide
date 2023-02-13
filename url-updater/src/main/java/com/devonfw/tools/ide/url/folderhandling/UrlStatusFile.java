@@ -11,6 +11,7 @@ import java.util.NoSuchElementException;
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFile;
 import com.devonfw.tools.ide.url.folderhandling.jsonfile.StatusJson;
 import com.devonfw.tools.ide.url.folderhandling.jsonfile.URLStatus;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -73,35 +74,3 @@ public class UrlStatusFile extends AbstractUrlFile {
 	}
 
 }
-
-//	@Override
-//	public void doLoad() {
-//
-//		this.urls.clear();
-//		Path path = getPath();
-//		try (BufferedReader br = Files.newBufferedReader(path)) {
-//			String line;
-//			do {
-//				line = br.readLine();
-//				if (line != null) {
-//					this.urls.add(line.trim());
-//				}
-//			} while (line != null);
-//		} catch (IOException e) {
-//			throw new IllegalStateException("Failed to load file " + path, e);
-//		}
-//	}
-//
-//	@Override
-//	public void doSave() {
-//
-//		Path path = getPath();
-//		try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
-//				StandardOpenOption.WRITE,StandardOpenOption.CREATE)) {
-//			for (String line : this.urls) {
-//				bw.write(line + "\n");
-//			}
-//		} catch (IOException e) {
-//			throw new IllegalStateException("Failed to save file " + path, e);
-//		}
-//	}
