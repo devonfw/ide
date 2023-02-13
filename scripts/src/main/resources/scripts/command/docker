@@ -74,9 +74,9 @@ function doSetup() {
           doEnsureVpnKitInstallation
         elif doIsMacOs
         then
-          doRunCommand "cp -a ${rancher_install_dir}/*.app /Applications/"
+          doRunCommand "cp -a '${rancher_install_dir}/*.app' /Applications/"
         else
-          doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
+          doRunCommand "cp -a '${rancher_install_dir}/.' '${DEVON_IDE_HOME}/software/docker/'"
           doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
         fi
         read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
