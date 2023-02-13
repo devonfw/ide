@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link SortedProperties}.

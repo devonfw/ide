@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.devonfw.tools.ide.configurator.merge.PropertiesMerger;
 
