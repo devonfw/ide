@@ -17,7 +17,7 @@ function doRun() {
     local recipe="${1}"
     local tool="${2}"
 
-    doRunCommand "mvn org.openrewrite.maven:rewrite-maven-plugin:4.39.0:run \
+    doRunCommand "mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
       -Drewrite.recipeArtifactCoordinates=${tool} \
       -DactiveRecipes=${recipe}"
 }
