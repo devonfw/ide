@@ -4,30 +4,27 @@ toc::[]
 = migration
 
 When we publish a new release, our users can install it to existing devonfw-ide installations via `devon ide update scripts`. 
-Sometimes we do some structural changes and "pollute" our scripts/commandlets with legacy handling code. 
-To avoid this behaviour, there is a `migration` script under `${DEVON_IDE_HOME}/scripts` that is automatically executed by `devon ide update scripts` but at the end on the new release.
-The `migration` script checks the installed version of the updating ide and executes all xref:migration scripts[] under `${DEVON_IDE_HOME}/scripts/migrations`.
+Sometimes we do some structural changes and to avoid "polluting" our scripts with legacy handling code, there is a `migration` script under `${DEVON_IDE_HOME}/scripts` that is automatically executed by `devon ide update scripts` after the new release has been installed.
+The `migration` script then executes all potential upgrades in `${DEVON_IDE_HOME}/scripts/migrations/«version»` that are greater or equal to the previously installed version in numerical order.
 
-== migration scripts
-The migrations folder has to follow this structure:
+== upgrade scripts
+The `migrations` folder contains a file for each devonfw-ide version that requires an upgrade migration on installation as illustrated by the following example:
 
 .Structure of migrations folder
 [subs=+macros]
 ----
 /migrations
 ├──/ ...
-├──/ 2023.01.001
-├──/ 2023.02.001
-├──/ 2023.02.003
-├──/ 2023.03.001 
-├──/ 2023.03.002 
-├──/ 2023.04.001
+├──/ 2023.03.001
+├──/ 2023.03.003
+├──/ 2023.12.001
 ├──/ ...
 ----
 
 As you can see, the migrations folder contains scripts with specific ide versions.
-So if the user runs `devon ide update scripts` on ide with version `2023.01.001`, the `migration` script will execute each script in migrations folder from the same version to the latest version in numerical order.
+If no upgrade is required for a new version there will be no migration script so there can be gaps in their numbers.
+So if the user runs `devon ide update scripts` on ide with version `«version-x»`, the `migration` script will execute each script in migrations folder from the same version to the latest version in numerical order.
 
-ATTENTION: Since this feature is available with version ´2023.01.001´, older ide's are not affected by the migration.
-
-
+ATTENTION: Since this feature is available with version ´2023.02.001´, older ide's are not affected by the migration.
+We try to reach our users with an announcement to upgrade all installations to that version once released.
+In case you missed to follow this guidance, you can still manually call `migration 2023.02.001` in your `${DEVON_IDE_HOME}/scripts/` folder to fix it.
