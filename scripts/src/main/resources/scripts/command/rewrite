@@ -17,9 +17,9 @@ function doRun() {
     local recipe="${1}"
     local tool="${2}"
 
-    doRunCommand "mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
+    doDevonCommand mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
       -Drewrite.recipeArtifactCoordinates=${tool} \
-      -DactiveRecipes=${recipe}"
+      -DactiveRecipes=${recipe}
 }
 
 # CLI
@@ -28,10 +28,9 @@ case ${1} in
   echo "Use openrewrite maven-plugin."
   echo
   echo "Arguments:"
-  echo "«recipe-artifact» [«catalog-artifact»]            run a «recipe-artifact». If it is a non built-in tool then provide the [«catalog-artifact»]"
+  echo "«recipe-artifact» [«catalog-artifact»]            run a «recipe-artifact». If it is a non built-in tool then provide the external module as [«catalog-artifact»]"
 ;;
 *)
   doRun "${@}"
 ;;
 esac
-  
