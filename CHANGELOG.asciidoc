@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/991[#991]: Integrate openrewrite feature
 * https://github.com/devonfw/ide/issues/1052[#1052]: Fix leading spaces on MacOS
 * https://github.com/devonfw/ide/issues/1022[#1022]: suppress confusing windows process result messages like The operation completed successfully.
 
