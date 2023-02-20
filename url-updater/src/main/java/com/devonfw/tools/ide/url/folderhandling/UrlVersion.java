@@ -89,7 +89,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
   @Override
   protected UrlFile newChild(String name) {
 
-    if (UrlStatusFile.STATUS_JSON.equals(name)) {
+    if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
       return new UrlStatusFile(this);
     }
     return new UrlDownloadFile(this, name);
