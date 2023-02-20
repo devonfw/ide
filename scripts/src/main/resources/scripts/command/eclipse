@@ -14,7 +14,7 @@ then
   exit
 fi
 
-# shellcheck source=./../functions
+# shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 ECLIPSE_HOME="${DEVON_IDE_HOME}/software/eclipse"
 ECLIPSE="${ECLIPSE_HOME}/eclipse"
