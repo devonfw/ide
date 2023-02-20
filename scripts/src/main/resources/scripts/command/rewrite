@@ -12,6 +12,7 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND=
 
 function doRun() {
     local recipe="${1}"
