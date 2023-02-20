@@ -76,6 +76,8 @@ include::quarkus.asciidoc[leveloffset=3]
 
 include::release.asciidoc[leveloffset=3]
 
+include::rewrite.asciidoc[leveloffset=3]
+
 include::sonar.asciidoc[leveloffset=3]
 
 include::terraform.asciidoc[leveloffset=3]
