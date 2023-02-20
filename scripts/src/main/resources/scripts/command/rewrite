@@ -16,11 +16,11 @@ TOOL_VERSION_COMMAND=
 
 function doRun() {
     local recipe="${1}"
-    local tool="${2}"
+    local catalog="${2}"
 
     doDevonCommand mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
-      -Drewrite.recipeArtifactCoordinates=${tool} \
-      -DactiveRecipes=${recipe}
+      -Drewrite.recipeArtifactCoordinates="${catalog}" \
+      -DactiveRecipes="${recipe}"
 }
 
 # CLI
@@ -29,7 +29,7 @@ case ${1} in
   echo "Use openrewrite maven-plugin."
   echo
   echo "Arguments:"
-  echo "«recipe-artifact» [«catalog-artifact»]            run a «recipe-artifact». If it is a non built-in tool then provide the external module as [«catalog-artifact»]"
+  echo "«recipe» [«catalog»]            run a «recipe». If it is not a built-in recipe then provide the catalog of this recipe in [«catalog»]"
 ;;
 *)
   doRun "${@}"
