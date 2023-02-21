@@ -1,0 +1,13 @@
+:toc:
+toc::[]
+
+# Kotlin
+
+The `kotlin` commandlet allows to install and setup https://kotlinlang.org/[Kotlin]. The arguments (`devon kotlin «args»`) are explained by the following table:
+
+[options="header"]
+|=======================
+|*Argument(s)*                       |*Meaning*
+|`setup`                             |setup Kotlin (install or update and verify),  via `KOTLIN_VERSION` (e.g. `1.8.10`)
+|`version`                           |print the version of the installed Kotlin
+|=======================
