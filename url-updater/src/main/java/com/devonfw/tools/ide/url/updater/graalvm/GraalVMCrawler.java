@@ -15,6 +15,7 @@ public class GraalVMCrawler extends GithubCrawler{
         doUpdateVersion(urlVersion, "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${version}/graalvm-ce-java11-windows-amd64-${version}.zip", OSType.WINDOWS,"x64");
         doUpdateVersion(urlVersion, "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${version}/graalvm-ce-java11-linux-amd64-${version}.tar.gz", OSType.LINUX,"x64");
         doUpdateVersion(urlVersion, "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${version}/graalvm-ce-java11-darwin-amd64-${version}.tar.gz", OSType.MAC,"x64");
+        doUpdateVersion(urlVersion, "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${version}/graalvm-ce-java11-darwin-aarch64-${version}.tar.gz", OSType.MAC,"arm64");
 
     }
 

@@ -15,12 +15,8 @@ public class GHCrawler extends GithubCrawler {
         doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_windows_amd64.zip", OSType.WINDOWS,"x64");
         doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz", OSType.LINUX,"x64");
         doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_arm64.tar.gz", OSType.LINUX,"arm64");
-        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_386.tar.gz", OSType.LINUX,"i386");
-        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_arm64.tar.gz", OSType.MAC,"arm64");
         doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_amd64.tar.gz", OSType.MAC,"x64");
-        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_386.tar.gz", OSType.MAC,"i386");
-
-
+        doUpdateVersion(urlVersion, "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_macOS_arm64.tar.gz", OSType.MAC,"arm64");
     }
 
     @Override

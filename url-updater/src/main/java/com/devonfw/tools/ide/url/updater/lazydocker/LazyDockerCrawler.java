@@ -12,7 +12,7 @@ public class LazyDockerCrawler extends GithubCrawler {
 
     @Override
     protected void updateVersion(UrlVersion urlVersion) {
-        System.out.println(urlVersion.getName());
+        doUpdateVersion(urlVersion, "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Windows_x86_64.zip", OSType.WINDOWS,"x64");
         doUpdateVersion(urlVersion, "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Windows_arm64.zip", OSType.WINDOWS,"arm64");
         doUpdateVersion(urlVersion, "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Linux_x86_64.tar.gz", OSType.LINUX,"x64");
         doUpdateVersion(urlVersion, "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_Linux_arm64.tar.gz", OSType.LINUX,"arm64");
