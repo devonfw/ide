@@ -80,7 +80,9 @@ public abstract class AbstractCrawler implements Updater {
         Set<Double> urlHashes = new HashSet<>();
         for (String urlFileName : urlFileNames) {
             UrlDownloadFile urlDownloadFile = urlVersion.getUrlFile(urlFileName);
-            urlHashes.addAll(urlDownloadFile.generateUrlHashes());
+            if(urlDownloadFile!=null){
+                urlHashes.addAll(urlDownloadFile.generateUrlHashes());
+            }
         }
         Map<String, URLStatus> urlStatuses = statusJson.getUrlStatuses();
         if(result.isSuccess()) {
@@ -160,7 +162,7 @@ public abstract class AbstractCrawler implements Updater {
 
     /**
      * @param version original version.
-     * @return transformed JavaJsonVersion or null to filter and ignore the version
+     * Returns the transformed JavaJsonVersion or null to filter and ignore the version
      */
     protected String mapVersion(String version) {
         return version;

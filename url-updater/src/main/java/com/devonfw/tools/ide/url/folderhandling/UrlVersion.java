@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,45 +109,4 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     super.save();
   }
 
-  public void createFile() {
-
-    File f = new File(this.getPath() + File.separator + "urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  public void createFile(String os) {
-
-    File f = new File(this.getPath() + File.separator + os + ".urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  public void createFile(String os, String arch) {
-    File f = new File(getPath() + File.separator + os + "_" + arch + ".urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  // For development
-  public void createJson() {
-    File f = new File(getPath() + File.separator + "status.json");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-  }
 }
