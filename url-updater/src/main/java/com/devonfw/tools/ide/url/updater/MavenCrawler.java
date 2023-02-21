@@ -1,7 +1,6 @@
 package com.devonfw.tools.ide.url.updater;
 
 import com.devonfw.tools.ide.url.updater.mavenapiclasses.Metadata;
-import com.devonfw.tools.ide.url.folderhandling.UrlDownloadFile;
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
@@ -33,12 +32,7 @@ public abstract class MavenCrawler extends AbstractCrawler {
     protected void updateVersion(UrlVersion urlVersion) {
         String version = urlVersion.getName();
         String url = mavenBaseRepoUrl + version + "/" + getArtifcatId() + "-" + version + getExtension();
-        Result resultOfHttpRequest= doCheckIfDownloadUrlWorks(url);
-        if(resultOfHttpRequest.isSuccess()){
-            UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls();
-            urlDownloadFile.addUrl(url);
-        }
-        urlVersion.save();
+        doUpdateVersion(urlVersion, url);
     }
 
 

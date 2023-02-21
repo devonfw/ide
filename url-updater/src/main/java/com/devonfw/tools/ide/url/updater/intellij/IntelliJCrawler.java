@@ -41,8 +41,8 @@ public abstract class IntelliJCrawler extends WebsiteCrawler {
         try {
             driver.get(url);
             String html = driver.getPageSource();
+            Thread.sleep(5000);
             driver.quit();
-            System.out.println(html);
             return doGetRegexMatchesAsList(html);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to retrieve response body from url: " + url, e);

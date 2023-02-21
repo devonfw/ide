@@ -7,6 +7,11 @@ import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 public class RancherCrawler extends GithubCrawler {
     @Override
     protected String getToolName() {
+        return "docker";
+    }
+
+    @Override
+    protected String getEdition() {
         return "rancher-desktop";
     }
 

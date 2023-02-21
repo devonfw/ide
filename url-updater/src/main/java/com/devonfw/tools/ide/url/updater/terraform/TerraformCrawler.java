@@ -15,6 +15,7 @@ public class TerraformCrawler extends GithubCrawler {
         doUpdateVersion(urlVersion, "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_windows_amd64.zip", OSType.WINDOWS);
         doUpdateVersion(urlVersion, "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_linux_amd64.zip", OSType.LINUX);
         doUpdateVersion(urlVersion, "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_darwin_amd64.zip", OSType.MAC);
+        doUpdateVersion(urlVersion, "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_darwin_arm64.zip", OSType.MAC, "arm64");
     }
 
     @Override

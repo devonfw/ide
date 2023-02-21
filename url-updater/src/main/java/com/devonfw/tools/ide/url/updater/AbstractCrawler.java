@@ -187,7 +187,7 @@ public abstract class AbstractCrawler implements Updater {
         }
     }
 
-    public void updateExistingVersions(UrlEdition edition) {
+    protected void updateExistingVersions(UrlEdition edition) {
         List<String> existingVersions = edition.getListOfAllChildren();
         edition.getListOfAllChildren().stream().filter(existingVersions::contains).forEach(version -> {
             UrlVersion urlVersion = edition.getChild(version);
