@@ -58,20 +58,21 @@ public abstract class AbstractCrawler implements Updater {
         if (resultOfHttpRequest.isSuccess()) {
             UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(osString, arch);
             urlDownloadFile.addUrl(downloadUrl);
-            doCreateOrRefreshStatusJson(resultOfHttpRequest,urlVersion);
+            doCreateOrRefreshStatusJson(resultOfHttpRequest, urlVersion);
             urlVersion.save();
             return true;
         } else {
             //check if folder of urlVersion exists
             Path folderPath = Paths.get(urlVersion.getPath().toString());
             if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
-                doCreateOrRefreshStatusJson(resultOfHttpRequest,urlVersion);
+                doCreateOrRefreshStatusJson(resultOfHttpRequest, urlVersion);
                 urlVersion.save();
             }
             return false;
         }
     }
-    private void doCreateOrRefreshStatusJson(Result result, UrlVersion urlVersion){
+
+    private void doCreateOrRefreshStatusJson(Result result, UrlVersion urlVersion) {
         UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
 
         StatusJson statusJson = urlStatusFile.getJsonFileData();
@@ -80,25 +81,25 @@ public abstract class AbstractCrawler implements Updater {
         Set<Double> urlHashes = new HashSet<>();
         for (String urlFileName : urlFileNames) {
             UrlDownloadFile urlDownloadFile = urlVersion.getUrlFile(urlFileName);
-            if(urlDownloadFile!=null){
+            if (urlDownloadFile != null) {
                 urlHashes.addAll(urlDownloadFile.generateUrlHashes());
             }
         }
         Map<String, URLStatus> urlStatuses = statusJson.getUrlStatuses();
-        if(result.isSuccess()) {
+        if (result.isSuccess()) {
             for (Double urlHash : urlHashes) {
                 URLStatus urlStatus = new URLStatus();
                 urlStatus.setSuccess(new Success());
                 urlStatuses.put(urlHash.toString(), urlStatus);
             }
         }
-        if(result.isFailure()) {
+        if (result.isFailure()) {
             for (Double urlHash : urlHashes) {
                 URLStatus urlStatus = new URLStatus();
-                if(urlStatus.getError()!=null){
+                if (urlStatus.getError() != null) {
                     return;
                 }
-                String message = result.getHttpStatusCode() +" "+result.getUrl();
+                String message = result.getHttpStatusCode() + " " + result.getUrl();
                 urlStatus.setError(new Error(message));
                 urlStatuses.put(urlHash.toString(), urlStatus);
             }
@@ -162,7 +163,7 @@ public abstract class AbstractCrawler implements Updater {
 
     /**
      * @param version original version.
-     * Returns the transformed JavaJsonVersion or null to filter and ignore the version
+     *                Returns the transformed JavaJsonVersion or null to filter and ignore the version
      */
     protected String mapVersion(String version) {
         return version;
@@ -182,7 +183,7 @@ public abstract class AbstractCrawler implements Updater {
             if (version != null && edition.getChild(version) == null && !version.isEmpty()) {
                 UrlVersion urlVersion = edition.getOrCreateChild(version);
                 updateVersion(urlVersion);
-                if(urlVersion.getChildCount()!=0){
+                if (urlVersion.getChildCount() != 0) {
                     urlVersion.save();
                 }
             }
@@ -193,14 +194,16 @@ public abstract class AbstractCrawler implements Updater {
         List<String> existingVersions = edition.getListOfAllChildren();
         edition.getListOfAllChildren().stream().filter(existingVersions::contains).forEach(version -> {
             UrlVersion urlVersion = edition.getChild(version);
-            UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-            logger.info("Getting or creating Status for version {}", version);
-            if(urlStatusFile.getJsonFileData().isManual()){
-                logger.atInfo().log("Version {} is manual, skipping update", version);
-                return;
+            if (urlVersion != null) {
+                UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
+                logger.info("Getting or creating Status for version {}", version);
+                if (urlStatusFile.getJsonFileData().isManual()) {
+                    logger.atInfo().log("Version {} is manual, skipping update", version);
+                    return;
+                }
+                updateVersion(urlVersion);
+                urlVersion.save();
             }
-            updateVersion(urlVersion);
-            urlVersion.save();
         });
     }
 
