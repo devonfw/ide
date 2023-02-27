@@ -3,12 +3,10 @@
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/functions
 
-from_version=0
-if [ -f "${DEVON_IDE_HOME}/.devon.software.version" ]  
+from_version=2023.0.001
+if [ ! -f "${DEVON_IDE_HOME}/.devon.software.version" ]  
 then
   from_version="$(cat ${DEVON_IDE_HOME}/.devon.software.version)"
-else
-  from_version="${1}"
 fi
 
 MIGRATIONS_DIR="${DEVON_IDE_HOME}/scripts/migrations"
