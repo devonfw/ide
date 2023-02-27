@@ -3,16 +3,34 @@
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/functions
 
-doEcho "\nRun migration scripts to version ${1}."
-migrations="$(dirname "${0}")/migrations/*"
-for migration in $(ls ${migrations} | sort -n)
-do
+from_version=0
+if [ -f "${DEVON_IDE_HOME}/.devon.software.version" ]  
+then
+  from_version="$(cat ${DEVON_IDE_HOME}/.devon.software.version)"
+else
   from_version="${1}"
-  to_version="${migration/*\//}"
-  doVersionCompare "${from_version}" "${to_version}"
-  result="${?}"
-  if [ "${result}" -eq 0 ] || [ "${result}" -eq 2 ]
-  then
-    "${migration}"
-  fi	
-done
+fi
+
+MIGRATIONS_DIR="${DEVON_IDE_HOME}/scripts/migrations"
+
+if [ -d "${MIGRATIONS_DIR}" ]
+then
+  cd "${MIGRATIONS_DIR}"
+  for migrate_to_version in  $(ls | sort -n)
+  do
+    doVersionCompare "${from_version}" "${migrate_to_version}"
+    result="${?}"
+    if [ "${result}" -eq 0 ] || [ "${result}" -eq 2 ]
+    then
+      doEcho "Run migration to version ${to_version}"
+      bash "${migrate_to_version}"
+      migration_result="${?}"
+      if [ "${migration_result}" -ne 0 ]
+      then
+        doAskToContinue "The migration to version ${migrate_to_version} failed. Would you like to continue?"
+      fi
+    fi
+  done
+else
+  doWarning "Migrations directory does not exist in ${MIGRATIONS_DIR}"
+fi
