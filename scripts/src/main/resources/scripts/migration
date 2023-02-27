@@ -22,7 +22,7 @@ then
     result="${?}"
     if [ "${result}" -eq 0 ] || [ "${result}" -eq 2 ]
     then
-      doEcho "Run migration to version ${to_version}"
+      doEcho "Run migration to version ${migrate_to_version}"
       bash "${migrate_to_version}"
       migration_result="${?}"
       if [ "${migration_result}" -ne 0 ]
