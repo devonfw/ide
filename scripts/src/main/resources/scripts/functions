@@ -780,6 +780,7 @@ function doReplaceExtractedFile() {
   local filename="${1/*\//}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
+  local migration="${DEVON_IDE_HOME}/scripts/migration"
   if [ -n "${2}" ]
   then
     target="${2}"
