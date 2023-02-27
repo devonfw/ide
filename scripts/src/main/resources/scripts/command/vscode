@@ -48,6 +48,7 @@ function cleanupPlugins() {
 function doAddPlugins() {
   local file
   local pluginsToInstall=()
+  local pluginsToRecommend=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -61,12 +62,22 @@ function doAddPlugins() {
       elif [ "${plugin_active}" = "true" ]
       then
         pluginsToInstall+=("${plugin_id}")
+      elif [ "${plugin_active}" = "false" ]
+      then
+        local IFS=, 
+        pluginsToRecommend+=("\"${plugin_id}\"")
       fi
     fi
   done
+  # install vscode plugins
   if [ "${#pluginsToInstall}" -gt 0 ]
   then
     doAddPlugin "${pluginsToInstall[@]}"
+  fi
+  # set vscode recommendations
+  if [ "${#pluginsToRecommend}" -gt 0 ]
+  then
+    doAddRecommendations "${pluginsToRecommend[@]}"
   fi
 }
 
@@ -122,52 +133,33 @@ function doRunVsCode() {
 
 function doStartVsCode() {
   doConfigureVsCode -u
-  doAddRecmdt
   doEcho "launching VSCode..."
   doRunVsCode "${WORKSPACE_PATH}"
 }
 
-function doAddRecmdt() {
-  local recmdtJSON="${WORKSPACE_PATH}/.vscode/extensions.json"
-  local file
-  local recmdtKey
-  local recmdtValue
-  local pluginsToRecmdt=()
-  for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
-  do
-    if [ -f "${file}" ]
-    then
-      plugin_id=""
-      plugin_active="true"
-      doLoadProperties "${file}"
-      if [ -z "${plugin_id}" ]
-      then
-        doWarning "Invalid vscode plugin config: ${file}"
-      elif [ "${plugin_active}" = "false" ]
-      then
-        local IFS=, 
-        pluginsToRecmdt+=("\"${plugin_id}\"")
-      fi
-    fi
-  done
-  recmdtValue=${pluginsToRecmdt[*]}
-  recmdtKey="\"recommendations\": [$recmdtValue]"
-  if [ -f "${recmdtJSON}" ] && [ ! -s "${recmdtJSON}" ]
+function doAddRecommendations() {
+  local recommendations="${*}"
+  local extensionsJSON="${WORKSPACE_PATH}/.vscode/extensions.json"
+  local key="\"recommendations\": [$recommendations]"
+  if [ -f "${extensionsJSON}" ] && [ ! -s "${extensionsJSON}" ]
   then 
-    if grep -q "\"recommendations\":" "${recmdtJSON}"
+    if grep -q "\"recommendations\":" "${extensionsJSON}"
     then
-      if ! grep -Fq "${recmdtKey}" "${recmdtJSON}"
+      if ! grep -Fq "${key}" "${extensionsJSON}"
       then
-        sed -i "s/\"recommendations\": \[[^]]*\]/${recmdtKey}/g" "${recmdtJSON}"
-        doSuccess "Plugin recommendations have been updated in ${recmdtJSON}."
+        # if recommendations key is already in extensions.JSON
+        sed -i "s/\"recommendations\": \[[^]]*\]/${key}/g" "${extensionsJSON}"
+        doSuccess "Plugin recommendations have been updated in ${extensionsJSON}."
       fi
     else
-      sed -i 's/^{/{ '"$recmdtKey"', /' "${recmdtJSON}"
-      doSuccess "Plugin recommendations have been added in ${recmdtJSON}."
+      # if recommendations key is not in extensions.JSON but file exists
+      sed -i 's/^{/{ '"${key}"', /' "${extensionsJSON}"
+      doSuccess "Plugin recommendations have been added in ${extensionsJSON}."
     fi
   else
-    echo "{${recmdtKey}}" > "${recmdtJSON}"
-    doSuccess "Plugin recommendations have been created in ${recmdtJSON}"
+    # if extensions.JSON does not exist
+    echo "{${key}}" > "${extensionsJSON}"
+    doSuccess "Plugin recommendations have been created in ${extensionsJSON}"
   fi
 }
   
