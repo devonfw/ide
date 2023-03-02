@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1062[#1062]: Migration support for devon4j 2023.01.001
 * https://github.com/devonfw/ide/issues/1052[#1052]: Fix leading spaces on MacOS
 * https://github.com/devonfw/ide/issues/1022[#1022]: suppress confusing windows process result messages like The operation completed successfully.
 * https://github.com/devonfw/ide/issues/1051[#1051]: creation of a documentation for using the software IObit Unlocker to find processes that block specific files
