@@ -3,7 +3,7 @@
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/functions
 
-from_version=2023.0.001
+from_version=2023.02.001
 if [ -f "${DEVON_IDE_HOME}/.devon.software.version" ]  
 then
   from_version="$(cat ${DEVON_IDE_HOME}/.devon.software.version)"
