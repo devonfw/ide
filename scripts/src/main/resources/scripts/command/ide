@@ -236,6 +236,36 @@ function doSetup() {
   doUpdateCli
   doUpdateMetaFile
   doUpdateSettings "${@}"
+  local devon_version
+  devon_version="$("${DEVON_IDE_HOME}"/scripts/devon -v)"
+  if [ ! -z "${DEVON_IDE_MIN_VERSION}" ]
+  then
+    doVersionCompare "${DEVON_IDE_MIN_VERSION}" "${devon_version}"
+    if [ "${?}" = 1 ]
+    then
+      if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+      then
+        doCreatePostMessageFile
+      fi
+      {
+        echo "doWarning \"### setup ###\""
+        echo "echo"
+        echo "doWarning \"Your version of devonfw-ide is currently ${devon_version}\""
+        echo "doWarning \"However you Project requires the latest version ${DEVON_IDE_MIN_VERSION}\""
+        echo "doWarning \"Newer features will be required for your project so you need to update your devonfw-ide via the following command:\""
+        echo "echo"
+        echo "doWarning \"   devon ide update scripts\""
+        echo "echo"
+        echo "doWarning \"Please start the command mentioned above in your bash to get the required version of devonfw-ide\""
+        echo "echo"
+      } >> "${DEVON_IDE_HOME}"/postmessages
+      if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+      then
+        ${DEVON_IDE_HOME}/postmessages
+        rm ${DEVON_IDE_HOME}/postmessages
+      fi
+    fi
+  fi
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
     doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
@@ -560,5 +590,13 @@ then
 else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
+
+doCheckGitVersion
+if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+then
+  ${DEVON_IDE_HOME}/postmessages
+  rm ${DEVON_IDE_HOME}/postmessages
+fi
+
 echo
 doSuccess "Completed ${*}"

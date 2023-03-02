@@ -167,6 +167,41 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
+function doCreatePostMessageFile() {
+  { echo "#!/usr/bin/env bash"
+    echo "# shellcheck source=scripts/functions"
+    echo "source "$(dirname "${0}")"/../functions"
+    echo "doWarning \"Important messages to print out after installation or update\""
+    echo "echo"
+  } > "${DEVON_IDE_HOME}"/postmessages
+  if doIsMacOs
+  then
+    chmod +x "${DEVON_IDE_HOME}"/postmessages
+  fi
+}
+
+function doCheckGitVersion() {
+  local git_version
+  git_version="$(git --version | sed -e 's/\.windows\..*$//' | awk '{print $3}')"
+  local is_git_version_safe
+  is_git_version_safe="$(grep "${git_version}" "${DEVON_IDE_HOME}/system/git/security"  | cut -c 1)"
+  if [ "${is_git_version_safe}" = ">" ]
+  then
+    if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+    then
+      doCreatePostMessageFile
+    fi
+    {
+      echo "doWarning \"### git version ###\""
+      echo "echo"
+      echo "doWarning \"You are using the git in version ${git_version} that has vulnerabilities. Please update the tool to state safe and secure.\""
+      echo "doWarning \"For further details and recent information have a look at the following webpage:\""
+      echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
+      echo "echo"
+    } >> "${DEVON_IDE_HOME}"/postmessages
+  fi
+}
+
 function doDebug() {
   if ! doIsDebug
   then
@@ -1200,10 +1235,10 @@ function doInstall() {
     doGitPullOrClone "${target_path}" "${url}"
     return
   fi
+  local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
   if [ -z "${version}" ]
   then
     doUpdateMirrors
-    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
     then
       version="$(head -n 1 "${available_versions}")"
@@ -1241,7 +1276,30 @@ function doInstall() {
     then
       if [ -z "${silent}" ]
       then
-        doEcho "Version ${version} of ${software} is already installed at ${target_path}."
+        local is_safe_version
+        is_safe_version="$(grep "${version}" "${available_versions}"  | cut -c 1)"
+        if [ "${is_safe_version}" = ">" ]
+        then
+          if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+          then
+            doCreatePostMessageFile
+          fi
+          {
+            echo "doWarning \"### doInstall ${software} ###\""
+            echo "echo"
+            echo "doWarning \"You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\""
+            echo "doWarning \"For further details and recent information have a look at the following webpage:\""
+            echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
+            echo "echo"
+          } >> "${DEVON_IDE_HOME}"/postmessages
+          if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+          then
+            ${DEVON_IDE_HOME}/postmessages
+            rm ${DEVON_IDE_HOME}/postmessages
+          fi
+        else
+          doEcho "Version ${version} of ${software} is already installed at ${target_path}."
+        fi
         if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
         then
           doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
@@ -1417,6 +1475,28 @@ function doInstall() {
   if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
   then
     doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+  fi
+  local is_safe_version
+  is_safe_version="$(grep "${version}" "${available_versions}"  | cut -c 1)"
+  if [ "${is_safe_version}" = ">" ]
+  then
+    if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+    then
+      doCreatePostMessageFile
+    fi
+    {
+      echo "doWarning \"### doInstall ${software} ###\""
+      echo "echo"
+      echo "doWarning \"You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\""
+      echo "doWarning \"For further details and recent information have a look at the following webpage:\""
+      echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
+      echo "echo"
+    } >> "${DEVON_IDE_HOME}"/postmessages
+    if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+    then
+      ${DEVON_IDE_HOME}/postmessages
+      rm ${DEVON_IDE_HOME}/postmessages
+    fi
   fi
   return ${result}
 }
