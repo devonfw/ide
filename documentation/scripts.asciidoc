@@ -40,6 +40,7 @@ This directory is the heart of the `devonfw-ide` and contains the required link:
 │  ├── link:pip.asciidoc[pip]
 │  ├── link:quarkus.asciidoc[quarkus]
 │  ├── link:release.asciidoc[release]
+│  ├── link:rewrite.asciidoc[rewrite]
 │  ├── link:sonar.asciidoc[sonar]
 │  ├── link:terraform.asciidoc[terraform]
 │  ├── link:vscode.asciidoc[vscode]
