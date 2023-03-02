@@ -4,9 +4,10 @@
 source "$(dirname "${0}")"/functions
 
 from_version=2023.01.001
-if [ -f "${DEVON_IDE_HOME}/.devon.software.version" ]  
+devon_version="${DEVON_IDE_HOME}/.devon.software.version"
+
+if [ -f "${devon_version}" ]  
 then
-  devon_version="${DEVON_IDE_HOME}/.devon.software.version"
   from_version="$(cat ${devon_version})"
 fi
 
