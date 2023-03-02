@@ -3,11 +3,14 @@ toc::[]
 
 = rewrite
 
-The rewrite commandlet allows the use of https://docs.openrewrite.org/[Openrewrite], a Maven based tool that can be used to refactor code with recipes for multiple languages and tools. Before using this tool, we recommend that you read the https://docs.openrewrite.org/running-recipes/getting-started[Getting-Started] page.
+The rewrite commandlet allows the use of https://docs.openrewrite.org/[Openrewrite], a Maven based tool that can be used to refactor code with recipes for multiple languages and tools.
+Before using this tool, we recommend that you read the https://docs.openrewrite.org/running-recipes/getting-started[Getting-Started] page.
 
 == Usage
-The commandlet excepts the name of a recipe such as
-`org.openrewrite.java.format.AutoFormat` as the first argument. If this recipe is built-in, the second argument can be ignored. In case the recipe is provided by an external catalog of recipes, the second parameter must be passed. Usually this information is set in the pom.xml of the project in plugin dependencies:
+The commandlet accepts the name of a recipe such as `org.openrewrite.java.format.AutoFormat` as the first argument.
+If this recipe is built-in, the second argument can be ignored.
+In case the recipe is provided by an external catalog of recipes, the second parameter must be passed.
+Usually this information is set in the pom.xml of the project in plugin dependencies:
 
 ```
 <dependencies>
@@ -17,9 +20,9 @@ The commandlet excepts the name of a recipe such as
     <version>4.33.0</version>
   </dependency>
 </dependencies>
-    
 ```
-However, you can set up the second parameter in this structure instead: `groupId:artifactId:version`. In the example the second parameter would be `org.openrewrite.recipe:rewrite-spring:LATEST`. You can also use the exact version instead of `LATEST`.
+However, you can set up the second parameter in this structure instead: `groupId:artifactId:version`.
+In the example the second parameter would be `org.openrewrite.recipe:rewrite-spring:LATEST`. You can also use the exact version instead of `LATEST`.
 
 The catalog of recipes can be found here:
 
