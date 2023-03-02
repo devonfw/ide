@@ -120,6 +120,9 @@ Prints the given arguments as warning message with according coloring (in orange
 
 The functions for testing environments return `0` (true) if the operating-system matches and `1` (false) otherwise.
 
+=== doCheckGitVersion
+Checks if the version of git has no security issues
+
 === doIsMacOs
 Checks if  the operating system is detected as MacOs.
 
@@ -411,6 +414,9 @@ If the target version is larger than the current version, the software is instal
 An array is defined from a number of elements, with the last element being defined as a prefix.
 The function doArrayContainsItemWithPrefix now checks the array if it contains elements that start with this prefix.
 If this is the case, the function ends with the return value 0, otherwise with 1.
+
+=== doCreatePostMessageFile
+Creates a file for messages which are displayed at the end of an action
 
 === doIsPackageJsonContainingScript
 Checks whether the module passed with the first parameter is contained in the package package.json.
