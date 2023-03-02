@@ -27,9 +27,11 @@ You may also supply additional arguments as `devon vscode «args»`. These are e
 
 == plugins
 
-To be productive with VS Code you need plugins (called `extensions` in VS Code). Of course `devonfw-ide` can automate this for your:
+To be productive with VS Code you need plugins (called `extensions` in VS Code).
+Of course `devonfw-ide` can automate this for your:
 In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/vscode/plugins[vscode/plugins] (click this link to see more examples and see which plugins come by default).
-Here you can create a properties file for each plugin. This is an example https://github.com/devonfw/ide-settings/blob/master/vscode/plugins/devonfw-extension-pack.properties[devonfw-extension-pack.properties]:
+Here you can create a properties file for each plugin.
+This is an example https://github.com/devonfw/ide-settings/blob/master/vscode/plugins/devonfw-extension-pack.properties[devonfw-extension-pack.properties]:
 ```
 plugin_id=devonfw.devonfw-extension-pack
 plugin_active=true
@@ -37,12 +39,25 @@ plugin_active=true
 
 The variables are defined as following:
 
-* `plugin_id` defines the unique ID of the plugin to install. If you want to customize `devonfw-ide` with new plugins click on `Extensions` at the bottom of the left navigation icon bar in VS code. Then use the search to find the plugin of your choice. If you click on it the plugin ID is displayed in grey beside the official title at the top of the plugin details page. Copy & paste the ID from here to make up your own custom config.
-* `plugin_active` is an optional parameter. If it is `true` (default) the plugin will be installed automatically during the project link:setup.asciidoc[setup] for all developers in your team. Otherwise developers can still install the plugin manually via `devon vscode add-plugin «plugin-name»` from the config file `settings/vscode/plugins/«plugin-name».properties`. See the `settings/vscode/plugins` folder for possible values of «plugin-name».
+* `plugin_id` defines the unique ID of the plugin to install.
+If you want to customize `devonfw-ide` with new plugins click on `Extensions` at the bottom of the left navigation icon bar in VS code.
+Then use the search to find the plugin of your choice.
+If you click on it the plugin ID is displayed in grey beside the official title at the top of the plugin details page.
+Copy & paste the ID from here to make up your own custom config.
+* `plugin_active` is an optional parameter.
+If it is `true` (default) the plugin will be installed automatically during the project link:setup.asciidoc[setup] for all developers in your team.
+Otherwise developers can still install the plugin manually via `devon vscode add-plugin «plugin-name»` from the config file `settings/vscode/plugins/«plugin-name».properties`.
+See the `settings/vscode/plugins` folder for possible values of «plugin-name».
 
-In general you should try to stick with the configuration pre-defined by your project. But some plugins may be considered as personal flavor and are typically not predefined by the project config. Such plugins should be shipped with your link:settings.asciidoc[settings] as described above with `plugin_active=false` allowing you to easily install it manually. Surely, you can easily add plugins via the UI of VS code. However, be aware that some plugins may collect sensitive data or could introduce other vulnerabilities. So consider the governance of your project and talk to your technical lead before installing additional plugins that are not pre-defined in your link:settings.asciidoc[settings].
+In general you should try to stick with the configuration pre-defined by your project.
+But some plugins may be considered as personal flavor and are typically not predefined by the project config.
+Such plugins should be shipped with your link:settings.asciidoc[settings] as described above with `plugin_active=false` allowing you to easily install it manually. Surely, you can easily add plugins via the UI of VS code.
+However, be aware that some plugins may collect sensitive data or could introduce other vulnerabilities.
+So consider the governance of your project and talk to your technical lead before installing additional plugins that are not pre-defined in your link:settings.asciidoc[settings].
 
-As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer. By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily. In addition, these plugins are recommended to the user by recommendation link:https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions[feature] of VS Code. Be aware that the recommendations feature is only works for the main workspace. 
+As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer.
+By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
+In addition, these plugins are recommended to the user by recommendation https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions[recommendation feature] of VS Code. Be aware that the recommendations feature only works for the main workspace. 
 
 === cleaning plugins on update
 
@@ -51,4 +66,6 @@ If you want to strictly manage the plugins for `VS code` in your project, you ca
 clean_plugins_on_update=true
 ```
 
-This will wipe all plugins when an update of `VS code` is performed (e.g. via `devon ide update`) and reinstall all configured plugins. While this gives you more control over the governance of the plugins and allows to remove a plugin later during project lifecycle. However, this will delete all manually installed plugins automatically without asking.
+This will wipe all plugins when an update of `VS code` is performed (e.g. via `devon ide update`) and reinstall all configured plugins.
+While this gives you more control over the governance of the plugins and allows to remove a plugin later during project lifecycle.
+However, this will delete all manually installed plugins automatically without asking.
