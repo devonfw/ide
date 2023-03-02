@@ -170,7 +170,7 @@ function doEchoInteraction() {
 function doCreatePostMessageFile() {
   { echo "#!/usr/bin/env bash"
     echo "# shellcheck source=scripts/functions"
-    echo "source "$(dirname "${0}")"/../functions"
+    echo "source \"$(dirname "${0}")\"/../functions"
     echo "doWarning \"Important messages to print out after installation or update\""
     echo "echo"
   } > "${DEVON_IDE_HOME}"/postmessages
@@ -1294,8 +1294,8 @@ function doInstall() {
           } >> "${DEVON_IDE_HOME}"/postmessages
           if [ -f "${DEVON_IDE_HOME}/postmessages" ]
           then
-            ${DEVON_IDE_HOME}/postmessages
-            rm ${DEVON_IDE_HOME}/postmessages
+            "${DEVON_IDE_HOME}"/postmessages
+            rm "${DEVON_IDE_HOME}"/postmessages
           fi
         else
           doEcho "Version ${version} of ${software} is already installed at ${target_path}."
@@ -1494,8 +1494,8 @@ function doInstall() {
     } >> "${DEVON_IDE_HOME}"/postmessages
     if [ -f "${DEVON_IDE_HOME}/postmessages" ]
     then
-      ${DEVON_IDE_HOME}/postmessages
-      rm ${DEVON_IDE_HOME}/postmessages
+      "${DEVON_IDE_HOME}"/postmessages
+      rm "${DEVON_IDE_HOME}"/postmessages
     fi
   fi
   return ${result}

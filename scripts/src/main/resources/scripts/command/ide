@@ -238,7 +238,7 @@ function doSetup() {
   doUpdateSettings "${@}"
   local devon_version
   devon_version="$("${DEVON_IDE_HOME}"/scripts/devon -v)"
-  if [ ! -z "${DEVON_IDE_MIN_VERSION}" ]
+  if [ -n "${DEVON_IDE_MIN_VERSION}" ]
   then
     doVersionCompare "${DEVON_IDE_MIN_VERSION}" "${devon_version}"
     if [ "${?}" = 1 ]
@@ -261,8 +261,8 @@ function doSetup() {
       } >> "${DEVON_IDE_HOME}"/postmessages
       if [ -f "${DEVON_IDE_HOME}/postmessages" ]
       then
-        ${DEVON_IDE_HOME}/postmessages
-        rm ${DEVON_IDE_HOME}/postmessages
+        "${DEVON_IDE_HOME}"/postmessages
+        rm "${DEVON_IDE_HOME}"/postmessages
       fi
     fi
   fi
@@ -594,8 +594,8 @@ fi
 doCheckGitVersion
 if [ -f "${DEVON_IDE_HOME}/postmessages" ]
 then
-  ${DEVON_IDE_HOME}/postmessages
-  rm ${DEVON_IDE_HOME}/postmessages
+  "${DEVON_IDE_HOME}"/postmessages
+  rm "${DEVON_IDE_HOME}"/postmessages
 fi
 
 echo
