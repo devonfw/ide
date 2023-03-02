@@ -29,6 +29,7 @@ then
         doAskToContinue "The migration to version ${migrate_to_version} failed. Would you like to continue?"
       else
         echo "${migrate_to_version}" > "${devon_version}"
+        doEcho "${devon_version} is set to version ${migrate_to_version}"
       fi
     fi
   done
