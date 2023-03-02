@@ -81,6 +81,7 @@ The following commandlets are currently available:
 * link:pip.asciidoc[pip]
 * link:quarkus.asciidoc[quarkus]
 * link:release.asciidoc[release]
+* link:rewrite.asciidoc[rewrite]
 * link:sonar.asciidoc[sonar]
 * link:terraform.asciidoc[terraform]
 * link:vscode.asciidoc[vscode]

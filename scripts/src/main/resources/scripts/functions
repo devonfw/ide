@@ -821,7 +821,7 @@ function doBackup() {
     fi
     mkdir -p "${backup_dir}"
     doEcho "Creating backup by moving existing ${source} to ${backup_dir}"
-    mv "${source}" "${backup_dir}/" || doFail "Failed to move ${source} to ${backup_dir}.\nMost probably this is a problem of windows file locks. In such case please terminate all processes locking the files and retry the operation."
+    mv "${source}" "${backup_dir}/" || doFail "Failed to move ${source} to ${backup_dir}.\nMost probably this is a problem of windows file locks. In such case please terminate all processes locking the files and retry the operation.\nPlease visit https://github.com/devonfw/ide/blob/master/documentation/how-to-unlock-files.asciidoc for more information."
   fi
 }
 
