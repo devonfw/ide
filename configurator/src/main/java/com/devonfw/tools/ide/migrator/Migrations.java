@@ -208,6 +208,9 @@ public class Migrations {
         .replaceProperty("spring.boot.version", "2.7.6") //
         .replaceProperty("cxf.version", "3.5.4") //
         .and() //
+        .next().to(VersionIdentifier.ofDevon4j("2023.01.001")).pom() //
+        .replaceProperty("devon4j.version", "2023.01.001") //
+        .and() //
         .next().build();
   }
 
