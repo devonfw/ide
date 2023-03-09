@@ -1,4 +1,6 @@
 @echo off
+setlocal ENABLEDELAYEDEXPANSION
+
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 if "%1%" == "-v" (
   goto :print_version
@@ -12,7 +14,7 @@ Set _fBGreen=[92m
 Set _fBRed=[91m
 Set _RESET=[0m
 
-rem Auto-install oursevles...
+rem Auto-install ourselves...
 if not exist "%USERPROFILE%\scripts" (
   md "%USERPROFILE%\scripts"
 )
@@ -42,6 +44,8 @@ if exist "%GIT_HOME%\bin\bash.exe" (
   goto :bash_detected
 )
 
+echo %_fBYellow%WARNING: Git-bash is required but was not found at GIT_HOME=%GIT_HOME%.%_RESET%
+
 rem If bash in GitForWindows could not be found search Cygwin Installation - prefer user over machine result
 for %%H in ( HKEY_LOCAL_MACHINE HKEY_CURRENT_USER ) do for /F "usebackq tokens=2*" %%O in (`call "%SystemRoot%"\system32\reg.exe query "%%H\Software\Cygwin\setup" /v "rootdir" 2^>nul ^| "%SystemRoot%\system32\findstr.exe" REG_SZ`) do set CYGWIN_HOME=%%P
 
@@ -53,17 +57,17 @@ if exist "%CYGWIN_HOME%\bin\bash.exe" (
 
 rem If bash can not be autodetected allow the user to configure bash via BASH_HOME environment variable as fallback
 
-if exists "%BASH_HOME%\bin\bash.exe" (
+if exist "%BASH_HOME%\bin\bash.exe" (
   set "BASH=%BASH_HOME%\bin\bash.exe"
   set "HOME=%USERPROFILE%"
   goto :bash_detected
 )
 echo:
 echo %_fBYellow%*** ATTENTION ***%_RESET%
-echo %_fBRed%Bash has not been found on your system!%_RESET%
-echo %_fBRed%Please install git for windows on your system.%_RESET%
+echo %_fBRed%ERROR: Could not find bash. It seems git for windows is not installed on your machine%_RESET%
+echo %_fBRed%Please download and install git for windows from the following URL and after that rerun devonfw-ide setup:%_RESET%
 echo %_fBRed%https://git-scm.com/download/win%_RESET%
-goto :eof
+exit /b 5
 
 :bash_detected
 if not "%DEVON_OLD_PATH%" == "" (
@@ -124,7 +128,6 @@ if "%folder%" == "workspaces" (
 )
 cd ..  
 goto :iterate_backwards
-
 goto :eof
 
 rem subroutine to print version
@@ -133,25 +136,25 @@ echo $[devon_ide_version]
 
 rem subroutine to set user path fix for https://github.com/devonfw/ide/issues/1066
 :set_userpath
-  if "%USER_PATH:~-1,1%" == ";" (
-    set "USER_PATH=%USER_PATH:~0,-1%"
-  )
-  if "%USER_PATH%" == "" (
-    setx PATH "%%USERPROFILE%%\scripts;"
-    echo %_fBYellow%"ATTENTION:"%_RESET%
-    echo "Your user PATH environment variable has not been previously set."
-    echo "You may need to log-off and log-in again so your PATH changes are properly applied."
-    echo "Otherwise you may get errors that devon command has not been found."
-    pause
-  ) else (
-    setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
-  )
-  if "%PATH:~-1,1%" == ";" (
-    set "PATH=%PATH%%USERPROFILE%\scripts"
-  ) else (
-    set "PATH=%PATH%;%USERPROFILE%\scripts"
-  )
-  echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
-  echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
-  echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
+if "%USER_PATH:~-1,1%" == ";" (
+  set "USER_PATH=%USER_PATH:~0,-1%"
+)
+if "%USER_PATH%" == "" (
+  setx PATH "%%USERPROFILE%%\scripts;"
+  echo %_fBYellow%"ATTENTION:"%_RESET%
+  echo "Your user PATH environment variable has not been previously set."
+  echo "You may need to log-off and log-in again so your PATH changes are properly applied."
+  echo "Otherwise you may get errors that devon command has not been found."
+  pause
+) else (
+  setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+)
+if "%PATH:~-1,1%" == ";" (
+  set "PATH=%PATH%%USERPROFILE%\scripts"
+) else (
+  set "PATH=%PATH%;%USERPROFILE%\scripts"
+)
+echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
+echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
+echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
 goto :eof
