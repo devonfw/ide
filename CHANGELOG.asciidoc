@@ -6,6 +6,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1066[#1066]: devon.bat stopped adding PATH
+* https://github.com/devonfw/ide/issues/1043[#1043]: Environment variables defined in devon.properties are not available in devonfw CMD 
 * https://github.com/devonfw/ide/issues/982[#982]: Add plugin recommendation feature to vscode
 * https://github.com/devonfw/ide/issues/971[#971]: Ability to run "migration script" on update
 * https://github.com/devonfw/ide/issues/991[#991]: Integrate openrewrite feature
