@@ -134,7 +134,7 @@ rem subroutine to print version
 :print_version
 echo $[devon_ide_version]
 
-rem subroutine to set user path fix for https://github.com/devonfw/ide/issues/1066
+rem subroutine to set user path - fix for https://github.com/devonfw/ide/issues/1066
 :set_userpath
 if "%USER_PATH:~-1,1%" == ";" (
   set "USER_PATH=%USER_PATH:~0,-1%"
