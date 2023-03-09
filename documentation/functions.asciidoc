@@ -290,6 +290,7 @@ Attention: for one installation package the function doReplaceExtractedSkipSingl
 Called with the three parameters path of the file or directory to be moved, the target directory and a backup directory.
 The function creates missing directories, makes a backup from the target directory to the backup directory.
 Then the files specified in the first parameter are moved to the target directory.
+Finally, the link:migration.asciidoc[migration script] is run to migrate the ide to the latest version.
 
 === doReplaceExtractedSkipSingleFolder
 The parameters source directory, target directory, backup directory and possibly a list of files and directories via shell file name expansion (globbing) are passed to the doReplaceExtractedSkipSingleFolder function.
