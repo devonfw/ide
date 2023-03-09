@@ -1,5 +1,4 @@
 @echo off
-setlocal ENABLEDELAYEDEXPANSION
 
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 if "%1%" == "-v" (
