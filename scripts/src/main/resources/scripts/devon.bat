@@ -129,10 +129,6 @@ cd ..
 goto :iterate_backwards
 goto :eof
 
-rem subroutine to print version
-:print_version
-echo $[devon_ide_version]
-
 rem subroutine to set user path - fix for https://github.com/devonfw/ide/issues/1066
 :set_userpath
 if "%USER_PATH:~-1,1%" == ";" (
@@ -157,3 +153,7 @@ echo %_fBGreen%The devon CLI script has been installed to your windows system.%_
 echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
 echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
 goto :eof
+
+rem subroutine to print version
+:print_version
+echo $[devon_ide_version]
