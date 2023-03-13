@@ -1,5 +1,4 @@
 @echo off
-setlocal ENABLEDELAYEDEXPANSION
 
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 if "%1%" == "-v" (
@@ -28,27 +27,7 @@ for %%f in (devon.bat) do set "p=%%~$PATH:f"
 if not defined p (
   echo Adding %USERPROFILE%\scripts to your users system PATH
   for /F "tokens=2* delims= " %%f IN ('reg query HKCU\Environment /v PATH ^| findstr /i path') do set USER_PATH=%%g
-  if "!USER_PATH:~-1,1!" == ";" (
-    set "USER_PATH=!USER_PATH:~0,-1!"
-  )
-  if "!USER_PATH!" == "" (
-    setx PATH "%%USERPROFILE%%\scripts"
-    echo %_fBYellow%"ATTENTION:"%_RESET%
-    echo "Your user PATH environment variable has not been previously set."
-    echo "You may need to log-off and log-in again so your PATH changes are properly applied."
-    echo "Otherwise you may get errors that devon command has not been found."
-    pause
-  ) else (
-    setx PATH "!USER_PATH!;%%USERPROFILE%%\scripts"
-  )
-  if "!PATH:~-1,1!" == ";" (
-    set "PATH=!PATH!%USERPROFILE%\scripts"
-  ) else (
-    set "PATH=!PATH!;%USERPROFILE%\scripts"
-  )
-  echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
-  echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
-  echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
+  call :set_userpath
 )
 
 if "%1%" == "" (
@@ -153,3 +132,28 @@ goto :eof
 rem subroutine to print version
 :print_version
 echo $[devon_ide_version]
+
+rem subroutine to set user path - fix for https://github.com/devonfw/ide/issues/1066
+:set_userpath
+if "%USER_PATH:~-1,1%" == ";" (
+  set "USER_PATH=%USER_PATH:~0,-1%"
+)
+if "%USER_PATH%" == "" (
+  setx PATH "%%USERPROFILE%%\scripts;"
+  echo %_fBYellow%"ATTENTION:"%_RESET%
+  echo "Your user PATH environment variable has not been previously set."
+  echo "You may need to log-off and log-in again so your PATH changes are properly applied."
+  echo "Otherwise you may get errors that devon command has not been found."
+  pause
+) else (
+  setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
+)
+if "%PATH:~-1,1%" == ";" (
+  set "PATH=%PATH%%USERPROFILE%\scripts"
+) else (
+  set "PATH=%PATH%;%USERPROFILE%\scripts"
+)
+echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
+echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
+echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
+goto :eof
