@@ -167,41 +167,6 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
-function doCreatePostMessageFile() {
-  { echo "#!/usr/bin/env bash"
-    echo "# shellcheck source=scripts/functions"
-    echo "source \"$(dirname "${0}")\"/../functions"
-    echo "doWarning \"Important messages to print out after installation or update\""
-    echo "echo"
-  } > "${DEVON_IDE_HOME}"/postmessages
-  if doIsMacOs
-  then
-    chmod +x "${DEVON_IDE_HOME}"/postmessages
-  fi
-}
-
-function doCheckGitVersion() {
-  local git_version
-  git_version="$(git --version | sed -e 's/\.windows\..*$//' | awk '{print $3}')"
-  local is_git_version_safe
-  is_git_version_safe="$(grep "${git_version}" "${DEVON_IDE_HOME}/system/git/security"  | cut -c 1)"
-  if [ "${is_git_version_safe}" = ">" ]
-  then
-    if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
-    then
-      doCreatePostMessageFile
-    fi
-    {
-      echo "doWarning \"### git version ###\""
-      echo "echo"
-      echo "doWarning \"You are using the git in version ${git_version} that has vulnerabilities. Please update the tool to state safe and secure.\""
-      echo "doWarning \"For further details and recent information have a look at the following webpage:\""
-      echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
-      echo "echo"
-    } >> "${DEVON_IDE_HOME}"/postmessages
-  fi
-}
-
 function doDebug() {
   if ! doIsDebug
   then

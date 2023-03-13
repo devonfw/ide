@@ -46,9 +46,6 @@ In xref:doIsForce[force] or xref:doIsBatch[batch] mode, it will continue automat
 Passes all arguments to xref:doWarning[] to print as warning.
 Then it calls xref:doAskToContinue[].
 
-=== doCreatePostMessageFile
-Creates a file for messages which are displayed at the end of an action.
-
 === doDebug
 Prints the given arguments as debug message with according coloring (in gray).
 Debug messages will be printed in xref:doIsDebug[debug] mode.
@@ -130,9 +127,6 @@ Checks if  the operating system is detected as MacOs.
 Checks if  the operating system is detected as Windows.
 
 == Functions to verify requirements
-
-=== doCheckGitVersion
-Checks if the version of git has security issues or not.
 
 === doRequireNotBatch
 Uses xref:doIsBatch[] to check whether the batch variable is set and, if set, issues an error message.
