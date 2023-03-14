@@ -6,7 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
-* TODO
+* https://github.com/devonfw/ide/issues/1071[#1071]: devon.bat sets wrong user PATH in Windows system environment settings
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/41?closed=1[milestone 2023.03.002].
 
