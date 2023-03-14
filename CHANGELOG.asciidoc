@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.04.001
+
+Release with new features and bugfixes:
+
+* TODO
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/42?closed=1[milestone 2023.04.001].
+
 == 2023.03.002
 
 Release with new features and bugfixes:
