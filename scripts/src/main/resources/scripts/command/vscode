@@ -64,8 +64,10 @@ function doAddPlugins() {
         pluginsToInstall+=("${plugin_id}")
       elif [ "${plugin_active}" = "false" ]
       then
-        local IFS=, 
+        local defaultIFS="${IFS}"
+        IFS=, 
         pluginsToRecommend+=("\"${plugin_id}\"")
+        IFS="${defaultIFS}"
       fi
     fi
   done
