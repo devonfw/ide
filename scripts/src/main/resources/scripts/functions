@@ -267,20 +267,21 @@ function doTranslateMirrorOptionsToUrlOptions() {
   if [ -n "${INTELLIJ_EDITION_TYPE}" ]
   then
     case "${INTELLIJ_EDITION_TYPE}" in
-# shellcheck disable=SC2034
-      "c"|"C") INTELLIJ_EDITION="community";;
-# shellcheck disable=SC2034
-      "u"|"U") INTELLIJ_EDITION="ultimate";;
+      "c"|"C") # shellcheck disable=SC2034
+               INTELLIJ_EDITION="community";;
+
+      "u"|"U") # shellcheck disable=SC2034
+               INTELLIJ_EDITION="ultimate";;
     esac
   fi
   if [ -n "${ECLIPSE_EDITION_TYPE}" ]
   then
-# shellcheck disable=SC2034
+    # shellcheck disable=SC2034
     ECLIPSE_EDITION="${ECLIPSE_EDITION_TYPE}"
   fi
   if [ -n "${DOCKER_EDITION}" ]
   then
-# shellcheck disable=SC2034
+    # shellcheck disable=SC2034
     DOCKER_EDITION="docker"
   fi
 }
