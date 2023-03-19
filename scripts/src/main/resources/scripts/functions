@@ -211,19 +211,20 @@ function doCheckToolSecurityVersion() {
   local zahl="1"
   local check="0"
   local line=""
-  local first
-  local last
-  for line in $(cat "${security_file}")
+  local myfirst
+  local mylast
+
+  while IFS= read -r line
   do
-    first[${zahl}]="$(echo "${line}" | cut -d'>' -f 1)"
-    last[${zahl}]="$(echo "${line}" | cut -d'>' -f 2)"
-    doCheckVersionRange "${first[${zahl}]}" "${last[${zahl}]}" "${version}"
+    myfirst[${zahl}]="$(echo "${line}" | cut -d'>' -f 1)"
+    mylast[${zahl}]="$(echo "${line}" | cut -d'>' -f 2)"
+    doCheckVersionRange "${myfirst[${zahl}]}" "${mylast[${zahl}]}" "${version}"
     if [ "${?}" == "0" ]
     then
       check="1"
     fi
     ((zahl++))
-  done
+  done < "${security_file}"
   return "${check}"
 }
 
