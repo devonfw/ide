@@ -167,6 +167,118 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
+function doCreatePostMessageFile() {
+  { echo "#!/usr/bin/env bash"
+    echo "# shellcheck source=scripts/functions"
+    echo "source \"$(dirname "${0}")\"/../functions"
+    echo "doWarning \"Important messages to print out after installation or update\""
+    echo "echo"
+  } > "${DEVON_IDE_HOME}"/postmessages
+  if doIsMacOs
+  then
+    chmod +x "${DEVON_IDE_HOME}"/postmessages
+  fi
+}
+
+# $1: version_start
+# $2: version_end
+# $3: version
+# returns 0 if version_start <= version <= version_end
+function doCheckVersionRange() {
+  local version1="${1}"
+  local version2="${2}"
+  local version="${3}"
+  doVersionCompare "${version}" "${version1}"
+  check1="${?}"
+  doVersionCompare "${version2}" "${version}"
+  check2="${?}"
+  if [ "${check1}" == "2" ] || [ "${check2}" == "2" ] 
+  then
+    return 1
+  else 
+    return 0
+  fi
+}
+
+# $1: tool
+# $2: version
+# $3: security file
+# return 1 if version is found in tool's security file
+function doCheckToolSecurityVersion() {
+  local tool="${1}"
+  local version="${2}"
+  local security_file="${3}"
+  local zahl="1"
+  local check="0"
+  local line=""
+  for line in $(cat "${security_file}")
+  do
+    first[${zahl}]="$(echo ${line} | cut -d'>' -f 1)"
+    last[${zahl}]="$(echo ${line} | cut -d'>' -f 2)"
+    doCheckVersionRange "${first[${zahl}]}" "${last[${zahl}]}" "${version}"
+    if [ "${?}" == "0" ]
+    then
+      check="1"
+    fi
+    ((zahl++))
+  done
+  return "${check}"
+}
+
+function doCheckGitVersion() {
+  local version
+  version="$(git --version | sed -e 's/\.windows\..*$//' | awk '{print $3}')"
+  local security_file
+  if [ -d "${DEVON_IDE_HOME}/ide-urls" ]
+  then
+    security_file="${DEVON_IDE_HOME}/ide-urls/git/git/security"
+  else
+    security_file="${DEVON_IDE_HOME}/mirrors/git/security"
+  fi
+  if [ -f "${security_file}" ]
+  then
+    doCheckToolSecurityVersion "git" "${version}" "${security_file}"
+    if [ "$?" == "1" ]
+    then
+      if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+      then
+        doCreatePostMessageFile
+      fi
+    {
+      echo "doWarning \"### git version ###\""
+      echo "echo"
+      echo "doWarning \"You are using the git in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\""
+      echo "doWarning \"For further details and recent information have a look at the following webpage:\""
+      echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
+      echo "echo"
+    } >> "${DEVON_IDE_HOME}"/postmessages
+      if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+      then
+        "${DEVON_IDE_HOME}"/postmessages
+        rm "${DEVON_IDE_HOME}"/postmessages
+      fi
+    fi
+  fi
+}
+
+function doTranslateMirrorOptionsToUrlOptions() {
+  if [ -n "${INTELLIJ_EDITION_TYPE}" ]
+  then
+    case "${INTELLIJ_EDITION_TYPE}" in
+      "c"|"C") INTELLIJ_EDITION="community";;
+      "u"|"U") INTELLIJ_EDITION="ultimate";;
+    esac
+  fi
+  if [ -n "${ECLIPSE_EDITION_TYPE}" ]
+  then
+    ECLIPSE_EDITION="${ECLIPSE_EDITION_TYPE}"
+  fi
+  if [ -n "${DOCKER_EDITION}" ]
+  then
+    DOCKER_EDITION="docker"
+  fi
+}
+
 function doDebug() {
   if ! doIsDebug
   then
@@ -1417,6 +1529,42 @@ function doInstall() {
   if [ -n "${TOOL_VERSION_COMMAND}" ] && [ "${TOOL_VERSION_COMMAND}" != "-" ] && ! doIsQuiet
   then
     doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
+  fi
+  local security_file
+  if [ -d "${DEVON_IDE_HOME}/ide-urls" ]
+  then
+    if [ -z "${edition}" ]
+    then
+      edition="${software}"
+    fi
+    doTranslateMirrorOptionsToUrlOptions
+    security_file="${DEVON_IDE_HOME}/ide-urls/${software}/${edition}/security"
+  else
+    security_file="${DEVON_IDE_HOME}/mirrors/${software}/security"
+  fi
+  if [ -f "${security_file}" ]
+  then
+    doCheckToolSecurityVersion "${software}" "${version}" "${security_file}"
+    if [ "$?" == "1" ]
+    then
+      if [ ! -f "${DEVON_IDE_HOME}"/postmessages ]
+      then
+        doCreatePostMessageFile
+      fi
+      {
+        echo "doWarning \"### doInstall ${software} ###\""
+        echo "echo"
+        echo "doWarning \"You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\""
+        echo "doWarning \"For further details and recent information have a look at the following webpage:\""
+        echo "doWarning \"https://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\""
+        echo "echo"
+      } >> "${DEVON_IDE_HOME}"/postmessages
+      if [ -f "${DEVON_IDE_HOME}/postmessages" ]
+      then
+        "${DEVON_IDE_HOME}"/postmessages
+        rm "${DEVON_IDE_HOME}"/postmessages
+      fi
+    fi
   fi
   return ${result}
 }

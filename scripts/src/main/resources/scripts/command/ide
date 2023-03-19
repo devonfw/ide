@@ -492,6 +492,7 @@ case "${DEVON_IDE_HOME}" in
    ;;
 esac
 
+doCheckGitVersion
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
