@@ -211,10 +211,12 @@ function doCheckToolSecurityVersion() {
   local zahl="1"
   local check="0"
   local line=""
+  local first
+  local last
   for line in $(cat "${security_file}")
   do
-    first[${zahl}]="$(echo ${line} | cut -d'>' -f 1)"
-    last[${zahl}]="$(echo ${line} | cut -d'>' -f 2)"
+    first[${zahl}]="$(echo "${line}" | cut -d'>' -f 1)"
+    last[${zahl}]="$(echo "${line}" | cut -d'>' -f 2)"
     doCheckVersionRange "${first[${zahl}]}" "${last[${zahl}]}" "${version}"
     if [ "${?}" == "0" ]
     then
@@ -265,16 +267,20 @@ function doTranslateMirrorOptionsToUrlOptions() {
   if [ -n "${INTELLIJ_EDITION_TYPE}" ]
   then
     case "${INTELLIJ_EDITION_TYPE}" in
+# shellcheck disable=SC2034
       "c"|"C") INTELLIJ_EDITION="community";;
+# shellcheck disable=SC2034
       "u"|"U") INTELLIJ_EDITION="ultimate";;
     esac
   fi
   if [ -n "${ECLIPSE_EDITION_TYPE}" ]
   then
+# shellcheck disable=SC2034
     ECLIPSE_EDITION="${ECLIPSE_EDITION_TYPE}"
   fi
   if [ -n "${DOCKER_EDITION}" ]
   then
+# shellcheck disable=SC2034
     DOCKER_EDITION="docker"
   fi
 }
