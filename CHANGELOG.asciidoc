@@ -2,11 +2,28 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2023.03.001
+== 2023.04.001
 
 Release with new features and bugfixes:
 
 * TODO
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/42?closed=1[milestone 2023.04.001].
+
+== 2023.03.002
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1071[#1071]: devon.bat sets wrong user PATH in Windows system environment settings
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/41?closed=1[milestone 2023.03.002].
+
+== 2023.03.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1068[#1068]: setup of devon ide create hangs
+* https://github.com/devonfw/ide/issues/999[#999]: Ability to require minimum devonfw-ide version
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/40?closed=1[milestone 2023.03.001].
 

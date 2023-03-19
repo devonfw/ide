@@ -129,22 +129,23 @@ cd ..
 goto :iterate_backwards
 goto :eof
 
-rem subroutine to print version
-:print_version
-echo $[devon_ide_version]
-
 rem subroutine to set user path - fix for https://github.com/devonfw/ide/issues/1066
 :set_userpath
+echo USER_PATH=%USER_PATH%
 if "%USER_PATH:~-1,1%" == ";" (
   set "USER_PATH=%USER_PATH:~0,-1%"
 )
 if "%USER_PATH%" == "" (
-  setx PATH "%%USERPROFILE%%\scripts;"
-  echo %_fBYellow%"ATTENTION:"%_RESET%
-  echo "Your user PATH environment variable has not been previously set."
-  echo "You may need to log-off and log-in again so your PATH changes are properly applied."
-  echo "Otherwise you may get errors that devon command has not been found."
+  echo %_fBYellow%ATTENTION:
+  echo Your user specific PATH variable seems to be empty.
+  echo You can double check this by pressing [Windows][r] and launch the programm SystemPropertiesAdvanced.
+  echo Then click on 'Environment variables' and check if 'PATH' is set in in the 'user variables' from the upper list.
+  echo In case 'PATH' is defined there non-empty and you get this message, please abort and give us feedback via the following bug issue:
+  echo https://github.com/devonfw/ide/issues/1071
+  echo Otherwise all is correct and you can continue by pressing enter.
+  echo %_RESET%
   pause
+  setx PATH "%%PATH%%;%%USERPROFILE%%\scripts"
 ) else (
   setx PATH "%USER_PATH%;%%USERPROFILE%%\scripts"
 )
@@ -153,7 +154,11 @@ if "%PATH:~-1,1%" == ";" (
 ) else (
   set "PATH=%PATH%;%USERPROFILE%\scripts"
 )
-echo %_fBGreen%The devon CLI script has been installed to your windows system.%_RESET%
-echo %_fBGreen%Now in any new command shell, you can call devon to setup your IDE enviromennt variables.%_RESET%
-echo %_fBGreen%You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
+echo %_fBGreen%The devon CLI script has been installed to your windows system.
+echo Now in any new command shell, you can call devon to setup your IDE enviromennt variables.
+echo You can also provide arguments to devon for advanced usage, e.g. try calling 'devon help'%_RESET%
 goto :eof
+
+rem subroutine to print version
+:print_version
+echo $[devon_ide_version]
