@@ -57,8 +57,8 @@ jobs:
           git commit -m "set next version to ${next_version}"
           # prevent GH006 error when pushing to protected branch
           git remote set-url origin https://${BUILD_USER}:${BUILD_USER_PASSWORD}@github.com/devonfw/ide.git
-          git push
-          git push --tags
+          git -c "http.https://github.com/.extraheader=" push
+          git -c "http.https://github.com/.extraheader=" push --tags
           noDotVersion="${current_version//.}"
           gh release create "release/${current_version}" --title "${current_version}" --notes "# Download
           https://repo1.maven.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/${old_version}/devonfw-ide-scripts-${current_version}.tar.gz
