@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.url.updater;
 
 
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

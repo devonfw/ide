@@ -7,7 +7,7 @@ import java.nio.file.Path;
 public class UpdateInitiator {
 
     public static void main(String[] args) {
-        String pathToRepo = args[0];
+        String pathToRepo = "C:\\Users\\alfeil\\Desktop\\ide-urls";
         UpdateManager updateManager = new UpdateManager(Path.of(pathToRepo));
         updateManager.updateAll();
     }

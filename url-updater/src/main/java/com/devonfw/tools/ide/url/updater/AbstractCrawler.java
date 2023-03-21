@@ -17,6 +17,8 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.*;
 
@@ -58,8 +60,14 @@ public abstract class AbstractCrawler implements Updater {
         if (resultOfHttpRequest.isSuccess()) {
             UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(osString, arch);
             urlDownloadFile.addUrl(downloadUrl);
+
             doCreateOrRefreshStatusJson(resultOfHttpRequest, urlVersion);
+
             urlVersion.save();
+
+            UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName() + "." + "sha256");
+            urlChecksum.doChecksum("sha256", downloadUrl);
+
             return true;
         } else {
             //check if folder of urlVersion exists
@@ -207,4 +215,34 @@ public abstract class AbstractCrawler implements Updater {
         });
     }
 
+    protected byte[] doGetResponseBodyBytes(String url) {
+        try {
+            HttpRequest request1 = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+            return client.send(request1, HttpResponse.BodyHandlers.ofByteArray()).body();
+        } catch (IOException | InterruptedException exception) {
+            throw new IllegalStateException("Failed to retrieve response body from url: " + url, exception);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error while getting response body from url {}\", url, e");
+            return null;
+        }
+    }
+
+    private static String doSHA256Checksum(byte[] response) throws Exception {
+        MessageDigest md = MessageDigest.getInstance("sha256");
+        md.update(response);
+        byte[] digestBytes = md.digest();
+        String checksum = toHexString(digestBytes);
+        return checksum;
+    }
+    private static String toHexString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        //String solution = HexFormat.of().formatHex(bytes);
+        return sb.toString();
+    }
 }
