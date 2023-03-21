@@ -214,35 +214,4 @@ public abstract class AbstractCrawler implements Updater {
             }
         });
     }
-
-    protected byte[] doGetResponseBodyBytes(String url) {
-        try {
-            HttpRequest request1 = HttpRequest.newBuilder()
-                    .uri(URI.create(url))
-                    .GET()
-                    .build();
-            return client.send(request1, HttpResponse.BodyHandlers.ofByteArray()).body();
-        } catch (IOException | InterruptedException exception) {
-            throw new IllegalStateException("Failed to retrieve response body from url: " + url, exception);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error while getting response body from url {}\", url, e");
-            return null;
-        }
-    }
-
-    private static String doSHA256Checksum(byte[] response) throws Exception {
-        MessageDigest md = MessageDigest.getInstance("sha256");
-        md.update(response);
-        byte[] digestBytes = md.digest();
-        String checksum = toHexString(digestBytes);
-        return checksum;
-    }
-    private static String toHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        //String solution = HexFormat.of().formatHex(bytes);
-        return sb.toString();
-    }
 }
