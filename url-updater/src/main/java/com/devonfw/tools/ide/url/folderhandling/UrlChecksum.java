@@ -2,9 +2,7 @@ package com.devonfw.tools.ide.url.folderhandling;
 
 import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFile;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,9 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 public class UrlChecksum extends AbstractUrlFile {
 
     final HttpClient client = HttpClient.newBuilder().build();
+
+    private String checksum;
 
     public String getChecksum() {
         return checksum;
@@ -25,8 +26,6 @@ public class UrlChecksum extends AbstractUrlFile {
     public void setChecksum(String checksum) {
         this.checksum = checksum;
     }
-
-    private String checksum;
 
     /**
      * The constructor.
@@ -39,6 +38,10 @@ public class UrlChecksum extends AbstractUrlFile {
 
     }
 
+    /**
+     * @param url the url of the download file
+     * @return the input stream of requested url
+     */
     private InputStream doGetResponseInputStream(String url) {
         try {
             HttpRequest request1 = HttpRequest.newBuilder()
@@ -54,6 +57,11 @@ public class UrlChecksum extends AbstractUrlFile {
         }
     }
 
+    /**
+     * @param inputStream the input stream of requested url
+     * @param hashAlgorithm the hash algorithm (e.g sha256, sha1, md)
+     * @return
+     */
     private String doCreateChecksum(InputStream inputStream, String hashAlgorithm)  {
 
         try {
@@ -79,6 +87,10 @@ public class UrlChecksum extends AbstractUrlFile {
         }
     }
 
+    /**
+     * @param bytes the byte array to convert in hex String
+     * @return
+     */
     private static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
@@ -87,6 +99,10 @@ public class UrlChecksum extends AbstractUrlFile {
         return sb.toString();
     }
 
+    /**
+     * @param hashAlgorithm the hash algorithm (e.g sha256, sha1, md)
+     * @param downloadUrl the url of the download file
+     */
     public void doChecksum(String hashAlgorithm, String downloadUrl) {
         setChecksum(doCreateChecksum(doGetResponseInputStream(downloadUrl), hashAlgorithm));
         doSave();
@@ -95,6 +111,13 @@ public class UrlChecksum extends AbstractUrlFile {
     @Override
     protected void doLoad() {
 
+        Path path = getPath();
+        try {
+            String cs = Files.readString(path);
+            setChecksum(cs);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load file " + path, e);
+        }
     }
 
     @Override

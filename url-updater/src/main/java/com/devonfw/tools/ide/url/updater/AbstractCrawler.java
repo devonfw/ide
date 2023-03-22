@@ -75,6 +75,7 @@ public abstract class AbstractCrawler implements Updater {
             if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
                 doCreateOrRefreshStatusJson(resultOfHttpRequest, urlVersion);
                 urlVersion.save();
+                System.out.println("here");
             }
             return false;
         }
