@@ -1,4 +1,4 @@
-name: Update URLS with Checksum
+name: Update URLS with Checksums
 on: push
 
 jobs:
