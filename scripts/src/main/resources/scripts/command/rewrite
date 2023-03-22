@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "version help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+TOOL_VERSION_COMMAND=
+
+function doRun() {
+    local recipe="${1}"
+    local catalog="${2}"
+
+    doDevonCommand mvn -U org.openrewrite.maven:rewrite-maven-plugin:run \
+      -Drewrite.recipeArtifactCoordinates="${catalog}" \
+      -DactiveRecipes="${recipe}"
+}
+
+# CLI
+case ${1} in
+"help" | "-h")
+  echo "Use openrewrite maven-plugin."
+  echo
+  echo "Arguments:"
+  echo "«recipe» [«catalog»]            run a «recipe». If it is not a built-in recipe then provide the catalog of this recipe in [«catalog»]"
+;;
+*)
+  doRun "${@}"
+;;
+esac
