@@ -11,7 +11,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: alfeilex/ide-urls
-          ref: with-checksum-testing
           path: ide-urls
           token: ${{ secrets.ACTION_PUSH_TOKEN }}
       - name: Build and run url updater
