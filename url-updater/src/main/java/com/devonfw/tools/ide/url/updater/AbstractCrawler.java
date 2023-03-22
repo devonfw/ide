@@ -66,7 +66,7 @@ public abstract class AbstractCrawler implements Updater {
             urlVersion.save();
 
             UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName() + "." + "sha256");
-            urlChecksum.doChecksum("sha256", downloadUrl);
+            urlChecksum.doChecksum("SHA-256", downloadUrl);
 
             return true;
         } else {
