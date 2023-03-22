@@ -21,6 +21,7 @@ jobs:
       - name: Commit and push to ide-urls
         run: |
           cd ide-urls
+          checkout -b with-checksum-testing
           git add .
           git config --global user.name ${{ secrets.BUILD_USER }}
           git config --global user.email ${{ secrets.BUILD_USER_EMAIL }}
