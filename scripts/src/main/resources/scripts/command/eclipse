@@ -182,9 +182,8 @@ function doInvokeEclipse() {
   local application="$1"
   shift
   local eclipse_args=("$@")
-  local debug_info_file
-  debug_info_file=$(mktemp)
-  "${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //' > "${debug_info_file}" 2>&1
+  local debug_info
+  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
   local exit_code=$?
   if [ $exit_code -ne 0 ];
   then
@@ -192,10 +191,8 @@ function doInvokeEclipse() {
     echo ""
     return 1
   else
-  local debug_info
-  debug_info=$(<"${debug_info_file}")
-  echo "$debug_info"
-  return 0
+    echo "$debug_info"
+    return 0
   fi
 }
 
