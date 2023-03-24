@@ -87,7 +87,7 @@ function doRunCommand() {
   then
     popd > /dev/null || exit 255 
   fi
-  doResult "${message}" ${result}
+  doResult "${message}" "${result}"
 }
 
 function doIsForce() {
@@ -579,9 +579,9 @@ function doDownload() {
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
-      return ${result}
+      return "${result}"
     fi
-    doFail "Failed to download ${filename} from ${1}" ${result}
+    doFail "Failed to download ${filename} from ${1}" "${result}"
   fi
 }
 
@@ -780,6 +780,7 @@ function doReplaceExtractedFile() {
   local filename="${1/*\//}"
   local target_dir="${DEVON_IDE_HOME}"
   local target="${DEVON_IDE_HOME}/${filename}"
+  local migration="${DEVON_IDE_HOME}/scripts/migration"
   if [ -n "${2}" ]
   then
     target="${2}"
@@ -787,7 +788,7 @@ function doReplaceExtractedFile() {
   fi
   if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ] && doIsWindows
   then
-    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'") &
+    (sleep 10;doBackup "${target}" "${3}";doRunCommand "mv '${1}' '${target}'";doRunCommand "'${migration}'") &
   else
     doBackup "${target}" "${3}"
     if [ ! -d "${target_dir}" ]
@@ -795,6 +796,10 @@ function doReplaceExtractedFile() {
       mkdir -p "${target_dir}"
     fi
     doRunCommand "mv '${1}' '${target}'"
+    if [ "${target}" = "${DEVON_IDE_HOME}/scripts" ]
+    then
+      doRunCommand "'${migration}'"
+    fi
   fi
 }
 
@@ -816,7 +821,7 @@ function doBackup() {
     fi
     mkdir -p "${backup_dir}"
     doEcho "Creating backup by moving existing ${source} to ${backup_dir}"
-    mv "${source}" "${backup_dir}/" || doFail "Failed to move ${source} to ${backup_dir}.\nMost probably this is a problem of windows file locks. In such case please terminate all processes locking the files and retry the operation."
+    mv "${source}" "${backup_dir}/" || doFail "Failed to move ${source} to ${backup_dir}.\nMost probably this is a problem of windows file locks. In such case please terminate all processes locking the files and retry the operation.\nPlease visit https://github.com/devonfw/ide/blob/master/documentation/how-to-unlock-files.asciidoc for more information."
   fi
 }
 
@@ -836,7 +841,7 @@ function doReplaceExtractedSkipSingleFolder() {
   if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
   then
     files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-    anz_files="$(echo "${files}" | wc -w)"
+    anz_files="$(echo "${files}" | awk 'END{print NR}')"
     while [ "${anz_files}" == "1" ]
     do
       if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
@@ -846,7 +851,7 @@ function doReplaceExtractedSkipSingleFolder() {
         break
       fi
       files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-      anz_files="$(echo "${files}" | wc -w)"
+      anz_files="$(echo "${files}" | awk 'END{print NR}')"
     done
     source_dir="${dir}"
     doDebug "Changing source directory from ${root_dir} to ${source_dir} due to single folder."
@@ -1527,10 +1532,10 @@ function doVersionCompare() {
       then
         n2=0
       fi
-      if [ ${n1} -gt ${n2} ]
+      if [ "${n1}" -gt "${n2}" ]
       then
         return 1
-      elif [ ${n1} -lt ${n2} ]
+      elif [ "${n1}" -lt "${n2}" ]
       then
         return 2
       else
@@ -1559,10 +1564,10 @@ function doVersionCompare() {
             then
               n2=0
             fi
-            if [ ${n1} -gt ${n2} ]
+            if [ "${n1}" -gt "${n2}" ]
             then
               return 1
-            elif [ ${n1} -lt ${n2} ]
+            elif [ "${n1}" -lt "${n2}" ]
             then
               return 2
             fi
