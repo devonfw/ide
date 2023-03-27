@@ -167,17 +167,17 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
-# $1: version_start
-# $2: version_end
-# $3: version
-# returns 0 if version_start <= version <= version_end
+# $1: first_range_version
+# $2: version
+# $3: last_range_version
+# returns 0 if first_range_version <= version <= last_range_version
 function doCheckVersionRange() {
-  local version1="${1}"
-  local version2="${2}"
-  local version="${3}"
-  doVersionCompare "${version}" "${version1}"
+  local first_range_version="${1}"
+  local version="${2}"
+  local last_range_version="${3}"
+  doVersionCompare "${version}" "${first_range_version}"
   check1="${?}"
-  doVersionCompare "${version2}" "${version}"
+  doVersionCompare "${last_range_version}" "${version}"
   check2="${?}"
   if [ "${check1}" == "2" ] || [ "${check2}" == "2" ] 
   then
@@ -197,9 +197,9 @@ function doCheckSoftwareSecurityVersion() {
   local security_file
   local check="0"
   local line=""
-  local myfirst
-  local mylast
-  if [ -d "${DEVON_IDE_HOME}/ide-urls" ]
+  local first_version
+  local last_last
+  if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     if [ -z "${edition}" ]
     then
@@ -207,17 +207,15 @@ function doCheckSoftwareSecurityVersion() {
     else
       doTranslateMirrorOptionsToUrlOptions
     fi
-    security_file="${DEVON_IDE_HOME}/ide-urls/${software}/${edition}/security"
-  else
-    security_file="${DEVON_IDE_HOME}/mirrors/${software}/security"
+    security_file="${DEVON_IDE_HOME}/urls/${software}/${edition}/security"
   fi
   if [ -f "${security_file}" ]
   then
     while IFS= read -r line
     do
-      myfirst="$(echo "${line}" | cut -d'>' -f 1)"
-      mylast="$(echo "${line}" | cut -d'>' -f 2)"
-      doCheckVersionRange "${myfirst}" "${mylast}" "${version}"
+      first_version="$(echo "${line}" | cut -d'>' -f 1)"
+      last_version="$(echo "${line}" | cut -d'>' -f 2)"
+      doCheckVersionRange "${first_version}" "${version}" "${last_version}"
       if [ "${?}" == "0" ]
       then
         check="1"
@@ -225,14 +223,19 @@ function doCheckSoftwareSecurityVersion() {
     done < "${security_file}"
     if [ "${check}" == "1" ]
     then
-      mymessage="You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
-      doVersionWarning "${mymessage}"
+      if [ -z "${edition}" ]
+      then
+        mymessage="You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
+      else
+        mymessage="You are using the tool ${software}, edition ${edition} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
+      fi 
+      doReportVersionSecurityWarning "${mymessage}"
     fi
   fi
 }
 
 # $1: message
-function doVersionWarning() {
+function doReportVersionSecurityWarning() {
   local message="${1}"
   doWarning "${message}"
 }
@@ -256,7 +259,11 @@ function doTranslateMirrorOptionsToUrlOptions() {
   if [ -n "${DOCKER_EDITION}" ]
   then
     # shellcheck disable=SC2034
-    DOCKER_EDITION="docker"
+    case ${DOCKER_EDITION} in
+      DOCKERDESKTOP) DOCKER_EDITION="docker";;
+      docker)        DOCKER_EDITION="docker";;
+      *)             DOCKER_EDITION="rancher";;
+    esac
   fi
 }
 

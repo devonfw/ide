@@ -377,6 +377,9 @@ If this is the case, it ends with the return value `0` otherwise `1`.
 === doListSoftwareVersions
 Takes the name of the tool as a parameter and displays the available versions.
 
+=== doReportVersionSecurityWarning
+Prints out a message on version security alerts.
+
 === doSetSoftwareVersion
 Used to set a specific version of a software tool, and requires 2 parameters: the name of the software tool and the desired version.
 The version is saved as `«tool»_VERSION` variable in `settings/devon.properties`.
@@ -384,9 +387,6 @@ The version is saved as `«tool»_VERSION` variable in `settings/devon.propertie
 === doVersionCompare
 Two version numbers are passed to the doVersionCompare function as parameters.
 If the versions are equal, the function returns 0, if the first version is higher than the second, returns 1, and if the second version is higher than the first, the function returns 2.
-
-=== doVersionWarning
-Prints out a message on version security alerts
 
 == Functions on workspaces
 
