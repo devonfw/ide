@@ -167,6 +167,102 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
+# $1: version_start
+# $2: version_end
+# $3: version
+# returns 0 if version_start <= version <= version_end
+function doCheckVersionRange() {
+  local version1="${1}"
+  local version2="${2}"
+  local version="${3}"
+  doVersionCompare "${version}" "${version1}"
+  check1="${?}"
+  doVersionCompare "${version2}" "${version}"
+  check2="${?}"
+  if [ "${check1}" == "2" ] || [ "${check2}" == "2" ] 
+  then
+    return 1
+  else 
+    return 0
+  fi
+}
+
+# $1: software
+# $2: version
+# return 1 if version is found in tool's security file
+function doCheckSoftwareSecurityVersion() {
+  local software="${1}"
+  local version="${2}"
+  local security_file
+  local check="0"
+  local line=""
+  local myfirst
+  local mylast
+  if [ -d "${DEVON_IDE_HOME}/ide-urls" ]
+  then
+    if [ "${software}" == "git" ]
+    then 
+      edition="git"
+    else
+      if [ -z "${edition}" ]
+      then
+        edition="${software}"
+      fi
+      doTranslateMirrorOptionsToUrlOptions
+    fi
+    security_file="${DEVON_IDE_HOME}/ide-urls/${software}/${edition}/security"
+  else
+    security_file="${DEVON_IDE_HOME}/mirrors/${software}/security"
+  fi
+  if [ -f "${security_file}" ]
+  then
+    while IFS= read -r line
+    do
+      myfirst="$(echo "${line}" | cut -d'>' -f 1)"
+      mylast="$(echo "${line}" | cut -d'>' -f 2)"
+      doCheckVersionRange "${myfirst}" "${mylast}" "${version}"
+      if [ "${?}" == "0" ]
+      then
+        check="1"
+      fi
+    done < "${security_file}"
+    if [ "${check}" == "1" ]
+    then
+      mymessage="You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
+      doVersionWarning "${mymessage}"
+    fi
+  fi
+}
+
+# $1: message
+function doVersionWarning() {
+  local message="${1}"
+  doWarning "${message}"
+}
+
+function doTranslateMirrorOptionsToUrlOptions() {
+  if [ -n "${INTELLIJ_EDITION_TYPE}" ]
+  then
+    case "${INTELLIJ_EDITION_TYPE}" in
+      "c"|"C") # shellcheck disable=SC2034
+               INTELLIJ_EDITION="community";;
+
+      "u"|"U") # shellcheck disable=SC2034
+               INTELLIJ_EDITION="ultimate";;
+    esac
+  fi
+  if [ -n "${ECLIPSE_EDITION_TYPE}" ]
+  then
+    # shellcheck disable=SC2034
+    ECLIPSE_EDITION="${ECLIPSE_EDITION_TYPE}"
+  fi
+  if [ -n "${DOCKER_EDITION}" ]
+  then
+    # shellcheck disable=SC2034
+    DOCKER_EDITION="docker"
+  fi
+}
+
 function doDebug() {
   if ! doIsDebug
   then
@@ -1418,6 +1514,8 @@ function doInstall() {
   then
     doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
   fi
+
+  doCheckSoftwareSecurityVersion "${software}" "${version}"
   return ${result}
 }
 
