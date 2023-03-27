@@ -48,6 +48,7 @@ function cleanupPlugins() {
 function doAddPlugins() {
   local file
   local pluginsToInstall=()
+  local pluginsToRecommend=()
   for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
   do
     if [ -f "${file}" ]
@@ -61,12 +62,22 @@ function doAddPlugins() {
       elif [ "${plugin_active}" = "true" ]
       then
         pluginsToInstall+=("${plugin_id}")
+      elif [ "${plugin_active}" = "false" ]
+      then
+        pluginsToRecommend+=("\"${plugin_id}\"")
       fi
     fi
   done
+  # install vscode plugins
   if [ "${#pluginsToInstall}" -gt 0 ]
   then
     doAddPlugin "${pluginsToInstall[@]}"
+  fi
+  # set vscode recommendations
+  if [ "${#pluginsToRecommend}" -gt 0 ]
+  then
+    local IFS=, 
+    doAddRecommendations "${pluginsToRecommend[@]}"
   fi
 }
 
@@ -126,6 +137,32 @@ function doStartVsCode() {
   doRunVsCode "${WORKSPACE_PATH}"
 }
 
+function doAddRecommendations() {
+  local recommendations="${*}"
+  local extensionsJSON="${WORKSPACE_PATH}/.vscode/extensions.json"
+  local key="\"recommendations\": [$recommendations]"
+  if [ -f "${extensionsJSON}" ] && [ ! -s "${extensionsJSON}" ]
+  then 
+    if grep -q "\"recommendations\":" "${extensionsJSON}"
+    then
+      if ! grep -Fq "${key}" "${extensionsJSON}"
+      then
+        # if recommendations key is already in extensions.JSON
+        sed -i "s/\"recommendations\": \[[^]]*\]/${key}/g" "${extensionsJSON}"
+        doSuccess "Plugin recommendations have been updated in ${extensionsJSON}."
+      fi
+    else
+      # if recommendations key is not in extensions.JSON but file exists
+      sed -i 's/^{/{ '"${key}"', /' "${extensionsJSON}"
+      doSuccess "Plugin recommendations have been added in ${extensionsJSON}."
+    fi
+  else
+    # if extensions.JSON does not exist
+    echo "{${key}}" > "${extensionsJSON}"
+    doSuccess "Plugin recommendations have been created in ${extensionsJSON}"
+  fi
+}
+  
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then

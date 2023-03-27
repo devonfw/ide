@@ -236,6 +236,16 @@ function doSetup() {
   doUpdateCli
   doUpdateMetaFile
   doUpdateSettings "${@}"
+  if [ -n "${DEVON_IDE_MIN_VERSION}" ]
+  then
+    local devon_version
+    devon_version="$("${DEVON_IDE_HOME}"/scripts/devon -v)"
+    doVersionCompare "${DEVON_IDE_MIN_VERSION}" "${devon_version}"
+    if [ "${?}" = 1 ]
+    then
+      doFail "Your version of devonfw-ide is currently ${devon_version}\nHowever this is too old as your project requires at latest version ${DEVON_IDE_MIN_VERSION}\nPlease run the following command to update to the latest version of devonfw-ide and fix the problem before rerunning setup:\n\ndevon ide update scripts\n\n"
+    fi
+  fi
   if [ ! -f "${SETTINGS_PATH}/devon.properties" ]
   then
     doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
@@ -560,5 +570,6 @@ then
 else
   doFail "Missing arguments. Call 'devon help ide' to get help."
 fi
+
 echo
 doSuccess "Completed ${*}"
