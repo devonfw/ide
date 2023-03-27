@@ -193,6 +193,7 @@ function doCheckVersionRange() {
 function doCheckSoftwareSecurityVersion() {
   local software="${1}"
   local version="${2}"
+  local edition="${3}"
   local security_file
   local check="0"
   local line=""
@@ -200,14 +201,10 @@ function doCheckSoftwareSecurityVersion() {
   local mylast
   if [ -d "${DEVON_IDE_HOME}/ide-urls" ]
   then
-    if [ "${software}" == "git" ]
-    then 
-      edition="git"
+    if [ -z "${edition}" ]
+    then
+      edition="${software}"
     else
-      if [ -z "${edition}" ]
-      then
-        edition="${software}"
-      fi
       doTranslateMirrorOptionsToUrlOptions
     fi
     security_file="${DEVON_IDE_HOME}/ide-urls/${software}/${edition}/security"
@@ -1515,7 +1512,7 @@ function doInstall() {
     doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
   fi
 
-  doCheckSoftwareSecurityVersion "${software}" "${version}"
+  doCheckSoftwareSecurityVersion "${software}" "${version}" "${edition}"
   return ${result}
 }
 
