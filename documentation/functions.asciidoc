@@ -351,9 +351,6 @@ Updates the PATH variable according to the latest tools installed in the `softwa
 
 == Version handling
 
-=== doCheckGitVersion
-Determines whether there is an security issue with the active git version, listed in the security file.
-
 === doCheckSoftwareSecurityVersion
 Determines whether the actual version is contained in the security file for the corresponding tool and print out a message if so.
 
