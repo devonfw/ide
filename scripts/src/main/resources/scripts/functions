@@ -198,7 +198,7 @@ function doCheckSoftwareSecurityVersion() {
   local check="0"
   local line=""
   local first_version
-  local last_last
+  local last_version
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     if [ -z "${edition}" ]
