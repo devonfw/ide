@@ -10,4 +10,6 @@ The `kotlin` commandlet allows to install and setup https://kotlinlang.org/[Kotl
 |*Argument(s)*                       |*Meaning*
 |`setup`                             |setup Kotlin (install or update and verify),  via `KOTLIN_VERSION` (e.g. `1.8.10`)
 |`version`                           |print the version of the installed Kotlin
+|`version list`                      |list available Kotlin versions
+|`version set [«v»]`                 |set a specific Kotlin version «v»
 |=======================
