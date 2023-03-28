@@ -167,6 +167,74 @@ function doEchoInteraction() {
   echo -e "\033[96m${*}\033[39m"
 }
 
+# $1: first_range_version
+# $2: version
+# $3: last_range_version
+# returns 0 if first_range_version <= version <= last_range_version
+function doCheckVersionRange() {
+  local first_range_version="${1}"
+  local version="${2}"
+  local last_range_version="${3}"
+  doVersionCompare "${first_range_version}" "${version}" 
+  check1="${?}"
+  doVersionCompare "${version}" "${last_range_version}" 
+  check2="${?}"
+  if [ "${check1}" != "1" ] && [ "${check2}" != "1" ] 
+  then
+    return 0
+  else 
+    return 1
+  fi
+}
+
+# $1: software
+# $2: version
+# $3: edition
+function doCheckSoftwareSecurityVersion() {
+  local software="${1}"
+  local version="${2}"
+  local edition="${3}"
+  local security_file
+  local check="0"
+  local line=""
+  local first_version
+  local last_version
+  local software_info="${software}"
+  if [ -z "${edition}" ]
+  then
+    edition="${software}"
+  fi
+  security_file="${DEVON_IDE_HOME}/urls/${software}/${edition}/security"
+  if [ -f "${security_file}" ]
+  then
+    while IFS= read -r line
+    do
+      first_version="$(echo "${line}" | cut -d'>' -f 1)"
+      last_version="$(echo "${line}" | cut -d'>' -f 2)"
+      doCheckVersionRange "${first_version}" "${version}" "${last_version}"
+      if [ "${?}" == "0" ]
+      then
+        check="1"
+      fi
+    done < "${security_file}"
+    if [ "${check}" == "1" ]
+    then
+      if [ "${edition}" != "${software}" ]
+      then
+        software_info="${software} with edition ${edition}"
+      fi
+      mymessage="You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
+      doReportVersionSecurityWarning "${mymessage}"
+    fi
+  fi
+}
+
+# $1: message
+function doReportVersionSecurityWarning() {
+  local message="${1}"
+  doWarning "${message}"
+}
+
 function doDebug() {
   if ! doIsDebug
   then
@@ -1418,6 +1486,8 @@ function doInstall() {
   then
     doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of ${software}"
   fi
+
+  doCheckSoftwareSecurityVersion "${software}" "${version}" "${edition}"
   return ${result}
 }
 
