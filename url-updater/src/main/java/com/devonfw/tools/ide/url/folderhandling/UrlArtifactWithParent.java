@@ -7,8 +7,8 @@ package com.devonfw.tools.ide.url.folderhandling;
  */
 public interface UrlArtifactWithParent<P extends UrlFolder<?>> extends UrlArtifact {
 
-  /**
-   * @return the parent {@link UrlFolder} owning this artifact as child.
-   */
-  P getParent();
+	/**
+	 * @return the parent {@link UrlFolder} owning this artifact as child.
+	 */
+	P getParent();
 }

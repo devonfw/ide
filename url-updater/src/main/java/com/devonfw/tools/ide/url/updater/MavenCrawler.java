@@ -1,67 +1,65 @@
 package com.devonfw.tools.ide.url.updater;
 
-import com.devonfw.tools.ide.url.updater.mavenapiclasses.Metadata;
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
+import com.devonfw.tools.ide.url.updater.mavenapiclasses.Metadata;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * The MavenCrawler class is an abstract class that provides functionality for crawling Maven repositories.
+ * The MvnCrawler class is an abstract class that provides functionality for crawling Maven repositories.
  */
 public abstract class MavenCrawler extends AbstractCrawler {
-    protected abstract String getArtifcatId();
+	private final static Logger logger = LoggerFactory.getLogger(MavenCrawler.class.getName());
+	private final String mavenBaseRepoUrl;
 
-    protected abstract String getGroupIdPath();
+	public MavenCrawler() {
+		super();
+		this.mavenBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
 
-    private final String mavenBaseRepoUrl;
+	}
 
-    private final static Logger logger = Logger.getLogger(MavenCrawler.class.getName());
+	protected abstract String getGroupIdPath();
 
-    public MavenCrawler() {
-        super();
-        this.mavenBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
+	protected abstract String getArtifcatId();
 
-    }
+	@Override
+	protected Set<String> getVersions() {
+		return doGetVersionsFromMavenApi(this.mavenBaseRepoUrl + "maven-metadata.xml");
+	}
 
-    protected String getExtension() {
-        return ".jar";
-    }
+	@Override
+	protected void updateVersion(UrlVersion urlVersion) {
+		String version = urlVersion.getName();
+		String url = mavenBaseRepoUrl + version + "/" + getArtifcatId() + "-" + version + getExtension();
+		doUpdateVersion(urlVersion, url);
+	}
 
-    @Override
-    protected void updateVersion(UrlVersion urlVersion) {
-        String version = urlVersion.getName();
-        String url = mavenBaseRepoUrl + version + "/" + getArtifcatId() + "-" + version + getExtension();
-        doUpdateVersion(urlVersion, url);
-    }
+	protected String getExtension() {
+		return ".jar";
+	}
 
-    /**
-     * Gets the versions from the Maven API.
-     *
-     * @param url The Url of the metadata.xml file
-     * @return The versions.
-     */
-    private Set<String> doGetVersionsFromMavenApi(String url) {
-        Set<String> versions = new HashSet<>();
-        try {
-            String response = doGetResponseBody(url);
-            XmlMapper mapper = new XmlMapper();
-            Metadata metaData = mapper.readValue(response, Metadata.class);
-            versions.addAll(metaData.getVersioning().getVersions());
-        } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error while getting javaJsonVersions", e);
-        }
-        logger.log(Level.INFO, "Found  javaJsonVersions : " + versions);
-
-        return versions;
-    }
-
-    @Override
-    protected Set<String> getVersions() {
-        return doGetVersionsFromMavenApi(this.mavenBaseRepoUrl + "maven-metadata.xml");
-    }
+	/**
+	 * Gets the versions from the Maven API.
+	 *
+	 * @param url The Url of the metadata.xml file
+	 * @return The versions.
+	 */
+	private Set<String> doGetVersionsFromMavenApi(String url) {
+		Set<String> versions = new HashSet<>();
+		try {
+			String response = doGetResponseBody(url);
+			XmlMapper mapper = new XmlMapper();
+			Metadata metaData = mapper.readValue(response, Metadata.class);
+			versions.addAll(metaData.getVersioning().getVersions());
+		} catch (IOException e) {
+			logger.error("URLStatusError while getting javaJsonVersions", e);
+		}
+		logger.info("Found  javaJsonVersions : {}", versions);
+		return versions;
+	}
 }

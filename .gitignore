@@ -16,3 +16,6 @@ generated/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+url-updater/src/main/java/com/devonfw/tools/ide/url/UpdateInitiator.java
+url-updater/src/main/java/com/devonfw/tools/ide/url/updater/intellij/IntelliJUltimateEditionCrawler.java
+url-updater/src/main/java/com/devonfw/tools/ide/url/updater/kotlin/KotlinNativeCrawler.java

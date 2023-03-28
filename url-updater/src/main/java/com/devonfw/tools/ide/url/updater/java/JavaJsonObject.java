@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaJsonObject implements JsonObject {
-    private final List<JavaJsonVersion> versions = new ArrayList<>();
+	private final List<JavaJsonVersion> versions = new ArrayList<>();
 
-    public List<JavaJsonVersion> getVersions () {
-        return versions;
-    }
+	public List<JavaJsonVersion> getVersions() {
+		return versions;
+	}
 }
 

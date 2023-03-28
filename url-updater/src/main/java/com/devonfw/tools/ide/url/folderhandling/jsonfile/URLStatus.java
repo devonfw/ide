@@ -1,27 +1,27 @@
 package com.devonfw.tools.ide.url.folderhandling.jsonfile;
 
 public class URLStatus {
-    private Success success;
-    private Error error;
+	private URLStatusSuccess URLStatusSuccess;
+	private URLStatusError URLStatusError;
 
-    public URLStatus(){
-    }
+	public URLStatus() {
+	}
 
-    public Success getSuccess() {
-        return success;
-    }
+	public URLStatusSuccess getSuccess() {
+		return URLStatusSuccess;
+	}
 
-    public void setSuccess(Success success) {
-        this.success = success;
-    }
+	public void setSuccess(URLStatusSuccess URLStatusSuccess) {
+		this.URLStatusSuccess = URLStatusSuccess;
+	}
 
-    public Error getError() {
-        return error;
-    }
+	public URLStatusError getError() {
+		return URLStatusError;
+	}
 
-    public void setError(Error error) {
-        this.error = error;
-    }
+	public void setError(URLStatusError URLStatusError) {
+		this.URLStatusError = URLStatusError;
+	}
 }
 
 

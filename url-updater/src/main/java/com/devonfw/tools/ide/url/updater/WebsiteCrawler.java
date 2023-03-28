@@ -1,8 +1,8 @@
 package com.devonfw.tools.ide.url.updater;
 
 
-import java.util.*;
-import java.util.logging.Level;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -17,53 +17,51 @@ import java.util.regex.Pattern;
  * specify the version pattern and URL of the website to crawl, respectively.
  */
 public abstract class WebsiteCrawler extends AbstractCrawler {
-    /**
-     * Returns the pattern for matching version numbers in the HTML body of the website.
-     *
-     * @return the pattern for matching version numbers
-     */
-    protected abstract Pattern getVersionPattern();
+	private final Logger logger = Logger.getLogger(WebsiteCrawler.class.getName());
 
-    /**
-     * Returns the URL of the website to crawl.
-     *
-     * @return the URL of the website
-     */
-    protected abstract String getVersionUrl();
+	/**
+	 * Retrieves the available versions by performing a GET request on the version URL and
+	 * extracting the version numbers from the HTML body of the response.
+	 *
+	 * @return a set of available version numbers
+	 */
+	@Override
+	protected Set<String> getVersions() {
+		return doGetRegexMatchesAsList(doGetResponseBody(getVersionUrl()));
+	}
 
-    private final Logger logger = Logger.getLogger(WebsiteCrawler.class.getName());
+	/**
+	 * Extracts the version numbers from the given HTML body by matching them against the
+	 * pattern returned by the getVersionPattern method.
+	 *
+	 * @param htmlBody the HTML body to extract version numbers from
+	 * @return a set of version numbers extracted from the HTML body
+	 */
+	protected Set<String> doGetRegexMatchesAsList(String htmlBody) {
+		Set<String> versions = new HashSet<>();
+		var matcher = getVersionPattern().matcher(htmlBody);
+		while (matcher.find()) {
+			MatchResult result = matcher.toMatchResult();
+			String match = result.group();
+			versions.add(match);
+		}
+		logger.info("Found  versions : " + versions);
+		return versions;
+	}
 
+	/**
+	 * Returns the URL of the website to crawl.
+	 *
+	 * @return the URL of the website
+	 */
+	protected abstract String getVersionUrl();
 
-    /**
-     * Retrieves the available versions by performing a GET request on the version URL and
-     * extracting the version numbers from the HTML body of the response.
-     *
-     * @return a set of available version numbers
-     */
-    @Override
-    protected Set<String> getVersions() {
-        return doGetRegexMatchesAsList(doGetResponseBody(getVersionUrl()));
-    }
-
-
-    /**
-     * Extracts the version numbers from the given HTML body by matching them against the
-     * pattern returned by the getVersionPattern method.
-     *
-     * @param htmlBody the HTML body to extract version numbers from
-     * @return a set of version numbers extracted from the HTML body
-     */
-    protected Set<String> doGetRegexMatchesAsList(String htmlBody) {
-        Set<String> versions = new HashSet<>();
-        var matcher = getVersionPattern().matcher(htmlBody);
-        while (matcher.find()) {
-            MatchResult result = matcher.toMatchResult();
-            String match = result.group();
-            versions.add(match);
-        }
-        logger.log(Level.INFO, "Found  versions : " + versions);
-        return versions;
-    }
+	/**
+	 * Returns the pattern for matching version numbers in the HTML body of the website.
+	 *
+	 * @return the pattern for matching version numbers
+	 */
+	protected abstract Pattern getVersionPattern();
 
 
 }

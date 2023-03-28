@@ -11,27 +11,29 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public abstract class JsonCrawler<J extends JsonObject> extends AbstractCrawler{
+public abstract class JsonCrawler<J extends JsonObject> extends AbstractCrawler {
 
-    private final Logger logger = LoggerFactory.getLogger(JsonCrawler.class.getName());
+	private final Logger logger = LoggerFactory.getLogger(JsonCrawler.class.getName());
 
-    protected abstract Class<J> getJsonObjectType();
-    protected abstract String doGetVersionUrl();
-    protected abstract void collectVersionsFromJson(J jsonItem, Collection<String> versions);
+	@Override
+	protected Set<String> getVersions() {
+		String url = doGetVersionUrl();
+		Set<String> versions = new HashSet<>();
+		try {
+			String response = doGetResponseBody(url);
+			ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			J jsonObject = mapper.readValue(response, getJsonObjectType());
+			collectVersionsFromJson(jsonObject, versions);
+			logger.info("Found following versions in json {}", versions);
+		} catch (IOException e) {
+			logger.error("URLStatusError while getting Versions from Json api {}", url, e);
+		}
+		return versions;
+	}
 
-    @Override
-    protected Set<String> getVersions() {
-        String url = doGetVersionUrl();
-        Set<String> versions = new HashSet<>();
-        try {
-            String response = doGetResponseBody(url);
-            ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            J jsonObject = mapper.readValue(response, getJsonObjectType());
-            collectVersionsFromJson(jsonObject,versions);
-            logger.info("Found following versions in json {}", versions);
-        } catch (IOException e) {
-            logger.error("Error while getting Versions from Json api {}",url, e);
-        }
-        return versions;
-    }
+	protected abstract String doGetVersionUrl();
+
+	protected abstract Class<J> getJsonObjectType();
+
+	protected abstract void collectVersionsFromJson(J jsonItem, Collection<String> versions);
 }
