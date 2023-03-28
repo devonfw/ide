@@ -35,6 +35,11 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The {@code UpdateManager} class manages the update process for various tools by using a list of {@link AbstractCrawler}s
+ * to update the {@link UrlRepository}. The list of {@link AbstractCrawler}s contains crawlers for different tools and services,
+ * To use the UpdateManager, simply create an instance with the path to the repository as a parameter and call the {@link #updateAll()} method.
+ */
 public class UpdateManager {
     private final UrlRepository urlRepository;
 

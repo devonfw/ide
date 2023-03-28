@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The MavenCrawler class is an abstract class that provides functionality for crawling Maven repositories.
+ */
 public abstract class MavenCrawler extends AbstractCrawler {
     protected abstract String getArtifcatId();
 
@@ -24,7 +27,8 @@ public abstract class MavenCrawler extends AbstractCrawler {
         this.mavenBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
 
     }
-    protected String getExtension(){
+
+    protected String getExtension() {
         return ".jar";
     }
 
@@ -35,7 +39,12 @@ public abstract class MavenCrawler extends AbstractCrawler {
         doUpdateVersion(urlVersion, url);
     }
 
-
+    /**
+     * Gets the versions from the Maven API.
+     *
+     * @param url The Url of the metadata.xml file
+     * @return The versions.
+     */
     private Set<String> doGetVersionsFromMavenApi(String url) {
         Set<String> versions = new HashSet<>();
         try {
