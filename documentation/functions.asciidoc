@@ -439,6 +439,3 @@ In this case, it does the handling to `list`, `get`, or `set` the version and ex
 If -- is passed, a variable is set that prevents further calls of this function and ends with the return value 0.
 If none of these options are passed, the return value is 255.
 
-=== doTranslateMirrorOptionsToUrlOptions
-Translate edition variables from mirrors environment to ide-urls environment.
-

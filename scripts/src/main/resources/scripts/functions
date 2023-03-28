@@ -204,8 +204,6 @@ function doCheckSoftwareSecurityVersion() {
     if [ -z "${edition}" ]
     then
       edition="${software}"
-    else
-      doTranslateMirrorOptionsToUrlOptions
     fi
     security_file="${DEVON_IDE_HOME}/urls/${software}/${edition}/security"
   fi
@@ -238,33 +236,6 @@ function doCheckSoftwareSecurityVersion() {
 function doReportVersionSecurityWarning() {
   local message="${1}"
   doWarning "${message}"
-}
-
-function doTranslateMirrorOptionsToUrlOptions() {
-  if [ -n "${INTELLIJ_EDITION_TYPE}" ]
-  then
-    case "${INTELLIJ_EDITION_TYPE}" in
-      "c"|"C") # shellcheck disable=SC2034
-               INTELLIJ_EDITION="community";;
-
-      "u"|"U") # shellcheck disable=SC2034
-               INTELLIJ_EDITION="ultimate";;
-    esac
-  fi
-  if [ -n "${ECLIPSE_EDITION_TYPE}" ]
-  then
-    # shellcheck disable=SC2034
-    ECLIPSE_EDITION="${ECLIPSE_EDITION_TYPE}"
-  fi
-  if [ -n "${DOCKER_EDITION}" ]
-  then
-    # shellcheck disable=SC2034
-    case ${DOCKER_EDITION} in
-      DOCKERDESKTOP) DOCKER_EDITION="docker";;
-      docker)        DOCKER_EDITION="docker";;
-      *)             DOCKER_EDITION="rancher";;
-    esac
-  fi
 }
 
 function doDebug() {
