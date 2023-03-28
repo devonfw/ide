@@ -14,7 +14,7 @@ public class KotlinNativeCrawler extends WebsiteCrawler {
 
     @Override
     protected String getEdition() {
-        return "kotlinnative";
+        return "kotlin_native";
     }
 
     @Override
