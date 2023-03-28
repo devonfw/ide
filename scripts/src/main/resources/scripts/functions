@@ -175,21 +175,21 @@ function doCheckVersionRange() {
   local first_range_version="${1}"
   local version="${2}"
   local last_range_version="${3}"
-  doVersionCompare "${version}" "${first_range_version}"
+  doVersionCompare "${first_range_version}" "${version}" 
   check1="${?}"
-  doVersionCompare "${last_range_version}" "${version}"
+  doVersionCompare "${version}" "${last_range_version}" 
   check2="${?}"
-  if [ "${check1}" == "2" ] || [ "${check2}" == "2" ] 
+  if [ "${check1}" != "1" ] && [ "${check2}" != "1" ] 
   then
-    return 1
-  else 
     return 0
+  else 
+    return 1
   fi
 }
 
 # $1: software
 # $2: version
-# return 1 if version is found in tool's security file
+# $3: edition
 function doCheckSoftwareSecurityVersion() {
   local software="${1}"
   local version="${2}"
@@ -199,14 +199,12 @@ function doCheckSoftwareSecurityVersion() {
   local line=""
   local first_version
   local last_version
-  if [ -d "${DEVON_IDE_HOME}/urls" ]
+  local software_info=${software}
+  if [ -z "${edition}" ]
   then
-    if [ -z "${edition}" ]
-    then
-      edition="${software}"
-    fi
-    security_file="${DEVON_IDE_HOME}/urls/${software}/${edition}/security"
+    edition="${software}"
   fi
+  security_file="${DEVON_IDE_HOME}/urls/${software}/${edition}/security"
   if [ -f "${security_file}" ]
   then
     while IFS= read -r line
@@ -221,12 +219,11 @@ function doCheckSoftwareSecurityVersion() {
     done < "${security_file}"
     if [ "${check}" == "1" ]
     then
-      if [ -z "${edition}" ]
+      if [ "${edition}" != "${software}" ]
       then
-        mymessage="You are using the tool ${software} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
-      else
-        mymessage="You are using the tool ${software}, edition ${edition} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
-      fi 
+        software_info = "${software} with edition ${edition}"
+      fi
+      mymessage="You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
       doReportVersionSecurityWarning "${mymessage}"
     fi
   fi
