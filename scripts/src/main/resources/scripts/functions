@@ -189,6 +189,7 @@ function doCheckVersionRange() {
 
 # $1: software
 # $2: version
+# $3: edition
 # return 1 if version is found in tool's security file
 function doCheckSoftwareSecurityVersion() {
   local software="${1}"
