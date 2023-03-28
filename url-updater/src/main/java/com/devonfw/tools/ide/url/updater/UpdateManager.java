@@ -16,6 +16,7 @@ import com.devonfw.tools.ide.url.updater.intellij.IntelliJUltimateEditionCrawler
 import com.devonfw.tools.ide.url.updater.java.JavaCrawler;
 import com.devonfw.tools.ide.url.updater.jenkins.JenkinsCrawler;
 import com.devonfw.tools.ide.url.updater.kotlin.KotlinCrawler;
+import com.devonfw.tools.ide.url.updater.kotlin.KotlinNativeCrawler;
 import com.devonfw.tools.ide.url.updater.lazydocker.LazyDockerCrawler;
 import com.devonfw.tools.ide.url.updater.maven.MavenCrawler;
 import com.devonfw.tools.ide.url.updater.nodejs.NodeJsCrawler;
@@ -59,6 +60,7 @@ public class UpdateManager {
             new JavaCrawler(),
             new JenkinsCrawler(),
             new KotlinCrawler(),
+            new KotlinNativeCrawler(),
             new LazyDockerCrawler(),
             new MavenCrawler(),
             new NodeJsCrawler(),
