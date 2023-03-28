@@ -199,7 +199,7 @@ function doCheckSoftwareSecurityVersion() {
   local line=""
   local first_version
   local last_version
-  local software_info=${software}
+  local software_info="${software}"
   if [ -z "${edition}" ]
   then
     edition="${software}"
@@ -221,7 +221,7 @@ function doCheckSoftwareSecurityVersion() {
     then
       if [ "${edition}" != "${software}" ]
       then
-        software_info = "${software} with edition ${edition}"
+        software_info="${software} with edition ${edition}"
       fi
       mymessage="You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
       doReportVersionSecurityWarning "${mymessage}"
