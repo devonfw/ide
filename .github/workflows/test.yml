@@ -14,7 +14,9 @@ jobs:
           path: ide-urls
           token: ${{ secrets.ACTION_PUSH_TOKEN }}
       - name: Build and run url updater
-        run: touch testingFile.txt
+        run: |
+          cd ide-urls
+          touch testingFile.txt
       - name: Commit and push to ide-urls
         run: |
           cd ide-urls
