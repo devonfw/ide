@@ -15,8 +15,9 @@ jobs:
           token: ${{ secrets.ACTION_PUSH_TOKEN }}
       - name: Build and run url updater
         run: |
-          cd ide-urls
-          touch testingFile.txt
+          cd url-updater
+          mvn install
+          mvn exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls"
       - name: Commit and push to ide-urls
         run: |
           cd ide-urls
