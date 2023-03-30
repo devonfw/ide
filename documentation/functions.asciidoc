@@ -351,6 +351,12 @@ Updates the PATH variable according to the latest tools installed in the `softwa
 
 == Version handling
 
+=== doCheckSoftwareSecurityVersion
+Determines whether the actual version is contained in the security file for the corresponding tool and print out a message if so.
+
+=== doCheckVersionRange
+Determines whether a version is in a version range.
+
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
@@ -370,6 +376,9 @@ If this is the case, it ends with the return value `0` otherwise `1`.
 
 === doListSoftwareVersions
 Takes the name of the tool as a parameter and displays the available versions.
+
+=== doReportVersionSecurityWarning
+Prints out a message on version security alerts.
 
 === doSetSoftwareVersion
 Used to set a specific version of a software tool, and requires 2 parameters: the name of the software tool and the desired version.
