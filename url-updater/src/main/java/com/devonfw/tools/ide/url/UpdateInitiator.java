@@ -23,6 +23,5 @@ public class UpdateInitiator {
 		}
 		UpdateManager updateManager = new UpdateManager(repoPath);
 		updateManager.updateAll();
-
 	}
 }

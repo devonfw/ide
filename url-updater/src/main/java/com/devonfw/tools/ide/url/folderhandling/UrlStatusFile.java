@@ -12,7 +12,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -68,9 +67,13 @@ public class UrlStatusFile extends AbstractUrlFile {
 	@Override
 	public void doLoad() {
 		Path path = getPath();
+		if (!Files.exists(path)) {
+			this.jsonFileData = new StatusJson();
+			return;
+		}
 		try (BufferedReader reader = Files.newBufferedReader(path)) {
 			this.jsonFileData = MAPPER.readValue(reader, StatusJson.class);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to load " + path, e);
 		}
 	}
@@ -79,7 +82,7 @@ public class UrlStatusFile extends AbstractUrlFile {
 	public void doSave() {
 		try (BufferedWriter writer = Files.newBufferedWriter(getPath(), StandardOpenOption.CREATE)) {
 			MAPPER.writeValue(writer, this.jsonFileData);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Failed to save file " + getPath(), e);
 		}
 	}

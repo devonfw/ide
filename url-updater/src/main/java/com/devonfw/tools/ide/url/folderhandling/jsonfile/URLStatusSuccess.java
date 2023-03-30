@@ -3,17 +3,17 @@ package com.devonfw.tools.ide.url.folderhandling.jsonfile;
 import java.time.Instant;
 
 public class URLStatusSuccess {
-	private String timestamp;
+	private Instant timestamp;
 
 	public URLStatusSuccess() {
-		this.timestamp = Instant.now().toString();
+		this.timestamp = Instant.now();
 	}
 
-	public String getTimestamp() {
+	public Instant getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(Instant timestamp) {
 		this.timestamp = timestamp;
 	}
 }
