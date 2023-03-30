@@ -17,8 +17,6 @@ public class PythonCrawler extends WebsiteCrawler {
 		doUpdateVersion(urlVersion, "https://www.python.org/ftp/python/${version}/python-${version}-embed-win32.zip", OSType.WINDOWS);
 		doUpdateVersion(urlVersion, "https://www.python.org/ftp/python/${version}/Python-${version}.tgz", OSType.LINUX);
 		doUpdateVersion(urlVersion, "https://www.python.org/ftp/python/${version}/Python-${version}.tgz", OSType.MAC);
-
-
 	}
 
 	@Override
