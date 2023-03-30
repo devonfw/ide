@@ -16,7 +16,7 @@ public class UpdateInitiator {
 			logger.error("Usage: java UpdateInitiator <path_to_repository>");
 			System.exit(1);
 		}
-		String pathToRepo = "C:\\Users\\alfeil\\Desktop\\ide-urls";
+		String pathToRepo = args[0];
 		Path repoPath = Path.of(pathToRepo);
 		if (!repoPath.toFile().isDirectory()) {
 			logger.error("Error: Provided path is not a valid directory.");
