@@ -1,5 +1,6 @@
 package com.devonfw.tools.ide.url;
 
+import com.devonfw.tools.ide.url.updater.ChecksumGenerator;
 import com.devonfw.tools.ide.url.updater.UpdateManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ public class UpdateInitiator {
 			logger.error("Usage: java UpdateInitiator <path_to_repository>");
 			System.exit(1);
 		}
-		String pathToRepo = args[0];
+		String pathToRepo = "C:\\Users\\alfeil\\Desktop\\ide-urls";
 		Path repoPath = Path.of(pathToRepo);
 		if (!repoPath.toFile().isDirectory()) {
 			logger.error("Error: Provided path is not a valid directory.");
@@ -23,6 +24,7 @@ public class UpdateInitiator {
 		}
 		UpdateManager updateManager = new UpdateManager(repoPath);
 		updateManager.updateAll();
-
+		ChecksumGenerator checksumGenerator = new ChecksumGenerator();
+		checksumGenerator.generateChecksums(repoPath.toFile().listFiles());
 	}
 }

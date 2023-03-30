@@ -54,6 +54,4 @@ public class UpdateManager {
 			crawler.update(urlRepository);
 		}
 	}
-
-
 }
