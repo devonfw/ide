@@ -64,7 +64,6 @@ function doAddPlugins() {
         pluginsToInstall+=("${plugin_id}")
       elif [ "${plugin_active}" = "false" ]
       then
-        local IFS=, 
         pluginsToRecommend+=("\"${plugin_id}\"")
       fi
     fi
@@ -77,6 +76,7 @@ function doAddPlugins() {
   # set vscode recommendations
   if [ "${#pluginsToRecommend}" -gt 0 ]
   then
+    local IFS=, 
     doAddRecommendations "${pluginsToRecommend[@]}"
   fi
 }

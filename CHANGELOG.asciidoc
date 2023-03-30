@@ -2,13 +2,49 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.04.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1054[#1054]: automated security warnings
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/43?closed=1[milestone 2023.04.001].
+
+== 2023.03.003
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1074[#1074]: Fix vscode plugin installation
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/42?closed=1[milestone 2023.03.003].
+
+== 2023.03.002
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1071[#1071]: devon.bat sets wrong user PATH in Windows system environment settings
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/41?closed=1[milestone 2023.03.002].
+
+== 2023.03.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1068[#1068]: setup of devon ide create hangs
+* https://github.com/devonfw/ide/issues/999[#999]: Ability to require minimum devonfw-ide version
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/40?closed=1[milestone 2023.03.001].
+
 == 2023.02.001
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1066[#1066]: devon.bat stopped adding PATH
+* https://github.com/devonfw/ide/issues/1043[#1043]: Environment variables defined in devon.properties are not available in devonfw CMD 
 * https://github.com/devonfw/ide/issues/982[#982]: Add plugin recommendation feature to vscode
 * https://github.com/devonfw/ide/issues/971[#971]: Ability to run "migration script" on update
 * https://github.com/devonfw/ide/issues/991[#991]: Integrate openrewrite feature
+* https://github.com/devonfw/ide/issues/1030[#1030]: Rancher Desktop Installation not detected
 * https://github.com/devonfw/ide/issues/1062[#1062]: Migration support for devon4j 2023.01.001
 * https://github.com/devonfw/ide/issues/1052[#1052]: Fix leading spaces on MacOS
 * https://github.com/devonfw/ide/issues/1022[#1022]: suppress confusing windows process result messages like The operation completed successfully.
