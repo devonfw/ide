@@ -17,7 +17,7 @@ jobs:
         with:
           java-version: '11'
       - name: Set up shellcheck
-        run: scoop install shellcheck
+        run: choco install shellcheck
       - name: Build project with Maven
         run: |
           export INTEGRATION_TEST=false
