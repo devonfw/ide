@@ -898,34 +898,19 @@ function doBackup() {
 # $3: backup path
 # $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
-  local source_dir="${1}"
-  local target_dir="${2}"
-  local backup_dir="${3}"
-  local root_dir="${1}"
+  local source_path="${1}"
+  local target_path="${2}"
+  local backup_path="${3}"
+  local root_path="${1}"
   shift 3
-  local files
-  local anz_files
-  local dir="${1}"
-  if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
+  local path="${1}"
+  if [ "${#*}" = 1 ] && [ "${source_path%.app}" = "${source_path}" ] && [ -d "${source_path}" ] && [ "$(basename "${source_path}")" != "Contents" ]
   then
-    files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-    anz_files="$(echo "${files}" | awk 'END{print NR}')"
-    while [ "${anz_files}" == "1" ]
-    do
-      if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
-      then
-        dir="${dir}/${files}"
-      else
-        break
-      fi
-      files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-      anz_files="$(echo "${files}" | awk 'END{print NR}')"
-    done
-    source_dir="${dir}"
-    doDebug "Changing source directory from ${root_dir} to ${source_dir} due to single folder."
+    doReplaceExtractedSkipSingleFolder "${path}" "${target_path}" "${backup_path}" "${path}"/*
+  else
+    doReplaceExtractedFile "${source_path}" "${target_path}" "${backup_path}"
+    [ -d "${root_path}" ] && rm -rf "${root_path}"
   fi
-  doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
-  [ -d "${root_dir}" ] && rm -rf "${root_dir}"
 }
 
 # $1: path of the extracted name to install (move to target)
