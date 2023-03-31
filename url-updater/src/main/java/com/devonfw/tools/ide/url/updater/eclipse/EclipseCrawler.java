@@ -33,17 +33,17 @@ public abstract class EclipseCrawler extends WebsiteCrawler {
 
 		//osuosl
 		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-win32-x86_64.zip", OSType.WINDOWS, "x64", getEdition());
-		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-win32-x86_64.zip", OSType.WINDOWS, "x64", getEdition());
+		// doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-win32-x86_64.zip", OSType.WINDOWS, "x64", getEdition());
 
 		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
-		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
+		// doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
 		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-linux-gtk-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
-		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
+		// doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-linux-gtk-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
 
 		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
-		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
+		// doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-x86_64.tar.gz", OSType.LINUX, "x64", getEdition());
 		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/R/eclipse-${edition}-${version}-R-macosx-cocoa-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
-		doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
+		// doUpdateVersion(urlVersion, "https://ftp.osuosl.org/pub/eclipse/technology/epp/downloads/release/${version}/M1/eclipse-${edition}-${version}-M1-macosx-cocoa-aarch64.tar.gz", OSType.LINUX, "arm64", getEdition());
 	}
 
 	@Override
