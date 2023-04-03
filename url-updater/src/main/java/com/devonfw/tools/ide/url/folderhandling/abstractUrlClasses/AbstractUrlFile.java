@@ -8,51 +8,52 @@ import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
  */
 public abstract class AbstractUrlFile extends AbstractUrlArtifactWithParent<UrlVersion> implements UrlFile {
 
-  /**
-   * {@code true} if modified and changes are unsaved, {@code false} otherwise.
-   */
-  protected boolean modified;
 
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent folder}.
-   * @param name the {@link #getName() filename}.
-   */
-  public AbstractUrlFile(UrlVersion parent, String name) {
+	/**
+	 * {@code true} if modified and changes are unsaved, {@code false} otherwise.
+	 */
+	protected boolean modified;
 
-    super(parent, name);
-    this.modified = true;
-  }
+	/**
+	 * The constructor.
+	 *
+	 * @param parent the {@link #getParent() parent folder}.
+	 * @param name   the {@link #getName() filename}.
+	 */
+	public AbstractUrlFile(UrlVersion parent, String name) {
 
-  @Override
-  protected void load() {
+		super(parent, name);
+		this.modified = true;
+	}
 
-    doLoad();
-    this.modified = false;
-  }
+	@Override
+	protected void load() {
 
-  /**
-   * Performs the actual loading.
-   *
-   * @see #load()
-   */
-  protected abstract void doLoad();
+		doLoad();
+		this.modified = false;
+	}
 
-  @Override
-  public void save() {
+	/**
+	 * Performs the actual loading.
+	 *
+	 * @see #load()
+	 */
+	protected abstract void doLoad();
 
-    if (this.modified) {
-      doSave();
-      this.modified = false;
-    }
-  }
+	@Override
+	public void save() {
 
-  /**
-   * Performs the actual saving.
-   *
-   * @see #save()
-   */
-  protected abstract void doSave();
+		if (this.modified) {
+			doSave();
+			this.modified = false;
+		}
+	}
+
+	/**
+	 * Performs the actual saving.
+	 *
+	 * @see #save()
+	 */
+	protected abstract void doSave();
 
 }
