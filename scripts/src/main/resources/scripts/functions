@@ -904,7 +904,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local root_path="${1}"
   shift 3
   local path="${1}"
-  if [ "${#*}" = 1 ] && [ "${path%.app}" = "${path}" ] && [ -d "${path}" ] && [ "$(basename "${path}")" != "Contents" ]
+  if [ "${#*}" = 1 ] && [ "${path%.app}" = "${path}" ] && [ -d "${path}" ] && [ "$(basename "${path}")" != "Contents" ] && [ "$(basename "${path}")" != "bin" ]
   then
     doReplaceExtractedSkipSingleFolder "${path}" "${target_path}" "${backup_path}" "${path}"/*
   else
