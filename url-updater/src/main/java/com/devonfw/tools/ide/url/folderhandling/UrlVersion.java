@@ -1,12 +1,12 @@
 package com.devonfw.tools.ide.url.folderhandling;
 
-import java.io.File;
+import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFolderWithParent;
 
 /**
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
@@ -14,131 +14,90 @@ import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFo
  */
 public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile> {
 
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent folder}.
-   * @param name the {@link #getName() filename}.
-   */
-  public UrlVersion(UrlEdition parent, String name) {
+	/**
+	 * The constructor.
+	 *
+	 * @param parent the {@link #getParent() parent folder}.
+	 * @param name   the {@link #getName() filename}.
+	 */
+	public UrlVersion(UrlEdition parent, String name) {
 
-    super(parent, name);
-  }
+		super(parent, name);
+	}
 
-  /**
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
-   */
-  public UrlDownloadFile getOrCreateUrls() {
+	/**
+	 * @param os the name of the operating system ("windows", "linux", "mac").
+	 * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
+	 */
+	public UrlDownloadFile getOrCreateUrls(String os) {
+		return getOrCreateUrls(os, null);
+	}
 
-    return (UrlDownloadFile) getOrCreateChild("urls");
-  }
+	/**
+	 * @param os   the name of the operating system ("windows", "linux", "mac").
+	 * @param arch the architecture (e.g. "x64" or "arm64").
+	 * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
+	 * exist.
+	 */
+	public UrlDownloadFile getOrCreateUrls(String os, String arch) {
+		if (os == null && arch == null) {
+			return getOrCreateUrls();
+		}
+		return (UrlDownloadFile) getOrCreateChild(os + "_" + getArchOrDefault(arch) + ".urls");
+	}
 
-  /**
-   * @param os the name of the operating system ("windows", "linux", "mac").
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
-   */
-  public UrlDownloadFile getOrCreateUrls(String os) {
+	/**
+	 * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
+	 */
+	public UrlDownloadFile getOrCreateUrls() {
+		return (UrlDownloadFile) getOrCreateChild("urls");
+	}
 
-    return getOrCreateUrls(os, null);
-  }
+	private String getArchOrDefault(String arch) {
+		if (arch == null) {
+			return "x64";
+		}
+		return arch;
+	}
 
-  /**
-   * @param os the name of the operating system ("windows", "linux", "mac").
-   * @param arch the architecture (e.g. "x64" or "arm64").
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
-   *         exist.
-   */
-  public UrlDownloadFile getOrCreateUrls(String os, String arch) {
+	public UrlDownloadFile getUrlFile(String name) {
+		return (UrlDownloadFile) getChild(name);
+	}
 
-    if (os == null && arch == null) {
-      return getOrCreateUrls();
-    }
-    return (UrlDownloadFile) getOrCreateChild(os + "_" + getArchOrDefault(arch) + ".urls");
-  }
+	/**
+	 * @return the {@link UrlStatusFile}.
+	 */
+	public UrlStatusFile getOrCreateStatus() {
+		return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
+	}
 
-  private String getArchOrDefault(String arch) {
+	/**
+	 * This method is used to add new children to the children collection of an instance from this class.
+	 *
+	 * @param name The name of the {@link UrlFile} object that should be created.
+	 */
+	@Override
+	protected UrlFile newChild(String name) {
 
-    if (arch == null) {
-      return "x64";
-    }
-    return arch;
-  }
+		if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
+			return new UrlStatusFile(this);
+		}
+		return new UrlDownloadFile(this, name);
+	}
 
-  /**
-   * @return the {@link UrlStatusFile}.
-   */
-  public UrlStatusFile getOrCreateStatus() {
+	@Override
+	public void save() {
+		if (getChildCount() == 0) {
+			return;
+		}
+		Path path = getPath();
+		try {
+			Files.createDirectories(path);
+		} catch (IOException e) {
+			throw new IllegalStateException("Failed to create directory " + path, e);
+		}
+		super.save();
+	}
 
-    return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
-  }
 
-  /**
-   * This method is used to add new children to the children collection of an instance from this class.
-   *
-   * @param name The name of the {@link UrlFile} object that should be created.
-   */
-  @Override
-  protected UrlFile newChild(String name) {
-
-    if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
-      return new UrlStatusFile(this);
-    }
-    return new UrlDownloadFile(this, name);
-  }
-
-  @Override
-  public void save() {
-
-    Path path = getPath();
-    try {
-      Files.createDirectories(path);
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create directory " + path, e);
-    }
-    super.save();
-  }
-
-  public void createFile() {
-
-    File f = new File(getPath() + File.separator + "urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  public void createFile(String os) {
-
-    File f = new File(getPath() + File.separator + os + ".urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  public void createFile(String os, String arch) {
-
-    File f = new File(getPath() + File.separator + os + "_" + arch + ".urls");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-
-  }
-
-  // For development
-  public void createJson() {
-
-    File f = new File(getPath() + File.separator + "status.json");
-    try {
-      f.createNewFile();
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create file " + getPath(), e);
-    }
-  }
 }
