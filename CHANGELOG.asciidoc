@@ -51,7 +51,6 @@ Release with new features and bugfixes:
 * https://github.com/devonfw/ide/issues/1022[#1022]: suppress confusing windows process result messages like The operation completed successfully.
 * https://github.com/devonfw/ide/issues/1051[#1051]: creation of a documentation for using the software IObit Unlocker to find processes that block specific files
 
-
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/39?closed=1[milestone 2023.02.001].
 
 == 2023.01.001
