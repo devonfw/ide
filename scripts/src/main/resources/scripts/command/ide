@@ -492,6 +492,9 @@ case "${DEVON_IDE_HOME}" in
    ;;
 esac
 
+git_version="$(git --version | sed -e 's/\.windows\..*$//' | awk '{print $3}')"
+doCheckSoftwareSecurityVersion "git" "${git_version}"
+
 # CLI
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
