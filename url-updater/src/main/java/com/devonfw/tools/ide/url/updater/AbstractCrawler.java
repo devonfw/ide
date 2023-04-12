@@ -112,7 +112,7 @@ public abstract class AbstractCrawler implements Updater {
 
 			//generate checksum of download file
 			if (HTTPRequestResultOfURLRequest.getHttpStatusCode() == 200) {
-				UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName());
+				UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName(), client);
 				urlChecksum.doGenerateChecksum(downloadUrl);
 			}
 			return true;

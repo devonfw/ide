@@ -13,10 +13,15 @@ import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.devonfw.tools.ide.url.updater.AbstractCrawler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class UrlChecksum extends AbstractUrlFile {
 
-    final HttpClient client = HttpClient.newBuilder().build();
-    final String hashAlgorithm = "SHA-256";
+    private static final Logger logger = LoggerFactory.getLogger(UrlChecksum.class);
+    private final HttpClient client;
+    private static final String HASH_ALGORITHM = "SHA-256";
     private String checksum;
 
     /**
@@ -25,8 +30,9 @@ public class UrlChecksum extends AbstractUrlFile {
      * @param parent the {@link #getParent() parent folder}.
      * @param name   the {@link #getName() filename}.
      */
-    public UrlChecksum(UrlVersion parent, String name) {
+    public UrlChecksum(UrlVersion parent, String name, HttpClient client) {
         super(parent, name + ".sha256");
+        this.client = client;
     }
 
     public String getChecksum() {
@@ -51,7 +57,7 @@ public class UrlChecksum extends AbstractUrlFile {
         } catch (IOException | InterruptedException exception) {
             throw new IllegalStateException("Failed to retrieve response body from url: " + url, exception);
         } catch (IllegalArgumentException e) {
-            System.out.println("Error while getting response body from url {}\", url, e");
+            logger.error("Error while getting response body from url {}", url, e);
             return null;
         }
     }
@@ -63,7 +69,7 @@ public class UrlChecksum extends AbstractUrlFile {
     private String doGenerateChecksumFromInputStream(InputStream inputStream)  {
 
         try {
-            MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
+            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
 
             byte[] buffer = new byte[8192];
             int bytesRead;
@@ -77,10 +83,10 @@ public class UrlChecksum extends AbstractUrlFile {
             System.out.println(checksum);
             return checksum;
         } catch (IOException e) {
+            logger.error("Failed to read input stream " + e);
             throw new IllegalStateException("Failed to read input stream " + e);
         } catch (NoSuchAlgorithmException e) {
-            System.out.println("No such hash algorithm " + hashAlgorithm);
-            return null;
+            throw new IllegalStateException(("No such hash algorithm " + HASH_ALGORITHM));
         }
     }
 
