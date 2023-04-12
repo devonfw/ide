@@ -1765,19 +1765,6 @@ function doRequireWsl() {
 # echos name of the tool folder (in mirrors or software)
 function doGetToolFolderName() {
   local tool="${1/*\//}"
-  if [ "${tool}" = "mvn" ]
-  then
-    tool="maven"
-  elif [ "${tool}" = "node" ]
-  then
-    tool="nodejs"
-  elif [ "${tool}" = "sonar" ]
-  then
-    tool="sonarqube"
-  elif [ "${tool}" = "cobigen" ]
-  then
-    tool="cobigen-cli"
-  fi
   echo "${tool}"
 }
 

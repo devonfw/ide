@@ -12,7 +12,7 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-MAVEN_HOME="${DEVON_IDE_HOME}/software/maven"
+MAVEN_HOME="${DEVON_IDE_HOME}/software/mvn"
 MVN="${MAVEN_HOME}/bin/mvn"
 TOOL_VERSION_COMMAND="${MVN} -v"
 # shellcheck source=scripts/commandlet-cli
