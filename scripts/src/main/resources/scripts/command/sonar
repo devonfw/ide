@@ -20,7 +20,7 @@ source "$(dirname "${0}")"/../commandlet-cli
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  doInstall "sonarqube" "${SONAR_VERSION}" "${1}" "" "${SONAR_HOME}" "-"
+  doInstall "sonar" "${SONAR_VERSION}" "${1}" "" "${SONAR_HOME}" "-"
   return 0
 }
 
