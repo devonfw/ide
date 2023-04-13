@@ -4,9 +4,6 @@ jobs:
   test:
     name: Integration test Windows
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -19,6 +16,7 @@ jobs:
       - name: Set up shellcheck
         run: choco install shellcheck
       - name: Build project with Maven
+        shell: bash
         run: |
           export INTEGRATION_TEST=true
           mvn -B -ntp -Dstyle.color=always install
