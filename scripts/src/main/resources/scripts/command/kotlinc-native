@@ -12,24 +12,25 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+KOTLINC_NATIVE_HOME="${DEVON_IDE_HOME}/software/kotlinc-native"
 TOOL_VERSION_COMMAND="kotlinc-native -version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional silent mode
 function doSetup() {
-  doInstall "kotlin_native" "${KOTLIN_NATIVE_VERSION}" "${1}"
+  doInstall "kotlinc-native" "${KOTLINC_NATIVE_VERSION}" "${1}"
   return 0
 }
 
 # CLI
 case ${1} in
 "help" | "-h")
-  echo "Install kotlin native."
+  echo "Install kotlinc-native."
   echo
   echo "Arguments:"
-  echo " setup                          install kotlin native on your machine."
-  echo " «args»                         call kotlinnative with the specified arguments. Call kotlinnative --help for details or use kotlinnative directly as preferred."
+  echo " setup                          install kotlinc native on your machine."
+  echo " «args»                         call kotlinc-native with the specified arguments. Call kotlinc-native --help for details or use kotlinc-native directly as preferred."
 ;;
 "setup" | "s" | "")
   doSetup "${2}"

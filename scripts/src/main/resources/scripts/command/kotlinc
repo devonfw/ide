@@ -12,7 +12,7 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-KOTLIN_HOME="${DEVON_IDE_HOME}/software/kotlin"
+KOTLINC_HOME="${DEVON_IDE_HOME}/software/kotlinc"
 TOOL_VERSION_COMMAND="kotlinc -version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
@@ -20,23 +20,23 @@ source "$(dirname "${0}")"/../commandlet-cli
 # Call kotlin with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${KOTLIN_HOME}/kotlin ${*}"
+  doRunCommand "${KOTLINC_HOME}/kotlinc ${*}"
 }
 
 # $1: optional silent mode
 function doSetup() {
-  doInstall "kotlin" "${KOTLIN_VERSION}" "${1}"
+  doInstall "kotlinc" "${KOTLINC_VERSION}" "${1}"
   return 0
 }
 
 # CLI
 case ${1} in
 "help" | "-h")
-  echo "Install kotlin."
+  echo "Install kotlinc."
   echo
   echo "Arguments:"
-  echo " setup                          install kotlin on your machine."
-  echo " «args»                         call kotlin with the specified arguments. Call kotlin --help for details or use kotlin directly as preferred."
+  echo " setup                          install kotlinc on your machine."
+  echo " «args»                         call kotlin with the specified arguments. Call kotlinc --help for details or use kotlinc directly as preferred."
 ;;
 "setup" | "s" | "")
   doSetup "${2}"
