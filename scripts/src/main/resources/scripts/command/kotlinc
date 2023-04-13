@@ -20,7 +20,7 @@ source "$(dirname "${0}")"/../commandlet-cli
 # Call kotlin with specified arguments.
 function doRun() {
   doSetup silent
-  doRunCommand "${KOTLINC_HOME}/kotlinc ${*}"
+  doRunCommand "${KOTLINC_HOME}/bin/kotlinc ${*}"
 }
 
 # $1: optional silent mode
