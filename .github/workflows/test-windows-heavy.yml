@@ -21,4 +21,4 @@ jobs:
       - name: Build project with Maven
         run: |
           export INTEGRATION_TEST=true
-          mvn -B -ntp install
+          mvn -B -ntp -Dstyle.color=always install
