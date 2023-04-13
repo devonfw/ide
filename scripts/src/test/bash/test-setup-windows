@@ -8,7 +8,7 @@ if doIsWindows
 then
     doExtract ../../devonfw-ide-scripts-*.tar.gz
     TESTS_PATH=$(dirname "${0}")
-    cmd "/c ${TESTS_PATH}\setup-windows.bat"
+    cmd.exe "/c ${TESTS_PATH}\setup-windows.bat"
 else
     doEcho The test is skipped, because it is only for windows.
     exit 0
