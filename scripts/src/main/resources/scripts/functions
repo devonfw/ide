@@ -903,7 +903,7 @@ function doReplaceExtractedSkipSingleFolder() {
   local backup_path="${3}"
   shift 3
   local path="${1}"
-  local basename="${source_path/*\//}"
+  local basename="${path/*\//}"
   if [ "${#*}" = 1 ] && [ "${path%.app}" = "${path}" ] && [ -d "${path}" ] && [ "${basename}" != "Contents" ] && [ "${basename}" != "bin" ]
   then
     doDebug "Changing source directory from ${source_path} to ${1} due to single folder."
