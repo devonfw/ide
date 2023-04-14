@@ -1838,13 +1838,18 @@ function doSetSoftwareVersion() {
       doUpdateMirrors
       version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
     fi
-    local software_version_variable
-    software_version_variable="$(echo "${software}" | awk '{print toupper($0)}')_VERSION"
+    local software_version_variable="${software}"
+    # temporary workaround for #1098 should be fixed and removed with #1085
+    if [ "${software_version_variable}" = "nodejs" ]
+    then
+      software_version_variable="node"
+    fi
+    software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
     local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
     grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
     mv "${devon_properties}.tmp" "${devon_properties}"
-    echo "${software_version_variable}=\"${version}\"" >> "${devon_properties}"
-    doEchoInteraction "${software_version_variable}=\"${version}\" has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+    echo "${software_version_variable}=${version}" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
     doError "You have to specify the version you want to set."
   fi
