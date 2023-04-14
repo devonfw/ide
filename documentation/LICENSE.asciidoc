@@ -70,7 +70,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://quarkus.io/guides/cli-tooling[QuarkusCLI]|Optional|https://github.com/quarkusio/quarkus/blob/main/LICENSE.txt[ASL 2.0]
 |https://cloud.google.com/sdk/gcloud[GCloudCLI]|Optional|https://github.com/twistedpair/google-cloud-sdk/blob/master/google-cloud-sdk/LICENSE[ASL 2.0]
 |https://github.com/openrewrite/rewrite-maven-plugin[Openrewrite]|Optional|https://github.com/openrewrite/rewrite-maven-plugin/blob/main/LICENSE[ASL 2.0]
-|https://kotlinlang.org//[kotlinc]|Optional|https://github.com/JetBrains/kotlin-web-site/blob/master/LICENSE[ASL 2.0]
+|https://kotlinlang.org//[kotlin]|Optional|https://github.com/JetBrains/kotlin-web-site/blob/master/LICENSE[ASL 2.0]
 |=======================
 
 == Apache Software License - Version 2.0
