@@ -1154,13 +1154,13 @@ function doGitPullOrClone() {
   local dir="${1}"
   local url="${2}"
   local git_opts=""
-  if doIsQuiet
-  then
-    git_opts="-q"
-  fi
   if [ -d "${dir}/.git" ]
   then
     pushd "${dir}" > /dev/null || exit 255
+    if ! doIsDebug
+    then
+      git_opts="-q"
+    fi
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
@@ -1197,6 +1197,12 @@ function doGitPullOrClone() {
     else
       mkdir -p "${dir}"
       pushd "${dir}" > /dev/null || exit 255 
+      if doIsQuiet
+      then
+        git_opts="-q"
+      else
+        doEcho "Cloning git repositroy from ${url}"
+      fi
       local branch="${url/*#/}"
       url="${url%#*}"
       doRunCommand "git clone ${git_opts} --recursive '${url}' --config core.autocrlf=false ."
