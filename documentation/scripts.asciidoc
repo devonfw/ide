@@ -29,6 +29,7 @@ This directory is the heart of the `devonfw-ide` and contains the required link:
 │  ├── link:java.asciidoc[java]
 │  ├── link:jenkins.asciidoc[jenkins]
 │  ├── link:kotlinc.asciidoc[kotlinc]
+│  ├── link:kotlinc-native.asciidoc[kotlinc-native]
 │  ├── link:kubectl.asciidoc[kubectl]
 │  ├── link:lazydocker.asciidoc[lazydocker]
 │  ├── link:mvn.asciidoc[mvn]
