@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1065[#1065]: Checksum verification of binary downloads
 * https://github.com/devonfw/ide/issues/1076[#1076]: Fix extraction error in doReplaceExtractedSkipSingleFolder()
 * https://github.com/devonfw/ide/issues/1054[#1054]: automated security warnings
 * https://github.com/devonfw/ide/issues/1039[#1039]: Add support for Kotlin.
