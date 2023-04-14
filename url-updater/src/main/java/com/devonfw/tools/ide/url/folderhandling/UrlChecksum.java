@@ -80,13 +80,11 @@ public class UrlChecksum extends AbstractUrlFile {
 
             byte[] digestBytes = md.digest();
             String checksum = toHexString(digestBytes);
-            System.out.println(checksum);
             return checksum;
         } catch (IOException e) {
-            logger.error("Failed to read input stream " + e);
-            throw new IllegalStateException("Failed to read input stream " + e);
+            throw new IllegalStateException("Failed to read input stream of download.", e);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException(("No such hash algorithm " + HASH_ALGORITHM));
+            throw new IllegalStateException("No such hash algorithm " + HASH_ALGORITHM);
         }
     }
 
