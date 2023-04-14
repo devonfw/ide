@@ -18,7 +18,7 @@ if "%PATH%" == "%AFTER_SETUP_PATH%" (
 )
 
 rem Testcase: Are PATH, tools and devon.properties updated after running devon.bat
-set PATH=
+set "PATH=%SystemRoot%\System32;"
 echo export TEST_VAR="test" >> scripts\devon.properties
 call scripts/devon.bat
 call mvn -v

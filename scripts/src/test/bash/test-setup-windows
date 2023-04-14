@@ -10,6 +10,6 @@ then
     TESTS_PATH=$(dirname "${0}")
     cmd.exe "/c ${TESTS_PATH}\setup-windows.bat"
 else
-    doEcho The test is skipped, because it is only for windows.
+    doEcho "The test is skipped, because it is only for windows."
     exit 0
 fi
