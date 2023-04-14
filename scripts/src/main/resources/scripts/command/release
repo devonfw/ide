@@ -29,7 +29,7 @@ then
   echo "...        optional arguments are directly passed to the build command (e.g. mvn) as additional arguments."
   exit
 fi
-
+doDevonCommand mvn setup silent
 if doGitHasUncomittedChanges
 then
   doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
@@ -48,7 +48,6 @@ then
     doFail "Release has to be performed from the top-level project or using force option."
   fi
 fi
-
 doEcho "Trying to determine current version of your project..."
 current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
 if doIsDevVersion "${current_version}" 
