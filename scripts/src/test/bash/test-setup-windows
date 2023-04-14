@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This test checks the setup.bat and devon.bat for windows.
+
+source "$(dirname "${0}")"/functions-test
+
+if doIsWindows
+then
+    doExtract ../../devonfw-ide-scripts-*.tar.gz
+    TESTS_PATH=$(dirname "${0}")
+    cmd.exe "/c ${TESTS_PATH}\setup-windows.bat"
+else
+    doEcho "The test is skipped, because it is only for windows."
+    exit 0
+fi

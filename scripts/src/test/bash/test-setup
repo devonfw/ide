@@ -1,14 +1,6 @@
 #!/bin/bash
 
-function doExtract() {
-  if [ -f "${1}" ]
-  then
-    tar xfz "${1}" || exit 1
-  else
-    echo "Could not find and extract release ${1}"
-    exit 1
-  fi
-}
+source "$(dirname "${0}")"/functions-test
 
 function doGetVersion() {
   cat pom.xml | grep "\(devon\|oasp\)4j.version>" | sed "s/.*>\([^<]*\)<.*/\1/"
