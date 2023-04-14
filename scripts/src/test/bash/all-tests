@@ -23,21 +23,25 @@ do
     cd "${testcase}"
     echo "export M2_REPO=~/.m2/repository" > "conf/devon.properties"
   fi
-  "${testpath}" &> errorLog
+  "${testpath}"
   result=${?}
   if [ "${result}" == 0 ]
   then
     doSuccess "[SUCCESS] Succeeded running test #${total}: ${testcase}"
     let "success++"
+    echo "\033[92m[SUCCESS] Succeeded running test #${total}: ${testcase}\033[39m" >> ../testResults
   else
     doError "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}"
     let "failure++"
-    cat errorLog
-    echo -e "[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}" >> ../errorList
+    echo "\033[91m[ERROR] Failed running test #${total}: ${testcase} - exit code ${result}\033[39m" >> ../testResults
   fi
   let "total++"
   cd ..
 done
+}
+
+function doDisplayResults() {
+  cat testResults | while read -r line; do echo -e "${line}"; done 
 }
 
 mkdir -p ~/.devon
@@ -54,8 +58,9 @@ echo -e "*****************************************************\n"
 if [ "${failure}" == 0 ]
 then
   doSuccess "All test succeeded. Fine!"
+  doDisplayResults
 else
   doWarning "There are test failures! Please check the logs and fix errors.\n"
-  cat errorList
+  doDisplayResults
   exit 1
 fi
