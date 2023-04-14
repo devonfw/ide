@@ -64,37 +64,32 @@ function doAddPlugins() {
 
 function doAddPlugin() {
   local pluginId="${1}"
-  local intellij_build
   local download_dir="${DEVON_DOWNLOAD_DIR}"
-  local filename
-  local install_path
-
+  local intellij_build
+  local install_path="${DEVON_IDE_HOME}/software/intellij-plugins/"
   if [ -e "${IDEA_HOME}/build.txt" ]
   then
     intellij_build="$(cat "${IDEA_HOME}/build.txt")"
-    install_path="${IDEA_HOME}/plugins"
   elif [ -e "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt" ]
   then 
     intellij_build="$(cat "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
-    install_path="${IDEA_HOME}/IntelliJ.app/Contents/plugins"
   fi
 
   if [ -n "${1}" ] && [ -n "${intellij_build}" ]
   then
+    mkdir -p "${install_path}"
     local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
-    filename=$(curl -sI "${download_url}" | grep -o -E 'location:.*$' | sed -e 's/location://')
-    filename="${filename##*/}"
-    filename="${filename%%\?*}"
-    doDownload "${download_url}" "${download_dir}" "intellij-plugin-${intellij_build}-${pluginId}" "" "" "" "" "" "${filename}"
-    if [ "${filename##*.}" = "zip" ]
+    local filename="intellij-plugin-${intellij_build}-${pluginId}"
+    doDownload "${download_url}" "${download_dir}" "${filename}" "" "" "" "" "" "${filename}"
+    # test if downloaded file is a valid zip archive...
+    if unzip -z "${download_dir}/${filename}" > /dev/null 2>&1
     then
-      local extract_name=${filename%.*}
-      doExtract "${download_dir}/${filename}" "${extract_name}"
-      cp -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"* "${install_path}/"
-      rm -r "${DEVON_IDE_HOME}/updates/extracted/${extract_name}/"
+      local extract_path="${DEVON_IDE_HOME}/updates/extracted/${pluginId}"
+      doUnzip "${download_dir}/${filename}" "${extract_path}"
+      doRunCommand "cp -r '${extract_path}/'* '${install_path}/'"
+      doRunCommand "rm -r '${extract_path}/'"
     else
-      cp "${download_dir}/${filename}" "${install_path}"
-      rm "${download_dir}/${filename}"
+      doRunCommand "cp '${download_dir}/${filename}' '${install_path}/${pluginId}'"
     fi
   else
     doEcho "No plugins to be installed"
