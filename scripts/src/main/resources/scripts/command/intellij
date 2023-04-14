@@ -136,6 +136,7 @@ function doStartIntellij() {
   then
     IDEA="${IDEA_HOME}/idea"
   fi
+  export IDEA_PROPERTIES="${WORKSPACE_PATH}/idea.properties"
   if doIsMacOs
   then
     echo "MacOs command ${IDEA}"
