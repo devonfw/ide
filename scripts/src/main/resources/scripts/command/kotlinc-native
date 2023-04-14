@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup version help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+KOTLINC_NATIVE_HOME="${DEVON_IDE_HOME}/software/kotlinc-native"
+TOOL_VERSION_COMMAND="kotlinc-native -version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
+# Call kotlin natice with specified arguments.
+function doRun() {
+  doSetup silent
+  doRunCommand "${KOTLINC_NATIVE_HOME}/bin/kotlinc-native ${*}"
+}
+
+# $1: optional silent mode
+function doSetup() {
+  doInstall "kotlinc-native" "${KOTLINC_NATIVE_VERSION}" "${1}"
+  return 0
+}
+
+# CLI
+case ${1} in
+"help" | "-h")
+  echo "Install kotlinc-native."
+  echo
+  echo "Arguments:"
+  echo " setup                          install kotlinc native on your machine."
+  echo " «args»                         call kotlinc-native with the specified arguments. Call kotlinc-native --help for details or use kotlinc-native directly as preferred."
+;;
+"setup" | "s" | "")
+  doSetup "${2}"
+;;
+*)
+  doRun "${@}"
+;;
+esac

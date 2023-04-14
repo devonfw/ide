@@ -8,6 +8,7 @@ Release with new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/1076[#1076]: Fix extraction error in doReplaceExtractedSkipSingleFolder()
 * https://github.com/devonfw/ide/issues/1054[#1054]: automated security warnings
+* https://github.com/devonfw/ide/issues/1039[#1039]: Add support for Kotlin.
 * https://github.com/devonfw/ide/issues/1080[#1080]: auto-configure IntelliJ core settings
 * https://github.com/devonfw/ide/issues/1104[#1104]: IntelliJ plugin installation not working
 
