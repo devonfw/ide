@@ -902,8 +902,9 @@ function doReplaceExtractedSkipSingleFolder() {
   local target_path="${2}"
   local backup_path="${3}"
   shift 3
-  local basename="${source_path/*\//}"
-  if [ "${#*}" = 1 ] && [ "${source_path%.app}" = "${source_path}" ] && [ -d "${source_path}" ] && [ "${basename}" != "Contents" ] && [ "${basename}" != "bin" ]
+  local path="${1}"
+  local basename="${path/*\//}"
+  if [ "${#*}" = 1 ] && [ "${path%.app}" = "${path}" ] && [ -d "${path}" ] && [ "${basename}" != "Contents" ] && [ "${basename}" != "bin" ]
   then
     doDebug "Changing source directory from ${source_path} to ${1} due to single folder."
     source_path="${1}"
@@ -1153,13 +1154,13 @@ function doGitPullOrClone() {
   local dir="${1}"
   local url="${2}"
   local git_opts=""
-  if ! doIsDebug
-  then
-    git_opts="-q"
-  fi
   if [ -d "${dir}/.git" ]
   then
     pushd "${dir}" > /dev/null || exit 255
+    if ! doIsDebug
+    then
+      git_opts="-q"
+    fi
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
@@ -1196,6 +1197,12 @@ function doGitPullOrClone() {
     else
       mkdir -p "${dir}"
       pushd "${dir}" > /dev/null || exit 255 
+      if doIsQuiet
+      then
+        git_opts="-q"
+      else
+        doEcho "Cloning git repositroy from ${url}"
+      fi
       local branch="${url/*#/}"
       url="${url%#*}"
       doRunCommand "git clone ${git_opts} --recursive '${url}' --config core.autocrlf=false ."
@@ -1831,13 +1838,18 @@ function doSetSoftwareVersion() {
       doUpdateMirrors
       version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
     fi
-    local software_version_variable
-    software_version_variable="$(echo "${software}" | awk '{print toupper($0)}')_VERSION"
+    local software_version_variable="${software}"
+    # temporary workaround for #1098 should be fixed and removed with #1085
+    if [ "${software_version_variable}" = "nodejs" ]
+    then
+      software_version_variable="node"
+    fi
+    software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
     local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
     grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
     mv "${devon_properties}.tmp" "${devon_properties}"
-    echo "${software_version_variable}=\"${version}\"" >> "${devon_properties}"
-    doEchoInteraction "${software_version_variable}=\"${version}\" has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+    echo "${software_version_variable}=${version}" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
     doError "You have to specify the version you want to set."
   fi
