@@ -109,6 +109,12 @@ public abstract class AbstractCrawler implements Updater {
 			urlDownloadFile.addUrl(downloadUrl);
 			doCreateOrRefreshStatusJson(HTTPRequestResultOfURLRequest, urlVersion, downloadUrl);
 			urlVersion.save();
+
+			//generate checksum of download file
+			if (HTTPRequestResultOfURLRequest.getHttpStatusCode() == 200) {
+				UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName(), client);
+				urlChecksum.doGenerateChecksum(downloadUrl);
+			}
 			return true;
 		} else {
 			//check if folder of urlVersion exists
