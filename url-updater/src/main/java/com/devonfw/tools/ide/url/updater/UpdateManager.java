@@ -7,7 +7,7 @@ import com.devonfw.tools.ide.url.updater.cobigen.CobigenCrawler;
 import com.devonfw.tools.ide.url.updater.docker.DockerCrawler;
 import com.devonfw.tools.ide.url.updater.dotnet.DotNetCrawler;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseCppCrawler;
-import com.devonfw.tools.ide.url.updater.eclipse.EclipseJavaCrawler;
+import com.devonfw.tools.ide.url.updater.eclipse.EclipseEclipseCrawler;
 import com.devonfw.tools.ide.url.updater.gcviewer.GCViewerCrawler;
 import com.devonfw.tools.ide.url.updater.gh.GHCrawler;
 import com.devonfw.tools.ide.url.updater.graalvm.GraalVMCrawler;
@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class UpdateManager {
 	private final UrlRepository urlRepository;
-	private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(), new CobigenCrawler(), new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(), new EclipseJavaCrawler(), new GCViewerCrawler(), new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(), new HelmCrawler(), new IntelliJUltimateEditionCrawler(), new IntelliJCommunityEditionCrawler(), new JavaCrawler(), new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(), new LazyDockerCrawler(), new MvnCrawler(), new NodeJsCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(), new PythonCrawler(), new QuarkusCrawler(), new RancherCrawler(), new SonarqubeCrawler(), new TerraformCrawler(), new VSCodeCrawler());
+	private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(), new CobigenCrawler(), new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(), new EclipseEclipseCrawler(), new GCViewerCrawler(), new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(), new HelmCrawler(), new IntelliJUltimateEditionCrawler(), new IntelliJCommunityEditionCrawler(), new JavaCrawler(), new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(), new LazyDockerCrawler(), new MvnCrawler(), new NodeJsCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(), new PythonCrawler(), new QuarkusCrawler(), new RancherCrawler(), new SonarqubeCrawler(), new TerraformCrawler(), new VSCodeCrawler());
 
 	public UpdateManager(Path pathToRepository) {
 		this.urlRepository = UrlRepository.load(pathToRepository);
