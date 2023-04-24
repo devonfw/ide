@@ -12,7 +12,7 @@ public class RancherCrawler extends GithubCrawler {
 
 	@Override
 	protected String getEdition() {
-		return "rancher-desktop";
+		return "rancher";
 	}
 
 	@Override
