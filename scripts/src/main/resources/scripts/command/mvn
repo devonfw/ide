@@ -21,7 +21,7 @@ source "$(dirname "${0}")"/../commandlet-cli
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  doInstall "mvn" "${MAVEN_VERSION}" "${1}" "" "${MAVEN_HOME}" "-"
+  doInstall "mvn" "${MVN_VERSION}" "${1}" "" "${MAVEN_HOME}" "-"
   if [ "${1}" != "silent" ]
   then
     if [ -d "${SETTINGS_PATH}" ]
