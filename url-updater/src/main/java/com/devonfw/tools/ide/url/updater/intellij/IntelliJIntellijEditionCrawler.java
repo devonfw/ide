@@ -3,11 +3,11 @@ package com.devonfw.tools.ide.url.updater.intellij;
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 import com.devonfw.tools.ide.url.updater.OSType;
 
-public class IntelliJCommunityEditionCrawler extends IntelliJCrawler {
+public class IntelliJIntellijEditionCrawler extends IntelliJCrawler {
 
 	@Override
 	protected String getEdition() {
-		return "community";
+		return "intellij";
 	}
 
 

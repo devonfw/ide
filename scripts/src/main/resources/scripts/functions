@@ -898,34 +898,21 @@ function doBackup() {
 # $3: backup path
 # $4-$N: contents of $1 ($1/* so all files in the folder of $1 after globbing)
 function doReplaceExtractedSkipSingleFolder() {
-  local source_dir="${1}"
-  local target_dir="${2}"
-  local backup_dir="${3}"
-  local root_dir="${1}"
+  local source_path="${1}"
+  local target_path="${2}"
+  local backup_path="${3}"
   shift 3
-  local files
-  local anz_files
-  local dir="${1}"
-  if [ "${#*}" = 1 ] && [ "${1%.app}" = "${1}" ] && [ -d "${1}" ]
+  local path="${1}"
+  local basename="${path/*\//}"
+  if [ "${#*}" = 1 ] && [ "${path%.app}" = "${path}" ] && [ -d "${path}" ] && [ "${basename}" != "Contents" ] && [ "${basename}" != "bin" ]
   then
-    files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-    anz_files="$(echo "${files}" | awk 'END{print NR}')"
-    while [ "${anz_files}" == "1" ]
-    do
-      if [ -d "${dir}/${files}" ] && [ "${files}" != "bin" ] && [ "${files%.app}" = "${files}" ]
-      then
-        dir="${dir}/${files}"
-      else
-        break
-      fi
-      files="$(find "${dir}" -maxdepth 1 -mindepth 1 -exec basename {} \;)"
-      anz_files="$(echo "${files}" | awk 'END{print NR}')"
-    done
-    source_dir="${dir}"
-    doDebug "Changing source directory from ${root_dir} to ${source_dir} due to single folder."
+    doDebug "Changing source directory from ${source_path} to ${1} due to single folder."
+    source_path="${1}"
+    doReplaceExtractedSkipSingleFolder "${source_path}" "${target_path}" "${backup_path}" "${source_path}"/*
+  else
+    doReplaceExtractedFile "${source_path}" "${target_path}" "${backup_path}"
+    [ -d "${source_path}" ] && rm -rf "${source_path}"
   fi
-  doReplaceExtractedFile "${source_dir}" "${target_dir}" "${backup_dir}"
-  [ -d "${root_dir}" ] && rm -rf "${root_dir}"
 }
 
 # $1: path of the extracted name to install (move to target)
@@ -1167,13 +1154,13 @@ function doGitPullOrClone() {
   local dir="${1}"
   local url="${2}"
   local git_opts=""
-  if ! doIsDebug
-  then
-    git_opts="-q"
-  fi
   if [ -d "${dir}/.git" ]
   then
     pushd "${dir}" > /dev/null || exit 255
+    if ! doIsDebug
+    then
+      git_opts="-q"
+    fi
     local remotes
     remotes="$(git remote)"
     local message="Can not update git repository: ${dir}\n"
@@ -1210,6 +1197,12 @@ function doGitPullOrClone() {
     else
       mkdir -p "${dir}"
       pushd "${dir}" > /dev/null || exit 255 
+      if doIsQuiet
+      then
+        git_opts="-q"
+      else
+        doEcho "Cloning git repositroy from ${url}"
+      fi
       local branch="${url/*#/}"
       url="${url%#*}"
       doRunCommand "git clone ${git_opts} --recursive '${url}' --config core.autocrlf=false ."
@@ -1845,13 +1838,18 @@ function doSetSoftwareVersion() {
       doUpdateMirrors
       version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
     fi
-    local software_version_variable
-    software_version_variable="$(echo "${software}" | awk '{print toupper($0)}')_VERSION"
+    local software_version_variable="${software}"
+    # temporary workaround for #1098 should be fixed and removed with #1085
+    if [ "${software_version_variable}" = "nodejs" ]
+    then
+      software_version_variable="node"
+    fi
+    software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
     local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
     grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
     mv "${devon_properties}.tmp" "${devon_properties}"
-    echo "${software_version_variable}=\"${version}\"" >> "${devon_properties}"
-    doEchoInteraction "${software_version_variable}=\"${version}\" has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+    echo "${software_version_variable}=${version}" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
     doError "You have to specify the version you want to set."
   fi

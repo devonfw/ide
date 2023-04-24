@@ -6,7 +6,14 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1065[#1065]: compute checksum of binary downloads
+* https://github.com/devonfw/ide/issues/1076[#1076]: Fix extraction error in doReplaceExtractedSkipSingleFolder()
 * https://github.com/devonfw/ide/issues/1054[#1054]: automated security warnings
+* https://github.com/devonfw/ide/issues/1039[#1039]: Add support for Kotlin.
+* https://github.com/devonfw/ide/issues/1080[#1080]: auto-configure IntelliJ core settings
+* https://github.com/devonfw/ide/issues/1104[#1104]: IntelliJ plugin installation not working
+* https://github.com/devonfw/ide/issues/1099[#1099]: progress output when project is cloned
+* https://github.com/devonfw/ide/issues/1098[#1098]: devon node version set buggy
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/43?closed=1[milestone 2023.04.001].
 
