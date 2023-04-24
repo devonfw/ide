@@ -1,9 +1,9 @@
 package com.devonfw.tools.ide.url.updater.eclipse;
 
-public class EclipseJavaCrawler extends EclipseCrawler {
+public class EclipseEclipseCrawler extends EclipseCrawler {
 	@Override
 	protected String getEdition() {
-		return "java";
+		return "eclipse";
 	}
 }
 
