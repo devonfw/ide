@@ -3,13 +3,13 @@
 # autocompletion list
 if [ "${1}" = "shortlist" ]
 then
-  all_opts="ws-update ws-reverse ws-reverse-add create-script"
+  allOptions="ws-update ws-reverse ws-reverse-add create-script"
   if [ -z "${2}" ]
   then
-    echo "--all setup version add-plugin run start ${all_opts} import help"
+    echo "--all setup version add-plugin run start ${allOptions} import help"
   elif [ "${2}" = "--all" ]
   then
-    echo "${all_opts}"
+    echo "${allOptions}"
   fi
   exit
 fi
@@ -40,7 +40,8 @@ L_PWD=$(pwd)
 cd "${DEVON_IDE_HOME}" || exit 255
 
 function doCreateProperties() {
-  #create properties file at properties_path with properties_file as name, if plugin name was not specified, use plugin_id as filename, file contents are plugin_url and plugin_id
+  #The function creates a properties file at the given path and with the given name,
+  #but if a plugin name is not provided, it will use the pluginId value as the file name.
   local properties_path="${DEVON_IDE_HOME}/settings/eclipse/plugins"
   local plugin_id="${1}"
   local plugin_url="${2}"
@@ -66,51 +67,52 @@ function doCreateProperties() {
 
 
 function doInstallEclipsePlugin() {
-  local do_install_plugin_id="${1}"
-  local do_install_plugin_url="${2}" #Update site
-  local do_install_plugin_name="${3}" 
-  if [ -z "${do_install_plugin_name}" ]
+  local plugin_id="${1}"
+  local plugin_url="${2}" #Update site
+  local plugin_name="${3:-$plugin_id}"
+  
+  echo "Installing Eclipse plugin '${plugin_name}' from URL ${plugin_url}..."
+
+  local pluginDependencies
+  pluginDependencies=$(doCheckPluginsInstalled "${plugin_id}")
+  local debugInfo
+  debugInfo=$(doInvokeEclipse org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_id}")
+  if [ "${debugInfo}" != "" ] && doCheckSuccessOfPluginInstall "${debugInfo}" "${plugin_name}" "${plugin_url}" "${pluginDependencies}"
   then
-    do_install_plugin_name="${do_install_plugin_id}"
-  fi
-  echo "Installing Eclipse plugin '${do_install_plugin_name}' from URL ${do_install_plugin_url}..."
-
-  local plugin_dependencies
-  plugin_dependencies=$(doCheckPluginsInstalled "${do_install_plugin_id}")
-
-  # Install plugins and write debug info into temp file
-  local debug_info_file
-  debug_info_file=$(mktemp)
-  # get only !MESSAGE lines from the debug inf
-
-  "${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -repository "${do_install_plugin_url}" -installIU "${do_install_plugin_id}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //' >"${debug_info_file}" 2>&1
-  local exit_code=$?
-  if [[ $(grep "Overall install request is satisfiable" "${debug_info_file}") != "" ]] && [ "${exit_code}" == 0 ]
-  then
-    #If plugin name was specified, create a properties file for an easier remove plugin process.
-
     return 0
-  elif [[ $(grep "Unable to load repositories" "${debug_info_file}") != "" ]] || [[ $(grep "No repository found at" "${debug_info_file}") != "" ]]
+  fi
+  return 1
+}
+
+function doCheckSuccessOfPluginInstall(){
+  local debug_info="${1}"
+  local pluginName="${2}"
+  local plugin_url="${3}"
+  local plugin_dependencies="${4}"
+  if grep -q "Overall install request is satisfiable" <(echo "$debug_info")
   then
-    doError "The given repository ${do_install_plugin_url} is not a correct update site."
+    return 0
+  elif grep -q "Unable to load repositories" <(echo "$debug_info") || grep -q "No repository found at" <(echo "$debug_info")
+    then
+    doError "Installation of plugin '${pluginName}' from $plugin_url failed:\n${debug_info}"
     return 1
   else
-    echo
-    doError "Installation of plugin '${do_install_plugin_name}' failed: \n$(cat "${debug_info_file}")"
+    doError "Installation of plugin '${pluginName}' from $plugin_url failed:\n${debug_info}"
     if [ -n "${plugin_dependencies}" ]
     then
       plugin_dependencies=$(echo -e "${plugin_dependencies}" | sort -u)
-      doWarning "Plugin '${do_install_plugin_name}' might be already installed, because of existing dependencies: ${plugin_dependencies} \nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
+      doWarning "Plugin '${pluginName}' might be already installed, because of existing dependencies: ${plugin_dependencies}\nMake sure the plugin is not installed yet by checking the list of installed plugins in the Eclipse IDE. If there's an error and the issue persists, try to remove the plugin manually from the plugins folder or uninstall it with devon remove-plugin command."
     fi
     return 1
   fi
 }
+  
 
 # Check if the plugins are already installed by looking at the eclipse/plugins folder
 # $1: plugin feature group ID
 # return: dependencies that are already installed
 function doCheckPluginsInstalled() {
-  local plugin_dir="${DEVON_IDE_HOME}/software/eclipse/plugins"
+  local plugin_directory="${DEVON_IDE_HOME}/software/eclipse/plugins"
 
   # Remove feature.group from each plugin id
   local plugins="${1//.feature.group/}"
@@ -124,16 +126,15 @@ function doCheckPluginsInstalled() {
     plugin=${plugin/\.feature*/}
 
     local plugin_dependencies
-    plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
+    plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
       if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]
       then
         break
       fi
-
       local new_plugin_dependencies
-      new_plugin_dependencies=$(ls -1 "${plugin_dir}"/*"${plugin}".* 2>/dev/null)
+      new_plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
       if [ -n "${new_plugin_dependencies}" ]
       then
         plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
@@ -141,55 +142,85 @@ function doCheckPluginsInstalled() {
       plugin=${plugin%.*}
     done
   done
-  # Remove plugin_dir from plugin variable
-  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_dir}/||g")
+  # Remove plugin_directory from plugin variable
+  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_directory}/||g")
   echo -e "${plugin_dependencies}" | sort -u
 }
 
 # Remove plugins from Eclipse by feature group ID
 function doRemovePlugin() {
-  local do_remove_plugin_id="${1}"
-  if [ -z "${do_remove_plugin_id}" ]
+  local rm_plugin_id="${1}"
+  if [ -z "${rm_plugin_id}" ]
   then
     doError "No plugin was specified for removal."
     return 1
   fi
-  doLoadPluginProperties "${do_remove_plugin_id}"
-  if [ -z "${plugin_id}" ]
+  doLoadPluginProperties "${rm_plugin_id}" # Sets global variables: plugin_id, plugin_url, plugin_name, plugin_status
+  if [ -z "${plugin_id}" ] 
   then
-    if [[ "${do_remove_plugin_id}" == *.* ]]
+    if [[ "${rm_plugin_id}" == *.* ]] # If rm_plugin_id contains a dot, it is probably a feature group ID
     then
-      plugin_id="${do_remove_plugin_id}"
+      plugin_id="${rm_plugin_id}"
     else
-      doError "Plugin ${do_remove_plugin_id} is not installed.\nMake sure you provided the correct plugin.properties name or plugin id."
+      doError "Plugin ${rm_plugin_id} is not installed.\nMake sure you provided the correct plugin.properties name or plugin id."
       return 1
     fi
   fi
   doEcho "Removing plugin ${plugin_id}..."
-  local debug_info_file
-  debug_info_file=$(mktemp)
-  "${ECLIPSE}" -nosplash -clean -consoleLog -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.director -uninstallIU "${plugin_id}" -vmargs "${ECLIPSE_VMARGS}" >"${debug_info_file}" 2>&1
-  local exit_code=$?
-  # Overwrite file with lines containing !MESSAGE
-  sed -i -n '/!MESSAGE/ p' "${debug_info_file}"
+  
+  local debugInfo
+  debugInfo=$(doInvokeEclipse org.eclipse.equinox.p2.director -uninstallIU "${plugin_id}")
+  
+  if [ "${debugInfo}" != "" ] && doCheckRemovalOfPluginDependencies "${debugInfo}" "${plugin_id}"
+  then
+    doSuccess "Plugin ${plugin_id} removed successfully."
+  fi
+}
 
+# Launches Eclipse with the given arguments and returns the debug info or empty String if the invocation failed.
+function doInvokeEclipse() {
+  local application="$1"
+  shift
+  local eclipse_args=("$@")
+  local debug_info
+  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
+  local exit_code=$?
+  if [ $exit_code -ne 0 ];
+  then
+    doError "Failed to invoke Eclipse with arguments: ${eclipse_args[*]}"
+    echo ""
+    return 1
+  else
+    echo "$debug_info"
+    return 0
+  fi
+}
+
+function doCheckRemovalOfPluginDependencies(){
+  local debug_info="$1"
+  local plugin_id="$2"
+  local plugin_dependencies
   plugin_dependencies=$(doCheckPluginsInstalled "${plugin_id}")
   plugin_id="${plugin_id// /}"
   IFS=',' read -ra plugin_id_arr <<<"${plugin_id}"
+  if [[ ${#plugin_id_arr[@]} -eq 0 ]]
+  then
+    doError "Plugin ${plugin_id} couldn't be removed from your Eclipse installation as it was not found. "
+    return 1
+  fi
   for plugin in "${plugin_id_arr[@]}"; do
     # If debug info contains words The installable unit could not be found, then the plugin was not uninstalled correctly
-    if [[ $(grep "The installable unit ${plugin} has not been found" "${debug_info_file}") != "" ]]
-     then
-      doError "Plugin ${plugin} couldn't be removed from your Eclipse installation as it was not found. Please check if the plugin exists and try to remove it manually."
-      if [ -n "${plugin_dependencies}" ]
+      if grep -q "The installable unit ${plugin} has not been found." <(echo "$debug_info");
       then
-        doWarning "If the problem persists, try removing the following dependencies: ${plugin_dependencies}"
-      fi
-      return 1
+        doError "Plugin ${plugin} couldn't be removed from your Eclipse installation as it was not found. Please check if the plugin exists and try to remove it manually."
+        if [ -n "${plugin_dependencies}" ]
+        then
+          doWarning "If the problem persists, try removing the following dependencies: ${plugin_dependencies}"
+        fi
+        return 1
     fi
   done
-  doSuccess "Plugin ${plugin_id} removed successfully."
-
+  return 0
 }
 
 function doSetup() {
@@ -248,7 +279,10 @@ function doAddPluginFromConfig() {
     fi
     if [ -n "${plugin_id}" ] && [ -n "${url}" ] && [ "$plugin_active" = "true" ] || [ "${optional_plugin_active}" = "true" ] 
     then
-      doInstallEclipsePlugin "${plugin_id}" "${url}" "$(basename "${plugin_properties_file%.*}")"
+      if doInstallEclipsePlugin "${plugin_id}" "${url}" "$(basename "${plugin_properties_file%.*}")"
+      then
+        doSuccess "Plugin ${plugin_id} installed successfully."
+      fi
     fi
   else 
     doError "Plugin ${plugin_properties_file} was not found.\nMake sure you provided the correct plugin.properties name."
@@ -302,25 +336,27 @@ function doConfigureEclipse() {
 
 
 function doAddPlugin() {
-  local do_add_plugin_id="${1}"
-  local do_add_plugin_url="${2}"
-  local do_add_plugin_name="${3}" #optional. If specified, the plugin will be installed with a properties file with the name that is specified.
-  if [ -z "${do_add_plugin_url}" ] 
+  local plugin_id="${1}"
+  local plugin_url="${2}"
+  local plugin_name="${3}" #optional. If specified, the plugin will be installed with a properties file with the name that is specified.
+  if [ -z "${plugin_url}" ] 
   then
-    doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${do_add_plugin_id}.properties" "true"
+    doAddPluginFromConfig "${SETTINGS_PATH}/eclipse/plugins/${plugin_id}.properties" "true"
     if [ ! "${?}" = 0 ]
     then
       doError "There was an error during the installation. Please try to call add-plugin again with parameters: «id» [«url»] «plugin name»[optional]."
     fi
   else
-    doInstallEclipsePlugin "${do_add_plugin_id}" "${do_add_plugin_url}" "${do_add_plugin_name}"
-    if [ "${?}" = 0 ] && [ -n "${do_add_plugin_name}" ]
+    if doInstallEclipsePlugin "${plugin_id}" "${plugin_url}" "${plugin_name}"
+    then
+      if [ -n "${plugin_name}" ]
       then
-      doCreateProperties "${do_add_plugin_id}" "${do_add_plugin_url}" "${do_add_plugin_name}"
+        doCreateProperties "${plugin_id}" "${plugin_url}" "${plugin_name}"
+      fi
+      doSuccess "Plugin ${plugin_id} installed successfully."
     fi
   fi
 }
-
 function doStartEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
@@ -352,42 +388,40 @@ function doImportEclipse() {
   doCheckAndInstallGroovy
   if [[ "${1}" = /* ]]
   then
-    importPath="${1}"
+    local import_path="${1}"
   else
     # Path is relative make it absolute
-    importPath="${L_PWD}/${1}"
+    import_path="${L_PWD}/${1}"
   fi
   importWorkingSets="${2}"
-  echo "Starting eclipse import for ${importPath} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+  echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${importPath}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
 }
 
 # $1: id
 # $2: optional plugin URL (update site)
 function doMirrorUpdateSite() {
-  local do_mirror_plugin_id="${1}"
-  local do_mirror_plugin_url="${2}" #optional Update Site
-  if [ -z "${do_mirror_plugin_id}" ]
+  local mir_plugin_id="${1}"
+  local mir_plugin_url="${2}" #optional Update Site
+  if [ -z "${mir_plugin_id}" ]
   then
     doFail "Parameter \"id\" is missing."
   fi
-  local url
-  if [ -n "${do_mirror_plugin_url}" ]
+  if [ -z "${mir_plugin_url}" ]
   then
-    url="${do_mirror_plugin_url}"
-  else
-    doLoadPluginProperties "${do_mirror_plugin_id}"
-    url="${plugin_url}"
+    doLoadPluginProperties "${mir_plugin_id}" # Sets global variables plugin_id and plugin_url
+    mir_plugin_url="${plugin_url}"
   fi
   local timestamp
   timestamp=$(date +'%Y-%m-%d')
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${do_mirror_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${do_mirror_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
-  local result="${?}"
-  if [ "${result}" != 0 ]
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  local result
+  result="${?}"
+  if [ "$?" != 0 ]
   then
-    doEchoAttention "Mirroring of the update-site ${url} failed. Please check the URL or rerun setup (devon eclipse setup)."
+    doEchoAttention "Mirroring of the update-site ${mir_plugin_url} failed. Please check the URL or rerun setup (devon eclipse setup)."
   fi
   return "${result}"
 }
