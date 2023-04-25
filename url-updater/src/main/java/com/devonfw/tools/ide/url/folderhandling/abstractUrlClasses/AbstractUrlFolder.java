@@ -1,13 +1,17 @@
 package com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses;
 
-import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
-import com.devonfw.tools.ide.url.folderhandling.UrlFolder;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlArtifactWithParent;
+import com.devonfw.tools.ide.url.folderhandling.UrlFolder;
 
 /**
  * Class from which UrlRepository inherits, as its objects don't have a parent, but possibly child objects of the class
@@ -15,40 +19,46 @@ import java.util.stream.Stream;
  *
  * @param <C> Type of the child object.
  */
-public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> extends AbstractUrlArtifact implements UrlFolder<C> {
+public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> extends AbstractUrlArtifact
+    implements UrlFolder<C> {
 
-	private final Map<String, C> children;
+  private final Map<String, C> children;
 
-	/**
-	 * The constructor.
-	 *
-	 * @param path the {@link #getPath() path}.
-	 * @param name the {@link #getName() filename}.
-	 */
-	public AbstractUrlFolder(Path path, String name) {
-		super(path, name);
-		this.children = new HashMap<>();
-	}
+  /**
+   * The constructor.
+   *
+   * @param path the {@link #getPath() path}.
+   * @param name the {@link #getName() filename}.
+   */
+  public AbstractUrlFolder(Path path, String name) {
 
-	@Override
-	public int getChildCount() {
-		return this.children.size();
-	}
+    super(path, name);
+    this.children = new HashMap<>();
+  }
 
-	@Override
-	public C getChild(String name) {
-		return this.children.get(name);
-	}
+  @Override
+  public int getChildCount() {
 
-	@Override
-	public C getOrCreateChild(String name) {
-		return this.children.computeIfAbsent(name, p -> newChild(name));
-	}
+    return this.children.size();
+  }
 
-	@Override
-	public List<C> getChildren() {
-		return new ArrayList<>(this.children.values());
-	}
+  @Override
+  public C getChild(String name) {
+
+    return this.children.get(name);
+  }
+
+  @Override
+  public C getOrCreateChild(String name) {
+
+    return this.children.computeIfAbsent(name, p -> newChild(name));
+  }
+
+  @Override
+  public List<C> getChildren() {
+
+    return new ArrayList<>(this.children.values());
+  }
 
   /**
    * @param name the plain filename (excluding any path).
@@ -61,26 +71,27 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
     return folder;
   }
 
+  /**
+   * @return the {@link Set} with all {@link #getName() names} of the children.
+   * @deprecated method name does not make sense here and the method exposes internal mutable structures allowing to
+   *             remove or add items to the internal map bypassing the API.
+   */
+  @Deprecated
+  public Set<String> getAllVersions() {
 
-	/**
-	 * @return the {@link Set} with all {@link #getName() names} of the children.
-	 * @deprecated method name does not make sense here and the method exposes internal mutable structures allowing to
-	 * remove or add items to the internal map bypassing the API.
-	 */
-	@Deprecated
-	public Set<String> getAllVersions() {
-		return this.children.keySet();
-	}
+    return this.children.keySet();
+  }
 
-	@Override
-	protected void load() {
-		Path path = getPath();
-		try (Stream<Path> childStream = Files.list(path)) {
-			childStream.forEach(this::loadChild);
-		} catch (IOException e) {
-			throw new IllegalStateException("Failed to list children of directory " + path, e);
-		}
-	}
+  @Override
+  protected void load() {
+
+    Path path = getPath();
+    try (Stream<Path> childStream = Files.list(path)) {
+      childStream.forEach(this::loadChild);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to list children of directory " + path, e);
+    }
+  }
 
   private void loadChild(Path childPath) {
 
@@ -95,16 +106,17 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
     }
   }
 
-	/**
-	 * @param name the {@link #getName() name} of the requested child.
-	 * @return the new child object.
-	 */
-	protected abstract C newChild(String name);
+  /**
+   * @param name the {@link #getName() name} of the requested child.
+   * @return the new child object.
+   */
+  protected abstract C newChild(String name);
 
-	@Override
-	public void save() {
-		for (C child : this.children.values()) {
-			((AbstractUrlArtifact) child).save();
-		}
-	}
+  @Override
+  public void save() {
+
+    for (C child : this.children.values()) {
+      ((AbstractUrlArtifact) child).save();
+    }
+  }
 }

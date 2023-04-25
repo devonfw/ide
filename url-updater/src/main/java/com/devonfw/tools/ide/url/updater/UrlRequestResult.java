@@ -1,29 +1,36 @@
 package com.devonfw.tools.ide.url.updater;
 
 public class UrlRequestResult {
-	private final boolean success;
-	private final int httpStatusCode;
-	private final String url;
+  private final boolean success;
 
-	public UrlRequestResult(boolean success, int value, String url) {
-		this.success = success;
-		this.httpStatusCode = value;
-		this.url = url;
-	}
+  private final int httpStatusCode;
 
-	public boolean isSuccess() {
-		return this.success;
-	}
+  private final String url;
 
-	public boolean isFailure() {
-		return !this.success;
-	}
+  public UrlRequestResult(boolean success, int value, String url) {
 
-	public int getHttpStatusCode() {
-		return this.httpStatusCode;
-	}
+    this.success = success;
+    this.httpStatusCode = value;
+    this.url = url;
+  }
 
-	public String getUrl() {
-		return this.url;
-	}
+  public boolean isSuccess() {
+
+    return this.success;
+  }
+
+  public boolean isFailure() {
+
+    return !this.success;
+  }
+
+  public int getHttpStatusCode() {
+
+    return this.httpStatusCode;
+  }
+
+  public String getUrl() {
+
+    return this.url;
+  }
 }

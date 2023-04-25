@@ -1,5 +1,9 @@
 package com.devonfw.tools.ide.url.updater;
 
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+
 import com.devonfw.tools.ide.url.folderhandling.UrlRepository;
 import com.devonfw.tools.ide.url.updater.aws.AWSCrawler;
 import com.devonfw.tools.ide.url.updater.az.AzureCrawler;
@@ -32,34 +36,33 @@ import com.devonfw.tools.ide.url.updater.sonar.SonarCrawler;
 import com.devonfw.tools.ide.url.updater.terraform.TerraformCrawler;
 import com.devonfw.tools.ide.url.updater.vscode.VSCodeCrawler;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-
 /**
- * The {@code UpdateManager} class manages the update process for various tools by using a list of {@link AbstractCrawler}s
- * to update the {@link UrlRepository}. The list of {@link AbstractCrawler}s contains crawlers for different tools and services,
- * To use the UpdateManager, simply create an instance with the path to the repository as a parameter and call the {@link #updateAll()} method.
+ * The {@code UpdateManager} class manages the update process for various tools by using a list of
+ * {@link AbstractCrawler}s to update the {@link UrlRepository}. The list of {@link AbstractCrawler}s contains crawlers
+ * for different tools and services, To use the UpdateManager, simply create an instance with the path to the repository
+ * as a parameter and call the {@link #updateAll()} method.
  */
 public class UpdateManager {
-	private final UrlRepository urlRepository;
-	private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(), new CobigenCrawler(),
-	    new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(), new EclipseEclipseCrawler(), new GCViewerCrawler(),
-	    new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(), new HelmCrawler(), new IntelliJUltimateEditionCrawler(),
-	    new IntelliJIntellijEditionCrawler(), new JavaCrawler(), new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(),
-	    new LazyDockerCrawler(), new MvnCrawler(), new NodeCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(),
-	    new PythonCrawler(), new QuarkusCrawler(), new RancherCrawler(), new SonarCrawler(), new TerraformCrawler(),
-	    new VSCodeCrawler());
+  private final UrlRepository urlRepository;
 
-	public UpdateManager(Path pathToRepository) {
-		this.urlRepository = UrlRepository.load(pathToRepository);
-	}
+  private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(),
+      new CobigenCrawler(), new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(),
+      new EclipseEclipseCrawler(), new GCViewerCrawler(), new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(),
+      new HelmCrawler(), new IntelliJUltimateEditionCrawler(), new IntelliJIntellijEditionCrawler(), new JavaCrawler(),
+      new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(), new LazyDockerCrawler(), new MvnCrawler(),
+      new NodeCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(), new PythonCrawler(), new QuarkusCrawler(),
+      new RancherCrawler(), new SonarCrawler(), new TerraformCrawler(), new VSCodeCrawler());
 
-	public void updateAll() {
-		for (AbstractCrawler crawler : crawlers) {
-			crawler.update(urlRepository);
-		}
-	}
+  public UpdateManager(Path pathToRepository) {
 
+    this.urlRepository = UrlRepository.load(pathToRepository);
+  }
+
+  public void updateAll() {
+
+    for (AbstractCrawler crawler : crawlers) {
+      crawler.update(urlRepository);
+    }
+  }
 
 }

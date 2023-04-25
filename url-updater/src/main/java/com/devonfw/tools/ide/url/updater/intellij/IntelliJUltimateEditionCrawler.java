@@ -5,15 +5,17 @@ import com.devonfw.tools.ide.url.updater.OSType;
 
 public class IntelliJUltimateEditionCrawler extends IntelliJCrawler {
 
-	@Override
-	protected String getEdition() {
-		return "ultimate";
-	}
+  @Override
+  protected String getEdition() {
 
-	@Override
-	protected void updateVersion(UrlVersion urlVersion) {
-		doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.exe", OSType.WINDOWS);
-		doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.tar.gz", OSType.LINUX);
-		doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.dmg", OSType.MAC);
-	}
+    return "ultimate";
+  }
+
+  @Override
+  protected void updateVersion(UrlVersion urlVersion) {
+
+    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.exe", OSType.WINDOWS);
+    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.tar.gz", OSType.LINUX);
+    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIU-${version}.dmg", OSType.MAC);
+  }
 }
