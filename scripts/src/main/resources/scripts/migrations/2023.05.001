@@ -12,12 +12,12 @@ function doAdaptConfigurationFiles() {
     /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
     /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
     /INTELLIJ_EDITION_TYPE/       {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
-    /INTELLIJ_EDITION/, /c/       {gsub("c","INTELLIJ")}
-    /INTELLIJ_EDITION/, /u/       {gsub("u","ULTIMATE")}
+    /INTELLIJ_EDITION/, /c/       {gsub("c","intellij")}
+    /INTELLIJ_EDITION/, /u/       {gsub("u","ultimate")}
     /ECLIPSE_EDITION_TYPE/        {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
-    /ECLIPSE_EDITION/, /java/     {gsub("java","ECLIPSE")}
-    /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","DOCKER")}
-    /RANGER-DESKTOP/              {gsub("RANGER-DESKTOP","RANCHER")}        
+    /ECLIPSE_EDITION/, /java/     {gsub("java","eclipse")}
+    /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","docker")}
+    /RANGER-DESKTOP/              {gsub("RANGER-DESKTOP","rancher")}        
     {print $0}
   ' > "${configuration_file}".tmp
   mv "${configuration_file}".tmp "${configuration_file}"
