@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+source "$(dirname "${0}")"/../functions
+
+function doAdaptConfigurationFiles() {
+  configuration_file="${1}"
+  cat "${configuration_file}" | awk '
+    /MAVEN_HOME/                  {gsub("MAVEN_HOME","MVN_HOME")}
+    /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
+    /INTELLIJ_EDITION_TYPE/       {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
+    /INTELLIJ_EDITION/, /c/       {gsub("c","INTELLIJ")}
+    /INTELLIJ_EDITION/, /u/       {gsub("u","ULTIMATE")}
+    /ECLIPSE_EDITION_TYPE/        {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
+    /ECLIPSE_EDITION/, /java/     {gsub("java","ECLIPSE")}
+    /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
+    /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
+    /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","DOCKER")}
+    /RANGER-DESKTOP/              {gsub("RANGER-DESKTOP","RANCHER")}        
+    {print $0}
+  ' > "${configuration_file}".tmp
+  mv "${configuration_file}".tmp "${configuration_file}"
+}
+
+cd "${DEVON_IDE_HOME}"
+if [ ! -d "${DEVON_IDE_HOME}/urls" ] 
+then
+  git clone https://github.com/devonfw/ide-urls.git urls
+fi
+[ -d "${DEVON_IDE_HOME}"/mirrors ] && rm -rf "${DEVON_IDE_HOME}"/mirrors
+
+if doIsWindows
+then
+  [ -f "$USERPROFILE"/devon.properties ] && doAdaptConfigurationFiles "$USERPROFILE"/devon.properties
+else
+  [ -f ~/devon.properties ] && doAdaptConfigurationFiles ~/devon.properties
+fi
+[ -f "${DEVON_IDE_HOME}"/scripts/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/scripts/devon.properties
+[ -f "${DEVON_IDE_HOME}"/settings/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon.properties
+[ -f "${DEVON_IDE_HOME}"/conf/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/conf/devon.properties
+[ -f "${DEVON_IDE_HOME}"/settings/devon/conf/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon/conf/devon.properties
+find "${DEVON_IDE_HOME}"/workspaces/ -mindepth 2 -maxdepth 2 -name devon.properties -print | while read foundfile
+do
+  doAdaptConfigurationFiles "${foundfile}"
+done
+
+
+
+
+

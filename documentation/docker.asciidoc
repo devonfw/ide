@@ -37,9 +37,9 @@ for our installation, due to it being license free compared to Docker Desktop wh
 
 === Docker Desktop
 
-Docker Desktop can still be used by setting the variable DOCKER_EDITION equal to "DOCKERDESKTOP". 
+Docker Desktop can still be used by setting the variable DOCKER_EDITION equal to "DOCKER". 
 This can be done by your projects ide-admin in the link:usage.asciidoc#developer[settings file]. If you want to switch from Rancher Desktop to Docker Desktop, then add a line with the following content 
-"DOCKER_EDITION=DOCKERDESKTOP" 
+"DOCKER_EDITION=DOCKER" 
 (without the quotes around the allocation) to the file devon.properties located at the path ${DEVON_IDE_HOME}/conf/devon.properties.
 
 === Rancher Desktop 
