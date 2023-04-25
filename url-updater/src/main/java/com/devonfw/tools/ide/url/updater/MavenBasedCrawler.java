@@ -13,13 +13,13 @@ import java.util.Set;
 /**
  * The MvnCrawler class is an abstract class that provides functionality for crawling Maven repositories.
  */
-public abstract class MvnCrawler extends AbstractCrawler {
-	private final static Logger logger = LoggerFactory.getLogger(MvnCrawler.class.getName());
-	private final String mvnBaseRepoUrl;
+public abstract class MavenBasedCrawler extends AbstractCrawler {
+	private final static Logger logger = LoggerFactory.getLogger(MavenBasedCrawler.class.getName());
+	private final String mavenBaseRepoUrl;
 
-	public MvnCrawler() {
+	public MavenBasedCrawler() {
 		super();
-		this.mvnBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
+		this.mavenBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
 
 	}
 
@@ -29,13 +29,13 @@ public abstract class MvnCrawler extends AbstractCrawler {
 
 	@Override
 	protected Set<String> getVersions() {
-		return doGetVersionsFromMavenApi(this.mvnBaseRepoUrl + "maven-metadata.xml");
+		return doGetVersionsFromMavenApi(this.mavenBaseRepoUrl + "maven-metadata.xml");
 	}
 
 	@Override
 	protected void updateVersion(UrlVersion urlVersion) {
 		String version = urlVersion.getName();
-		String url = mvnBaseRepoUrl + version + "/" + getArtifcatId() + "-" + version + getExtension();
+		String url = mavenBaseRepoUrl + version + "/" + getArtifcatId() + "-" + version + getExtension();
 		doUpdateVersion(urlVersion, url);
 	}
 
