@@ -3,32 +3,68 @@ package com.devonfw.tools.ide.url.folderhandling.jsonfile;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.devonfw.tools.ide.url.folderhandling.UrlStatusFile;
+
+/**
+ * Java model class representing a "status.json" file.
+ *
+ * @see UrlStatusFile
+ */
 public class StatusJson {
-	private boolean manual;
-	private Map<String, URLStatus> urlStatuses;
+  private boolean manual;
 
-	public StatusJson() {
-		this.manual = false;
-		this.urlStatuses = new LinkedHashMap<>();
-	}
+  private Map<Integer, UrlStatus> urls;
 
-	public boolean isManual() {
-		return manual;
-	}
+  /**
+   * The constructor.
+   */
+  public StatusJson() {
 
-	public void setManual(boolean manual) {
-		this.manual = manual;
-	}
+    this.manual = false;
+    this.urls = new LinkedHashMap<>();
+  }
 
-	public Map<String, URLStatus> getUrlStatuses() {
-		return urlStatuses;
-	}
+  /**
+   * @return {@code true} if this file has been created manually and the containing version folder shall be ignored by
+   *         the automatic update process, {@code false} otherwise.
+   */
+  public boolean isManual() {
 
-	public void setUrlStatuses(Map<String, URLStatus> urlStatuses) {
-		this.urlStatuses = urlStatuses;
-	}
+    return this.manual;
+  }
 
-	public void addUrlStatus(String urlHash, URLStatus status) {
-		this.urlStatuses.put(urlHash, status);
-	}
+  /**
+   * @param manual the new value of {@link #isManual()}.
+   */
+  public void setManual(boolean manual) {
+
+    this.manual = manual;
+  }
+
+  /**
+   * @return the {@link Map} with the {@link UrlStatus} objects. The {@link Map#keySet() keys} are the
+   *         {@link String#hashCode() hash-codes} of the URLs.
+   */
+  public Map<Integer, UrlStatus> getUrls() {
+
+    return this.urls;
+  }
+
+  /**
+   * @param urlStatuses the new value of {@link #getUrls()}.
+   */
+  public void setUrls(Map<Integer, UrlStatus> urlStatuses) {
+
+    this.urls = urlStatuses;
+  }
+
+  /**
+   * @param url the URL to get or create the {@link UrlStatus} for.
+   * @return the existing {@link UrlStatus} for the given URL or a new {@link UrlStatus} associated with the given URL.
+   */
+  public UrlStatus getOrCreateUrlStatus(String url) {
+
+    Integer key = Integer.valueOf(url.hashCode());
+    return this.urls.computeIfAbsent(key, hash -> new UrlStatus());
+  }
 }

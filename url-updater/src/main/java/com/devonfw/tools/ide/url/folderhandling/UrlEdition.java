@@ -9,6 +9,9 @@ import com.devonfw.tools.ide.url.folderhandling.abstractUrlClasses.AbstractUrlFo
  */
 public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion> {
 
+  /** {@link #getName() Name} of security file. */
+  public static final String FILENAME_SECURITY = "security";
+
 	/**
 	 * The constructor.
 	 *
@@ -28,7 +31,19 @@ public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion>
 	@Override
 	protected UrlVersion newChild(String name) {
 
+	  if (FILENAME_SECURITY.equals(name)) {
+	    // return new UrlSecurityFile(this);
+	  }
 		return new UrlVersion(this, name);
+	}
+
+	@Override
+	protected boolean isAllowedChild(String name, boolean folder) {
+
+	  if (FILENAME_SECURITY.equals(name)) {
+	    return true;
+	  }
+	  return super.isAllowedChild(name, folder);
 	}
 
 }

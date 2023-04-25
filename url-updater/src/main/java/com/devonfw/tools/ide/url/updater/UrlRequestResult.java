@@ -1,11 +1,11 @@
 package com.devonfw.tools.ide.url.updater;
 
-public class URLRequestResult {
+public class UrlRequestResult {
 	private final boolean success;
 	private final int httpStatusCode;
 	private final String url;
 
-	public URLRequestResult(boolean success, int value, String url) {
+	public UrlRequestResult(boolean success, int value, String url) {
 		this.success = success;
 		this.httpStatusCode = value;
 		this.url = url;

@@ -1,11 +1,11 @@
 package com.devonfw.tools.ide.url.updater;
 
-import com.devonfw.tools.ide.url.folderhandling.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -13,8 +13,20 @@ import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Set;
+
+import com.devonfw.tools.ide.url.folderhandling.UrlChecksum;
+import com.devonfw.tools.ide.url.folderhandling.UrlDownloadFile;
+import com.devonfw.tools.ide.url.folderhandling.UrlEdition;
+import com.devonfw.tools.ide.url.folderhandling.UrlRepository;
+import com.devonfw.tools.ide.url.folderhandling.UrlStatusFile;
+import com.devonfw.tools.ide.url.folderhandling.UrlTool;
+import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
+import com.devonfw.tools.ide.url.folderhandling.jsonfile.UrlStatus;
+import com.devonfw.tools.ide.url.folderhandling.jsonfile.UrlStatusState;
 
 /**
  * An abstract class representing a web crawler that implements the Updater interface.
@@ -103,29 +115,95 @@ public abstract class AbstractCrawler implements Updater {
 		if (edition != null) {
 			downloadUrl = downloadUrl.replace("${edition}", edition);
 		}
-		URLRequestResult HTTPRequestResultOfURLRequest = doCheckIfDownloadUrlWorks(downloadUrl);
-		if (HTTPRequestResultOfURLRequest.isSuccess()) {
+		UrlRequestResult result = doCheckIfDownloadUrlWorks(downloadUrl);
+		if (result.isSuccess()) {
 			UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(osString, arch);
 			urlDownloadFile.addUrl(downloadUrl);
-			doCreateOrRefreshStatusJson(HTTPRequestResultOfURLRequest, urlVersion, downloadUrl);
+			doCreateOrRefreshStatusJson(result, urlVersion, downloadUrl);
 			urlVersion.save();
 
 			//generate checksum of download file
-			if (HTTPRequestResultOfURLRequest.getHttpStatusCode() == 200) {
-				UrlChecksum urlChecksum = new UrlChecksum(urlVersion, urlDownloadFile.getName(), client);
-				urlChecksum.doGenerateChecksum(downloadUrl);
+			if (result.getHttpStatusCode() == 200) {
+			  UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+			  doGenerateChecksum(urlChecksum, downloadUrl);
 			}
 			return true;
 		} else {
 			//check if folder of urlVersion exists
 			Path folderPath = Paths.get(urlVersion.getPath().toString());
 			if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
-				doCreateOrRefreshStatusJson(HTTPRequestResultOfURLRequest, urlVersion, downloadUrl);
+				doCreateOrRefreshStatusJson(result, urlVersion, downloadUrl);
 				urlVersion.save();
 			}
 			return false;
 		}
 	}
+
+	  /**
+	   * @param url the url of the download file
+	   * @return the input stream of requested url
+	   */
+	  private InputStream doGetResponseInputStream(String url) {
+
+	    try {
+	      HttpRequest request1 = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+	      return this.client.send(request1, HttpResponse.BodyHandlers.ofInputStream()).body();
+	    } catch (IOException | InterruptedException exception) {
+	      throw new IllegalStateException("Failed to retrieve response body from url: " + url, exception);
+	    } catch (IllegalArgumentException e) {
+	      logger.error("Error while getting response body from url {}", url, e);
+	      return null;
+	    }
+	  }
+
+	  /**
+	   * @param inputStream the input stream of requested url
+	   * @return checksum of input stream as string
+	   */
+	  private String doGenerateChecksumFromInputStream(InputStream inputStream) {
+
+	    try {
+	      MessageDigest md = MessageDigest.getInstance(UrlChecksum.HASH_ALGORITHM);
+
+	      byte[] buffer = new byte[8192];
+	      int bytesRead;
+	      while ((bytesRead = inputStream.read(buffer)) != -1) {
+	        md.update(buffer, 0, bytesRead);
+	      }
+	      inputStream.close();
+
+	      byte[] digestBytes = md.digest();
+	      String checksum = toHexString(digestBytes);
+	      return checksum;
+	    } catch (IOException e) {
+	      throw new IllegalStateException("Failed to read input stream of download.", e);
+	    } catch (NoSuchAlgorithmException e) {
+	      throw new IllegalStateException("No such hash algorithm " + UrlChecksum.HASH_ALGORITHM, e);
+	    }
+	  }
+
+	  /**
+	   * @param bytes the byte array to convert in hex String
+	   * @return converted string in hexadecimal format
+	   */
+	  private static String toHexString(byte[] bytes) {
+
+	    StringBuilder sb = new StringBuilder();
+	    for (byte b : bytes) {
+	      sb.append(String.format("%02x", b));
+	    }
+	    return sb.toString();
+	  }
+
+	  /**
+	   * @param urlChecksum the {@link UrlChecksum} file.
+	   * @param downloadUrl the url of the download file.
+	   */
+	  public void doGenerateChecksum(UrlChecksum urlChecksum, String downloadUrl) {
+
+	    urlChecksum.setChecksum(doGenerateChecksumFromInputStream(doGetResponseInputStream(downloadUrl)));
+	    // urlChecksum.save();
+	  }
 
 	/**
 	 * Checks if a download URL works and if the file is available for download.
@@ -133,18 +211,18 @@ public abstract class AbstractCrawler implements Updater {
 	 * @param downloadUrl the URL to check.
 	 * @return a URLRequestResult object representing the success or failure of the URL check.
 	 */
-	protected URLRequestResult doCheckIfDownloadUrlWorks(String downloadUrl) {
+	protected UrlRequestResult doCheckIfDownloadUrlWorks(String downloadUrl) {
 		// Do Head request to check if the download url works and if the file is available for download
-		URLRequestResult URLRequestResult;
+		UrlRequestResult URLRequestResult;
 		Level logLevel = Level.INFO;
 		try {
 			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(downloadUrl)).method("HEAD", HttpRequest.BodyPublishers.noBody()).timeout(Duration.ofSeconds(5)).build();
 
 			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 			// Return the success or failure URLRequestResult
-			URLRequestResult = response.statusCode() >= 200 && response.statusCode() < 400 ? new URLRequestResult(true, response.statusCode(), downloadUrl) : new URLRequestResult(false, response.statusCode(), downloadUrl);
+			URLRequestResult = response.statusCode() >= 200 && response.statusCode() < 400 ? new UrlRequestResult(true, response.statusCode(), downloadUrl) : new UrlRequestResult(false, response.statusCode(), downloadUrl);
 		} catch (IOException | InterruptedException e) {
-			URLRequestResult = new URLRequestResult(false, 500, downloadUrl);
+			URLRequestResult = new UrlRequestResult(false, 500, downloadUrl);
 		}
 
 		if (URLRequestResult.isFailure()) {
@@ -159,18 +237,20 @@ public abstract class AbstractCrawler implements Updater {
 	/**
 	 * Creates or refreshes the status JSON file for a given UrlVersion instance based on the URLRequestResult of checking if a download URL works.
 	 *
-	 * @param URLRequestResult the URLRequestResult instance indicating whether the download URL works.
+	 * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
 	 * @param urlVersion       the UrlVersion instance to create or refresh the status JSON file for.
 	 */
-	private void doCreateOrRefreshStatusJson(URLRequestResult URLRequestResult, UrlVersion urlVersion, String downloadUrl) {
+	private void doCreateOrRefreshStatusJson(UrlRequestResult result, UrlVersion urlVersion, String downloadUrl) {
 		UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-		String urlHashOfDownloadUrl = String.valueOf(downloadUrl.hashCode());
-		if (URLRequestResult.isSuccess()) {
-			urlStatusFile.addSuccessUrlStatus(urlHashOfDownloadUrl);
-		}
-		if (URLRequestResult.isFailure()) {
-			String message = URLRequestResult.getHttpStatusCode() + " " + URLRequestResult.getUrl();
-			urlStatusFile.addErrorUrlStatus(urlHashOfDownloadUrl, message);
+		UrlStatus status = urlStatusFile.getStatusJson().getOrCreateUrlStatus(downloadUrl);
+		if (result.isSuccess()) {
+		  status.setSuccess(new UrlStatusState());
+		} else if (result.isFailure()) {
+		  UrlStatusState error = new UrlStatusState();
+		  error.setCode(Integer.valueOf(result.getHttpStatusCode()));
+		  // String message = result.getHttpStatusCode() + " " + result.getUrl();
+		  // error.setMessage(message);
+		  status.setError(error);
 		}
 	}
 
@@ -201,8 +281,18 @@ public abstract class AbstractCrawler implements Updater {
 		return getToolName();
 	}
 
+	protected final String getToolWithEdition() {
+
+	  String tool = getToolName();
+	  String edition = getEdition();
+	  if (tool.equals(edition)) {
+	    return tool;
+	  }
+	  return tool + "/" + edition;
+	}
+
 	/**
-	 * Updates existing versions of the tool in the URL repository.
+	 * Update existing versions of the tool in the URL repository.
 	 *
 	 * @param edition the URL edition to update
 	 */
@@ -213,7 +303,7 @@ public abstract class AbstractCrawler implements Updater {
 			if (urlVersion != null) {
 				UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
 				logger.info("Getting or creating Status for version {}", version);
-				if (urlStatusFile.getJsonFileData().isManual()) {
+				if (urlStatusFile.getStatusJson().isManual()) {
 					logger.info("Version {} is manual, skipping update", version);
 					continue;
 				}
@@ -227,7 +317,7 @@ public abstract class AbstractCrawler implements Updater {
 
 	/**
 	 * @param version original version.
-	 *                Returns the transformed version
+	 * @return the transformed version
 	 */
 	protected String mapVersion(String version) {
 		return version;

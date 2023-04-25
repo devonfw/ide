@@ -81,7 +81,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
 	}
 
 	@Override
-	public void doLoad() {
+	protected void doLoad() {
 
 		this.urls.clear();
 		Path path = getPath();
@@ -99,7 +99,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
 	}
 
 	@Override
-	public void doSave() {
+	protected void doSave() {
 
 		Path path = getPath();
 		try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {

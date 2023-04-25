@@ -43,7 +43,13 @@ import java.util.List;
  */
 public class UpdateManager {
 	private final UrlRepository urlRepository;
-	private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(), new CobigenCrawler(), new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(), new EclipseEclipseCrawler(), new GCViewerCrawler(), new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(), new HelmCrawler(), new IntelliJUltimateEditionCrawler(), new IntelliJIntellijEditionCrawler(), new JavaCrawler(), new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(), new LazyDockerCrawler(), new MvnCrawler(), new NodeCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(), new PythonCrawler(), new QuarkusCrawler(), new RancherCrawler(), new SonarCrawler(), new TerraformCrawler(), new VSCodeCrawler());
+	private final List<AbstractCrawler> crawlers = Arrays.asList(new AWSCrawler(), new AzureCrawler(), new CobigenCrawler(),
+	    new DotNetCrawler(), new DockerCrawler(), new EclipseCppCrawler(), new EclipseEclipseCrawler(), new GCViewerCrawler(),
+	    new GHCrawler(), new GraalVMCrawler(), new GradleCrawler(), new HelmCrawler(), new IntelliJUltimateEditionCrawler(),
+	    new IntelliJIntellijEditionCrawler(), new JavaCrawler(), new JenkinsCrawler(), new KotlinCrawler(), new KotlinNativeCrawler(),
+	    new LazyDockerCrawler(), new MvnCrawler(), new NodeCrawler(), new NpmCrawler(), new OcCrawler(), new PipCrawler(),
+	    new PythonCrawler(), new QuarkusCrawler(), new RancherCrawler(), new SonarCrawler(), new TerraformCrawler(),
+	    new VSCodeCrawler());
 
 	public UpdateManager(Path pathToRepository) {
 		this.urlRepository = UrlRepository.load(pathToRepository);

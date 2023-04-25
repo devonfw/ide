@@ -60,15 +60,20 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 		return arch;
 	}
 
-	public UrlDownloadFile getUrlFile(String name) {
-		return (UrlDownloadFile) getChild(name);
-	}
-
 	/**
 	 * @return the {@link UrlStatusFile}.
 	 */
 	public UrlStatusFile getOrCreateStatus() {
 		return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
+	}
+
+	/**
+	 * @param urlsFilename the {@link #getName() filename} of the URLs file.
+	 * @return the existing or newly created and added {@link UrlChecksum} file.
+	 */
+	public UrlChecksum getOrCreateChecksum(String urlsFilename) {
+
+	  return (UrlChecksum) getOrCreateChild(urlsFilename + UrlChecksum.EXTENSION);
 	}
 
 	/**
@@ -81,8 +86,16 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 
 		if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
 			return new UrlStatusFile(this);
+		} else if (name.endsWith(UrlChecksum.EXTENSION)) {
+		  return new UrlChecksum(this, name);
 		}
 		return new UrlDownloadFile(this, name);
+	}
+
+	@Override
+	protected boolean isAllowedChild(String name, boolean folder) {
+
+	  return true;
 	}
 
 	@Override
