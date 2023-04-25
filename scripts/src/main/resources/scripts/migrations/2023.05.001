@@ -4,6 +4,7 @@ source "$(dirname "${0}")"/../functions
 
 function doAdaptConfigurationFiles() {
   configuration_file="${1}"
+  [ -f "${configuration_file}" ]
   cat "${configuration_file}" | awk '
     /MAVEN_HOME/                  {gsub("MAVEN_HOME","MVN_HOME")}
     /MVN_HOME/, /maven/           {gsub("maven","mvn")}
@@ -30,16 +31,12 @@ then
 fi
 [ -d "${DEVON_IDE_HOME}"/mirrors ] && rm -rf "${DEVON_IDE_HOME}"/mirrors
 
-if doIsWindows
-then
-  [ -f "$USERPROFILE"/devon.properties ] && doAdaptConfigurationFiles "$USERPROFILE"/devon.properties
-else
-  [ -f ~/devon.properties ] && doAdaptConfigurationFiles ~/devon.properties
-fi
-[ -f "${DEVON_IDE_HOME}"/scripts/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/scripts/devon.properties
-[ -f "${DEVON_IDE_HOME}"/settings/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon.properties
-[ -f "${DEVON_IDE_HOME}"/conf/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/conf/devon.properties
-[ -f "${DEVON_IDE_HOME}"/settings/devon/conf/devon.properties ] && doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon/conf/devon.properties
+doAdaptConfigurationFiles "${DEVON_HOME_DIR}"/devon.properties
+doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/scripts/devon.properties
+doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon.properties
+doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/conf/devon.properties
+doAdaptConfigurationFiles "${DEVON_IDE_HOME}"/settings/devon/conf/devon.properties
+
 find "${DEVON_IDE_HOME}"/workspaces/ -mindepth 2 -maxdepth 2 -name devon.properties -print | while read foundfile
 do
   doAdaptConfigurationFiles "${foundfile}"
