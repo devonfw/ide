@@ -9,45 +9,45 @@ import java.util.Set;
  */
 public class UrlJsonCompleteDataBlock {
 
-	private boolean manual;
+  private boolean manual;
 
-	private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<JsonDataBlockForSpecificUrl>();
+  private Set<JsonDataBlockForSpecificUrl> urls = new HashSet<>();
 
-	public UrlJsonCompleteDataBlock() {
+  public UrlJsonCompleteDataBlock() {
 
-		super();
-	}
+    super();
+  }
 
-	public UrlJsonCompleteDataBlock(boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
+  public UrlJsonCompleteDataBlock(boolean manual, Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
-		this.manual = manual;
-		this.urls = dataBlocks;
-	}
+    this.manual = manual;
+    this.urls = dataBlocks;
+  }
 
-	public boolean isManual() {
+  public boolean isManual() {
 
-		return this.manual;
-	}
+    return this.manual;
+  }
 
-	public void setManual(boolean manual) {
+  public void setManual(boolean manual) {
 
-		this.manual = manual;
-	}
+    this.manual = manual;
+  }
 
-	public Set<JsonDataBlockForSpecificUrl> getUrls() {
+  public Set<JsonDataBlockForSpecificUrl> getUrls() {
 
-		return this.urls;
-	}
+    return this.urls;
+  }
 
-	public void setUrls(Set<JsonDataBlockForSpecificUrl> dataBlocks) {
+  public void setUrls(Set<JsonDataBlockForSpecificUrl> dataBlocks) {
 
-		this.urls = dataBlocks;
-	}
+    this.urls = dataBlocks;
+  }
 
-	// For code testing
-	public void addSingleDataBlock(JsonDataBlockForSpecificUrl dataBlockToAdd) {
+  // For code testing
+  public void addSingleDataBlock(JsonDataBlockForSpecificUrl dataBlockToAdd) {
 
-		this.urls.add(dataBlockToAdd);
+    this.urls.add(dataBlockToAdd);
 
-	}
+  }
 }

@@ -12,38 +12,38 @@ public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion>
   /** {@link #getName() Name} of security file. */
   public static final String FILENAME_SECURITY = "security";
 
-	/**
-	 * The constructor.
-	 *
-	 * @param parent the {@link #getParent() parent folder}.
-	 * @param name   the {@link #getName() filename}.
-	 */
-	public UrlEdition(UrlTool parent, String name) {
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent folder}.
+   * @param name the {@link #getName() filename}.
+   */
+  public UrlEdition(UrlTool parent, String name) {
 
-		super(parent, name);
-	}
+    super(parent, name);
+  }
 
-	/**
-	 * This method is used to add new children to the children collection of an instance from this class.
-	 *
-	 * @param name The name of the {@link UrlVersion} object that should be created.
-	 */
-	@Override
-	protected UrlVersion newChild(String name) {
+  /**
+   * This method is used to add new children to the children collection of an instance from this class.
+   *
+   * @param name The name of the {@link UrlVersion} object that should be created.
+   */
+  @Override
+  protected UrlVersion newChild(String name) {
 
-	  if (FILENAME_SECURITY.equals(name)) {
-	    // return new UrlSecurityFile(this);
-	  }
-		return new UrlVersion(this, name);
-	}
+    if (FILENAME_SECURITY.equals(name)) {
+      // return new UrlSecurityFile(this);
+    }
+    return new UrlVersion(this, name);
+  }
 
-	@Override
-	protected boolean isAllowedChild(String name, boolean folder) {
+  @Override
+  protected boolean isAllowedChild(String name, boolean folder) {
 
-	  if (FILENAME_SECURITY.equals(name)) {
-	    return true;
-	  }
-	  return super.isAllowedChild(name, folder);
-	}
+    if (FILENAME_SECURITY.equals(name)) {
+      return true;
+    }
+    return super.isAllowedChild(name, folder);
+  }
 
 }

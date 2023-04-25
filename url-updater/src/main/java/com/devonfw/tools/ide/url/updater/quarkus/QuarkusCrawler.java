@@ -5,25 +5,33 @@ import com.devonfw.tools.ide.url.updater.GithubCrawler;
 import com.devonfw.tools.ide.url.updater.OSType;
 
 public class QuarkusCrawler extends GithubCrawler {
-	@Override
-	protected String getToolName() {
-		return "quarkus";
-	}
+  @Override
+  protected String getToolName() {
 
-	@Override
-	protected void updateVersion(UrlVersion urlVersion) {
-		doUpdateVersion(urlVersion, "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.zip", OSType.WINDOWS);
-		doUpdateVersion(urlVersion, "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.tar.gz", OSType.LINUX);
-		doUpdateVersion(urlVersion, "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.tar.gz", OSType.MAC);
-	}
+    return "quarkus";
+  }
 
-	@Override
-	protected String getOrganizationName() {
-		return "quarkusio";
-	}
+  @Override
+  protected void updateVersion(UrlVersion urlVersion) {
 
-	@Override
-	protected String getRepository() {
-		return "quarkus";
-	}
+    doUpdateVersion(urlVersion,
+        "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.zip", OSType.WINDOWS);
+    doUpdateVersion(urlVersion,
+        "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.tar.gz",
+        OSType.LINUX);
+    doUpdateVersion(urlVersion,
+        "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}.tar.gz", OSType.MAC);
+  }
+
+  @Override
+  protected String getOrganizationName() {
+
+    return "quarkusio";
+  }
+
+  @Override
+  protected String getRepository() {
+
+    return "quarkus";
+  }
 }

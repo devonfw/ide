@@ -1,62 +1,75 @@
 package com.devonfw.tools.ide.url.updater.mavenapiclasses;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Versioning {
-	private String latest;
-	private String release;
-	private List<String> versions;
-	private String lastUpdated;
+  private String latest;
 
-	public Versioning() {
-	} // added default constructor
+  private String release;
 
-	public Versioning(String latest, String release, List<String> versions, String lastUpdated) {
-		this.latest = latest;
-		this.release = release;
-		this.versions = versions;
-		this.lastUpdated = lastUpdated;
-	}
+  private List<String> versions;
 
-	@JsonProperty("latest")  // added JsonProperty annotation
-	public String getLatest() {
-		return latest;
-	}
+  private String lastUpdated;
 
-	@JsonProperty("latest")  // added JsonProperty annotation
-	public void setLatest(String latest) {
-		this.latest = latest;
-	}
+  public Versioning() {
 
-	@JsonProperty("release")  // added JsonProperty annotation
-	public String getRelease() {
-		return release;
-	}
+  } // added default constructor
 
-	@JsonProperty("release")  // added JsonProperty annotation
-	public void setRelease(String release) {
-		this.release = release;
-	}
+  public Versioning(String latest, String release, List<String> versions, String lastUpdated) {
 
-	@JsonProperty("versions")  // added JsonProperty annotation
-	public List<String> getVersions() {
-		return versions;
-	}
+    this.latest = latest;
+    this.release = release;
+    this.versions = versions;
+    this.lastUpdated = lastUpdated;
+  }
 
-	@JsonProperty("versions")  // added JsonProperty annotation
-	public void setVersions(List<String> versions) {
-		this.versions = versions;
-	}
+  @JsonProperty("latest") // added JsonProperty annotation
+  public String getLatest() {
 
-	@JsonProperty("lastUpdated")  // added JsonProperty annotation
-	public String getLastUpdated() {
-		return lastUpdated;
-	}
+    return latest;
+  }
 
-	@JsonProperty("lastUpdated")  // added JsonProperty annotation
-	public void setLastUpdated(String lastUpdated) {
-		this.lastUpdated = lastUpdated;
-	}
+  @JsonProperty("latest") // added JsonProperty annotation
+  public void setLatest(String latest) {
+
+    this.latest = latest;
+  }
+
+  @JsonProperty("release") // added JsonProperty annotation
+  public String getRelease() {
+
+    return release;
+  }
+
+  @JsonProperty("release") // added JsonProperty annotation
+  public void setRelease(String release) {
+
+    this.release = release;
+  }
+
+  @JsonProperty("versions") // added JsonProperty annotation
+  public List<String> getVersions() {
+
+    return versions;
+  }
+
+  @JsonProperty("versions") // added JsonProperty annotation
+  public void setVersions(List<String> versions) {
+
+    this.versions = versions;
+  }
+
+  @JsonProperty("lastUpdated") // added JsonProperty annotation
+  public String getLastUpdated() {
+
+    return lastUpdated;
+  }
+
+  @JsonProperty("lastUpdated") // added JsonProperty annotation
+  public void setLastUpdated(String lastUpdated) {
+
+    this.lastUpdated = lastUpdated;
+  }
 }

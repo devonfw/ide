@@ -5,29 +5,35 @@ import com.devonfw.tools.ide.url.updater.GithubCrawler;
 import com.devonfw.tools.ide.url.updater.OSType;
 
 public class NodeCrawler extends GithubCrawler {
-	@Override
-	protected String getToolName() {
-		return "node";
-	}
+  @Override
+  protected String getToolName() {
 
-	@Override
-	protected void updateVersion(UrlVersion urlVersion) {
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-win-x64.zip", OSType.WINDOWS);
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-win-aarch64.zip", OSType.WINDOWS, "arm64");
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-linux-x64.tar.gz", OSType.LINUX);
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-linux-aarch64.tar.gz", OSType.LINUX, "arm64");
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-darwin-x64.tar.gz", OSType.MAC);
-		doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-darwin-aarch64.tar.gz", OSType.MAC, "arm64");
-	}
+    return "node";
+  }
 
+  @Override
+  protected void updateVersion(UrlVersion urlVersion) {
 
-	@Override
-	protected String getOrganizationName() {
-		return "nodejs";
-	}
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-win-x64.zip", OSType.WINDOWS);
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-win-aarch64.zip", OSType.WINDOWS,
+        "arm64");
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-linux-x64.tar.gz", OSType.LINUX);
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-linux-aarch64.tar.gz", OSType.LINUX,
+        "arm64");
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-darwin-x64.tar.gz", OSType.MAC);
+    doUpdateVersion(urlVersion, "https://nodejs.org/dist/${version}/node-${version}-darwin-aarch64.tar.gz", OSType.MAC,
+        "arm64");
+  }
 
-	@Override
-	protected String getRepository() {
-		return "node";
-	}
+  @Override
+  protected String getOrganizationName() {
+
+    return "nodejs";
+  }
+
+  @Override
+  protected String getRepository() {
+
+    return "node";
+  }
 }
