@@ -2,38 +2,67 @@ package com.devonfw.tools.ide.url.updater.java;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * JSON data object for a version of of Java. We map only properties that we are interested in and let jackson ignore
+ * all others.
+ *
+ * @see JavaJsonObject#getVersions()
+ */
 public class JavaJsonVersion {
   @JsonProperty("openjdk_version")
-  private String openjdk_version;
+  private String openjdkVersion;
 
   @JsonProperty("semver")
   private String semver;
 
+  /**
+   * The constructor.
+   */
   public JavaJsonVersion() {
 
+    super();
   }
 
-  public JavaJsonVersion(String openjdk_version, String semver) {
+  /**
+   * The constructor.
+   *
+   * @param openjdkVersion the {@link #getOpenjdkVersion() OpenJDK version}.
+   * @param semver the {@link #getSemver() semantic version}.
+   */
+  public JavaJsonVersion(String openjdkVersion, String semver) {
 
-    this.openjdk_version = openjdk_version;
+    super();
+    this.openjdkVersion = openjdkVersion;
     this.semver = semver;
   }
 
-  public String getOpenjdk_version() {
+  /**
+   * @return the OpenJDK version.
+   */
+  public String getOpenjdkVersion() {
 
-    return openjdk_version;
+    return this.openjdkVersion;
   }
 
-  public void setOpenjdk_version(String openjdk_version) {
+  /**
+   * @param openjdkVersion the new value of {@link #getOpenjdkVersion()}.
+   */
+  public void setOpenjdkVersion(String openjdkVersion) {
 
-    this.openjdk_version = openjdk_version;
+    this.openjdkVersion = openjdkVersion;
   }
 
+  /**
+   * @return the semantic version.
+   */
   public String getSemver() {
 
-    return semver;
+    return this.semver;
   }
 
+  /**
+   * @param semver the new value of {@link #getSemver()}.
+   */
   public void setSemver(String semver) {
 
     this.semver = semver;
