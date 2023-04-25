@@ -19,7 +19,7 @@ jobs:
       - name: Build and run url updater
         run: |
           cd url-updater
-          mvn install -B -ntp
+          mvn -B -ntp -Dstyle.color=always install
           mvn exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls"
       - name: Commit and push to ide-urls
         run: |
