@@ -63,7 +63,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 
 
 	/**
-	 * @return
+	 * @return the {@link Set} with all {@link #getName() names} of the children.
 	 * @deprecated method name does not make sense here and the method exposes internal mutable structures allowing to
 	 * remove or add items to the internal map bypassing the API.
 	 */
