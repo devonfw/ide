@@ -6,14 +6,16 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   cat "${configuration_file}" | awk '
     /MAVEN_HOME/                  {gsub("MAVEN_HOME","MVN_HOME")}
+    /MVN_HOME/, /maven/           {gsub("maven","mvn")}
+    /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
     /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
+    /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
+    /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
     /INTELLIJ_EDITION_TYPE/       {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
     /INTELLIJ_EDITION/, /c/       {gsub("c","INTELLIJ")}
     /INTELLIJ_EDITION/, /u/       {gsub("u","ULTIMATE")}
     /ECLIPSE_EDITION_TYPE/        {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
     /ECLIPSE_EDITION/, /java/     {gsub("java","ECLIPSE")}
-    /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
-    /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
     /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","DOCKER")}
     /RANGER-DESKTOP/              {gsub("RANGER-DESKTOP","RANCHER")}        
     {print $0}
