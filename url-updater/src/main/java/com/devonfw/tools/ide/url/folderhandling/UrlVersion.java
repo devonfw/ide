@@ -68,6 +68,15 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 	}
 
 	/**
+	 * @param urlsFilename the {@link #getName() filename} of the URLs file.
+	 * @return the existing or newly created and added {@link UrlChecksum} file.
+	 */
+	public UrlChecksum getOrCreateChecksum(String urlsFilename) {
+
+	  return (UrlChecksum) getOrCreateChild(urlsFilename + UrlChecksum.EXTENSION);
+	}
+
+	/**
 	 * This method is used to add new children to the children collection of an instance from this class.
 	 *
 	 * @param name The name of the {@link UrlFile} object that should be created.
@@ -77,6 +86,8 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 
 		if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
 			return new UrlStatusFile(this);
+		} else if (name.endsWith(UrlChecksum.EXTENSION)) {
+		  return new UrlChecksum(this, name);
 		}
 		return new UrlDownloadFile(this, name);
 	}
