@@ -1,9 +1,9 @@
 package com.devonfw.tools.ide.url.updater.cobigen;
 
-import com.devonfw.tools.ide.url.updater.MavenCrawler;
+import com.devonfw.tools.ide.url.updater.MavenBasedCrawler;
 
 
-public class CobigenCrawler extends MavenCrawler {
+public class CobigenCrawler extends MavenBasedCrawler {
 	@Override
 	protected String getToolName() {
 		return "cobigen";

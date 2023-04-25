@@ -13,11 +13,11 @@ import java.util.Set;
 /**
  * The MvnCrawler class is an abstract class that provides functionality for crawling Maven repositories.
  */
-public abstract class MavenCrawler extends AbstractCrawler {
-	private final static Logger logger = LoggerFactory.getLogger(MavenCrawler.class.getName());
+public abstract class MavenBasedCrawler extends AbstractCrawler {
+	private final static Logger logger = LoggerFactory.getLogger(MavenBasedCrawler.class.getName());
 	private final String mavenBaseRepoUrl;
 
-	public MavenCrawler() {
+	public MavenBasedCrawler() {
 		super();
 		this.mavenBaseRepoUrl = "https://repo1.maven.org/maven2/" + getGroupIdPath() + "/" + getArtifcatId() + "/";
 
