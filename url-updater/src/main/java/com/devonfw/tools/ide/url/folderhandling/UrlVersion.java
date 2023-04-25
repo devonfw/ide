@@ -60,10 +60,6 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 		return arch;
 	}
 
-	public UrlDownloadFile getUrlFile(String name) {
-		return (UrlDownloadFile) getChild(name);
-	}
-
 	/**
 	 * @return the {@link UrlStatusFile}.
 	 */
@@ -83,6 +79,12 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
 			return new UrlStatusFile(this);
 		}
 		return new UrlDownloadFile(this, name);
+	}
+
+	@Override
+	protected boolean isAllowedChild(String name, boolean folder) {
+
+	  return true;
 	}
 
 	@Override

@@ -50,6 +50,24 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 		return new ArrayList<>(this.children.values());
 	}
 
+  /**
+   * @param name the plain filename (excluding any path).
+   * @param folder - {@code true} in case of a folder, {@code false} otherwise (plain data file).
+   * @return {@code true} if the existing file from the file-system should be {@link #getOrCreateChild(String) created
+   *         as child}, {@code false} otherwise (ignore the file).
+   */
+  protected boolean isAllowedChild(String name, boolean folder) {
+
+    return folder;
+  }
+
+
+	/**
+	 * @return
+	 * @deprecated method name does not make sense here and the method exposes internal mutable structures allowing to
+	 * remove or add items to the internal map bypassing the API.
+	 */
+	@Deprecated
 	public Set<String> getAllVersions() {
 		return this.children.keySet();
 	}
@@ -64,13 +82,18 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 		}
 	}
 
-	private void loadChild(Path childPath) {
-		String name = childPath.getFileName().toString();
-		if (!name.startsWith(".")) {
-			C child = getOrCreateChild(name);
-			((AbstractUrlArtifact) child).load();
-		}
-	}
+  private void loadChild(Path childPath) {
+
+    String name = childPath.getFileName().toString();
+    if (name.startsWith(".")) {
+      return; // ignore hidden files and folders (e.g. ".git")
+    }
+    boolean folder = Files.isDirectory(childPath);
+    if (isAllowedChild(name, folder)) {
+      C child = getOrCreateChild(name);
+      ((AbstractUrlArtifact) child).load();
+    }
+  }
 
 	/**
 	 * @param name the {@link #getName() name} of the requested child.
