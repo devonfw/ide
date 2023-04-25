@@ -1,13 +1,13 @@
-package com.devonfw.tools.ide.url.updater.nodejs;
+package com.devonfw.tools.ide.url.updater.node;
 
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubCrawler;
 import com.devonfw.tools.ide.url.updater.OSType;
 
-public class NodeJsCrawler extends GithubCrawler {
+public class NodeCrawler extends GithubCrawler {
 	@Override
 	protected String getToolName() {
-		return "nodejs";
+		return "node";
 	}
 
 	@Override
