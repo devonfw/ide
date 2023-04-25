@@ -1,12 +1,12 @@
-package com.devonfw.tools.ide.url.updater.sonarqube;
+package com.devonfw.tools.ide.url.updater.sonar;
 
 import com.devonfw.tools.ide.url.folderhandling.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubCrawler;
 
-public class SonarqubeCrawler extends GithubCrawler {
+public class SonarCrawler extends GithubCrawler {
 	@Override
 	protected String getToolName() {
-		return "sonarqube";
+		return "sonar";
 	}
 
 	@Override
