@@ -2,33 +2,69 @@ package com.devonfw.tools.ide.url.updater.java;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * JSON data object for a version of of Java. We map only properties that we are interested in and let jackson ignore
+ * all others.
+ *
+ * @see JavaJsonObject#getVersions()
+ */
 public class JavaJsonVersion {
-	@JsonProperty("openjdk_version")
-	private String openjdk_version;
-	@JsonProperty("semver")
-	private String semver;
+  @JsonProperty("openjdk_version")
+  private String openjdkVersion;
 
-	public JavaJsonVersion() {
-	}
+  @JsonProperty("semver")
+  private String semver;
 
-	public JavaJsonVersion(String openjdk_version, String semver) {
-		this.openjdk_version = openjdk_version;
-		this.semver = semver;
-	}
+  /**
+   * The constructor.
+   */
+  public JavaJsonVersion() {
 
-	public String getOpenjdk_version() {
-		return openjdk_version;
-	}
+    super();
+  }
 
-	public void setOpenjdk_version(String openjdk_version) {
-		this.openjdk_version = openjdk_version;
-	}
+  /**
+   * The constructor.
+   *
+   * @param openjdkVersion the {@link #getOpenjdkVersion() OpenJDK version}.
+   * @param semver the {@link #getSemver() semantic version}.
+   */
+  public JavaJsonVersion(String openjdkVersion, String semver) {
 
-	public String getSemver() {
-		return semver;
-	}
+    super();
+    this.openjdkVersion = openjdkVersion;
+    this.semver = semver;
+  }
 
-	public void setSemver(String semver) {
-		this.semver = semver;
-	}
+  /**
+   * @return the OpenJDK version.
+   */
+  public String getOpenjdkVersion() {
+
+    return this.openjdkVersion;
+  }
+
+  /**
+   * @param openjdkVersion the new value of {@link #getOpenjdkVersion()}.
+   */
+  public void setOpenjdkVersion(String openjdkVersion) {
+
+    this.openjdkVersion = openjdkVersion;
+  }
+
+  /**
+   * @return the semantic version.
+   */
+  public String getSemver() {
+
+    return this.semver;
+  }
+
+  /**
+   * @param semver the new value of {@link #getSemver()}.
+   */
+  public void setSemver(String semver) {
+
+    this.semver = semver;
+  }
 }
