@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.devonfw.tools.ide.maven.MavenMetadata;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -15,7 +12,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
  * The MvnCrawler class is an abstract class that provides functionality for crawling Maven repositories.
  */
 public abstract class MavenBasedUrlUpdater extends AbstractUrlUpdater {
-  private final static Logger logger = LoggerFactory.getLogger(MavenBasedUrlUpdater.class.getName());
+
+  private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
 
   private final String mavenBaseRepoUrl;
 
@@ -51,7 +49,7 @@ public abstract class MavenBasedUrlUpdater extends AbstractUrlUpdater {
   @Override
   protected Set<String> getVersions() {
 
-    return doGetVersionsFromMavenApi(this.mavenBaseRepoUrl + "maven-metadata.xml");
+    return doGetVersionsFromMavenApi(this.mavenBaseRepoUrl + MAVEN_METADATA_XML);
   }
 
   @Override
@@ -79,9 +77,8 @@ public abstract class MavenBasedUrlUpdater extends AbstractUrlUpdater {
         addVersion(version, versions);
       }
     } catch (IOException e) {
-      logger.error("URLStatusError while getting javaJsonVersions", e);
+      throw new IllegalStateException("Failed to get version from " + url, e);
     }
-    logger.info("Found  javaJsonVersions : {}", versions);
     return versions;
   }
 

@@ -2,8 +2,6 @@ package com.devonfw.tools.ide.url.updater;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
-import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
 /**
@@ -16,7 +14,6 @@ import java.util.regex.Pattern;
  * version pattern and URL of the website to crawl, respectively.
  */
 public abstract class WebsiteUrlUpdater extends AbstractUrlUpdater {
-  private final Logger logger = Logger.getLogger(WebsiteUrlUpdater.class.getName());
 
   /**
    * Retrieves the available versions by performing a GET request on the version URL and extracting the version numbers
@@ -42,11 +39,9 @@ public abstract class WebsiteUrlUpdater extends AbstractUrlUpdater {
     Set<String> versions = new HashSet<>();
     var matcher = getVersionPattern().matcher(htmlBody);
     while (matcher.find()) {
-      MatchResult result = matcher.toMatchResult();
-      String match = result.group();
-      versions.add(match);
+      String version = matcher.group();
+      addVersion(version, versions);
     }
-    logger.info("Found  versions : " + versions);
     return versions;
   }
 

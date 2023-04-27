@@ -3,9 +3,9 @@ package com.devonfw.tools.ide.url.model.folder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -22,7 +22,11 @@ import com.devonfw.tools.ide.url.model.UrlArtifactWithParent;
 public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> extends AbstractUrlArtifact
     implements UrlFolder<C> {
 
-  private final Map<String, C> children;
+  private final Map<String, C> childMap;
+
+  private final Set<String> childNames;
+
+  private final Collection<C> children;
 
   /**
    * The constructor.
@@ -33,31 +37,33 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   public AbstractUrlFolder(Path path, String name) {
 
     super(path, name);
-    this.children = new HashMap<>();
+    this.childMap = new HashMap<>();
+    this.childNames = Collections.unmodifiableSet(this.childMap.keySet());
+    this.children = Collections.unmodifiableCollection(this.childMap.values());
   }
 
   @Override
   public int getChildCount() {
 
-    return this.children.size();
+    return this.childMap.size();
   }
 
   @Override
   public C getChild(String name) {
 
-    return this.children.get(name);
+    return this.childMap.get(name);
   }
 
   @Override
   public C getOrCreateChild(String name) {
 
-    return this.children.computeIfAbsent(name, p -> newChild(name));
+    return this.childMap.computeIfAbsent(name, p -> newChild(name));
   }
 
   @Override
-  public List<C> getChildren() {
+  public Collection<C> getChildren() {
 
-    return new ArrayList<>(this.children.values());
+    return this.children;
   }
 
   /**
@@ -73,13 +79,10 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 
   /**
    * @return the {@link Set} with all {@link #getName() names} of the children.
-   * @deprecated method name does not make sense here and the method exposes internal mutable structures allowing to
-   *             remove or add items to the internal map bypassing the API.
    */
-  @Deprecated
-  public Set<String> getAllVersions() {
+  public Set<String> getChildNames() {
 
-    return this.children.keySet();
+    return this.childNames;
   }
 
   @Override
@@ -115,7 +118,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   @Override
   public void save() {
 
-    for (C child : this.children.values()) {
+    for (C child : this.childMap.values()) {
       ((AbstractUrlArtifact) child).save();
     }
   }
