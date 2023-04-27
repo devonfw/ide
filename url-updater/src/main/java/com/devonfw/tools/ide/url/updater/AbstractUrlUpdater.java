@@ -6,12 +6,10 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 
@@ -23,7 +21,9 @@ import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.url.model.file.UrlChecksum;
 import com.devonfw.tools.ide.url.model.file.UrlDownloadFile;
+import com.devonfw.tools.ide.url.model.file.UrlFile;
 import com.devonfw.tools.ide.url.model.file.UrlStatusFile;
+import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.file.json.UrlStatus;
 import com.devonfw.tools.ide.url.model.file.json.UrlStatusState;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
@@ -37,6 +37,8 @@ import com.devonfw.tools.ide.util.HexUtil;
  * updating tool versions, and checking if download URLs work.
  */
 public abstract class AbstractUrlUpdater implements UrlUpdater {
+
+  private static final Duration TWO_DAYS = Duration.ofDays(2);
 
   /** {@link OperatingSystem#WINDOWS}. */
   protected static final OperatingSystem WINDOWS = OperatingSystem.WINDOWS;
@@ -145,43 +147,38 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * Updates a tool version with the given arguments.
    *
    * @param urlVersion the UrlVersion instance to update.
-   * @param downloadUrl the URL of the download for the tool.
+   * @param url the URL of the download for the tool.
    * @param os the optional {@link OperatingSystem}.
    * @param architecture the optional {@link SystemArchitecture}.
    * @return {@code true} if the version was successfully updated, {@code false} otherwise.
    */
-  protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os,
+  protected boolean doUpdateVersion(UrlVersion urlVersion, String url, OperatingSystem os,
       SystemArchitecture architecture) {
 
     String version = urlVersion.getName();
-    downloadUrl = downloadUrl.replace("${version}", version);
+    url = url.replace("${version}", version);
     if (os != null) {
-      downloadUrl = downloadUrl.replace("${os}", os.toString());
+      url = url.replace("${os}", os.toString());
     }
     if (architecture != null) {
-      downloadUrl = downloadUrl.replace("${arch}", architecture.toString());
+      url = url.replace("${arch}", architecture.toString());
     }
-    downloadUrl = downloadUrl.replace("${edition}", getEdition());
-    UrlRequestResult result = doCheckIfDownloadUrlWorks(downloadUrl);
+    url = url.replace("${edition}", getEdition());
+    UrlRequestResult result = doCheckIfDownloadUrlWorks(url);
     if (result.isSuccess()) {
       UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      urlDownloadFile.addUrl(downloadUrl);
-      doCreateOrRefreshStatusJson(result, urlVersion, downloadUrl);
-      urlVersion.save();
-
+      urlDownloadFile.addUrl(url);
+      doUpdateStatusJson(result, urlVersion, url);
       // generate checksum of download file
       if (result.getHttpStatusCode() == 200) {
         UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-        doGenerateChecksum(downloadUrl, urlChecksum);
+        doGenerateChecksum(url, urlChecksum);
       }
+      urlVersion.save();
       return true;
     } else {
-      // check if folder of urlVersion exists
-      Path folderPath = Paths.get(urlVersion.getPath().toString());
-      if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
-        doCreateOrRefreshStatusJson(result, urlVersion, downloadUrl);
-        urlVersion.save();
-      }
+      logger.error("For tool {} and version {} the download of {} failed with status {}", getToolWithEdition(), version,
+          url, result.getHttpStatusCode());
       return false;
     }
   }
@@ -261,18 +258,21 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
    * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
    */
-  private void doCreateOrRefreshStatusJson(UrlRequestResult result, UrlVersion urlVersion, String downloadUrl) {
+  private void doUpdateStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url) {
 
     UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-    UrlStatus status = urlStatusFile.getStatusJson().getOrCreateUrlStatus(downloadUrl);
+    UrlStatus status = urlStatusFile.getStatusJson().getOrCreateUrlStatus(url);
     if (result.isSuccess()) {
       status.setSuccess(new UrlStatusState());
+      logger.info("Successfully verified download URL {}.", url);
     } else if (result.isFailure()) {
       UrlStatusState error = new UrlStatusState();
-      error.setCode(Integer.valueOf(result.getHttpStatusCode()));
+      Integer code = Integer.valueOf(result.getHttpStatusCode());
+      error.setCode(code);
       // String message = result.getHttpStatusCode() + " " + result.getUrl();
       // error.setMessage(message);
       status.setError(error);
+      logger.warn("Download verification failed with status code {} for URL {}.", code, url);
     }
   }
 
@@ -288,12 +288,17 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     UrlEdition edition = tool.getOrCreateChild(getEdition());
     updateExistingVersions(edition);
     Set<String> versions = getVersions();
+    String toolWithEdition = getToolWithEdition();
+    logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
     for (String version : versions) {
-      version = mapVersion(version);
-      if (version != null && edition.getChild(version) == null && !version.isEmpty()) {
-        UrlVersion urlVersion = edition.getOrCreateChild(version);
-        updateVersion(urlVersion);
-        urlVersion.save();
+      if (edition.getChild(version) == null) {
+        try {
+          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          updateVersion(urlVersion);
+          urlVersion.save();
+        } catch (Exception e) {
+          logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, e);
+        }
       }
     }
   }
@@ -305,19 +310,55 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected void updateExistingVersions(UrlEdition edition) {
 
-    Set<String> existingVersions = edition.getAllVersions();
+    Set<String> existingVersions = edition.getChildNames();
     for (String version : existingVersions) {
       UrlVersion urlVersion = edition.getChild(version);
       if (urlVersion != null) {
         UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-        logger.info("Getting or creating Status for version {}", version);
-        if (urlStatusFile.getStatusJson().isManual()) {
-          logger.info("Version {} is manual, skipping update", version);
-          continue;
+        StatusJson statusJson = urlStatusFile.getStatusJson();
+        if (statusJson.isManual()) {
+          logger.info("For tool {} the version {} is set to manual, hence skipping update", getToolWithEdition(),
+              version);
+        } else {
+          updateExistingVersion(version, urlVersion, statusJson, urlStatusFile);
+          urlVersion.save();
         }
-        updateVersion(urlVersion);
-        urlVersion.save();
       }
+    }
+  }
+
+  private void updateExistingVersion(String version, UrlVersion urlVersion, StatusJson statusJson,
+      UrlStatusFile urlStatusFile) {
+
+    boolean modified = false;
+    String toolWithEdition = getToolWithEdition();
+    Instant now = Instant.now();
+    for (UrlFile child : urlVersion.getChildren()) {
+      if (child instanceof UrlDownloadFile) {
+        Set<String> urls = ((UrlDownloadFile) child).getUrls();
+        for (String url : urls) {
+          UrlStatus urlStatus = statusJson.getOrCreateUrlStatus(url);
+          UrlStatusState success = urlStatus.getSuccess();
+          if (success != null) {
+            Instant timestamp = success.getTimestamp();
+            if (timestamp != null) {
+              Duration duration = Duration.between(timestamp, now);
+              if (duration.compareTo(TWO_DAYS) <= 0) {
+                logger.debug("For tool {} the URL {} has already been checked recently on {}", toolWithEdition, url,
+                    timestamp);
+                continue;
+              }
+            }
+          }
+          UrlRequestResult result = doCheckIfDownloadUrlWorks(url);
+          doUpdateStatusJson(result, urlVersion, url);
+          modified = true;
+        }
+      }
+    }
+    if (modified) {
+      urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
+      urlStatusFile.save();
     }
   }
 
@@ -344,8 +385,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected final void addVersion(String version, Collection<String> versions) {
 
     String mappedVersion = mapVersion(version);
-    if (mappedVersion == null) {
+    if ((mappedVersion == null) || mappedVersion.isBlank()) {
       logger.debug("Filtered version {}", version);
+      return;
     } else if (!mappedVersion.equals(version)) {
       logger.debug("Mapped version {} to {}", version, mappedVersion);
     }

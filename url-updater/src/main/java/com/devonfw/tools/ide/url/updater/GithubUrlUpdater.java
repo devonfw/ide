@@ -27,12 +27,18 @@ public abstract class GithubUrlUpdater extends JsonUrlUpdater<GithubTags> {
 
     for (GithubTag item : jsonItem) {
       String version = item.getRef().replace("refs/tags/", "");
-      if (version.contains("alpha") || version.contains("beta") || version.contains("dev") || version.contains("rc")
-          || version.contains("snapshot") || version.contains("preview") || version.equals("")) {
-        continue;
-      }
       addVersion(version, versions);
     }
+  }
+
+  @Override
+  protected String mapVersion(String version) {
+
+    if (version.contains("alpha") || version.contains("beta") || version.contains("dev") || version.contains("rc")
+        || version.contains("snapshot") || version.contains("preview")) {
+      return null;
+    }
+    return super.mapVersion(version);
   }
 
   /**
