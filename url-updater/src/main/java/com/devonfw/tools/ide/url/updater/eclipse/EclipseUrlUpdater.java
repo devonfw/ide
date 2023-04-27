@@ -33,7 +33,6 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
 
     // archive
     String version = urlVersion.getName();
-    version = version.replace(" ", "-");
     String releaseType = "R";
     int lastDash = version.lastIndexOf('-');
     if (lastDash > 0) {
@@ -82,6 +81,12 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   protected Pattern getVersionPattern() {
 
     return Pattern.compile("\\d{4}-\\d{2}(\\s\\w{2})?");
+  }
+  
+  @Override
+  protected String mapVersion(String version) {
+
+    return version.replace(" ", "-");
   }
 
 }
