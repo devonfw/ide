@@ -21,12 +21,12 @@ public class VSCodeUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://update.code.visualstudio.com/${version}/";
-    doUpdateVersion(urlVersion, baseUrl + "win32-x64-archive/stable", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + "linux-x64/stable", LINUX);
-    doUpdateVersion(urlVersion, baseUrl + "darwin/stable", MAC);
+    doAddVersion(urlVersion, baseUrl + "win32-x64-archive/stable", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + "linux-x64/stable", LINUX);
+    doAddVersion(urlVersion, baseUrl + "darwin/stable", MAC);
 
   }
 

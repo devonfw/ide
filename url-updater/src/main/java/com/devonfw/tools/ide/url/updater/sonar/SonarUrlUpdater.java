@@ -26,9 +26,9 @@ public class SonarUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion, "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${version}.zip");
+    doAddVersion(urlVersion, "https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-${version}.zip");
   }
 
 }

@@ -20,13 +20,13 @@ public class GraalVmUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${version}/graalvm-ce-java11-";
-    doUpdateVersion(urlVersion, baseUrl + "windows-amd64-${version}.zip", WINDOWS, X64);
-    doUpdateVersion(urlVersion, baseUrl + "linux-amd64-${version}.tar.gz", LINUX, X64);
-    doUpdateVersion(urlVersion, baseUrl + "darwin-amd64-${version}.tar.gz", MAC, X64);
-    doUpdateVersion(urlVersion, baseUrl + "darwin-aarch64-${version}.tar.gz", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "windows-amd64-${version}.zip", WINDOWS, X64);
+    doAddVersion(urlVersion, baseUrl + "linux-amd64-${version}.tar.gz", LINUX, X64);
+    doAddVersion(urlVersion, baseUrl + "darwin-amd64-${version}.tar.gz", MAC, X64);
+    doAddVersion(urlVersion, baseUrl + "darwin-aarch64-${version}.tar.gz", MAC, ARM64);
 
   }
 

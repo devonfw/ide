@@ -16,9 +16,9 @@ public class KotlincUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion,
+    doAddVersion(urlVersion,
         "https://github.com/JetBrains/kotlin/releases/download/v${version}/kotlin-compiler-${version}.zip");
   }
 

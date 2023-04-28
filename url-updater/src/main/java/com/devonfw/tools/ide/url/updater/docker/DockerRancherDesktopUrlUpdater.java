@@ -35,12 +35,12 @@ public class DockerRancherDesktopUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://github.com/rancher-sandbox/rancher-desktop/releases/download/v${version}/Rancher.Desktop";
-    doUpdateVersion(urlVersion, baseUrl + ".Setup.${version}.exe", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + "-${version}.x86_64.dmg", MAC);
-    doUpdateVersion(urlVersion, baseUrl + "-${version}.aarch64.dmg", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + ".Setup.${version}.exe", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + "-${version}.x86_64.dmg", MAC);
+    doAddVersion(urlVersion, baseUrl + "-${version}.aarch64.dmg", MAC, ARM64);
 
   }
 }

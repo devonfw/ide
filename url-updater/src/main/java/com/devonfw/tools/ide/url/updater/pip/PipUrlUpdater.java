@@ -16,9 +16,9 @@ public class PipUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion, "https://bootstrap.pypa.io/pip/${version}/get-pip.py");
+    doAddVersion(urlVersion, "https://bootstrap.pypa.io/pip/${version}/get-pip.py");
   }
 
   @Override
