@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -462,10 +463,11 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     if ((prefix != null) && version.startsWith(prefix)) {
       version = version.substring(prefix.length());
     }
-    if (version.contains("alpha") || version.contains("beta") || version.contains("dev") || version.contains("snapshot")
-        || version.contains("preview") || version.contains("test") || version.contains("tech-preview") //
-        || version.equals("BAD") || version.contains("translation/") // vscode nonsense
-        || version.contains("-pre") || version.startsWith("ce-")) {
+    String vLower = version.toLowerCase(Locale.ROOT);
+    if (vLower.contains("alpha") || vLower.contains("beta") || vLower.contains("dev") || vLower.contains("snapshot")
+        || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
+        || vLower.startsWith("bad") || vLower.contains("translation/") || vLower.contains("-insiders") // vscode
+        || vLower.contains("-pre") || vLower.startsWith("ce-")) {
       return null;
     }
     return version;
