@@ -37,7 +37,7 @@ import com.devonfw.tools.ide.url.updater.python.PythonUrlUpdater;
 import com.devonfw.tools.ide.url.updater.quarkus.QuarkusUrlUpdater;
 import com.devonfw.tools.ide.url.updater.sonar.SonarUrlUpdater;
 import com.devonfw.tools.ide.url.updater.terraform.TerraformUrlUpdater;
-import com.devonfw.tools.ide.url.updater.vscode.VSCodeUrlUpdater;
+import com.devonfw.tools.ide.url.updater.vscode.VsCodeUrlUpdater;
 
 /**
  * The {@code UpdateManager} class manages the update process for various tools by using a list of
@@ -58,7 +58,7 @@ public class UpdateManager {
       new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(), new KotlincNativeUrlUpdater(),
       new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(), new NpmUrlUpdater(), new OcUrlUpdater(),
       new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(), new DockerRancherDesktopUrlUpdater(),
-      new SonarUrlUpdater(), new TerraformUrlUpdater(), new VSCodeUrlUpdater());
+      new SonarUrlUpdater(), new TerraformUrlUpdater(), new VsCodeUrlUpdater());
 
   public UpdateManager(Path pathToRepository) {
 

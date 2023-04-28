@@ -188,7 +188,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
       urlDownloadFile.addUrl(url);
       UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      String checksum = doGenerateChecksum(response, url);
+      String checksum = doGenerateChecksum(response, url, urlVersion.getName());
       urlChecksum.setChecksum(checksum);
       urlVersion.save();
     }
@@ -196,21 +196,30 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
-   * @param inputStream the input stream of requested url
-   * @return checksum of input stream as string
+   * @param response the {@link HttpResponse}.
+   * @param url the download URL
+   * @param version the {@link UrlVersion version} identifier.
+   * @return checksum of input stream as hex string
    */
-  private String doGenerateChecksum(HttpResponse<InputStream> response, String url) {
+  private String doGenerateChecksum(HttpResponse<InputStream> response, String url, String version) {
 
     try (InputStream inputStream = response.body()) {
       MessageDigest md = MessageDigest.getInstance(UrlChecksum.HASH_ALGORITHM);
 
       byte[] buffer = new byte[8192];
       int bytesRead;
+      long size = 0;
       while ((bytesRead = inputStream.read(buffer)) != -1) {
         md.update(buffer, 0, bytesRead);
+        size += bytesRead;
+      }
+      if (size == 0) {
+        throw new IllegalStateException("Download empty for " + url);
       }
       byte[] digestBytes = md.digest();
       String checksum = HexUtil.toHexString(digestBytes);
+      logger.info("For tool {} and version {} we received {} bytes and computed SHA256 {} from URL {}",
+          getToolWithEdition(), version, Long.valueOf(size), checksum, url);
       return checksum;
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read body of download " + url, e);
@@ -256,16 +265,20 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     StatusJson statusJson = urlStatusFile.getStatusJson();
     UrlStatus status = statusJson.getOrCreateUrlStatus(url);
     Integer code = Integer.valueOf(result.getStatusCode());
+    String version = urlVersion.getName();
+    String tool = getToolWithEdition();
     if (result.isSuccess()) {
       status.setSuccess(new UrlStatusState());
-      logger.info("Download verification suceeded with status code {} for URL {}.", code, url);
+      logger.info("For tool {} and version {} the download verification suceeded with status code {} for URL {}.", tool,
+          version, code, url);
     } else if (result.isFailure()) {
       UrlStatusState error = new UrlStatusState();
       error.setCode(code);
       // String message = result.getHttpStatusCode() + " " + result.getUrl();
       // error.setMessage(message);
       status.setError(error);
-      logger.warn("Download verification failed with status code {} for URL {}.", code, url);
+      logger.warn("For tool {} and version {} the download verification failed with status code {} for URL {}.", tool,
+          version, code, url);
     }
     urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
   }

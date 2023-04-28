@@ -6,7 +6,7 @@ import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
 /**
  * {@link GithubUrlUpdater} for vscode (Visual Studio Code).
  */
-public class VSCodeUrlUpdater extends GithubUrlUpdater {
+public class VsCodeUrlUpdater extends GithubUrlUpdater {
 
   @Override
   protected String getTool() {
@@ -27,7 +27,15 @@ public class VSCodeUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "win32-x64-archive/stable", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux-x64/stable", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin/stable", MAC);
+  }
 
+  @Override
+  protected String mapVersion(String version) {
+
+    if ("BAD".equals(version)) {
+      return null;
+    }
+    return super.mapVersion(version);
   }
 
 }
