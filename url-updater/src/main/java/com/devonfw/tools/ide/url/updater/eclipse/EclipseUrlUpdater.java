@@ -80,7 +80,13 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected Pattern getVersionPattern() {
 
-    return Pattern.compile("\\d{4}-\\d{2}");
+    return Pattern.compile("\\d{4}-\\d{2}(\\s\\w{2})?");
+  }
+  
+  @Override
+  protected String mapVersion(String version) {
+
+    return version.replace(" ", "-");
   }
 
 }
