@@ -29,13 +29,4 @@ public class VsCodeUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "darwin/stable", MAC);
   }
 
-  @Override
-  protected String mapVersion(String version) {
-
-    if ("BAD".equals(version)) {
-      return null;
-    }
-    return super.mapVersion(version);
-  }
-
 }

@@ -457,7 +457,25 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected String mapVersion(String version) {
 
+    String prefix = getVersionPrefixToRemove();
+    if ((prefix != null) && version.startsWith(prefix)) {
+      version = version.substring(prefix.length());
+    }
+    if (version.contains("alpha") || version.contains("beta") || version.contains("dev") || version.contains("snapshot")
+        || version.contains("preview") || version.contains("test") || version.contains("tech-preview") //
+        || version.equals("BAD") || version.contains("translation/") // vscode nonsense
+        || version.contains("-pre") || version.startsWith("ce-")) {
+      return null;
+    }
     return version;
+  }
+
+  /**
+   * @return the optional version prefix that has to be removed (e.g. "v").
+   */
+  protected String getVersionPrefixToRemove() {
+
+    return null;
   }
 
   /**

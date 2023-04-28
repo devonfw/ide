@@ -31,16 +31,6 @@ public abstract class GithubUrlUpdater extends JsonUrlUpdater<GithubTags> {
     }
   }
 
-  @Override
-  protected String mapVersion(String version) {
-
-    if (version.contains("alpha") || version.contains("beta") || version.contains("dev") || version.contains("rc")
-        || version.contains("snapshot") || version.contains("preview")) {
-      return null;
-    }
-    return super.mapVersion(version);
-  }
-
   /**
    * @return the github organization- or user-name (e.g. "devonfw").
    */

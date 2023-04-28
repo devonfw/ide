@@ -21,12 +21,9 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    if (version.startsWith("v")) {
-      version = version.substring(1);
-    }
-    return version;
+    return "v";
   }
 
   @Override

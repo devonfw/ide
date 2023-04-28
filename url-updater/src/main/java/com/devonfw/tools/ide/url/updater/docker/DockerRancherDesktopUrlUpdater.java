@@ -3,6 +3,9 @@ package com.devonfw.tools.ide.url.updater.docker;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
 
+/**
+ * {@link GithubUrlUpdater} for the docker edition Rancher-Desktop.
+ */
 public class DockerRancherDesktopUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String getTool() {
@@ -29,12 +32,9 @@ public class DockerRancherDesktopUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    if (version.contains("test") || version.contains("tech-preview") || version.contains("beta")) {
-      return null;
-    }
-    return version.replace("v", "");
+    return "v";
   }
 
   @Override

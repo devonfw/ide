@@ -69,6 +69,7 @@ public abstract class IntellijUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected String mapVersion(String version) {
 
-    return version.replace("-", ".");
+    // TODO remove this hack, see #1132
+    return super.mapVersion(version.replace("-", "."));
   }
 }

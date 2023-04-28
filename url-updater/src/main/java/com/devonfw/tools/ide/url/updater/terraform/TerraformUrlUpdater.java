@@ -20,9 +20,9 @@ public class TerraformUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    return version.replace("v", "");
+    return "v";
   }
 
   @Override

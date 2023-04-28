@@ -14,14 +14,9 @@ public class GhUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    String version2 = version.replaceAll("v", "");
-    // filter out pre releases
-    if (version2.contains("-")) {
-      return null;
-    }
-    return version2;
+    return "v";
   }
 
   @Override
