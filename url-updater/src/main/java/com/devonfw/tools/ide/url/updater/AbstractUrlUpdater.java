@@ -281,7 +281,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * Creates or refreshes the status JSON file for a given UrlVersion instance based on the URLRequestResult of checking
    * if a download URL works.
    *
-   * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
+   * @param success - {@code true} on successful HTTP response, {@code false} otherwise.
+   * @param statusCode the HTTP status code of the response.
    * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
