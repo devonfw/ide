@@ -60,6 +60,11 @@ public class UpdateManager {
       new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(), new DockerRancherDesktopUrlUpdater(),
       new SonarUrlUpdater(), new TerraformUrlUpdater(), new VsCodeUrlUpdater());
 
+  /**
+   * The constructor.
+   *
+   * @param pathToRepository the {@link Path} to the {@code ide-urls} repository to update.
+   */
   public UpdateManager(Path pathToRepository) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
