@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
@@ -15,7 +16,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
@@ -56,7 +56,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
 
   /** The {@link HttpClient} for HTTP requests. */
-  protected final HttpClient client = HttpClient.newBuilder().build();
+  protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
@@ -227,7 +227,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     // Do Head request to check if the download url works and if the file is available for download
     UrlRequestResult result;
-    Level logLevel = Level.INFO;
     try {
       HttpRequest request = HttpRequest.newBuilder().uri(URI.create(downloadUrl))
           .method("HEAD", HttpRequest.BodyPublishers.noBody()).timeout(Duration.ofSeconds(5)).build();
@@ -240,13 +239,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     } catch (Exception e) {
       result = new UrlRequestResult(false, 500, downloadUrl);
     }
-
-    if (result.isFailure()) {
-      logLevel = Level.WARN;
-    }
-
-    logger.atLevel(logLevel).log("Download url: {} is {} with status code: {}", downloadUrl,
-        result.isSuccess() ? "available" : "not available", result.getHttpStatusCode());
     return result;
 
   }
@@ -258,16 +250,16 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
    * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
    */
-  private void doUpdateStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url) {
+  private void doCreateOrRefreshStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url) {
 
     UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
     UrlStatus status = urlStatusFile.getStatusJson().getOrCreateUrlStatus(url);
+    Integer code = Integer.valueOf(result.getHttpStatusCode());
     if (result.isSuccess()) {
       status.setSuccess(new UrlStatusState());
-      logger.info("Successfully verified download URL {}.", url);
+      logger.info("Download verification suceeded with status code {} for URL {}.", code, url);
     } else if (result.isFailure()) {
       UrlStatusState error = new UrlStatusState();
-      Integer code = Integer.valueOf(result.getHttpStatusCode());
       error.setCode(code);
       // String message = result.getHttpStatusCode() + " " + result.getUrl();
       // error.setMessage(message);
