@@ -466,8 +466,10 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     String vLower = version.toLowerCase(Locale.ROOT);
     if (vLower.contains("alpha") || vLower.contains("beta") || vLower.contains("dev") || vLower.contains("snapshot")
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
-        || vLower.startsWith("bad") || vLower.contains("translation/") || vLower.contains("-insiders") // vscode
-        || vLower.contains("-pre") || vLower.startsWith("ce-")) {
+        || vLower.contains("-pre") || vLower.startsWith("ce-")
+        // vscode nonsense
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;
