@@ -184,11 +184,17 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     UrlRequestResult result = new UrlRequestResult(response.statusCode(), url);
     doUpdateStatusJson(result, urlVersion, url);
     boolean success = result.isSuccess();
+    String contentType = response.headers().firstValue("content-type").orElse("undefined");
+    if (contentType.startsWith("text")) {
+      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}",
+          getToolWithEdition(), urlVersion.getName(), contentType, url);
+      success = false;
+    }
     if (success) {
       UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
       urlDownloadFile.addUrl(url);
       UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      String checksum = doGenerateChecksum(response, url, urlVersion.getName());
+      String checksum = doGenerateChecksum(response, url, urlVersion.getName(), contentType);
       urlChecksum.setChecksum(checksum);
       urlVersion.save();
     }
@@ -201,7 +207,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param version the {@link UrlVersion version} identifier.
    * @return checksum of input stream as hex string
    */
-  private String doGenerateChecksum(HttpResponse<InputStream> response, String url, String version) {
+  private String doGenerateChecksum(HttpResponse<InputStream> response, String url, String version,
+      String contentType) {
 
     try (InputStream inputStream = response.body()) {
       MessageDigest md = MessageDigest.getInstance(UrlChecksum.HASH_ALGORITHM);
@@ -218,8 +225,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       }
       byte[] digestBytes = md.digest();
       String checksum = HexUtil.toHexString(digestBytes);
-      logger.info("For tool {} and version {} we received {} bytes and computed SHA256 {} from URL {}",
-          getToolWithEdition(), version, Long.valueOf(size), checksum, url);
+      logger.info(
+          "For tool {} and version {} we received {} bytes with content-type {} and computed SHA256 {} from URL {}",
+          getToolWithEdition(), version, Long.valueOf(size), contentType, checksum, url);
       return checksum;
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read body of download " + url, e);
