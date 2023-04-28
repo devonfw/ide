@@ -17,7 +17,7 @@ public class DockerDesktopUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String version = urlVersion.getName().replaceAll("\\.", "");
     // get Code for version
@@ -28,26 +28,26 @@ public class DockerDesktopUrlUpdater extends WebsiteUrlUpdater {
     String code;
     if (matcher.find()) {
       code = matcher.group(1);
-      boolean success = doUpdateVersion(urlVersion,
+      boolean success = doAddVersion(urlVersion,
           "https://desktop.docker.com/win/main/amd64/" + code + "/Docker%20Desktop%20Installer.exe", WINDOWS);
       if (!success) {
         return;
       }
-      doUpdateVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/" + code + "/Docker.dmg", MAC, X64);
-      doUpdateVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/" + code + "/Docker.dmg", MAC, ARM64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/" + code + "/Docker.dmg", MAC, X64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/" + code + "/Docker.dmg", MAC, ARM64);
     } else {
       // For the latest version, there is no code in the url.
       // TODO but that means that the implementation is wrong as the URL will then change later and is therefore
       // unstable as it is always pointing to the latest version so all newly added versions will always have the same
       // URL pointing to the latest version what is dead wrong...
       // instead we could add a manual version called "latest" with these URLs but we can not provide checksum files...
-      boolean success = doUpdateVersion(urlVersion,
+      boolean success = doAddVersion(urlVersion,
           "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe", WINDOWS);
       if (!success) {
         return;
       }
-      doUpdateVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/Docker.dmg", MAC, X64);
-      doUpdateVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/Docker.dmg", MAC, ARM64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/Docker.dmg", MAC, X64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/Docker.dmg", MAC, ARM64);
     }
 
   }

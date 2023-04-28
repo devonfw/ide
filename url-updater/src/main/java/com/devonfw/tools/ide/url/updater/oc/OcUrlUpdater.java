@@ -16,12 +16,12 @@ public class OcUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${version}/openshift-client-";
-    doUpdateVersion(urlVersion, baseUrl + "windows-${version}.zip", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + "linux-${version}.tar.gz", LINUX);
-    doUpdateVersion(urlVersion, baseUrl + "mac-${version}.tar.gz", MAC);
+    doAddVersion(urlVersion, baseUrl + "windows-${version}.zip", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + "linux-${version}.tar.gz", LINUX);
+    doAddVersion(urlVersion, baseUrl + "mac-${version}.tar.gz", MAC);
 
   }
 

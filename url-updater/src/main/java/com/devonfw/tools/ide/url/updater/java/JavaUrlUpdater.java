@@ -17,7 +17,7 @@ public class JavaUrlUpdater extends JsonUrlUpdater<JavaJsonObject> {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String mirror = "https://github.com/adoptium/temurin";
     String version = urlVersion.getName();
@@ -40,17 +40,17 @@ public class JavaUrlUpdater extends JsonUrlUpdater<JavaJsonObject> {
     }
 
     String baseUrl = mirror + major + "-binaries/releases/download/" + code + "/OpenJDK" + major;
-    boolean success = doUpdateVersion(urlVersion, baseUrl + "U-jdk_x64_windows_hotspot_${version}.zip", WINDOWS);
+    boolean success = doAddVersion(urlVersion, baseUrl + "U-jdk_x64_windows_hotspot_${version}.zip", WINDOWS);
     if (!success) {
       mirror = "https://github.com/AdoptOpenJDK/openjdk";
       baseUrl = mirror + major + "-binaries/releases/download/" + code + "/OpenJDK" + major;
-      success = doUpdateVersion(urlVersion, baseUrl + "U-jdk_x64_windows_hotspot_${version}.zip", WINDOWS);
+      success = doAddVersion(urlVersion, baseUrl + "U-jdk_x64_windows_hotspot_${version}.zip", WINDOWS);
       if (!success) {
         return;
       }
     }
-    doUpdateVersion(urlVersion, baseUrl + "U-jdk_x64_mac_hotspot_${version}.tar.gz", MAC);
-    doUpdateVersion(urlVersion, baseUrl + "U-jdk_x64_linux_hotspot_${version}.tar.gz", LINUX);
+    doAddVersion(urlVersion, baseUrl + "U-jdk_x64_mac_hotspot_${version}.tar.gz", MAC);
+    doAddVersion(urlVersion, baseUrl + "U-jdk_x64_linux_hotspot_${version}.tar.gz", LINUX);
 
   }
 

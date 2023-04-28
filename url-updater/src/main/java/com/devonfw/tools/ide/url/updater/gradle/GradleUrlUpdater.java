@@ -28,9 +28,9 @@ public class GradleUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion, "https://services.gradle.org/distributions/gradle-${version}-bin.zip");
+    doAddVersion(urlVersion, "https://services.gradle.org/distributions/gradle-${version}-bin.zip");
 
   }
 

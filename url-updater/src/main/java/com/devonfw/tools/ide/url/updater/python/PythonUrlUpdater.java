@@ -16,11 +16,11 @@ public class PythonUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://www.python.org/ftp/python/${version}/python-${version}";
-    doUpdateVersion(urlVersion, baseUrl + "-embed-win32.zip", WINDOWS);
-    doUpdateVersion(urlVersion, "https://www.python.org/ftp/python/${version}/Python-${version}" + ".tgz");
+    doAddVersion(urlVersion, baseUrl + "-embed-win32.zip", WINDOWS);
+    doAddVersion(urlVersion, "https://www.python.org/ftp/python/${version}/Python-${version}" + ".tgz");
   }
 
   @Override
