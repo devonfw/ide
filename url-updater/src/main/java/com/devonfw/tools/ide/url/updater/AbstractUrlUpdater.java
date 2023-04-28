@@ -185,7 +185,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     doUpdateStatusJson(result, urlVersion, url, false);
     boolean success = result.isSuccess();
     String contentType = response.headers().firstValue("content-type").orElse("undefined");
-    if (contentType.startsWith("text")) {
+    if (success && contentType.startsWith("text")) {
       logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}",
           getToolWithEdition(), urlVersion.getName(), contentType, url);
       success = false;
