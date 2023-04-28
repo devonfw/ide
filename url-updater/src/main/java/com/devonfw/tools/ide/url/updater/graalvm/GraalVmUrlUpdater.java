@@ -16,7 +16,14 @@ public class GraalVmUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String mapVersion(String version) {
 
-    return version.replaceAll("vm-", "");
+    if (version.endsWith("-pre")) {
+      return null;
+    }
+    version = version.replaceAll("vm-", "");
+    if (version.startsWith("ce-")) {
+      return null;
+    }
+    return version;
   }
 
   @Override
@@ -41,4 +48,5 @@ public class GraalVmUrlUpdater extends GithubUrlUpdater {
 
     return "graalvm-ce-builds";
   }
+
 }

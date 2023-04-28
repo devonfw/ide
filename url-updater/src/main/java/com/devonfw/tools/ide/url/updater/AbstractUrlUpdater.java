@@ -182,7 +182,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     HttpResponse<InputStream> response = doGetResponseAsStream(url);
     UrlRequestResult result = new UrlRequestResult(response.statusCode(), url);
-    doUpdateStatusJson(result, urlVersion, url);
+    doUpdateStatusJson(result, urlVersion, url, false);
     boolean success = result.isSuccess();
     String contentType = response.headers().firstValue("content-type").orElse("undefined");
     if (contentType.startsWith("text")) {
@@ -266,29 +266,43 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
    * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
+   * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
+   *        initially added).
    */
-  private void doUpdateStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url) {
+  private void doUpdateStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url, boolean update) {
 
-    UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-    StatusJson statusJson = urlStatusFile.getStatusJson();
-    UrlStatus status = statusJson.getOrCreateUrlStatus(url);
+    UrlStatusFile urlStatusFile = null;
+    StatusJson statusJson = null;
+    UrlStatus status = null;
+    if (result.isSuccess() || update) {
+      urlStatusFile = urlVersion.getOrCreateStatus();
+      statusJson = urlStatusFile.getStatusJson();
+      status = statusJson.getOrCreateUrlStatus(url);
+    }
     Integer code = Integer.valueOf(result.getStatusCode());
     String version = urlVersion.getName();
     String tool = getToolWithEdition();
     if (result.isSuccess()) {
+      if (status == null) {
+        throw new IllegalStateException(); // prevent false-positives from stupid null-checkers like Eclipse or Lift...
+      }
       status.setSuccess(new UrlStatusState());
       logger.info("For tool {} and version {} the download verification suceeded with status code {} for URL {}.", tool,
           version, code, url);
     } else if (result.isFailure()) {
-      UrlStatusState error = new UrlStatusState();
-      error.setCode(code);
-      // String message = result.getHttpStatusCode() + " " + result.getUrl();
-      // error.setMessage(message);
-      status.setError(error);
+      if (status != null) {
+        UrlStatusState error = new UrlStatusState();
+        error.setCode(code);
+        // String message = result.getHttpStatusCode() + " " + result.getUrl();
+        // error.setMessage(message);
+        status.setError(error);
+      }
       logger.warn("For tool {} and version {} the download verification failed with status code {} for URL {}.", tool,
           version, code, url);
     }
-    urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
+    if (urlStatusFile != null) {
+      urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
+    }
   }
 
   /**
@@ -354,7 +368,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
         for (String url : urls) {
           if (shouldVerifyDownloadUrl(version, statusJson, toolWithEdition, now)) {
             UrlRequestResult result = doCheckIfDownloadUrlWorks(url);
-            doUpdateStatusJson(result, urlVersion, url);
+            doUpdateStatusJson(result, urlVersion, url, true);
             modified = true;
           }
         }
