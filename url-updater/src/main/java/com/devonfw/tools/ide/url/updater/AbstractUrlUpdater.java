@@ -30,6 +30,7 @@ import com.devonfw.tools.ide.url.model.folder.UrlEdition;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
 import com.google.common.base.Objects;
 
@@ -286,38 +287,70 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
    *        initially added).
    */
+  @SuppressWarnings("null") // Eclipse is too stupid to check this
   private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
 
     UrlStatusFile urlStatusFile = null;
     StatusJson statusJson = null;
     UrlStatus status = null;
+    UrlStatusState errorStatus = null;
+    Instant errorTimestamp = null;
+    UrlStatusState successStatus = null;
+    Instant successTimestamp = null;
     if (success || update) {
       urlStatusFile = urlVersion.getOrCreateStatus();
       statusJson = urlStatusFile.getStatusJson();
       status = statusJson.getOrCreateUrlStatus(url);
+      errorStatus = status.getError();
+      if (errorStatus != null) {
+        errorTimestamp = errorStatus.getTimestamp();
+      }
+      successStatus = status.getSuccess();
+      if (successStatus != null) {
+        successTimestamp = successStatus.getTimestamp();
+      }
     }
     Integer code = Integer.valueOf(statusCode);
     String version = urlVersion.getName();
     String tool = getToolWithEdition();
+    boolean modified = false;
     if (success) {
-      if (status == null) {
-        throw new IllegalStateException(); // prevent false-positives from stupid null-checkers like Eclipse or Lift...
+      if (errorStatus != null) {
+        // we avoid git diff overhead by only updating success timestamp if last check was an error
+        if (DateTimeUtil.isAfter(errorTimestamp, successTimestamp)) {
+          status.setSuccess(new UrlStatusState());
+          modified = true;
+        }
       }
-      status.setSuccess(new UrlStatusState());
       logger.info("For tool {} and version {} the download verification suceeded with status code {} for URL {}.", tool,
           version, code, url);
     } else {
       if (status != null) {
-        UrlStatusState error = new UrlStatusState();
-        error.setCode(code);
-        // String message = result.getHttpStatusCode() + " " + result.getUrl();
-        // error.setMessage(message);
-        status.setError(error);
+        if (errorStatus == null) {
+          modified = true;
+        } else {
+          if (!Objects.equal(code, errorStatus.getCode())) {
+            logger.warn("For tool {} and version {} the error status-code changed from {} to {} for URL {}.", tool,
+                version, code, errorStatus.getCode(), code, url);
+            modified = true;
+          }
+          if (!modified) {
+            // we avoid git diff overhead by only updating error timestamp if last check was a success
+            if (DateTimeUtil.isAfter(successTimestamp, errorTimestamp)) {
+              modified = true;
+            }
+          }
+        }
+        if (modified) {
+          errorStatus = new UrlStatusState();
+          errorStatus.setCode(code);
+          status.setError(errorStatus);
+        }
       }
       logger.warn("For tool {} and version {} the download verification failed with status code {} for URL {}.", tool,
           version, code, url);
     }
-    if (urlStatusFile != null) {
+    if (modified) {
       urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
     }
   }
@@ -402,13 +435,10 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     UrlStatusState success = urlStatus.getSuccess();
     if (success != null) {
       Instant timestamp = success.getTimestamp();
-      if (timestamp != null) {
-        Duration duration = Duration.between(timestamp, now);
-        if (duration.compareTo(TWO_DAYS) <= 0) {
-          logger.debug("For tool {} the URL {} has already been checked recently on {}", toolWithEdition, url,
-              timestamp);
-          return false;
-        }
+      Integer delta = DateTimeUtil.compareDuration(timestamp, now, TWO_DAYS);
+      if ((delta != null) && (delta.intValue() <= 0)) {
+        logger.debug("For tool {} the URL {} has already been checked recently on {}", toolWithEdition, url, timestamp);
+        return false;
       }
     }
     return true;

@@ -31,6 +31,9 @@ public class DockerRancherDesktopUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String mapVersion(String version) {
 
+    if (version.contains("test") || version.contains("tech-preview") || version.contains("beta")) {
+      return null;
+    }
     return version.replace("v", "");
   }
 
