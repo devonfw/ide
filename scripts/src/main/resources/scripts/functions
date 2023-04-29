@@ -1281,7 +1281,11 @@ function doInstall() {
     if [ -e "${available_versions}" ]
     then
       local resolved_version
-      resolved_version="$(grep "^${version_prefix}[^0-9]" "${available_versions}" | head -n 1)"
+      if [ "$(version_prefix%?)" =~ [0-9] ]
+      then
+        resolved_version="$(grep "^${version_prefix}[^0-9]" "${available_versions}" | head -n 1)"
+      else
+        resolved_version="$(grep "^${version_prefix}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
