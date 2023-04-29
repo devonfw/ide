@@ -20,19 +20,19 @@ public class TerraformUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    return version.replace("v", "");
+    return "v";
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_";
-    doUpdateVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + "linux_amd64.zip", LINUX);
-    doUpdateVersion(urlVersion, baseUrl + "darwin_amd64.zip", MAC);
-    doUpdateVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + "linux_amd64.zip", LINUX);
+    doAddVersion(urlVersion, baseUrl + "darwin_amd64.zip", MAC);
+    doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64);
   }
 
 }

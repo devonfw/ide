@@ -30,8 +30,8 @@ public class JenkinsUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion, "https://mirrors.jenkins.io/war-stable/${version}/jenkins.war");
+    doAddVersion(urlVersion, "https://mirrors.jenkins.io/war-stable/${version}/jenkins.war");
   }
 }

@@ -15,10 +15,10 @@ public class IntellijCommunityUrlUpdater extends IntellijUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.exe", OperatingSystem.WINDOWS);
-    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.tar.gz", OperatingSystem.LINUX);
-    doUpdateVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.dmg", OperatingSystem.MAC);
+    doAddVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.exe", OperatingSystem.WINDOWS);
+    doAddVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.tar.gz", OperatingSystem.LINUX);
+    doAddVersion(urlVersion, "https://download.jetbrains.com/idea/ideaIC-${version}.dmg", OperatingSystem.MAC);
   }
 }

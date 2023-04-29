@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.05.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1118[#1118]: Add milestone versions of Eclipse
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/44?closed=1[milestone 2023.05.001].
+
 == 2023.04.001
 
 Release with new features and bugfixes:

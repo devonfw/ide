@@ -27,11 +27,11 @@ public class QuarkusUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}";
-    doUpdateVersion(urlVersion, baseUrl + ".zip", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + ".tar.gz");
+    doAddVersion(urlVersion, baseUrl + ".zip", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + ".tar.gz");
   }
 
 }

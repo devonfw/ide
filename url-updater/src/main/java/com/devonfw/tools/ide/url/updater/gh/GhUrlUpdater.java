@@ -14,25 +14,20 @@ public class GhUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    String version2 = version.replaceAll("v", "");
-    // filter out pre releases
-    if (version2.contains("-")) {
-      return null;
-    }
-    return version2;
+    return "v";
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_";
-    doUpdateVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS, X64);
-    doUpdateVersion(urlVersion, baseUrl + "linux_amd64.tar.gz", LINUX, X64);
-    doUpdateVersion(urlVersion, baseUrl + "linux_arm64.tar.gz", LINUX, ARM64);
-    doUpdateVersion(urlVersion, baseUrl + "macOS_amd64.tar.gz", MAC, X64);
-    doUpdateVersion(urlVersion, baseUrl + "macOS_arm64.tar.gz", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS, X64);
+    doAddVersion(urlVersion, baseUrl + "linux_amd64.tar.gz", LINUX, X64);
+    doAddVersion(urlVersion, baseUrl + "linux_arm64.tar.gz", LINUX, ARM64);
+    doAddVersion(urlVersion, baseUrl + "macOS_amd64.tar.gz", MAC, X64);
+    doAddVersion(urlVersion, baseUrl + "macOS_arm64.tar.gz", MAC, ARM64);
   }
 
   @Override
