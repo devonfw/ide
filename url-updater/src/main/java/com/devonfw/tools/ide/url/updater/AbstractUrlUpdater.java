@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.MessageDigest;
@@ -11,11 +12,11 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
@@ -30,7 +31,9 @@ import com.devonfw.tools.ide.url.model.folder.UrlEdition;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
+import com.google.common.base.Objects;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
@@ -56,7 +59,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
 
   /** The {@link HttpClient} for HTTP requests. */
-  protected final HttpClient client = HttpClient.newBuilder().build();
+  protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
@@ -98,7 +101,11 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     try {
       HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
-      return this.client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+      HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
+      if (response.statusCode() == 200) {
+        return response.body();
+      }
+      throw new IllegalStateException("Unexpected response code " + response.statusCode() + ":" + response.body());
     } catch (Exception e) {
       throw new IllegalStateException("Failed to retrieve response body from url: " + url, e);
     }
@@ -108,13 +115,13 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param url the URL of the download file.
    * @return the {@link InputStream} of response body.
    */
-  protected InputStream doGetResponseBodyAsStream(String url) {
+  protected HttpResponse<InputStream> doGetResponseAsStream(String url) {
 
     try {
-      HttpRequest request1 = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
-      return this.client.send(request1, HttpResponse.BodyHandlers.ofInputStream()).body();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+      return this.client.send(request, HttpResponse.BodyHandlers.ofInputStream());
     } catch (Exception e) {
-      throw new IllegalStateException("Failed to retrieve response body from url: " + url, e);
+      throw new IllegalStateException("Failed to retrieve response from url: " + url, e);
     }
   }
 
@@ -125,9 +132,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param downloadUrl the URL of the download for the tool.
    * @return true if the version was successfully updated, false otherwise.
    */
-  protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl) {
+  protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl) {
 
-    return doUpdateVersion(urlVersion, downloadUrl, null);
+    return doAddVersion(urlVersion, downloadUrl, null);
   }
 
   /**
@@ -138,9 +145,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param os the operating system type for the tool (can be null).
    * @return true if the version was successfully updated, false otherwise.
    */
-  protected boolean doUpdateVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os) {
+  protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os) {
 
-    return doUpdateVersion(urlVersion, downloadUrl, os, null);
+    return doAddVersion(urlVersion, downloadUrl, os, null);
   }
 
   /**
@@ -152,7 +159,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param architecture the optional {@link SystemArchitecture}.
    * @return {@code true} if the version was successfully updated, {@code false} otherwise.
    */
-  protected boolean doUpdateVersion(UrlVersion urlVersion, String url, OperatingSystem os,
+  protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os,
       SystemArchitecture architecture) {
 
     String version = urlVersion.getName();
@@ -164,41 +171,86 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       url = url.replace("${arch}", architecture.toString());
     }
     url = url.replace("${edition}", getEdition());
-    UrlRequestResult result = doCheckIfDownloadUrlWorks(url);
-    if (result.isSuccess()) {
-      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      urlDownloadFile.addUrl(url);
-      doUpdateStatusJson(result, urlVersion, url);
-      // generate checksum of download file
-      if (result.getHttpStatusCode() == 200) {
-        UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-        doGenerateChecksum(url, urlChecksum);
-      }
-      urlVersion.save();
-      return true;
-    } else {
-      logger.error("For tool {} and version {} the download of {} failed with status {}", getToolWithEdition(), version,
-          url, result.getHttpStatusCode());
-      return false;
-    }
+
+    return checkDownloadUrl(url, urlVersion, os, architecture);
   }
 
   /**
-   * @param inputStream the input stream of requested url
-   * @return checksum of input stream as string
+   * @param response the {@link HttpResponse}.
+   * @return {@code true} if success, {@code false} otherwise.
    */
-  private String doGenerateChecksumFromUrl(String url) {
+  protected boolean isSuccess(HttpResponse<?> response) {
 
-    try (InputStream inputStream = doGetResponseBodyAsStream(url)) {
+    return response.statusCode() == 200;
+  }
+
+  /**
+   * @param url the URL of the download to check.
+   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
+   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
+   */
+  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
+      SystemArchitecture architecture) {
+
+    HttpResponse<InputStream> response = doGetResponseAsStream(url);
+    int statusCode = response.statusCode();
+    boolean success = isSuccess(response);
+    String contentType = response.headers().firstValue("content-type").orElse("undefined");
+    String tool = getToolWithEdition();
+    String version = urlVersion.getName();
+    if (success && contentType.startsWith("text")) {
+      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+          contentType, url);
+      success = false;
+    }
+    if (success) {
+      String checksum = doGenerateChecksum(response, url, version, contentType);
+      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
+      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+      String oldChecksum = urlChecksum.getChecksum();
+      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
+            tool, version, url, checksum, oldChecksum);
+        success = false;
+      } else {
+        urlDownloadFile.addUrl(url);
+        urlChecksum.setChecksum(checksum);
+      }
+    }
+    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
+    if (success) {
+      urlVersion.save();
+    }
+    return success;
+  }
+
+  /**
+   * @param response the {@link HttpResponse}.
+   * @param url the download URL
+   * @param version the {@link UrlVersion version} identifier.
+   * @return checksum of input stream as hex string
+   */
+  private String doGenerateChecksum(HttpResponse<InputStream> response, String url, String version,
+      String contentType) {
+
+    try (InputStream inputStream = response.body()) {
       MessageDigest md = MessageDigest.getInstance(UrlChecksum.HASH_ALGORITHM);
 
       byte[] buffer = new byte[8192];
       int bytesRead;
+      long size = 0;
       while ((bytesRead = inputStream.read(buffer)) != -1) {
         md.update(buffer, 0, bytesRead);
+        size += bytesRead;
+      }
+      if (size == 0) {
+        throw new IllegalStateException("Download empty for " + url);
       }
       byte[] digestBytes = md.digest();
       String checksum = HexUtil.toHexString(digestBytes);
+      logger.info(
+          "For tool {} and version {} we received {} bytes with content-type {} and computed SHA256 {} from URL {}",
+          getToolWithEdition(), version, Long.valueOf(size), contentType, checksum, url);
       return checksum;
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read body of download " + url, e);
@@ -208,71 +260,100 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
-   * @param url the url of the download file.
-   * @param urlChecksum the {@link UrlChecksum} file.
-   */
-  public void doGenerateChecksum(String url, UrlChecksum urlChecksum) {
-
-    String checksum = doGenerateChecksumFromUrl(url);
-    urlChecksum.setChecksum(checksum);
-  }
-
-  /**
    * Checks if a download URL works and if the file is available for download.
    *
-   * @param downloadUrl the URL to check.
+   * @param url the URL to check.
    * @return a URLRequestResult object representing the success or failure of the URL check.
    */
-  protected UrlRequestResult doCheckIfDownloadUrlWorks(String downloadUrl) {
+  protected HttpResponse<?> doCheckDownloadViaHeadRequest(String url) {
 
-    // Do Head request to check if the download url works and if the file is available for download
-    UrlRequestResult result;
-    Level logLevel = Level.INFO;
     try {
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(downloadUrl))
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url))
           .method("HEAD", HttpRequest.BodyPublishers.noBody()).timeout(Duration.ofSeconds(5)).build();
 
-      HttpResponse<String> response = this.client.send(request, HttpResponse.BodyHandlers.ofString());
-      // Return the success or failure URLRequestResult
-      result = response.statusCode() >= 200 && response.statusCode() < 400
-          ? new UrlRequestResult(true, response.statusCode(), downloadUrl)
-          : new UrlRequestResult(false, response.statusCode(), downloadUrl);
+      return this.client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (Exception e) {
-      result = new UrlRequestResult(false, 500, downloadUrl);
+      logger.error("Failed to preform HEAD request of URL {}", url, e);
+      return null;
     }
-
-    if (result.isFailure()) {
-      logLevel = Level.WARN;
-    }
-
-    logger.atLevel(logLevel).log("Download url: {} is {} with status code: {}", downloadUrl,
-        result.isSuccess() ? "available" : "not available", result.getHttpStatusCode());
-    return result;
-
   }
 
   /**
    * Creates or refreshes the status JSON file for a given UrlVersion instance based on the URLRequestResult of checking
    * if a download URL works.
    *
-   * @param result the {@link UrlRequestResult} instance indicating whether the download URL works.
+   * @param success - {@code true} on successful HTTP response, {@code false} otherwise.
+   * @param statusCode the HTTP status code of the response.
    * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
+   * @param url the checked download URL.
+   * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
+   *        initially added).
    */
-  private void doUpdateStatusJson(UrlRequestResult result, UrlVersion urlVersion, String url) {
+  @SuppressWarnings("null") // Eclipse is too stupid to check this
+  private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
 
-    UrlStatusFile urlStatusFile = urlVersion.getOrCreateStatus();
-    UrlStatus status = urlStatusFile.getStatusJson().getOrCreateUrlStatus(url);
-    if (result.isSuccess()) {
-      status.setSuccess(new UrlStatusState());
-      logger.info("Successfully verified download URL {}.", url);
-    } else if (result.isFailure()) {
-      UrlStatusState error = new UrlStatusState();
-      Integer code = Integer.valueOf(result.getHttpStatusCode());
-      error.setCode(code);
-      // String message = result.getHttpStatusCode() + " " + result.getUrl();
-      // error.setMessage(message);
-      status.setError(error);
-      logger.warn("Download verification failed with status code {} for URL {}.", code, url);
+    UrlStatusFile urlStatusFile = null;
+    StatusJson statusJson = null;
+    UrlStatus status = null;
+    UrlStatusState errorStatus = null;
+    Instant errorTimestamp = null;
+    UrlStatusState successStatus = null;
+    Instant successTimestamp = null;
+    if (success || update) {
+      urlStatusFile = urlVersion.getOrCreateStatus();
+      statusJson = urlStatusFile.getStatusJson();
+      status = statusJson.getOrCreateUrlStatus(url);
+      errorStatus = status.getError();
+      if (errorStatus != null) {
+        errorTimestamp = errorStatus.getTimestamp();
+      }
+      successStatus = status.getSuccess();
+      if (successStatus != null) {
+        successTimestamp = successStatus.getTimestamp();
+      }
+    }
+    Integer code = Integer.valueOf(statusCode);
+    String version = urlVersion.getName();
+    String tool = getToolWithEdition();
+    boolean modified = false;
+    if (success) {
+      if (errorStatus != null) {
+        // we avoid git diff overhead by only updating success timestamp if last check was an error
+        if (DateTimeUtil.isAfter(errorTimestamp, successTimestamp)) {
+          status.setSuccess(new UrlStatusState());
+          modified = true;
+        }
+      }
+      logger.info("For tool {} and version {} the download verification suceeded with status code {} for URL {}.", tool,
+          version, code, url);
+    } else {
+      if (status != null) {
+        if (errorStatus == null) {
+          modified = true;
+        } else {
+          if (!Objects.equal(code, errorStatus.getCode())) {
+            logger.warn("For tool {} and version {} the error status-code changed from {} to {} for URL {}.", tool,
+                version, code, errorStatus.getCode(), code, url);
+            modified = true;
+          }
+          if (!modified) {
+            // we avoid git diff overhead by only updating error timestamp if last check was a success
+            if (DateTimeUtil.isAfter(successTimestamp, errorTimestamp)) {
+              modified = true;
+            }
+          }
+        }
+        if (modified) {
+          errorStatus = new UrlStatusState();
+          errorStatus.setCode(code);
+          status.setError(errorStatus);
+        }
+      }
+      logger.warn("For tool {} and version {} the download verification failed with status code {} for URL {}.", tool,
+          version, code, url);
+    }
+    if (modified) {
+      urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
     }
   }
 
@@ -294,7 +375,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       if (edition.getChild(version) == null) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);
-          updateVersion(urlVersion);
+          addVersion(urlVersion);
           urlVersion.save();
         } catch (Exception e) {
           logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, e);
@@ -337,29 +418,32 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {
-          UrlStatus urlStatus = statusJson.getOrCreateUrlStatus(url);
-          UrlStatusState success = urlStatus.getSuccess();
-          if (success != null) {
-            Instant timestamp = success.getTimestamp();
-            if (timestamp != null) {
-              Duration duration = Duration.between(timestamp, now);
-              if (duration.compareTo(TWO_DAYS) <= 0) {
-                logger.debug("For tool {} the URL {} has already been checked recently on {}", toolWithEdition, url,
-                    timestamp);
-                continue;
-              }
-            }
+          if (shouldVerifyDownloadUrl(version, statusJson, toolWithEdition, now)) {
+            HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
+            doUpdateStatusJson(isSuccess(response), response.statusCode(), urlVersion, url, true);
+            modified = true;
           }
-          UrlRequestResult result = doCheckIfDownloadUrlWorks(url);
-          doUpdateStatusJson(result, urlVersion, url);
-          modified = true;
         }
       }
     }
     if (modified) {
-      urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
       urlStatusFile.save();
     }
+  }
+
+  private boolean shouldVerifyDownloadUrl(String url, StatusJson statusJson, String toolWithEdition, Instant now) {
+
+    UrlStatus urlStatus = statusJson.getOrCreateUrlStatus(url);
+    UrlStatusState success = urlStatus.getSuccess();
+    if (success != null) {
+      Instant timestamp = success.getTimestamp();
+      Integer delta = DateTimeUtil.compareDuration(timestamp, now, TWO_DAYS);
+      if ((delta != null) && (delta.intValue() <= 0)) {
+        logger.debug("For tool {} the URL {} has already been checked recently on {}", toolWithEdition, url, timestamp);
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -375,7 +459,28 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected String mapVersion(String version) {
 
+    String prefix = getVersionPrefixToRemove();
+    if ((prefix != null) && version.startsWith(prefix)) {
+      version = version.substring(prefix.length());
+    }
+    String vLower = version.toLowerCase(Locale.ROOT);
+    if (vLower.contains("alpha") || vLower.contains("beta") || vLower.contains("dev") || vLower.contains("snapshot")
+        || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
+        || vLower.contains("-pre") || vLower.startsWith("ce-")
+        // vscode nonsense
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
+      return null;
+    }
     return version;
+  }
+
+  /**
+   * @return the optional version prefix that has to be removed (e.g. "v").
+   */
+  protected String getVersionPrefixToRemove() {
+
+    return null;
   }
 
   /**
@@ -402,6 +507,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    *
    * @param urlVersion the URL version to be updated
    */
-  protected abstract void updateVersion(UrlVersion urlVersion);
+  protected abstract void addVersion(UrlVersion urlVersion);
 
 }

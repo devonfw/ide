@@ -53,11 +53,11 @@ public abstract class MavenBasedUrlUpdater extends AbstractUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String version = urlVersion.getName();
     String url = this.mavenBaseRepoUrl + version + "/" + getMavenArtifcatId() + "-" + version + getExtension();
-    doUpdateVersion(urlVersion, url);
+    doAddVersion(urlVersion, url);
   }
 
   /**

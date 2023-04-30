@@ -16,18 +16,18 @@ public class AwsUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     if (!urlVersion.getName().startsWith("2")) {
       return; // There are no valid download links for aws-cli below version 2
     }
     String baseUrl = "https://awscli.amazonaws.com/";
-    boolean ok = doUpdateVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.msi", OperatingSystem.WINDOWS);
+    boolean ok = doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.msi", OperatingSystem.WINDOWS);
     if (!ok) {
       return;
     }
-    doUpdateVersion(urlVersion, baseUrl + "awscli-exe-linux-x86_64-${version}.zip", OperatingSystem.LINUX);
-    doUpdateVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.pkg", OperatingSystem.MAC);
+    doAddVersion(urlVersion, baseUrl + "awscli-exe-linux-x86_64-${version}.zip", OperatingSystem.LINUX);
+    doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.pkg", OperatingSystem.MAC);
   }
 
   @Override
