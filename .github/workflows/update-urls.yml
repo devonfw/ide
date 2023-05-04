@@ -28,4 +28,4 @@ jobs:
           git config --global user.name ${{ secrets.BUILD_USER }}
           git config --global user.email ${{ secrets.BUILD_USER_EMAIL }}
           git commit -m "Update urls" || echo "No changes, nothing to do." && exit 0
-          git push 
+          git push
