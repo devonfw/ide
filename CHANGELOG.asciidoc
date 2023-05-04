@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1114[#1114]: Separate eclipse plugins and keep software installation pristine
 * https://github.com/devonfw/ide/issues/1118[#1118]: Add milestone versions of Eclipse
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/44?closed=1[milestone 2023.05.001].
@@ -14,7 +15,6 @@ The full list of changes for this release can be found in https://github.com/dev
 
 Release with new features and bugfixes:
 
-* https://github.com/devonfw/ide/issues/1114[#1114]: Separate eclipse plugins and keep software installation pristine
 * https://github.com/devonfw/ide/issues/1065[#1065]: compute checksum of binary downloads
 * https://github.com/devonfw/ide/issues/1076[#1076]: Fix extraction error in doReplaceExtractedSkipSingleFolder()
 * https://github.com/devonfw/ide/issues/1054[#1054]: automated security warnings
