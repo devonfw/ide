@@ -112,7 +112,7 @@ function doCheckSuccessOfPluginInstall(){
 # $1: plugin feature group ID
 # return: dependencies that are already installed
 function doCheckPluginsInstalled() {
-  local plugin_directory="${DEVON_IDE_HOME}/software/eclipse/plugins"
+  local plugin_directory="${DEVON_IDE_HOME}/software/eclipse-plugins/plugins"
 
   # Remove feature.group from each plugin id
   local plugins="${1//.feature.group/}"
