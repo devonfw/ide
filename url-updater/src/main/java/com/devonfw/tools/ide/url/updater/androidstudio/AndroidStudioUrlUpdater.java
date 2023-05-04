@@ -1,16 +1,20 @@
 package com.devonfw.tools.ide.url.updater.androidstudio;
 
-import com.devonfw.tools.ide.url.model.folder.UrlVersion;
-import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
+import java.util.Collection;
 
-import java.util.regex.Pattern;
+import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 
 /**
- * Abstract {@link WebsiteUrlUpdater} base class for Android Studio.
+ * {@link JsonUrlUpdater} for Android Studio.
  */
-public class AndroidStudioUrlUpdater extends WebsiteUrlUpdater {
+public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
 
+  /** The download URL */
   private final static String DOWNLOAD_URL = "https://redirector.gvt1.com/edgedl/android/studio/ide-zips";
+
+  /** The version URL */
+  private final static String VERSION_URL = "https://jb.gg/android-studio-releases-list.json";
 
   @Override
   protected String getTool() {
@@ -22,25 +26,38 @@ public class AndroidStudioUrlUpdater extends WebsiteUrlUpdater {
   protected void addVersion(UrlVersion urlVersion) {
 
     String version = urlVersion.getName();
-    //    String mac = "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.1.1.1/android-studio-2023.1.1.1-mac.zip";
-    //    String linux = "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.1.1.1/android-studio-2023.1.1.1-linux.tar.gz";
 
-    String baseUrlWindows = DOWNLOAD_URL + "/" + version + "/" + "android-studio-" + version + "-" + "windows.zip";
-    String baseUrlLinux = DOWNLOAD_URL + "/" + version + "/" + "android-studio-" + version + "-" + "linux.tar.gz";
-    String baseUrlMac = DOWNLOAD_URL + "/" + version + "/" + "android-studio-" + version + "-" + "mac.zip";
+    String versionDownloadUrl = DOWNLOAD_URL + "/" + version + "/" + "android-studio" + "-" + version + "-";
 
-    doAddVersion(urlVersion, baseUrlWindows, WINDOWS);
+    String downloadUrlWindows = versionDownloadUrl + "windows.zip";
+    String downloadUrlLinux = versionDownloadUrl + "linux.tar.gz";
+    String downloadUrlMac = versionDownloadUrl + "mac.zip";
+
+    doAddVersion(urlVersion, downloadUrlWindows, WINDOWS);
+    doAddVersion(urlVersion, downloadUrlLinux, LINUX);
+    doAddVersion(urlVersion, downloadUrlMac, MAC);
+
   }
 
   @Override
-  protected String getVersionUrl() {
+  protected String doGetVersionUrl() {
 
-    return "https://developer.android.com/studio/archive";
+    return VERSION_URL;
   }
 
   @Override
-  protected Pattern getVersionPattern() {
+  protected Class<AndroidJsonObject> getJsonObjectType() {
 
-    return Pattern.compile("(\\d{4}\\.\\d\\.\\d\\.\\d)");
+    return AndroidJsonObject.class;
+  }
+
+  @Override
+  protected void collectVersionsFromJson(AndroidJsonObject jsonItem, Collection<String> versions) {
+
+    AndroidJsonContent content = jsonItem.getContent();
+    for (AndroidJsonItem item : content.getItem()) {
+      String version = item.getVersion();
+      addVersion(version, versions);
+    }
   }
 }
