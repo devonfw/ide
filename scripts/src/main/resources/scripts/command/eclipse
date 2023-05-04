@@ -183,7 +183,7 @@ function doInvokeEclipse() {
   shift
   local eclipse_args=("$@")
   local debug_info
-  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
+  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
   local exit_code=$?
   if [ $exit_code -ne 0 ];
   then
