@@ -59,6 +59,8 @@ In general you should try to stick with the configuration pre-defined by your pr
 
 As the maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer. By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
 
+All plugins are installed separately in `software/eclipse-plugins`.
+
 === legacy plugin config
 For downward compatibility we still support the deprecated legacy configuration if the folder `settings/eclipse/plugins` does not exist:
 The project link:configuration.asciidoc[configuration] typically defines the plugins that will be installed via `ECLIPSE_PLUGINS` link:variables.asciidoc[variable]. Otherwise defaults from this `eclipse` link:cli.asciidoc#commandlets[commandlet] will apply.
