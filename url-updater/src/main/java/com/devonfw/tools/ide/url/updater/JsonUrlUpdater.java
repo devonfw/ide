@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.devonfw.tools.ide.common.JsonObject;
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
@@ -21,8 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public abstract class JsonUrlUpdater<J extends JsonObject> extends AbstractUrlUpdater {
 
-  private final Logger logger = LoggerFactory.getLogger(JsonUrlUpdater.class.getName());
-
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
   @Override
@@ -34,16 +29,25 @@ public abstract class JsonUrlUpdater<J extends JsonObject> extends AbstractUrlUp
       String response = doGetResponseBodyAsString(url);
       J jsonObject = MAPPER.readValue(response, getJsonObjectType());
       collectVersionsFromJson(jsonObject, versions);
-      this.logger.info("Found following versions for tool {} in JSON {}", getToolWithEdition(), versions);
     } catch (Exception e) {
       throw new IllegalStateException("Error while getting versions from JSON API " + url, e);
     }
     return versions;
   }
 
+  /**
+   * @return the URL of the JSON API to get the versions from.
+   */
   protected abstract String doGetVersionUrl();
 
+  /**
+   * @return the {@link Class} reflecting the Java object the JSON shall be mapped to.
+   */
   protected abstract Class<J> getJsonObjectType();
 
+  /**
+   * @param jsonItem the Java object parsed from the JSON holding the information of a version.
+   * @param versions the versions where to {@link #addVersion(String, Collection) add the version to}.
+   */
   protected abstract void collectVersionsFromJson(J jsonItem, Collection<String> versions);
 }

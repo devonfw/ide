@@ -26,21 +26,21 @@ public class LazyDockerUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected String getVersionPrefixToRemove() {
 
-    return version.replace("v", "");
+    return "v";
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_";
-    doUpdateVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64);
-    doUpdateVersion(urlVersion, baseUrl + "Windows_arm64.zip", WINDOWS, ARM64);
-    doUpdateVersion(urlVersion, baseUrl + "Linux_x86_64.tar.gz", LINUX, X64);
-    doUpdateVersion(urlVersion, baseUrl + "Linux_arm64.tar.gz", LINUX, ARM64);
-    doUpdateVersion(urlVersion, baseUrl + "Darwin_x86_64.tar.gz", MAC, X64);
-    doUpdateVersion(urlVersion, baseUrl + "Darwin_arm64.tar.gz", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64);
+    doAddVersion(urlVersion, baseUrl + "Windows_arm64.zip", WINDOWS, ARM64);
+    doAddVersion(urlVersion, baseUrl + "Linux_x86_64.tar.gz", LINUX, X64);
+    doAddVersion(urlVersion, baseUrl + "Linux_arm64.tar.gz", LINUX, ARM64);
+    doAddVersion(urlVersion, baseUrl + "Darwin_x86_64.tar.gz", MAC, X64);
+    doAddVersion(urlVersion, baseUrl + "Darwin_arm64.tar.gz", MAC, ARM64);
   }
 
 }
