@@ -76,7 +76,7 @@ function doInstallEclipsePlugin() {
   local pluginDependencies
   pluginDependencies=$(doCheckPluginsInstalled "${plugin_id}")
   local debugInfo
-  debugInfo=$(doInvokeEclipse org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_id}" -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/")
+  debugInfo=$(doInvokeEclipse org.eclipse.equinox.p2.director -repository "${plugin_url}" -installIU "${plugin_id}")
   if [ "${debugInfo}" != "" ] && doCheckSuccessOfPluginInstall "${debugInfo}" "${plugin_name}" "${plugin_url}" "${pluginDependencies}"
   then
     return 0
@@ -396,7 +396,7 @@ function doImportEclipse() {
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  "${ECLIPSE}" -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
 }
 
 # $1: id
