@@ -20,12 +20,12 @@ jobs:
         run: |
           cd url-updater
           mvn -B -ntp -Dstyle.color=always install
-          mvn exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls"
+          mvn -B -ntp -Dstyle.color=always exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls"
       - name: Commit and push to ide-urls
         run: |
           cd ide-urls
           git add .
           git config --global user.name ${{ secrets.BUILD_USER }}
           git config --global user.email ${{ secrets.BUILD_USER_EMAIL }}
-          git commit -m "Update urls"
-          git push
+          git commit -m "Update urls" || echo "No changes, nothing to do." && exit 0
+          git push 

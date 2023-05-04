@@ -5,11 +5,11 @@ package com.devonfw.tools.ide.version;
  */
 public enum VersionComparisonResult {
 
-  /** {@link #LESS Less} but {@link #isUnsafe() unsafe}. */
-  LESS_UNSAFE,
-
   /** The first version is smaller than the second one. */
   LESS,
+
+  /** {@link #LESS Less} but {@link #isUnsafe() unsafe}. */
+  LESS_UNSAFE,
 
   /** Both versions are equal. */
   EQUAL,
