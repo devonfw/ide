@@ -71,10 +71,9 @@ function doAddPlugin() {
   if [ -e "${ANDROID_STUDIO_HOME}/build.txt" ]
   then
     android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/build.txt")"
-  # TODO: app name needs to be adjusted
-  elif [ -e "${ANDROID_STUDIO_HOME}/IntelliJ.app/Contents/Resources/build.txt" ]
+  elif [ -e "${ANDROID_STUDIO_HOME}/Android Studio.app/Contents/Resources/build.txt" ]
   then 
-    android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
+    android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/Android Studio.app/Contents/Resources/build.txt")"
   fi
 
   if [ -n "${1}" ] && [ -n "${android_studio_build}" ]
