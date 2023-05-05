@@ -30,8 +30,7 @@ cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   doDevonCommand java setup silent
-  # TODO: replace with android studio version
-  doInstall "android-studio" "${INTELLIJ_VERSION}" "${1}"
+  doInstall "android-studio" "${ANDROID_STUDIO_VERSION}" "${1}"
   if [ "${?}" = 0 ]
   then
     # TODO: check if this is existing
