@@ -33,7 +33,6 @@ function doSetup() {
   doInstall "android-studio" "${ANDROID_STUDIO_VERSION}" "${1}"
   if [ "${?}" = 0 ]
   then
-    # TODO: check if this is existing
     if  [ -f "${ANDROID_STUDIO_HOME}/bin/studio.sh" ]
     then
       ln -s "${ANDROID_STUDIO_HOME}/bin/studio.sh" "${ANDROID_STUDIO_HOME}/bin/studio"
