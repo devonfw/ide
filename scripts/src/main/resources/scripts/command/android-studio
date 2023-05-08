@@ -19,7 +19,6 @@ source "$(dirname "${0}")"/../functions
 ANDROID_STUDIO_HOME="${DEVON_IDE_HOME}/software/android-studio"
 if doIsMacOs
 then
-  # TODO path needs to be fixed...
   TOOL_VERSION_COMMAND="cd '${DEVON_IDE_HOME}/software/macos/android-studio'/*.app && head -n 6 'Contents/Resources/product-info.json'"
 else
   TOOL_VERSION_COMMAND="head -n 7 '${ANDROID_STUDIO_HOME}/product-info.json'"
@@ -79,8 +78,7 @@ function doAddPlugin() {
   then
     mkdir -p "${install_path}"
     local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${android_studio_build}"
-    # TODO: filename needs to be adjusted
-    local filename="intellij-plugin-${android_studio_build}-${pluginId}"
+    local filename="android-studio-plugin-${android_studio_build}-${pluginId}"
     doDownload "${download_url}" "${download_dir}" "${filename}" "" "" "" "" "" "${filename}"
     # test if downloaded file is a valid zip archive...
     if unzip -z "${download_dir}/${filename}" > /dev/null 2>&1
@@ -123,23 +121,23 @@ function doStartAndroidStudio() {
     doExtendPath "${JAVA_HOME}"
   fi
   echo "launching Android Studio..."
-  local IDEA="${ANDROID_STUDIO_HOME}/bin/studio64.exe"
-  if [ ! -f "${IDEA}" ];
+  local STUDIO="${ANDROID_STUDIO_HOME}/bin/studio64.exe"
+  if [ ! -f "${STUDIO}" ];
   then
-    IDEA="${ANDROID_STUDIO_HOME}/bin/idea"
+    STUDIO="${ANDROID_STUDIO_HOME}/bin/studio"
   fi
-  if [ ! -f "${IDEA}" ];
+  if [ ! -f "${STUDIO}" ];
   then
-    IDEA="${ANDROID_STUDIO_HOME}/idea"
+    STUDIO="${ANDROID_STUDIO_HOME}/studio"
   fi
-  export IDEA_PROPERTIES="${WORKSPACE_PATH}/idea.properties"
+  export STUDIO_PROPERTIES="${WORKSPACE_PATH}/idea.properties"
   if doIsMacOs
   then
-    echo "MacOs command ${IDEA}"
-    open "${IDEA}" --args "${@}"
+    echo "MacOs command ${STUDIO}"
+    open "${STUDIO}" --args "${@}"
   else
-    echo "command ${IDEA}"
-    "${IDEA}" "${@}" &
+    echo "command ${STUDIO}"
+    "${STUDIO}" "${@}" &
   fi
 }
 
