@@ -112,7 +112,8 @@ function doCheckSuccessOfPluginInstall(){
 # $1: plugin feature group ID
 # return: dependencies that are already installed
 function doCheckPluginsInstalled() {
-  local plugin_directory="${DEVON_IDE_HOME}/software/eclipse-plugins/plugins"
+  local plugin_directory="${DEVON_IDE_HOME}/software/eclipse/plugins"
+  local plugin_custom_directory="${DEVON_IDE_HOME}/software/eclipse-plugins/plugins"
 
   # Remove feature.group from each plugin id
   local plugins="${1//.feature.group/}"
@@ -126,7 +127,7 @@ function doCheckPluginsInstalled() {
     plugin=${plugin/\.feature*/}
 
     local plugin_dependencies
-    plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
+    plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* "${plugin_custom_directory}"/*"${plugin}".* 2>/dev/null)
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
       if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]
@@ -134,7 +135,7 @@ function doCheckPluginsInstalled() {
         break
       fi
       local new_plugin_dependencies
-      new_plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
+      new_plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* "${plugin_custom_directory}"/*"${plugin}".* 2>/dev/null)
       if [ -n "${new_plugin_dependencies}" ]
       then
         plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
@@ -143,7 +144,7 @@ function doCheckPluginsInstalled() {
     done
   done
   # Remove plugin_directory from plugin variable
-  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_directory}/||g")
+  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_directory}/||g" | sed "s|${plugin_custom_directory}/||g")
   echo -e "${plugin_dependencies}" | sort -u
 }
 
@@ -357,16 +358,32 @@ function doAddPlugin() {
     fi
   fi
 }
-function doStartEclipse() {
+
+function doLaunchEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   if doIsWindows
   then
     # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    start "eclipse" /B doStartEclipse -clean -data "${WORKSPACE_PATH}" -showlocation "${WORKSPACE}"
   else
     # shellcheck disable=SC2086
-    "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    doStartEclipse -clean -data "${WORKSPACE_PATH}" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" &
+  fi
+}
+
+function doStartEclipse() {
+  local start_eclipse
+  start_eclipse=$("${ECLIPSE}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs "${ECLIPSE_VMARGS}")
+  local exit_code=$?
+  if [ $exit_code -ne 0 ];
+  then
+    doError "Failed to start eclipse."
+    echo ""
+    return 1
+  else
+    echo "$start_eclipse"
+    return 0
   fi
 }
 
@@ -396,7 +413,7 @@ function doImportEclipse() {
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  "${ECLIPSE}" -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  doStartEclipse -nosplash -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
 }
 
 # $1: id
@@ -468,7 +485,7 @@ fi
 if [ -z "${1}" ]
 then
   doSetup silent
-  doStartEclipse
+  doLaunchEclipse
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
@@ -483,7 +500,7 @@ while [ -n "${1}" ]; do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
     doSetup silent
-    doStartEclipse
+    doLaunchEclipse
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
     doConfigureEclipse -u
