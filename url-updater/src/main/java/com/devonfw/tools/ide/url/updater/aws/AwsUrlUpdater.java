@@ -16,21 +16,6 @@ public class AwsUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void addVersion(UrlVersion urlVersion) {
-
-    if (!urlVersion.getName().startsWith("2")) {
-      return; // There are no valid download links for aws-cli below version 2
-    }
-    String baseUrl = "https://awscli.amazonaws.com/";
-    boolean ok = doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.msi", OperatingSystem.WINDOWS);
-    if (!ok) {
-      return;
-    }
-    doAddVersion(urlVersion, baseUrl + "awscli-exe-linux-x86_64-${version}.zip", OperatingSystem.LINUX);
-    doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.pkg", OperatingSystem.MAC);
-  }
-
-  @Override
   protected String getGithubOrganization() {
 
     return "aws";
@@ -41,4 +26,39 @@ public class AwsUrlUpdater extends GithubUrlUpdater {
 
     return "aws-cli";
   }
+
+  @Override
+  protected String mapVersion(String version) {
+
+    int majorEnd = 0;
+    int len = version.length();
+    while (majorEnd < len) {
+      char c = version.charAt(majorEnd);
+      if ((c >= '0') && (c <= '9')) {
+        majorEnd++;
+      } else {
+        break;
+      }
+    }
+    if (majorEnd > 0) {
+      int major = Integer.parseInt(version.substring(0, majorEnd));
+      if (major < 2) {
+        return null; // There are no valid download links for aws-cli below version 2
+      }
+    }
+    return super.mapVersion(version);
+  }
+
+  @Override
+  protected void addVersion(UrlVersion urlVersion) {
+
+    String baseUrl = "https://awscli.amazonaws.com/";
+    boolean ok = doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.msi", OperatingSystem.WINDOWS);
+    if (!ok) {
+      return;
+    }
+    doAddVersion(urlVersion, baseUrl + "awscli-exe-linux-x86_64-${version}.zip", OperatingSystem.LINUX);
+    doAddVersion(urlVersion, baseUrl + "AWSCLIV2-${version}.pkg", OperatingSystem.MAC);
+  }
+
 }
