@@ -449,6 +449,12 @@ function doUpdateMirrors() {
   doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
 }
 
+function doUpdateUrls() {
+  local urls_dir="${DEVON_IDE_HOME}/urls"
+  doDebug "Cloning or updating download urls"
+  doGitPullOrClone "${urls_dir}" "${DEVON_URLS:-https://github.com/devonfw/ide-urls.git}"
+}
+
 # $1: the URL to download
 # $2: the optional, target directory to save to
 # $3: the software to download (e.g. 'java', 'mvn', 'node')
@@ -1831,46 +1837,112 @@ function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
   local commandlet="${3}"
-  if [ -n "${version}" ]
+  if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
-    if [ "${version}" = "latest" ]
+    if [ -n "${version}" ]
     then
-      doUpdateMirrors
-      version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
+      if [ "${version}" = "latest" ]
+      then
+        doUpdateUrls
+        [ -z "${edition}" ] && edition="${software}"
+        if [ doIsMacOs ]
+        then
+          version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} | sort -rV | head -1)"
+        else
+          version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} --indicator-style=none | sort -rV | head -1)"
+        fi
+      fi
+      local software_version_variable="${software}"
+      # temporary workaround for #1098 should be fixed and removed with #1085
+      if [ "${software_version_variable}" = "nodejs" ]
+      then
+        software_version_variable="node"
+      fi
+      software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
+      local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
+      grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
+      mv "${devon_properties}.tmp" "${devon_properties}"
+      echo "${software_version_variable}=${version}" >> "${devon_properties}"
+      doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+    else
+      doError "You have to specify the version you want to set."
     fi
-    local software_version_variable="${software}"
-    # temporary workaround for #1098 should be fixed and removed with #1085
-    if [ "${software_version_variable}" = "nodejs" ]
-    then
-      software_version_variable="node"
-    fi
-    software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
-    local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
-    grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
-    mv "${devon_properties}.tmp" "${devon_properties}"
-    echo "${software_version_variable}=${version}" >> "${devon_properties}"
-    doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
-    doError "You have to specify the version you want to set."
+    if [ -n "${version}" ]
+    then
+      if [ "${version}" = "latest" ]
+      then
+        doUpdateMirrors
+        version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
+      fi
+      local software_version_variable="${software}"
+      # temporary workaround for #1098 should be fixed and removed with #1085
+      if [ "${software_version_variable}" = "nodejs" ]
+      then
+        software_version_variable="node"
+      fi
+      software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
+      local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
+      grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
+      mv "${devon_properties}.tmp" "${devon_properties}"
+      echo "${software_version_variable}=${version}" >> "${devon_properties}"
+      doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
+    else
+      doError "You have to specify the version you want to set."
+    fi
   fi
 }
 
 # $1: software
 function doListSoftwareVersions() {
   local software="${1}"
-  doUpdateMirrors
-  local versions_path="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
-  if [ ! -f "${versions_path}" ]
+  if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
-    doError "No versions available at ${versions_path}"
-  elif [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
-  then
-    pr -4 -t -s "${versions_path}" | column -t
+    doUpdateUrls
+    [ -z "${edition}" ] && edition="${software}"
+    local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
+    if [ ! -d "${versions_path}" ]
+    then
+      doError "No versions available at ${versions_path}"
+    elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
+    then
+      if [ doIsMacOs ]
+      then
+        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
+      else
+        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
+      fi
+    else
+      if [ doIsMacOs ]
+      then
+        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
+      else
+        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
+      fi
+      doEcho "Only the 20 latest versions are displayed."
+      doAskToContinue "Do you want to see all versions?"
+      if [ doIsMacOs ]
+      then
+        ls "${versions_path}" | sort -rV | less
+      else
+        ls "${versions_path}" --indicator-style=none | sort -rV | less
+      fi
+    fi
   else
-    head -n 20 "${versions_path}" | pr -4 -t -s | column -t
-    doEcho "Only the 20 latest versions are displayed."
-    doAskToContinue "Do you want to see all versions?"
-    less "${versions_path}"
+    doUpdateMirrors
+    local versions_path="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
+    if [ ! -f "${versions_path}" ]
+    then
+      doError "No versions available at ${versions_path}"
+    elif [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
+    then
+      pr -4 -t -s "${versions_path}" | column -t
+    else
+      head -n 20 "${versions_path}" | pr -4 -t -s | column -t
+      doEcho "Only the 20 latest versions are displayed."
+      doAskToContinue "Do you want to see all versions?"
+      less "${versions_path}"
+    fi
   fi
 }
 
