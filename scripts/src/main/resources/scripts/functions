@@ -1903,8 +1903,8 @@ function doListSoftwareVersions() {
     doUpdateUrls
     [ -z "${edition}" ] && edition="${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
-    # shellcheck disable=SC2012
     local anz_versions
+    # shellcheck disable=SC2012
     anz_versions="$(ls "${versions_path}" | wc -l)"
     if [ ! -d "${versions_path}" ]
     then
