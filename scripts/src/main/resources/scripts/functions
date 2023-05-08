@@ -1853,6 +1853,7 @@ function doSetSoftwareVersion() {
         edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
         edition=$(eval "${edition_cmd}")
         [ -z "${edition}" ] && edition="${software}"
+        # shellcheck disable=SC2012
         version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} ${lsopt} | sort -rV | head -1)"
       fi
       local software_version_variable="${software}"
@@ -1911,16 +1912,22 @@ function doListSoftwareVersions() {
     edition="$(eval "${edition_cmd}")"
     [ -z "${edition}" ] && edition="${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
+    local anz_path
+    # shellcheck disable=SC2012
+    anz_versions="$(ls "${versions_path}" | wc -l)"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
-    elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
+    elif [ "${anz_versions}" -lt 20 ]
     then
+      # shellcheck disable=SC2012
       ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t
     else
+      # shellcheck disable=SC2012
       ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t | head -5
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
+      # shellcheck disable=SC2012
       ls "${versions_path}" "${lsopt}" | sort -rV | less
     fi
   else
