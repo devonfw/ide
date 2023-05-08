@@ -1847,9 +1847,11 @@ function doSetSoftwareVersion() {
         [ -z "${edition}" ] && edition="${software}"
         if doIsMacOs
         then
-          version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} | sort -rV | head -1)"
+          # shellcheck disable=SC2012
+          version="$(ls ${DEVON_IDE_HOME}/urls/"${software}"/"${edition}" | sort -rV | head -1)"
         else
-          version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} --indicator-style=none | sort -rV | head -1)"
+          # shellcheck disable=SC2012
+          version="$(ls ${DEVON_IDE_HOME}/urls/"${software}"/"${edition}" --indicator-style=none | sort -rV | head -1)"
         fi
       fi
       local software_version_variable="${software}"
@@ -1904,27 +1906,34 @@ function doListSoftwareVersions() {
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
+    # shellcheck disable=SC2012
     elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
     then
       if doIsMacOs
       then
+        # shellcheck disable=SC2012
         ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t
       else
+        # shellcheck disable=SC2012
         ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t
       fi
     else
       if doIsMacOs
       then
+        # shellcheck disable=SC2012
         ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t | head -5
       else
+        # shellcheck disable=SC2012
         ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t | head -5
       fi
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
       if doIsMacOs
       then
+        # shellcheck disable=SC2012
         ls "${versions_path}" | sort -rV -- | less
       else
+        # shellcheck disable=SC2012
         ls "${versions_path}" --indicator-style=none | sort -rV -- | less
       fi
     fi
