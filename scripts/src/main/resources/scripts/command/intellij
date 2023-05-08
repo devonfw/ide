@@ -77,13 +77,13 @@ function doAddPlugin() {
     intellij_build="$(cat "${IDEA_HOME}/IntelliJ.app/Contents/Resources/build.txt")"
   fi
 
-  if [ -n "${1}" ] && [ -n "${intellij_build}" ]
+  if [ -n "${pluginId}" ] && [ -n "${intellij_build}" ]
   then
     mkdir -p "${install_path}"
 
-    if [ -n "${2}" ]
+    if [ -n "${pluginUrl}" ]
       then
-      local download_url="${2}"
+      local download_url="${pluginUrl}"
       else
       local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
       fi
