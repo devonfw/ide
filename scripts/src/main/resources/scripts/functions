@@ -1906,7 +1906,6 @@ function doListSoftwareVersions() {
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
-    # shellcheck disable=SC2012
     elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
     then
       if doIsMacOs
