@@ -1912,29 +1912,29 @@ function doListSoftwareVersions() {
       if doIsMacOs
       then
         # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t
+        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
       else
         # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t
+        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
       fi
     else
       if doIsMacOs
       then
         # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t | head -5
+        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t | head -5
       else
         # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t | head -5
+        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t | head -5
       fi
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
       if doIsMacOs
       then
         # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV -- | less
+        ls "${versions_path}" | sort -rV | less
       else
         # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV -- | less
+        ls "${versions_path}" --indicator-style=none | sort -rV | less
       fi
     fi
   else
