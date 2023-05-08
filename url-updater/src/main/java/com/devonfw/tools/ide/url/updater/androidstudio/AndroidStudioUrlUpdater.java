@@ -32,10 +32,12 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
     String downloadUrlWindows = versionDownloadUrl + "windows.zip";
     String downloadUrlLinux = versionDownloadUrl + "linux.tar.gz";
     String downloadUrlMac = versionDownloadUrl + "mac.zip";
+    String downloadUrlMacArm64 = versionDownloadUrl + "mac_arm.zip";
 
     doAddVersion(urlVersion, downloadUrlWindows, WINDOWS);
     doAddVersion(urlVersion, downloadUrlLinux, LINUX);
     doAddVersion(urlVersion, downloadUrlMac, MAC);
+    doAddVersion(urlVersion, downloadUrlMacArm64, MAC, ARM64);
 
   }
 
