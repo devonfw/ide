@@ -1837,6 +1837,12 @@ function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
   local commandlet="${3}"
+  local lsopt
+  if ! doIsMacOs
+  then
+    lsopt="--indicator-style=none"
+  fi
+  local edition
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     if [ -n "${version}" ]
@@ -1844,15 +1850,10 @@ function doSetSoftwareVersion() {
       if [ "${version}" = "latest" ]
       then
         doUpdateUrls
+        edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+        edition=$(eval "${edition_cmd}")
         [ -z "${edition}" ] && edition="${software}"
-        if doIsMacOs
-        then
-          # shellcheck disable=SC2012
-          version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" | sort -rV | head -1)"
-        else
-          # shellcheck disable=SC2012
-          version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" --indicator-style=none | sort -rV | head -1)"
-        fi
+        version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} ${lsopt} | sort -rV | head -1)"
       fi
       local software_version_variable="${software}"
       # temporary workaround for #1098 should be fixed and removed with #1085
@@ -1898,46 +1899,29 @@ function doSetSoftwareVersion() {
 # $1: software
 function doListSoftwareVersions() {
   local software="${1}"
+  local lsopt
+  if ! doIsMacOs
+  then
+    lsopt="--indicator-style=none"
+  fi
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     doUpdateUrls
+    edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+    edition="$(eval "${edition_cmd}")"
     [ -z "${edition}" ] && edition="${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
-    local anz_versions
-    # shellcheck disable=SC2012
-    anz_versions="$(ls "${versions_path}" | wc -l)"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
-    elif [ "${anz_versions}" -lt 20 ]
+    elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
     then
-      if doIsMacOs
-      then
-        # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
-      else
-        # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
-      fi
+      ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t
     else
-      if doIsMacOs
-      then
-        # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t | head -5
-      else
-        # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t | head -5
-      fi
+      ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t | head -5
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
-      if doIsMacOs
-      then
-        # shellcheck disable=SC2012
-        ls "${versions_path}" | sort -rV | less
-      else
-        # shellcheck disable=SC2012
-        ls "${versions_path}" --indicator-style=none | sort -rV | less
-      fi
+      ls "${versions_path}" "${lsopt}" | sort -rV | less
     fi
   else
     doUpdateMirrors
