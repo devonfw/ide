@@ -1845,7 +1845,7 @@ function doSetSoftwareVersion() {
       then
         doUpdateUrls
         [ -z "${edition}" ] && edition="${software}"
-        if [ doIsMacOs ]
+        if doIsMacOs
         then
           version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} | sort -rV | head -1)"
         else
@@ -1906,26 +1906,26 @@ function doListSoftwareVersions() {
       doError "No versions available at ${versions_path}"
     elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
     then
-      if [ doIsMacOs ]
+      if doIsMacOs
       then
-        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
+        ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t
       else
-        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
+        ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t
       fi
     else
-      if [ doIsMacOs ]
+      if doIsMacOs
       then
-        ls "${versions_path}" | sort -rV | pr -4 -t -s | column -t
+        ls "${versions_path}" | sort -rV -- | pr -4 -t -s | column -t | head -5
       else
-        ls "${versions_path}" --indicator-style=none | sort -rV | pr -4 -t -s | column -t
+        ls "${versions_path}" --indicator-style=none | sort -rV -- | pr -4 -t -s | column -t | head -5
       fi
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
-      if [ doIsMacOs ]
+      if doIsMacOs
       then
-        ls "${versions_path}" | sort -rV | less
+        ls "${versions_path}" | sort -rV -- | less
       else
-        ls "${versions_path}" --indicator-style=none | sort -rV | less
+        ls "${versions_path}" --indicator-style=none | sort -rV -- | less
       fi
     fi
   else
