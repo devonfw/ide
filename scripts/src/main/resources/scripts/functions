@@ -1848,10 +1848,10 @@ function doSetSoftwareVersion() {
         if doIsMacOs
         then
           # shellcheck disable=SC2012
-          version="$(ls ${DEVON_IDE_HOME}/urls/"${software}"/"${edition}" | sort -rV | head -1)"
+          version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" | sort -rV | head -1)"
         else
           # shellcheck disable=SC2012
-          version="$(ls ${DEVON_IDE_HOME}/urls/"${software}"/"${edition}" --indicator-style=none | sort -rV | head -1)"
+          version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" --indicator-style=none | sort -rV | head -1)"
         fi
       fi
       local software_version_variable="${software}"
@@ -1903,10 +1903,12 @@ function doListSoftwareVersions() {
     doUpdateUrls
     [ -z "${edition}" ] && edition="${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
+    # shellcheck disable=SC2012
+    local anz_versions="$(ls "${versions_path}" | wc -l)"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
-    elif [ "$(ls "${versions_path}" | wc -l)" -lt 20 ]
+    elif [ "${anz_versions}" -lt 20 ]
     then
       if doIsMacOs
       then
