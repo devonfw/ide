@@ -1850,11 +1850,11 @@ function doSetSoftwareVersion() {
       if [ "${version}" = "latest" ]
       then
         doUpdateUrls
-        edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+        edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
         edition=$(eval "${edition_cmd}")
         [ -z "${edition}" ] && edition="${software}"
         # shellcheck disable=SC2012
-        version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} ${lsopt} | sort -rV | head -1)"
+        version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
       fi
       local software_version_variable="${software}"
       # temporary workaround for #1098 should be fixed and removed with #1085
@@ -1908,11 +1908,11 @@ function doListSoftwareVersions() {
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     doUpdateUrls
-    edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+    edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
     edition="$(eval "${edition_cmd}")"
     [ -z "${edition}" ] && edition="${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
-    local anz_path
+    local anz_versions
     # shellcheck disable=SC2012
     anz_versions="$(ls "${versions_path}" | wc -l)"
     if [ ! -d "${versions_path}" ]
