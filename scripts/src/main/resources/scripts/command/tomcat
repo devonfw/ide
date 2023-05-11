@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup version help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
+TOOL_VERSION_COMMAND="tomcat version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
+# $1: optional silent mode
+function doSetup() {
+  export TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
+  doInstall "tomcat" "1.8.10" "${1}"
+  return 0
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Install Tomcat."
+  echo
+  echo "Arguments:"
+  echo " setup          setup Tomcat (install and verify)"
+elif [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+else
+  doFail "Unknown argument ${1}"
+fi
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitH
