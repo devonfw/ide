@@ -1833,7 +1833,7 @@ function doGetSoftwareVersion() {
 # $1: software
 doGetSoftwareEdition() {
   local software="${1}"
-  edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+  edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
   edition=$(eval "${edition_cmd}")
   [ -z "${edition}" ] && edition="${software}"
 }
@@ -1848,7 +1848,7 @@ doGetLatestSoftwareVersion() {
   doUpdateUrls
   doGetSoftwareEdition "${software}"
   # shellcheck disable=SC2012
-  latest_version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} ${lsopt} | sort -rV | head -1)"
+  latest_version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
 } 
 
 # $1: software
