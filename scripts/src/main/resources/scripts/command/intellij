@@ -80,13 +80,11 @@ function doAddPlugin() {
   if [ -n "${pluginId}" ] && [ -n "${intellij_build}" ]
   then
     mkdir -p "${install_path}"
-
-    if [ -n "${pluginUrl}" ]
-      then
-      local download_url="${pluginUrl}"
-      else
-      local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
-      fi
+    local download_url="${pluginUrl}"
+    if [ -z "${pluginUrl}" ]
+    then
+      download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${intellij_build}"
+    fi
     local filename="intellij-plugin-${intellij_build}-${pluginId}"
     doDownload "${download_url}" "${download_dir}" "${filename}" "" "" "" "" "" "${filename}"
     # test if downloaded file is a valid zip archive...
