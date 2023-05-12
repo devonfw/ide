@@ -1831,18 +1831,33 @@ function doGetSoftwareVersion() {
 }
 
 # $1: software
+doGetSoftwareEdition() {
+  local software="${1}"
+  edition_cmd="$(echo "\${"${software}"" | awk '{print "echo", toupper($0)}')_EDITION}"
+  edition=$(eval "${edition_cmd}")
+  [ -z "${edition}" ] && edition="${software}"
+}
+
+# $1: software
+doGetLatestSoftwareVersion() {
+  local software="${1}"
+  if ! doIsMacOs
+  then
+    lsopt="--indicator-style=none"
+  fi
+  doUpdateUrls
+  doGetSoftwareEdition "${software}"
+  # shellcheck disable=SC2012
+  latest_version="$(ls ${DEVON_IDE_HOME}/urls/${software}/${edition} ${lsopt} | sort -rV | head -1)"
+} 
+
+# $1: software
 # $2: selected version
 # $3: commandlet name
 function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
   local commandlet="${3}"
-  local lsopt
-  if ! doIsMacOs
-  then
-    lsopt="--indicator-style=none"
-  fi
-  local edition
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     if [ -n "${version}" ]
@@ -1850,11 +1865,9 @@ function doSetSoftwareVersion() {
       if [ "${version}" = "latest" ]
       then
         doUpdateUrls
-        edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
-        edition=$(eval "${edition_cmd}")
-        [ -z "${edition}" ] && edition="${software}"
-        # shellcheck disable=SC2012
-        version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
+        doGetSoftwareEdition "${software}"
+        doGetLatestSoftwareVersion "${software}"
+        version="${latest_version}"
       fi
       local software_version_variable="${software}"
       # temporary workaround for #1098 should be fixed and removed with #1085
@@ -1900,21 +1913,19 @@ function doSetSoftwareVersion() {
 # $1: software
 function doListSoftwareVersions() {
   local software="${1}"
-  local lsopt
-  if ! doIsMacOs
-  then
-    lsopt="--indicator-style=none"
-  fi
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     doUpdateUrls
-    edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
-    edition="$(eval "${edition_cmd}")"
-    [ -z "${edition}" ] && edition="${software}"
+    doGetSoftwareEdition "${software}"
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
     local anz_versions
     # shellcheck disable=SC2012
     anz_versions="$(ls "${versions_path}" | wc -l)"
+    local lsopt
+    if ! doIsMacOs
+    then
+      lsopt="--indicator-style=none"
+    fi
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
