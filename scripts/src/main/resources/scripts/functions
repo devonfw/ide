@@ -1276,18 +1276,18 @@ function doInstall() {
   then
     doDebug "Resolving version prefix ${version}"
     local version_prefix="${version:0:${#version}-1}"
+    echo "version_prefix" $version_prefix
     doUpdateMirrors
     local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
     then
-      local regex="0-9"
       local resolved_version
-      if [[ "${version_prefix}" =~ [$regex]$ ]]
+      local regex="[0-9]*\."
+      if [[ "${version_prefix}" =~ $regex ]]
       then
-        resolved_version="$(grep "^${version_prefix}[^$regex]" "${available_versions}" | head -n 1)"
-      else
-        resolved_version="$(grep "^${version_prefix/./\\.}" "${available_versions}" | head -n 1)"
+        version_prefix="${version_prefix/./\\.}"
       fi
+      resolved_version="$(grep "^${version_prefix}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
