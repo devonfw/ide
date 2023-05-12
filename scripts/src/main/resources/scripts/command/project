@@ -84,7 +84,12 @@ function doImportProject() {
   project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
   mkdir -p "${project_workspace_path}"
   cd "${project_workspace_path}" || exit 255
-  doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
+  local target_git_url="${project_git_url}"
+  if [ -n "${project_git_branch}" ]
+  then
+    target_git_url="${project_git_url}#${project_git_branch}"
+  fi
+  doGitPullOrClone "${project_path}" "${target_git_url}"
   doDebug "Building project with devon command: ${project_build_cmd}"
   if [ -n "${project_build_cmd}" ]
   then
