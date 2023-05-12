@@ -1831,7 +1831,7 @@ function doGetSoftwareVersion() {
 }
 
 # $1: software
-doGetSoftwareEdition() {
+function doGetSoftwareEdition() {
   local software="${1}"
   edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
   edition=$(eval "${edition_cmd}")
@@ -1839,7 +1839,7 @@ doGetSoftwareEdition() {
 }
 
 # $1: software
-doGetLatestSoftwareVersion() {
+function doGetLatestSoftwareVersion() {
   local software="${1}"
   if ! doIsMacOs
   then
