@@ -10,11 +10,31 @@ import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
  */
 public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
 
-  /** The download URL */
-  private final static String DOWNLOAD_URL = "https://redirector.gvt1.com/edgedl/android/studio/ide-zips";
+  /** The base URL for the download of the software */
+  private final static String DOWNLOAD_BASE_URL = "https://redirector.gvt1.com";
 
-  /** The version URL */
-  private final static String VERSION_URL = "https://jb.gg/android-studio-releases-list.json";
+  /** The base URL for the version json file */
+  private final static String VERSION_BASE_URL = "https://jb.gg";
+
+  /** The path of the download URL */
+  private final static String DOWNLOAD_URL_PATH = "edgedl/android/studio/ide-zips";
+
+  /** The name of the version json file */
+  private final static String VERSION_FILENAME = "android-studio-releases-list.json";
+
+  /**
+   * @return String of download base URL
+   */
+  protected String getDownloadBaseUrl() {
+    return DOWNLOAD_BASE_URL;
+  }
+
+  /**
+   * @return String of version base URL
+   */
+  protected String getVersionBaseUrl() {
+    return VERSION_BASE_URL;
+  }
 
   @Override
   protected String getTool() {
@@ -27,7 +47,7 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
 
     String version = urlVersion.getName();
 
-    String versionDownloadUrl = DOWNLOAD_URL + "/" + version + "/" + "android-studio" + "-" + version + "-";
+    String versionDownloadUrl = getDownloadBaseUrl() + "/" + DOWNLOAD_URL_PATH + "/" + version + "/" + "android-studio" + "-" + version + "-";
 
     String downloadUrlWindows = versionDownloadUrl + "windows.zip";
     String downloadUrlLinux = versionDownloadUrl + "linux.tar.gz";
@@ -44,7 +64,7 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
   @Override
   protected String doGetVersionUrl() {
 
-    return VERSION_URL;
+    return getVersionBaseUrl() + "/" + VERSION_FILENAME;
   }
 
   @Override
