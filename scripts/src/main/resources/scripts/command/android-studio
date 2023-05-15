@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  all_opts="ws-update ws-reverse ws-reverse-add create-script"
+  if [ -z "${2}" ]
+  then
+    echo "--all setup version add-plugin run start ${all_opts} help"
+  elif [ "${2}" = "--all" ]
+  then
+    echo "${all_opts}"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+ANDROID_STUDIO_HOME="${DEVON_IDE_HOME}/software/android-studio"
+if doIsMacOs
+then
+  TOOL_VERSION_COMMAND="cd '${DEVON_IDE_HOME}/software/macos/android-studio'/*.app && head -n 6 'Contents/Resources/product-info.json'"
+else
+  TOOL_VERSION_COMMAND="head -n 7 '${ANDROID_STUDIO_HOME}/product-info.json'"
+fi
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+cd "${DEVON_IDE_HOME}" || exit 255
+
+function doSetup() {
+  doDevonCommand java setup silent
+  doInstall "android-studio" "${ANDROID_STUDIO_VERSION}" "${1}"
+  if [ "${?}" = 0 ]
+  then
+    if  [ -f "${ANDROID_STUDIO_HOME}/bin/studio.sh" ]
+    then
+      ln -s "${ANDROID_STUDIO_HOME}/bin/studio.sh" "${ANDROID_STUDIO_HOME}/bin/studio"
+    fi
+    export PATH="${ANDROID_STUDIO_HOME}/bin:${PATH}"
+    doAddPlugins
+  fi
+}
+
+function doAddPlugins() {
+  local file
+  for file in "${SETTINGS_PATH}"/android-studio/plugins/*.properties
+  do
+    if [ -f "${file}" ]
+    then
+      plugin_id=""
+      plugin_active="true"
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ]
+      then
+        doWarning "Invalid Android Studio plugin config: ${file}"
+      elif [ "${plugin_active}" = "true" ]
+      then
+        doAddPlugin "${plugin_id}"
+      fi
+    fi
+  done
+}
+
+function doAddPlugin() {
+  local pluginId="${1}"
+  local download_dir="${DEVON_DOWNLOAD_DIR}"
+  local android_studio_build
+  local install_path="${DEVON_IDE_HOME}/software/android-studio-plugins/"
+  if [ -e "${ANDROID_STUDIO_HOME}/build.txt" ]
+  then
+    android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/build.txt")"
+  elif [ -e "${ANDROID_STUDIO_HOME}/Android Studio.app/Contents/Resources/build.txt" ]
+  then 
+    android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/Android Studio.app/Contents/Resources/build.txt")"
+  fi
+
+  if [ -n "${1}" ] && [ -n "${android_studio_build}" ]
+  then
+    mkdir -p "${install_path}"
+    local download_url="https://plugins.jetbrains.com/pluginManager?action=download&id=${pluginId}&build=${android_studio_build}"
+    local filename="android-studio-plugin-${android_studio_build}-${pluginId}"
+    doDownload "${download_url}" "${download_dir}" "${filename}" "" "" "" "" "" "${filename}"
+    # test if downloaded file is a valid zip archive...
+    if unzip -z "${download_dir}/${filename}" > /dev/null 2>&1
+    then
+      local extract_path="${DEVON_IDE_HOME}/updates/extracted/${pluginId}"
+      doUnzip "${download_dir}/${filename}" "${extract_path}"
+      doRunCommand "cp -r '${extract_path}/'* '${install_path}/'"
+      doRunCommand "rm -r '${extract_path}/'"
+    else
+      doRunCommand "cp '${download_dir}/${filename}' '${install_path}/${pluginId}'"
+    fi
+  else
+    doEcho "No plugins to be installed"
+  fi
+}
+
+function doConfigureAndroidStudio() {
+  local mode="${1}"
+  if [ ! -d "${WORKSPACE_PATH}/.idea" ]
+  then
+    if [ -z "${mode}" ]
+    then
+      mode="-u"
+    elif [ "${mode}" != "-u" ]
+    then
+      doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+    fi
+  fi
+  if [ -n "${mode}" ]
+  then
+    doConfigureWorkspace "${SETTINGS_PATH}/android-studio/workspace" "${WORKSPACE_PATH}" "${mode}"
+  fi
+}
+
+function doStartAndroidStudio() {
+  doConfigureAndroidStudio "-u"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
+  then
+    JAVA_HOME="${DEVON_IDE_HOME}/software/extra/java"
+    doExtendPath "${JAVA_HOME}"
+  fi
+  echo "launching Android Studio..."
+  local STUDIO="${ANDROID_STUDIO_HOME}/bin/studio64.exe"
+  if [ ! -f "${STUDIO}" ];
+  then
+    STUDIO="${ANDROID_STUDIO_HOME}/bin/studio"
+  fi
+  if [ ! -f "${STUDIO}" ];
+  then
+    STUDIO="${ANDROID_STUDIO_HOME}/studio"
+  fi
+  export STUDIO_PROPERTIES="${WORKSPACE_PATH}/idea.properties"
+  if doIsMacOs
+  then
+    echo "MacOs command ${STUDIO}"
+    open "${STUDIO}" --args "${@}"
+  else
+    echo "command ${STUDIO}"
+    "${STUDIO}" "${@}" &
+  fi
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Manage Android Studio IDE and workspace."
+  echo
+  echo "Arguments:"
+  echo " --all                          if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                          setup Android Studio (install or update)"
+  echo " add-plugin «id»                install an additional plugin"
+  echo " run | start                    launch Android Studio IDE (default if no argument is given)"
+  echo " ws-up[date]                    update Android Studio workspace"
+  echo " ws-re[verse]                   reverse merge changes from workspace into settings"
+  echo " ws-reverse-add                 reverse merge adding new properties"
+  echo " create-script                  create android-studio-${WORKSPACE} script if not already exists"
+  exit
+fi
+if [ -z "${1}" ]
+then
+  doSetup silent
+  doStartAndroidStudio
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+  exit
+fi
+if [ "${1}" = "--all" ]
+then
+  shift
+  doDevonCommandAllWorkspaces android-studio "${@}"
+fi
+while [ -n "${1}" ]
+do
+  if [ "${1}" = "run" ] || [ "${1}" = "start" ]
+  then
+    doSetup silent
+    shift
+    doStartAndroidStudio "${@}"
+  elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+  then
+    doConfigureAndroidStudio "-u"
+  elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+  then
+    doConfigureAndroidStudio "-i"
+  elif [ "${1}" = "ws-reverse-add" ]
+  then
+    doConfigureAndroidStudio "-x"
+  elif [ "${1}" = "create-script" ]
+  then
+    doCreateIdeScript android-studio
+  elif [ "${1}" = "add-plugin" ]
+  then
+    shift
+    doAddPlugin "${@}"
+  else
+    doFail "Unknown argument: ${1}"
+  fi
+  shift
+done
