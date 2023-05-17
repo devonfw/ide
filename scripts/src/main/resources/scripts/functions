@@ -1834,14 +1834,14 @@ function doGetSoftwareVersion() {
 function doGetSoftwareEdition() {
   local software="${1}"
   local edition
-  echo ${software} | grep '-' >/dev/null
+  echo "${software}" | grep '-' >/dev/null
   ERG="$?"
   if [ "${ERG}" = "0" ]
   then
     echo "${software}"
   else
     edition="$(echo "${software}" | awk '{print toupper($0)}')_EDITION"
-    if [ "$(echo ${!edition})" == "" ]
+    if [ "$(echo "${!edition}")" == "" ]
     then
       echo "${software}"
     else
