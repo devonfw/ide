@@ -1,7 +1,11 @@
 package com.devonfw.tools.ide.url.updater.az;
 
+import com.devonfw.tools.ide.github.GithubTag;
+import com.devonfw.tools.ide.github.GithubTags;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+
+import java.util.Collection;
 
 /**
  * {@link GithubUrlUpdater} for Azure-CLI.
@@ -29,5 +33,21 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
   protected String getGithubRepository() {
 
     return "azure-cli";
+  }
+
+  @Override
+  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
+
+    for (GithubTag item : jsonItem) {
+      String version = item.getRef().replace("refs/tags/", "");
+      version = version.substring(version.lastIndexOf("-") + 1);
+      if (version.matches("\\d+\\.\\d+\\.\\d+")) {
+        String[] versionParts = version.split("\\.");
+        int majorVersion = Integer.parseInt(versionParts[0]);
+        int minorVersion = Integer.parseInt(versionParts[1]);
+        if (majorVersion >= 2 && minorVersion >= 18)
+          addVersion(version, versions);
+      }
+    }
   }
 }

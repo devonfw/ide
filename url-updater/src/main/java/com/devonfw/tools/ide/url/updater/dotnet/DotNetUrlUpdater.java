@@ -1,7 +1,11 @@
 package com.devonfw.tools.ide.url.updater.dotnet;
 
+import com.devonfw.tools.ide.github.GithubTag;
+import com.devonfw.tools.ide.github.GithubTags;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+
+import java.util.Collection;
 
 /**
  * {@link GithubUrlUpdater} for Microsoft .NET core.
@@ -45,4 +49,16 @@ public class DotNetUrlUpdater extends GithubUrlUpdater {
 
     return "sdk";
   }
+
+  @Override
+  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
+
+    for (GithubTag item : jsonItem) {
+      String version = item.getRef().replace("refs/tags/", "");
+      if(version.matches("v\\d+\\.\\d+\\.\\d+"))
+        addVersion(version, versions);
+    }
+  }
+
+
 }
