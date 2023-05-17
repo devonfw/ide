@@ -1276,7 +1276,6 @@ function doInstall() {
   then
     doDebug "Resolving version prefix ${version}"
     local version_prefix="${version:0:${#version}-1}"
-    echo "version_prefix" $version_prefix
     doUpdateMirrors
     local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
