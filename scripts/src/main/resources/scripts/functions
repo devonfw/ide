@@ -1833,20 +1833,33 @@ function doGetSoftwareVersion() {
 # $1: software
 function doGetSoftwareEdition() {
   local software="${1}"
-  edition_cmd="$(echo "\${""${software}""" | awk '{print "echo", toupper($0)}')_EDITION}"
-  edition=$(eval "${edition_cmd}")
-  [ -z "${edition}" ] && edition="${software}"
+  local edition
+  echo ${software} | grep '-' >/dev/null
+  ERG="$?"
+  if [ "${ERG}" = "0" ]
+  then
+    echo "${software}"
+  else
+    edition="$(echo "${software}" | awk '{print toupper($0)}')_EDITION"
+    if [ "$(echo ${!edition})" == "" ]
+    then
+      echo "${software}"
+    else
+      echo "${!edition}"
+    fi
+  fi
 }
 
 # $1: software
 function doGetLatestSoftwareVersion() {
   local software="${1}"
+  local edition
   if ! doIsMacOs
   then
     lsopt="--indicator-style=none"
   fi
   doUpdateUrls
-  doGetSoftwareEdition "${software}"
+  edition=$(doGetSoftwareEdition "${software}")
   # shellcheck disable=SC2012
   latest_version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
 } 
@@ -1858,6 +1871,7 @@ function doSetSoftwareVersion() {
   local software="${1}"
   local version="${2}"
   local commandlet="${3}"
+  local edition
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     if [ -n "${version}" ]
@@ -1865,7 +1879,7 @@ function doSetSoftwareVersion() {
       if [ "${version}" = "latest" ]
       then
         doUpdateUrls
-        doGetSoftwareEdition "${software}"
+        edition=$(doGetSoftwareEdition "${software}")
         doGetLatestSoftwareVersion "${software}"
         version="${latest_version}"
       fi
@@ -1913,10 +1927,11 @@ function doSetSoftwareVersion() {
 # $1: software
 function doListSoftwareVersions() {
   local software="${1}"
+  local edition
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
     doUpdateUrls
-    doGetSoftwareEdition "${software}"
+    edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
     local anz_versions
     # shellcheck disable=SC2012
