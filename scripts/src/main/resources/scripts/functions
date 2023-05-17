@@ -1841,7 +1841,7 @@ function doGetSoftwareEdition() {
     echo "${software}"
   else
     edition="$(echo "${software}" | awk '{print toupper($0)}')_EDITION"
-    if [ "$(echo "${!edition}")" == "" ]
+    if [ "$(printf '%s\n' "${!edition}")" == "" ]
     then
       echo "${software}"
     else
