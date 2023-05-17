@@ -1854,6 +1854,8 @@ function doGetSoftwareEdition() {
 function doGetLatestSoftwareVersion() {
   local software="${1}"
   local edition
+  local version
+  local lsopt
   if ! doIsMacOs
   then
     lsopt="--indicator-style=none"
@@ -1861,7 +1863,8 @@ function doGetLatestSoftwareVersion() {
   doUpdateUrls
   edition=$(doGetSoftwareEdition "${software}")
   # shellcheck disable=SC2012
-  latest_version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
+  version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
+  echo "${version}"
 } 
 
 # $1: software
@@ -1880,8 +1883,7 @@ function doSetSoftwareVersion() {
       then
         doUpdateUrls
         edition=$(doGetSoftwareEdition "${software}")
-        doGetLatestSoftwareVersion "${software}"
-        version="${latest_version}"
+        version=doGetLatestSoftwareVersion "${software}"
       fi
       local software_version_variable="${software}"
       # temporary workaround for #1098 should be fixed and removed with #1085
