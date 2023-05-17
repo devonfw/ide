@@ -446,6 +446,27 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     return true;
   }
 
+  protected boolean doVersionMatchWithMinor(String version, int major, int minor) {
+    String[] versionParts = version.split("\\.");
+    int majorVersion = Integer.parseInt(versionParts[0]);
+    int minorVersion = Integer.parseInt(versionParts[1]);
+    if (majorVersion >= major && minorVersion >= minor)
+      return true;
+    else
+      return false;
+  }
+
+  protected boolean doVersionMatchWithPatch(String version, int major, int minor, int patch) {
+    String[] versionParts = version.split("\\.");
+    int majorVersion = Integer.parseInt(versionParts[0]);
+    int minorVersion = Integer.parseInt(versionParts[1]);
+    int patchVersion = Integer.parseInt(versionParts[2]);
+    if (majorVersion >= major && minorVersion >= minor && patchVersion >= patch)
+      return true;
+    else
+      return false;
+  }
+
   /**
    * Finds all currently available versions of the {@link UrlEdition tool edition}.
    *

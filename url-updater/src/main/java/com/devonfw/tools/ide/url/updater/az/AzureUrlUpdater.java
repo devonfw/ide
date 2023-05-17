@@ -42,10 +42,7 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
       String version = item.getRef().replace("refs/tags/", "");
       version = version.substring(version.lastIndexOf("-") + 1);
       if (version.matches("\\d+\\.\\d+\\.\\d+")) {
-        String[] versionParts = version.split("\\.");
-        int majorVersion = Integer.parseInt(versionParts[0]);
-        int minorVersion = Integer.parseInt(versionParts[1]);
-        if (majorVersion >= 2 && minorVersion >= 18)
+        if (doVersionMatchWithMinor(version, 2, 18))
           addVersion(version, versions);
       }
     }
