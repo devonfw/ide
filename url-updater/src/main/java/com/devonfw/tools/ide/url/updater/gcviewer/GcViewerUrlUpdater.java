@@ -1,7 +1,11 @@
 package com.devonfw.tools.ide.url.updater.gcviewer;
 
+import com.devonfw.tools.ide.github.GithubTag;
+import com.devonfw.tools.ide.github.GithubTags;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+
+import java.util.Collection;
 
 /**
  * {@link GithubUrlUpdater} for GCViewer.
@@ -29,5 +33,15 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
   protected String getGithubRepository() {
 
     return "GCViewer";
+  }
+
+  @Override
+  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
+
+    for (GithubTag item : jsonItem) {
+      String version = item.getRef().replace("refs/tags/", "");
+      if(version.matches("\\d+\\.\\d+(\\.\\d+)?"))
+        addVersion(version, versions);
+    }
   }
 }
