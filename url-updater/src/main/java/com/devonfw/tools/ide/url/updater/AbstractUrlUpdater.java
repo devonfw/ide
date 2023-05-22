@@ -159,8 +159,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param checksum String of the checksum to utilize
    * @return {@code true} if the version was successfully updated, {@code false} otherwise.
    */
-  protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os,
-      SystemArchitecture architecture, String checksum) {
+  protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os, SystemArchitecture architecture,
+      String checksum) {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
@@ -172,38 +172,12 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     }
     url = url.replace("${edition}", getEdition());
 
-    if (checksum.isEmpty()){
+    if (checksum.isEmpty()) {
       return checkDownloadUrl(url, urlVersion, os, architecture);
     } else {
       return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
     }
 
-  }
-
-  /**
-   * Checks the download URL and takes the provided checksum into account instead of downloading the file and generating the checksum
-   *
-   * @param url the URL of the download to check.
-   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
-   * @param os the {@link OperatingSystem}
-   * @param architecture the {@link SystemArchitecture}
-   * @param checksum String of the checksum to use
-   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
-   */
-  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
-      SystemArchitecture architecture, String checksum) {
-
-    UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-    UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-
-    urlDownloadFile.addUrl(url);
-    urlChecksum.setChecksum(checksum);
-
-    doUpdateStatusJson(true, 200, urlVersion, url, false);
-
-    urlVersion.save();
-
-    return true;
   }
 
   /**
@@ -216,6 +190,59 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
+   * Checks the download URL and takes the provided checksum into account instead of downloading the file and generating
+   * the checksum from it
+   *
+   * @param url the URL of the download to check.
+   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
+   * @param os the {@link OperatingSystem}
+   * @param architecture the {@link SystemArchitecture}
+   * @param checksum String of the checksum to use
+   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
+   */
+  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
+      SystemArchitecture architecture, String checksum) {
+
+    HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
+    int statusCode = response.statusCode();
+    boolean success = isSuccess(response);
+    String tool = getToolWithEdition();
+    String version = urlVersion.getName();
+    String contentType = response.headers().firstValue("content-type").orElse("undefined");
+    if (success && contentType.startsWith("text")) {
+      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+          contentType, url);
+      success = false;
+    }
+    if (success) {
+      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
+      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+      urlDownloadFile.addUrl(url);
+      urlChecksum.setChecksum(checksum);
+      String oldChecksum = urlChecksum.getChecksum();
+
+      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
+            tool, version, url, checksum, oldChecksum);
+        success = false;
+      } else {
+        urlDownloadFile.addUrl(url);
+        urlChecksum.setChecksum(checksum);
+      }
+    }
+
+    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
+
+    if (success) {
+      urlVersion.save();
+    }
+
+    return success;
+  }
+
+  /**
+   * Checks the download URL by downloading the file and generating the checksum from it
+   *
    * @param url the URL of the download to check.
    * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
    * @param os the {@link OperatingSystem}
