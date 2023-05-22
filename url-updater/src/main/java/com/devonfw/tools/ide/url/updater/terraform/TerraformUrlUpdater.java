@@ -32,7 +32,7 @@ public class TerraformUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux_amd64.zip", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin_amd64.zip", MAC);
-    doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64, "");
   }
 
 }
