@@ -127,7 +127,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments (OS independent).
    *
-   * @param urlVersion the UrlVersion instance to update.
+   * @param urlVersion the {@link UrlVersion} instance to update.
    * @param downloadUrl the URL of the download for the tool.
    * @return true if the version was successfully updated, false otherwise.
    */
@@ -139,14 +139,14 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the UrlVersion instance to update.
+   * @param urlVersion the {@link UrlVersion} instance to update.
    * @param downloadUrl the URL of the download for the tool.
-   * @param os the operating system type for the tool (can be null).
+   * @param os the {@link OperatingSystem} for the tool (can be null).
    * @return true if the version was successfully updated, false otherwise.
    */
   protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os) {
 
-    return doAddVersion(urlVersion, downloadUrl, os, null);
+    return doAddVersion(urlVersion, downloadUrl, os, null, "");
   }
 
   /**
@@ -156,10 +156,11 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param url the URL of the download for the tool.
    * @param os the optional {@link OperatingSystem}.
    * @param architecture the optional {@link SystemArchitecture}.
+   * @param checksum String of the checksum to utilize
    * @return {@code true} if the version was successfully updated, {@code false} otherwise.
    */
   protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os,
-      SystemArchitecture architecture) {
+      SystemArchitecture architecture, String checksum) {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
@@ -171,25 +172,24 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     }
     url = url.replace("${edition}", getEdition());
 
-    return checkDownloadUrl(url, urlVersion, os, architecture);
+    if (checksum.isEmpty()){
+      return checkDownloadUrl(url, urlVersion, os, architecture);
+    } else {
+      return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
+    }
+
   }
 
-  protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os, SystemArchitecture architecture,
-      String checksum) {
-
-    String version = urlVersion.getName();
-    url = url.replace("${version}", version);
-    if (os != null) {
-      url = url.replace("${os}", os.toString());
-    }
-    if (architecture != null) {
-      url = url.replace("${arch}", architecture.toString());
-    }
-    url = url.replace("${edition}", getEdition());
-
-    return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
-  }
-
+  /**
+   * Checks the download URL and takes the provided checksum into account instead of downloading the file and generating the checksum
+   *
+   * @param url the URL of the download to check.
+   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
+   * @param os the {@link OperatingSystem}
+   * @param architecture the {@link SystemArchitecture}
+   * @param checksum String of the checksum to use
+   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
+   */
   private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
       SystemArchitecture architecture, String checksum) {
 
@@ -218,6 +218,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * @param url the URL of the download to check.
    * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
+   * @param os the {@link OperatingSystem}
+   * @param architecture the {@link SystemArchitecture}
    * @return {@code true} if the download was checked successfully, {@code false} otherwise.
    */
   private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
@@ -315,7 +317,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    *
    * @param success - {@code true} on successful HTTP response, {@code false} otherwise.
    * @param statusCode the HTTP status code of the response.
-   * @param urlVersion the UrlVersion instance to create or refresh the status JSON file for.
+   * @param urlVersion the {@link UrlVersion} instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
    * initially added).
@@ -397,7 +399,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates the tool's versions in the URL repository.
    *
-   * @param urlRepository the URL repository to update
+   * @param urlRepository the {@link UrlRepository} to update
    */
   @Override
   public void update(UrlRepository urlRepository) {
@@ -424,7 +426,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Update existing versions of the tool in the URL repository.
    *
-   * @param edition the URL edition to update
+   * @param edition the {@link UrlEdition} to update
    */
   protected void updateExistingVersions(UrlEdition edition) {
 
@@ -542,7 +544,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates the version of a given URL version.
    *
-   * @param urlVersion the URL version to be updated
+   * @param urlVersion the {@link UrlVersion} to be updated
    */
   protected abstract void addVersion(UrlVersion urlVersion);
 
