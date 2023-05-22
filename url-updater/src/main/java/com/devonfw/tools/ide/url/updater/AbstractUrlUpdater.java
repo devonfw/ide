@@ -175,6 +175,38 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     return checkDownloadUrl(url, urlVersion, os, architecture);
   }
 
+  protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os, SystemArchitecture architecture,
+      String checksum) {
+
+    String version = urlVersion.getName();
+    url = url.replace("${version}", version);
+    if (os != null) {
+      url = url.replace("${os}", os.toString());
+    }
+    if (architecture != null) {
+      url = url.replace("${arch}", architecture.toString());
+    }
+    url = url.replace("${edition}", getEdition());
+
+    return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
+  }
+
+  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
+      SystemArchitecture architecture, String checksum) {
+
+    UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
+    UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+
+    urlDownloadFile.addUrl(url);
+    urlChecksum.setChecksum(checksum);
+
+    doUpdateStatusJson(true, 200, urlVersion, url, false);
+
+    urlVersion.save();
+
+    return true;
+  }
+
   /**
    * @param response the {@link HttpResponse}.
    * @return {@code true} if success, {@code false} otherwise.
@@ -316,14 +348,20 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     String version = urlVersion.getName();
     String tool = getToolWithEdition();
     boolean modified = false;
+
     if (success) {
+      boolean setSuccess = !update;
+
       if (errorStatus != null) {
         // we avoid git diff overhead by only updating success timestamp if last check was an error
-        if (DateTimeUtil.isAfter(errorTimestamp, successTimestamp)) {
-          status.setSuccess(new UrlStatusState());
-          modified = true;
-        }
+        setSuccess = DateTimeUtil.isAfter(errorTimestamp, successTimestamp);
       }
+
+      if (setSuccess) {
+        status.setSuccess(new UrlStatusState());
+        modified = true;
+      }
+
       logger.info("For tool {} and version {} the download verification suceeded with status code {} for URL {}.", tool,
           version, code, url);
     } else {
