@@ -1864,7 +1864,7 @@ function doGetLatestSoftwareVersion() {
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | head -1)"
   else
     prefix="${prefix:0:${#prefix}-1}"
-    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | grep "${prefix}" | sort -rV | head -1)"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | grep "^${prefix}" | sort -rV | head -1)"
   fi
   echo "${version}"
 } 
