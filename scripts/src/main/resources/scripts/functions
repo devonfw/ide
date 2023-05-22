@@ -1858,7 +1858,7 @@ function doGetLatestSoftwareVersion() {
   local edition
   local version
   doUpdateUrls
-  edition=$(doGetSoftwareEdition ${software})
+  edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | head -1)"
