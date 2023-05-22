@@ -33,7 +33,7 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "windows-amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux-amd64.tar.gz", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin-amd64.tar.gz", MAC);
-    if (doVersionMatchWithMinor(urlVersion.getName(), 3, 5))
+    if (doVersionGreaterThan(urlVersion.getName(), 3, 5,0))
       doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
   }
 

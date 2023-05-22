@@ -29,7 +29,7 @@ public class QuarkusUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    if(doVersionMatchWithMinor(urlVersion.getName(), 2, 6)) {
+    if(doVersionGreaterThan(urlVersion.getName(), 2, 6,0)) {
       String baseUrl = "https://github.com/quarkusio/quarkus/releases/download/${version}/quarkus-cli-${version}";
       doAddVersion(urlVersion, baseUrl + ".zip", WINDOWS);
       doAddVersion(urlVersion, baseUrl + ".tar.gz");

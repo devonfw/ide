@@ -35,14 +35,14 @@ public class NodeUrlUpdater extends GithubUrlUpdater {
   protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://nodejs.org/dist/v${version}/node-v${version}-";
-    if (doVersionMatchWithMinor(urlVersion.getName(), 4, 0)) {
+    if (doVersionGreaterThan(urlVersion.getName(), 4, 0,0)) {
       doAddVersion(urlVersion, baseUrl + "win-x64.zip", WINDOWS);
-      if (doVersionMatchWithMinor(urlVersion.getName(), 20, 0))
+      if (doVersionGreaterThan(urlVersion.getName(), 20, 0,0))
         doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64);
       doAddVersion(urlVersion, baseUrl + "linux-x64.tar.gz", LINUX);
       doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64);
       doAddVersion(urlVersion, baseUrl + "darwin-x64.tar.gz", MAC);
-      if (doVersionMatchWithMinor(urlVersion.getName(), 16, 0))
+      if (doVersionGreaterThan(urlVersion.getName(), 16, 0,0))
         doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
     }
   }

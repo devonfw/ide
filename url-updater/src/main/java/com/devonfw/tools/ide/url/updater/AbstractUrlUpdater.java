@@ -446,24 +446,26 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     return true;
   }
 
-  protected boolean doVersionMatchWithMinor(String version, int major, int minor) {
+  /**
+   * Filter the versions which are greater or equal to the given major and minor version.
+   * @param version version
+   * @param major
+   * @param minor
+   */
+  protected boolean doVersionGreaterThan(String version, int major, int minor, int patch) {
     String[] versionParts = version.split("\\.");
     int majorVersion = Integer.parseInt(versionParts[0]);
     int minorVersion = Integer.parseInt(versionParts[1]);
-    if (majorVersion >= major && minorVersion >= minor)
+    if (majorVersion > major) {
       return true;
-    else
-      return false;
-  }
-
-  protected boolean doVersionMatchWithPatch(String version, int major, int minor, int patch) {
-    String[] versionParts = version.split("\\.");
-    int majorVersion = Integer.parseInt(versionParts[0]);
-    int minorVersion = Integer.parseInt(versionParts[1]);
-    int patchVersion = Integer.parseInt(versionParts[2]);
-    if (majorVersion >= major && minorVersion >= minor && patchVersion >= patch)
-      return true;
-    else
+    } else if (majorVersion == major) {
+        if (minorVersion > minor) {
+          return true;
+        } else if (minorVersion == minor && versionParts.length == 3) {
+            int patchVersion = Integer.parseInt(versionParts[2]);
+            return patchVersion > patch;
+        }
+    }
       return false;
   }
 
