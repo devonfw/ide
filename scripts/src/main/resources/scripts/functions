@@ -1851,19 +1851,21 @@ function doGetSoftwareEdition() {
 }
 
 # $1: software
+# $2: optional prefix
 function doGetLatestSoftwareVersion() {
   local software="${1}"
+  local prefix="${2}"
   local edition
   local version
-  local lsopt
-  if ! doIsMacOs
-  then
-    lsopt="--indicator-style=none"
-  fi
   doUpdateUrls
-  edition=$(doGetSoftwareEdition "${software}")
-  # shellcheck disable=SC2012
-  version="$(ls "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" ${lsopt} | sort -rV | head -1)"
+  edition=$(doGetSoftwareEdition ${software})
+  if [ -z "${prefix}" ]
+  then
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | head -1)"
+  else
+    prefix="${prefix:0:${#prefix}-1}"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -printf "%f\n" | grep "${prefix}" | sort -rV | head -1)"
+  fi
   echo "${version}"
 } 
 
@@ -1936,27 +1938,18 @@ function doListSoftwareVersions() {
     edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
     local anz_versions
-    # shellcheck disable=SC2012
-    anz_versions="$(ls "${versions_path}" | wc -l)"
-    local lsopt
-    if ! doIsMacOs
-    then
-      lsopt="--indicator-style=none"
-    fi
+    anz_versions="$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | wc -l)"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
     elif [ "${anz_versions}" -lt 20 ]
     then
-      # shellcheck disable=SC2012
-      ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t
+      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | pr -4 -t -s | column -t
     else
-      # shellcheck disable=SC2012
-      ls "${versions_path}" "${lsopt}" | sort -rV | pr -4 -t -s | column -t | head -5
+      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | head -20 | pr -4 -t -s | column -t
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
-      # shellcheck disable=SC2012
-      ls "${versions_path}" "${lsopt}" | sort -rV | less
+      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | less
     fi
   else
     doUpdateMirrors
