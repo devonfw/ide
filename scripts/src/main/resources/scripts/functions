@@ -1931,9 +1931,9 @@ function doListSoftwareVersions() {
     edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
     declare -a versions
-    versions="$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV)"
+    versions=("$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV)")
     local anz_versions
-    anz_versions="$(echo ""${versions[@]}"" | wc -w )"
+    anz_versions="$(echo "${versions[@]}" | wc -w )"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
