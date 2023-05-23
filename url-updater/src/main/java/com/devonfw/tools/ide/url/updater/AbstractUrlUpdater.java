@@ -146,7 +146,22 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os) {
 
-    return doAddVersion(urlVersion, downloadUrl, os, null, "");
+    return doAddVersion(urlVersion, downloadUrl, os, null);
+  }
+
+  /**
+   * Updates a tool version with the given arguments.
+   *
+   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param downloadUrl the URL of the download for the tool.
+   * @param os the {@link OperatingSystem} for the tool (can be null).
+   * @param architecture the optional {@link SystemArchitecture}.
+   * @return true if the version was successfully updated, false otherwise.
+   */
+  protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os,
+      SystemArchitecture architecture) {
+
+    return doAddVersion(urlVersion, downloadUrl, os, architecture, "");
   }
 
   /**
@@ -172,11 +187,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     }
     url = url.replace("${edition}", getEdition());
 
-    if (checksum.isEmpty()) {
-      return checkDownloadUrl(url, urlVersion, os, architecture);
-    } else {
-      return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
-    }
+    return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
 
   }
 
@@ -190,97 +201,95 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
-   * Checks the download URL and takes the provided checksum into account instead of downloading the file and generating
-   * the checksum from it
+   * Checks if the download file checksum is still valid
+   *
+   * @param url String of the URL to check
+   * @param urlVersion String of the version
+   * @param os the {@link OperatingSystem}
+   * @param architecture the {@link SystemArchitecture}
+   * @param checksum String of the new checksum to check
+   * @param tool String of the tool
+   * @param version String of the version
+   * @return {@code true} if update of checksum was successful, {@code false} otherwise.
+   */
+  private static boolean isChecksumStillValid(String url, UrlVersion urlVersion, OperatingSystem os,
+      SystemArchitecture architecture, String checksum, String tool, String version) {
+
+    UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
+    UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+    urlDownloadFile.addUrl(url);
+    urlChecksum.setChecksum(checksum);
+    String oldChecksum = urlChecksum.getChecksum();
+
+    if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+      logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
+          tool, version, url, checksum, oldChecksum);
+      return false;
+    } else {
+      urlDownloadFile.addUrl(url);
+      urlChecksum.setChecksum(checksum);
+    }
+    return true;
+  }
+
+  /**
+   * Checks if the content type is valid (not of type text)
+   *
+   * @param url String of the url to check
+   * @param tool String of the tool name
+   * @param version String of the version
+   * @param contentType String of the content type
+   * @return {@code true} if the content type is not of type text, {@code false} otherwise.
+   */
+  private static boolean isContentTypeValid(String url, String tool, String version,
+      String contentType) {
+
+    if (contentType.startsWith("text")) {
+      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+          contentType, url);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Checks the download URL by checksum or by downloading the file and generating the checksum from it
    *
    * @param url the URL of the download to check.
    * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
    * @param os the {@link OperatingSystem}
    * @param architecture the {@link SystemArchitecture}
-   * @param checksum String of the checksum to use
    * @return {@code true} if the download was checked successfully, {@code false} otherwise.
    */
   private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
       SystemArchitecture architecture, String checksum) {
 
-    HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
-    int statusCode = response.statusCode();
-    boolean success = isSuccess(response);
-    String tool = getToolWithEdition();
-    String version = urlVersion.getName();
-    String contentType = response.headers().firstValue("content-type").orElse("undefined");
-    if (success && contentType.startsWith("text")) {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
-      success = false;
-    }
-    if (success) {
-      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      urlDownloadFile.addUrl(url);
-      urlChecksum.setChecksum(checksum);
-      String oldChecksum = urlChecksum.getChecksum();
-
-      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
-        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
-            tool, version, url, checksum, oldChecksum);
-        success = false;
-      } else {
-        urlDownloadFile.addUrl(url);
-        urlChecksum.setChecksum(checksum);
-      }
-    }
-
-    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
-
-    if (success) {
-      urlVersion.save();
-    }
-
-    return success;
-  }
-
-  /**
-   * Checks the download URL by downloading the file and generating the checksum from it
-   *
-   * @param url the URL of the download to check.
-   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
-   * @param os the {@link OperatingSystem}
-   * @param architecture the {@link SystemArchitecture}
-   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
-   */
-  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
-      SystemArchitecture architecture) {
-
     HttpResponse<InputStream> response = doGetResponseAsStream(url);
     int statusCode = response.statusCode();
     boolean success = isSuccess(response);
-    String contentType = response.headers().firstValue("content-type").orElse("undefined");
     String tool = getToolWithEdition();
     String version = urlVersion.getName();
-    if (success && contentType.startsWith("text")) {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
-      success = false;
-    }
+    String contentType = "";
+
     if (success) {
-      String checksum = doGenerateChecksum(response, url, version, contentType);
-      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      String oldChecksum = urlChecksum.getChecksum();
-      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
-        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
-            tool, version, url, checksum, oldChecksum);
-        success = false;
-      } else {
-        urlDownloadFile.addUrl(url);
-        urlChecksum.setChecksum(checksum);
-      }
+      contentType = response.headers().firstValue("content-type").orElse("undefined");
+      success = isContentTypeValid(url, tool, version, contentType);
     }
-    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
+
+    if (success) {
+      if (checksum.isEmpty()) {
+        checksum = doGenerateChecksum(response, url, version, contentType);
+      }
+
+      success = isChecksumStillValid(url, urlVersion, os, architecture, checksum, tool, version);
+    }
+
     if (success) {
       urlVersion.save();
     }
+
+    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
+
     return success;
   }
 
