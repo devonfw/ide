@@ -700,7 +700,7 @@ function doDownloadInternal() {
 # $1: filename (potentiall including absolute or relative path)
 # echos the file extension
 function doGetExtension() {
-  local filename="${1/*\//}"
+  local filename="${1/*\//}"     usr/test/file.txt   file.txt
   local ext="${filename/*\./}"
   local filename_base="${filename:0:(${#filename}-${#ext}-1)}"
   if [ "${filename_base/*\./.}" = ".tar" ]
@@ -1833,21 +1833,15 @@ function doGetSoftwareVersion() {
 # $1: software
 function doGetSoftwareEdition() {
   local software="${1}"
+  local editionVar
+  editionVar="$(echo "${software/-/_}" | awk '{print toupper($0)}')_EDITION"
   local edition
-  echo "${software}" | grep '-' >/dev/null
-  ERG="$?"
-  if [ "${ERG}" = "0" ]
+  edition="${!editionVar}"
+  if [ -z "${edition}" ]
   then
-    echo "${software}"
-  else
-    edition="$(echo "${software}" | awk '{print toupper($0)}')_EDITION"
-    if [ "$(printf '%s\n' "${!edition}")" == "" ]
-    then
-      echo "${software}"
-    else
-      echo "${!edition}"
-    fi
+    edition="${software}"
   fi
+  echo "${edition}"
 }
 
 # $1: software
@@ -1884,8 +1878,7 @@ function doSetSoftwareVersion() {
       if [ "${version}" = "latest" ]
       then
         doUpdateUrls
-        edition=$(doGetSoftwareEdition "${software}")
-        version=doGetLatestSoftwareVersion "${software}"
+        version=$(doGetLatestSoftwareVersion "${software}")
       fi
       local software_version_variable="${software}"
       # temporary workaround for #1098 should be fixed and removed with #1085
@@ -1937,19 +1930,21 @@ function doListSoftwareVersions() {
     doUpdateUrls
     edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
+    declare -a versions
+    versions="$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV)"
     local anz_versions
-    anz_versions="$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | wc -l)"
+    anz_versions="$(echo ${versions} | wc -w )"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
-    elif [ "${anz_versions}" -lt 20 ]
-    then
-      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | pr -4 -t -s | column -t
     else
-      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | head -20 | pr -4 -t -s | column -t
-      doEcho "Only the 20 latest versions are displayed."
-      doAskToContinue "Do you want to see all versions?"
-      find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV | less
+      echo "${versions}" | head -20 | pr -4 -t -s | column -t
+      if [ "${anz_versions}" -ge 20 ]
+      then
+        doEcho "Only the 20 latest versions are displayed."
+        doAskToContinue "Do you want to see all versions?"
+        echo "${versions}" | less
+      fi
     fi
   else
     doUpdateMirrors
