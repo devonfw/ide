@@ -1933,17 +1933,17 @@ function doListSoftwareVersions() {
     declare -a versions
     versions="$(find "${versions_path}" -mindepth 1 -maxdepth 1 -printf "%f\n" | sort -rV)"
     local anz_versions
-    anz_versions="$(echo ${versions} | wc -w )"
+    anz_versions="$(echo ""${versions[@]}"" | wc -w )"
     if [ ! -d "${versions_path}" ]
     then
       doError "No versions available at ${versions_path}"
     else
-      echo "${versions}" | head -20 | pr -4 -t -s | column -t
+      echo "${versions[@]}" | head -20 | pr -4 -t -s | column -t
       if [ "${anz_versions}" -ge 20 ]
       then
         doEcho "Only the 20 latest versions are displayed."
         doAskToContinue "Do you want to see all versions?"
-        echo "${versions}" | less
+        echo "${versions[@]}" | less
       fi
     fi
   else
