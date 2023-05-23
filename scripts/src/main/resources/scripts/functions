@@ -1927,7 +1927,6 @@ function doListSoftwareVersions() {
   local edition
   if [ -d "${DEVON_IDE_HOME}/urls" ]
   then
-
     doUpdateUrls
     edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
