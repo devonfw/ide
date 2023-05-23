@@ -21,19 +21,13 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String getVersionPrefixToRemove() {
-
-    return "v";
-  }
-
-  @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    String baseUrl = "https://get.helm.sh/helm-v${version}-";
+    String baseUrl = "https://get.helm.sh/helm-${version}-";
     doAddVersion(urlVersion, baseUrl + "windows-amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux-amd64.tar.gz", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin-amd64.tar.gz", MAC);
-    doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
+    doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64, "");
   }
 
 }
