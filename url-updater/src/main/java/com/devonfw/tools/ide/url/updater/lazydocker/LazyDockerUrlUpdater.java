@@ -40,6 +40,7 @@ public class LazyDockerUrlUpdater extends GithubUrlUpdater {
     VersionIdentifier compareArm = VersionIdentifier.of("0.16.0");
 
     String baseUrl = "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_";
+
     if (vid.compareVersion(compareWindows).isGreater())
       doAddVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64);
     doAddVersion(urlVersion, baseUrl + "Linux_x86_64.tar.gz", LINUX, X64);
