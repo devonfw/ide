@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.url.updater.node;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link GithubUrlUpdater} for node.js.
@@ -34,15 +35,20 @@ public class NodeUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
+    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
+    VersionIdentifier versionToCompare = VersionIdentifier.of("4.0.0");
+    VersionIdentifier compareWinArm = VersionIdentifier.of("20.0.0");
+    VersionIdentifier compareMacArm = VersionIdentifier.of("16.0.0");
+
     String baseUrl = "https://nodejs.org/dist/v${version}/node-v${version}-";
-    if (doVersionGreaterThan(urlVersion.getName(), 4, 0,0)) {
+    if (vid.compareVersion(versionToCompare).isGreater()) {
       doAddVersion(urlVersion, baseUrl + "win-x64.zip", WINDOWS);
-      if (doVersionGreaterThan(urlVersion.getName(), 20, 0,0))
+      if (vid.compareVersion(compareWinArm).isGreater())
         doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64);
       doAddVersion(urlVersion, baseUrl + "linux-x64.tar.gz", LINUX);
       doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64);
       doAddVersion(urlVersion, baseUrl + "darwin-x64.tar.gz", MAC);
-      if (doVersionGreaterThan(urlVersion.getName(), 16, 0,0))
+      if (vid.compareVersion(compareMacArm).isGreater())
         doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
     }
   }

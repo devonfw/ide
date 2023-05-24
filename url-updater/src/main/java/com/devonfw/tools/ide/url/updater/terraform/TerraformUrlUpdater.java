@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.url.updater.terraform;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link GithubUrlUpdater} for terraform.
@@ -28,11 +29,14 @@ public class TerraformUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
+    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
+    VersionIdentifier compareMacArm = VersionIdentifier.of("1.2.0");
+
     String baseUrl = "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_";
     doAddVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux_amd64.zip", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin_amd64.zip", MAC);
-    if(doVersionGreaterThan(urlVersion.getName(), 1, 0, 2))
+    if (vid.compareVersion(compareMacArm).isGreater())
       doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64);
   }
 

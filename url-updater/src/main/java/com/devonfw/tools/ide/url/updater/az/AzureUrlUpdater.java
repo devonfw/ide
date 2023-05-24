@@ -4,6 +4,7 @@ import com.devonfw.tools.ide.github.GithubTag;
 import com.devonfw.tools.ide.github.GithubTags;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 import java.util.Collection;
 
@@ -41,10 +42,10 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
     for (GithubTag item : jsonItem) {
       String version = item.getRef().replace("refs/tags/", "");
       version = version.substring(version.lastIndexOf("-") + 1);
-      if (version.matches("\\d+\\.\\d+\\.\\d+")) {
-        if (doVersionGreaterThan(version, 2, 18, 0))
-          addVersion(version, versions);
-      }
+      VersionIdentifier vid = VersionIdentifier.of(version);
+      VersionIdentifier versionToCompare = VersionIdentifier.of("2.18.0");
+      if (vid.isValid() && vid.compareVersion(versionToCompare).isGreater());
+        addVersion(version, versions);
     }
   }
 }
