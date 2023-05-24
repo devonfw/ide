@@ -12,12 +12,6 @@ public class AndroidStudioUrlUpdaterMock extends AndroidStudioUrlUpdater {
   private final static String TEST_BASE_URL = "http://localhost:8080";
 
   @Override
-  protected String getDownloadBaseUrl() {
-
-    return TEST_BASE_URL;
-  }
-
-  @Override
   protected String getVersionBaseUrl() {
 
     return TEST_BASE_URL;
