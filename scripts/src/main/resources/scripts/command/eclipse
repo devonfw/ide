@@ -381,7 +381,7 @@ function doStartEclipse() {
       # shellcheck disable=SC2086
       start_eclipse=$("${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
     fi
-  elif [ "${start_mode}" == "log" ]
+  elif [ "${start_mode}" = "log" ]
     then
       start_eclipse=$("${ECLIPSE}" -consoleLog -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
   else
