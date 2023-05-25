@@ -33,8 +33,8 @@ public class DockerDesktopUrlUpdater extends WebsiteUrlUpdater {
       if (!success) {
         return;
       }
-      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/" + code + "/Docker.dmg", MAC, X64);
-      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/" + code + "/Docker.dmg", MAC, ARM64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/" + code + "/Docker.dmg", MAC, X64, "");
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/" + code + "/Docker.dmg", MAC, ARM64, "");
     } else {
       // For the latest version, there is no code in the url.
       // TODO but that means that the implementation is wrong as the URL will then change later and is therefore
@@ -46,8 +46,8 @@ public class DockerDesktopUrlUpdater extends WebsiteUrlUpdater {
       if (!success) {
         return;
       }
-      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/Docker.dmg", MAC, X64);
-      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/Docker.dmg", MAC, ARM64);
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/amd64/Docker.dmg", MAC, X64, "");
+      doAddVersion(urlVersion, "https://desktop.docker.com/mac/main/arm64/Docker.dmg", MAC, ARM64, "");
     }
 
   }
