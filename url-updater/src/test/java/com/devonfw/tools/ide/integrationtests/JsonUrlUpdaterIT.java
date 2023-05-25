@@ -1,0 +1,128 @@
+package com.devonfw.tools.ide.integrationtests;
+
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
+import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
+import com.devonfw.tools.ide.url.updater.UpdateManager;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+
+/**
+ * Test class for integrations of the {@link JsonUrlUpdater}
+ */
+@WireMockTest(httpPort = 8080)
+public class JsonUrlUpdaterIT extends Assertions {
+
+  /**
+   * Test resource location
+   */
+  private final static String testdataRoot = "src/test/resources/integrationtests/JsonUrlUpdater";
+
+  /**
+   * Test of {@link JsonUrlUpdater} for the creation of Android Studio download
+   * URLs and checksums.
+   *
+   * @param tempDir Path to a temporary directory
+   * @throws IOException test fails
+   */
+  @Test
+  public void testJsonUrlUpdaterCreatesDownloadUrlsAndChecksums(@TempDir Path tempDir) throws IOException {
+
+    // given
+    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
+
+    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+        aResponse().withStatus(200).withBody("aBody")));
+
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
+    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+
+    // when
+    updater.update(urlRepository);
+
+    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+
+    // then
+    assertThat(androidStudioVersionsPath.resolve("status.json")).exists();
+    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls")).exists();
+    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls.sha256")).exists();
+    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls")).exists();
+    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls.sha256")).exists();
+    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls")).exists();
+    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls.sha256")).exists();
+    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls")).exists();
+    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists();
+
+  }
+
+  /**
+   * Test if the {@link JsonUrlUpdater} for Android Studio can handle downloads with missing checksums (generate
+   * checksum from download file if no checksum was provided)
+   *
+   * @param tempDir Path to a temporary directory
+   * @throws IOException test fails
+   */
+  @Test
+  public void testJsonUrlUpdaterWithMissingDownloadsDoesNotCreateVersionFolder(@TempDir Path tempDir)
+      throws IOException {
+
+    // given
+    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
+
+    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(aResponse().withStatus(404)));
+
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
+    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+
+    // when
+    updater.update(urlRepository);
+
+    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+
+    // then
+    assertThat(androidStudioVersionsPath).doesNotExist();
+
+  }
+
+  /**
+   * Test if the {@link JsonUrlUpdater} for {@link AndroidStudioUrlUpdater} can handle downloads with missing checksums (generate
+   * checksum from download file if no checksum was provided)
+   *
+   * @param tempDir Path to a temporary directory
+   * @throws IOException test fails
+   */
+  @Test
+  public void testJsonUrlUpdaterWithMissingChecksumGeneratesChecksum(@TempDir Path tempDir) throws IOException {
+
+    // given
+    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version-without-checksum.json")))));
+
+    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+        aResponse().withStatus(200).withBody("aBody")));
+
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
+    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+
+    // when
+    updater.update(urlRepository);
+
+    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+
+    // then
+    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists()
+        .hasContent("de08da1685e537e887fbbe1eb3278fed38aff9da5d112d96115150e8771a0f30");
+
+  }
+}
