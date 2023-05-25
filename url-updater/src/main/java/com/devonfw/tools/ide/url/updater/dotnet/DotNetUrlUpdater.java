@@ -28,8 +28,8 @@ public class DotNetUrlUpdater extends GithubUrlUpdater {
   protected void addVersion(UrlVersion urlVersion) {
 
     String baseUrl = "https://dotnetcli.azureedge.net/dotnet/Sdk/${version}/dotnet-sdk-${version}-";
-    boolean ok1 = doAddVersion(urlVersion, baseUrl + "win-x64.exe", WINDOWS, X64, "");
-    boolean ok2 = doAddVersion(urlVersion, baseUrl + "win-arm64.exe", WINDOWS, ARM64, "");
+    boolean ok1 = doAddVersion(urlVersion, baseUrl + "win-x64.zip", WINDOWS, X64, "");
+    boolean ok2 = doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64, "");
     if (!ok1 && !ok2) {
       return;
     }
