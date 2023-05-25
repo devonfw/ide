@@ -184,7 +184,7 @@ function doInvokeEclipse() {
   shift
   local eclipse_args=("$@")
   local debug_info
-  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
+  debug_info=$(doStartEclipse log -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
   local exit_code=$?
   if [ $exit_code -ne 0 ];
   then
@@ -361,32 +361,31 @@ function doAddPlugin() {
 function doLaunchEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
-  if doIsWindows
-  then
-    # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
-  else
-    # shellcheck disable=SC2086
-    "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
-  fi
+  doStartEclipse gui -showlocation "${WORKSPACE}" -vmargs "${ECLIPSE_VMARGS}"
 }
 
 # $1: start gui or cli mode
 # $@: further parameters 
 function doStartEclipse() {
-  local start_gui="${1}"
+  local start_mode="${1}"
+  shift
+  local eclipse_args=("$@")
   local start_eclipse
-  if [ "${start_gui}" = "gui" ]
+  if [ "${start_mode}" = "gui" ]
   then
     if doIsWindows
     then
-      start_eclipse=$(start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS})
+      # shellcheck disable=SC2086
+      start_eclipse=$(start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" "${eclipse_args[@]}")
+    else
+      # shellcheck disable=SC2086
+      start_eclipse=$("${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
     fi
-  elif [ "${start_gui}" == "cli" ]
+  elif [ "${start_mode}" == "log" ]
     then
-    echo "no gui"
+      start_eclipse=$("${ECLIPSE}" -consoleLog -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
   else
-    echo "Please select how to you prefer to start eclipse (gui - cli)"
+    echo "Please specify how to you would like to start eclipse. (gui or log)"
   fi
   local exit_code=$?
   if [ $exit_code -ne 0 ];
@@ -426,7 +425,7 @@ function doImportEclipse() {
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
   # shellcheck disable=SC2086
-  doStartEclipse -nosplash -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  doStartEclipse log -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
 }
 
 # $1: id
@@ -445,8 +444,8 @@ function doMirrorUpdateSite() {
   fi
   local timestamp
   timestamp=$(date +'%Y-%m-%d')
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  doStartEclipse log -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  doStartEclipse log -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
   local result
   result="${?}"
   if [ "$?" != 0 ]
@@ -498,7 +497,7 @@ fi
 if [ -z "${1}" ]
 then
   doSetup silent
-  doStartEclipse gui
+  doLaunchEclipse gui
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
