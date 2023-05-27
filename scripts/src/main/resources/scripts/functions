@@ -1281,11 +1281,11 @@ function doInstall() {
     if [ -e "${available_versions}" ]
     then
       local resolved_version
-      local regex="[0-9]*\."
-      if [[ "${version_prefix}" =~ $regex ]]
-      then
-        version_prefix="${version_prefix/./\\.}"
+      local digit_regex="0-9"
+      if [[ ${version_prefix:(-2)} =~ [$digit_regex] ]]
+      then version_prefix+=$"."
       fi
+      version_prefix="$(echo "${version_prefix::-1}" | sed 's/[[:punct:]]/[.]/g')"
       resolved_version="$(grep "^${version_prefix}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
