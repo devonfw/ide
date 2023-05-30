@@ -86,6 +86,6 @@ The following commandlets are currently available:
 * link:rewrite.asciidoc[rewrite]
 * link:sonar.asciidoc[sonar]
 * link:terraform.asciidoc[terraform]
+* link:tomcat.asciidoc[tomcat]
 * link:vscode.asciidoc[vscode]
 * link:yarn.asciidoc[yarn]
-* link:tomcat.asciidoc[tomcat]
