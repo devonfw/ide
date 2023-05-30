@@ -217,8 +217,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
     UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-    urlDownloadFile.addUrl(url);
-    urlChecksum.setChecksum(checksum);
     String oldChecksum = urlChecksum.getChecksum();
 
     if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
@@ -241,8 +239,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param contentType String of the content type
    * @return {@code true} if the content type is not of type text, {@code false} otherwise.
    */
-  private static boolean isContentTypeValid(String url, String tool, String version,
-      String contentType) {
+  private static boolean isContentTypeValid(String url, String tool, String version, String contentType) {
 
     if (contentType.startsWith("text")) {
       logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
@@ -264,7 +261,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
       SystemArchitecture architecture, String checksum) {
 
-    HttpResponse<InputStream> response = doGetResponseAsStream(url);
+    HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
     int statusCode = response.statusCode();
     boolean success = isSuccess(response);
     String tool = getToolWithEdition();
@@ -277,8 +274,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     }
 
     if (success) {
-      if (checksum.isEmpty()) {
-        checksum = doGenerateChecksum(response, url, version, contentType);
+      if (checksum != null && checksum.isEmpty()) {
+        checksum = doGenerateChecksum(doGetResponseAsStream(url), url, version, contentType);
       }
 
       success = isChecksumStillValid(url, urlVersion, os, architecture, checksum, tool, version);
@@ -342,7 +339,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
       return this.client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (Exception e) {
-      logger.error("Failed to preform HEAD request of URL {}", url, e);
+      logger.error("Failed to perform HEAD request of URL {}", url, e);
       return null;
     }
   }

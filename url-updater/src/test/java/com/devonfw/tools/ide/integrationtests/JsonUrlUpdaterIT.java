@@ -43,7 +43,7 @@ public class JsonUrlUpdaterIT extends Assertions {
     stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
         .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
 
-    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
         aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
@@ -111,7 +111,7 @@ public class JsonUrlUpdaterIT extends Assertions {
     stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
         .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version-without-checksum.json")))));
 
-    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
         aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
