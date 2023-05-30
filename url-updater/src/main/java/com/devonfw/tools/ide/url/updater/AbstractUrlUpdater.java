@@ -236,16 +236,22 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param url String of the url to check
    * @param tool String of the tool name
    * @param version String of the version
-   * @param contentType String of the content type
+   * @param response the {@link HttpResponse}.
    * @return {@code true} if the content type is not of type text, {@code false} otherwise.
    */
-  private static boolean isContentTypeValid(String url, String tool, String version, String contentType) {
+  private boolean isValidDownload(String url, String tool, String version, HttpResponse<?> response) {
 
-    if (contentType.startsWith("text")) {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
+    if (isSuccess(response)) {
+      String contentType = response.headers().firstValue("content-type").orElse("undefined");
+      if (contentType.startsWith("text")) {
+        logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+            contentType, url);
+        return false;
+      }
+    } else {
       return false;
     }
+
     return true;
   }
 
@@ -263,18 +269,14 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
     int statusCode = response.statusCode();
-    boolean success = isSuccess(response);
     String tool = getToolWithEdition();
     String version = urlVersion.getName();
-    String contentType = "";
+
+    boolean success = isValidDownload(url, tool, version, response);
 
     if (success) {
-      contentType = response.headers().firstValue("content-type").orElse("undefined");
-      success = isContentTypeValid(url, tool, version, contentType);
-    }
-
-    if (success) {
-      if (checksum != null && checksum.isEmpty()) {
+      if (checksum == null || checksum.isEmpty()) {
+        String contentType = response.headers().firstValue("content-type").orElse("undefined");
         checksum = doGenerateChecksum(doGetResponseAsStream(url), url, version, contentType);
       }
 
