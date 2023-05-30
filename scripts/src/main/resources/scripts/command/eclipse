@@ -364,38 +364,29 @@ function doLaunchEclipse() {
   doStartEclipse gui -showlocation "${WORKSPACE}" -vmargs "${ECLIPSE_VMARGS}"
 }
 
-# $1: start gui or cli mode
+# $1: start eclipse in gui or log mode
 # $@: further parameters 
 function doStartEclipse() {
   local start_mode="${1}"
   shift
   local eclipse_args=("$@")
-  local start_eclipse
+  local configuration_path="${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" 
+  local default_arguments="${ECLIPSE} -clean -data ${WORKSPACE_PATH} -keyring ~/.eclipse/.keyring -configuration ${configuration_path}"
   if [ "${start_mode}" = "gui" ]
   then
     if doIsWindows
     then
       # shellcheck disable=SC2086
-      start_eclipse=$(start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" "${eclipse_args[@]}")
+      start "eclipse" /B ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" "${eclipse_args[@]}"
     else
       # shellcheck disable=SC2086
-      start_eclipse=$("${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
+      ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}"
     fi
   elif [ "${start_mode}" = "log" ]
     then
-      start_eclipse=$("${ECLIPSE}" -consoleLog -nosplash -configuration "${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}")
+      "${ECLIPSE}" -consoleLog -nosplash -configuration "${configuration_path}" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}"
   else
-    echo "Please specify how to you would like to start eclipse. (gui or log)"
-  fi
-  local exit_code=$?
-  if [ $exit_code -ne 0 ];
-  then
-    doError "Failed to start eclipse."
-    echo ""
-    return 1
-  else
-    echo "$start_eclipse"
-    return 0
+    echo "Please specify how you want to start eclipse, either in gui or log mode"
   fi
 }
 
@@ -497,7 +488,7 @@ fi
 if [ -z "${1}" ]
 then
   doSetup silent
-  doLaunchEclipse gui
+  doLaunchEclipse
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
