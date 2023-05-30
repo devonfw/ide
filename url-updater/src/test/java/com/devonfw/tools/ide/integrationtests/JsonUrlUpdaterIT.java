@@ -3,7 +3,6 @@ package com.devonfw.tools.ide.integrationtests;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
-import com.devonfw.tools.ide.url.updater.UpdateManager;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -26,6 +25,9 @@ public class JsonUrlUpdaterIT extends Assertions {
    * Test resource location
    */
   private final static String testdataRoot = "src/test/resources/integrationtests/JsonUrlUpdater";
+
+  /** This is the SHA256 checksum of aBody (a placeholder body which gets returned by WireMock) */
+  private static final String EXPECTED_ABODY_CHECKSUM = "de08da1685e537e887fbbe1eb3278fed38aff9da5d112d96115150e8771a0f30";
 
   /**
    * Test of {@link JsonUrlUpdater} for the creation of Android Studio download
@@ -122,7 +124,7 @@ public class JsonUrlUpdaterIT extends Assertions {
 
     // then
     assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists()
-        .hasContent("de08da1685e537e887fbbe1eb3278fed38aff9da5d112d96115150e8771a0f30");
+        .hasContent(EXPECTED_ABODY_CHECKSUM);
 
   }
 }
