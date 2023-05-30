@@ -1282,10 +1282,12 @@ function doInstall() {
     then
       local resolved_version
       local digit_regex="0-9"
+      local punctuation=""
       if [[ ${version_prefix:(-2)} =~ [$digit_regex] ]]
-      then version_prefix+=$"."
+      then punctuation="."
       fi
-      version_prefix="$(echo "${version_prefix::-1}" | sed 's/[[:punct:]]/[.]/g')"
+      version_prefix=${version_prefix::-1}$punctuation
+      version_prefix=${version_prefix//./[.]}
       resolved_version="$(grep "^${version_prefix}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
