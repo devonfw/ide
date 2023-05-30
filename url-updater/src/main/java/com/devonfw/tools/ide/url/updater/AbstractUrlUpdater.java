@@ -127,7 +127,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments (OS independent).
    *
-   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param downloadUrl the URL of the download for the tool.
    * @return true if the version was successfully updated, false otherwise.
    */
@@ -139,7 +139,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param downloadUrl the URL of the download for the tool.
    * @param os the {@link OperatingSystem} for the tool (can be null).
    * @return true if the version was successfully updated, false otherwise.
@@ -152,7 +152,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param downloadUrl the URL of the download for the tool.
    * @param os the {@link OperatingSystem} for the tool (can be null).
    * @param architecture the optional {@link SystemArchitecture}.
@@ -167,7 +167,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the UrlVersion instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param url the URL of the download for the tool.
    * @param os the optional {@link OperatingSystem}.
    * @param architecture the optional {@link SystemArchitecture}.
@@ -204,7 +204,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * Checks if the download file checksum is still valid
    *
    * @param url String of the URL to check
-   * @param urlVersion String of the version
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param os the {@link OperatingSystem}
    * @param architecture the {@link SystemArchitecture}
    * @param checksum String of the new checksum to check
