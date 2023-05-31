@@ -35,21 +35,18 @@ public class NodeUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
-    VersionIdentifier versionToCompare = VersionIdentifier.of("4.0.0");
-    VersionIdentifier compareWinArm = VersionIdentifier.of("20.0.0");
-    VersionIdentifier compareMacArm = VersionIdentifier.of("16.0.0");
+    String version = urlVersion.getName();
 
     String baseUrl = "https://nodejs.org/dist/v${version}/node-v${version}-";
-    if (vid.compareVersion(versionToCompare).isGreater()) {
+    if (isVersionGreaterThan(version, "3.9.9")) {
       doAddVersion(urlVersion, baseUrl + "win-x64.zip", WINDOWS);
-      if (vid.compareVersion(compareWinArm).isGreater())
-        doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64);
+      if (isVersionGreaterThan(version, "19.9.9"))
+        doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64,"");
       doAddVersion(urlVersion, baseUrl + "linux-x64.tar.gz", LINUX);
-      doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64);
+      doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64,"");
       doAddVersion(urlVersion, baseUrl + "darwin-x64.tar.gz", MAC);
-      if (vid.compareVersion(compareMacArm).isGreater())
-        doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
+      if (isVersionGreaterThan(version, "15.9.9"))
+        doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64,"");
     }
   }
 

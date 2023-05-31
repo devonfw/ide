@@ -37,12 +37,11 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
+  protected String mapVersion(String version) {
 
-    for (GithubTag item : jsonItem) {
-      String version = item.getRef().replace("refs/tags/", "");
-      if(version.matches("\\d+\\.\\d+(\\.\\d+)?"))
-        addVersion(version, versions);
-    }
+    if (version.matches("\\d+\\.\\d+(\\.\\d+)?"))
+      return super.mapVersion(version);
+    else
+      return null;
   }
 }

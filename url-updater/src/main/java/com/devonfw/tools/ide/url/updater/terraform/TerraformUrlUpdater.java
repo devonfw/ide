@@ -29,17 +29,14 @@ public class TerraformUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
-    VersionIdentifier compareMacArm = VersionIdentifier.of("1.2.0");
+    String version = urlVersion.getName();
 
     String baseUrl = "https://releases.hashicorp.com/terraform/${version}/terraform_${version}_";
     doAddVersion(urlVersion, baseUrl + "windows_amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux_amd64.zip", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin_amd64.zip", MAC);
-
-    if (vid.compareVersion(compareMacArm).isGreater())
-      doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64);
-
+    if (isVersionGreaterThan(version, "1.1.0"))
+      doAddVersion(urlVersion, baseUrl + "darwin_arm64.zip", MAC, ARM64,"");
   }
 
 }

@@ -35,20 +35,17 @@ public class LazyDockerUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
-    VersionIdentifier compareWindows= VersionIdentifier.of("0.7.5");
-    VersionIdentifier compareArm = VersionIdentifier.of("0.16.0");
-
+    String version = urlVersion.getName();
     String baseUrl = "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_";
 
-    if (vid.compareVersion(compareWindows).isGreater())
-      doAddVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64);
-    doAddVersion(urlVersion, baseUrl + "Linux_x86_64.tar.gz", LINUX, X64);
-    doAddVersion(urlVersion, baseUrl + "Linux_arm64.tar.gz", LINUX, ARM64);
-    doAddVersion(urlVersion, baseUrl + "Darwin_x86_64.tar.gz", MAC, X64);
-    if (vid.compareVersion(compareArm).isGreater()) {
-      doAddVersion(urlVersion, baseUrl + "Windows_arm64.zip", WINDOWS, ARM64);
-      doAddVersion(urlVersion, baseUrl + "Darwin_arm64.tar.gz", MAC, ARM64);
+    if (isVersionGreaterThan(version, "0.7.4"))
+      doAddVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64,"");
+    doAddVersion(urlVersion, baseUrl + "Linux_x86_64.tar.gz", LINUX, X64,"");
+    doAddVersion(urlVersion, baseUrl + "Linux_arm64.tar.gz", LINUX, ARM64,"");
+    doAddVersion(urlVersion, baseUrl + "Darwin_x86_64.tar.gz", MAC, X64,"");
+    if (isVersionGreaterThan(version, "0.15.0")) {
+      doAddVersion(urlVersion, baseUrl + "Windows_arm64.zip", WINDOWS, ARM64,"");
+      doAddVersion(urlVersion, baseUrl + "Darwin_arm64.tar.gz", MAC, ARM64,"");
     }
   }
 

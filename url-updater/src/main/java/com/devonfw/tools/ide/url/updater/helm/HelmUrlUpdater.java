@@ -30,15 +30,13 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    VersionIdentifier vid = VersionIdentifier.of(urlVersion.getName());
-    VersionIdentifier compareDarwinArm = VersionIdentifier.of("3.5.0");
-
+    String version = urlVersion.getName();
     String baseUrl = "https://get.helm.sh/helm-v${version}-";
     doAddVersion(urlVersion, baseUrl + "windows-amd64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "linux-amd64.tar.gz", LINUX);
     doAddVersion(urlVersion, baseUrl + "darwin-amd64.tar.gz", MAC);
-    if (vid.compareVersion(compareDarwinArm).isGreater())
-      doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
+    if (isVersionGreaterThan(version, "3.4.0"))
+      doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64,"");
   }
 
 }

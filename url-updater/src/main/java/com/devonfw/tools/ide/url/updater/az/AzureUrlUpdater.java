@@ -37,15 +37,12 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
+  protected String mapVersion(String version) {
 
-    for (GithubTag item : jsonItem) {
-      String version = item.getRef().replace("refs/tags/", "");
-      version = version.substring(version.lastIndexOf("-") + 1);
-      VersionIdentifier vid = VersionIdentifier.of(version);
-      VersionIdentifier versionToCompare = VersionIdentifier.of("2.18.0");
-      if (vid.isValid() && vid.compareVersion(versionToCompare).isGreater());
-        addVersion(version, versions);
-    }
+    version = version.substring(version.lastIndexOf("-") + 1);
+    VersionIdentifier vid = VersionIdentifier.of(version);
+    if (vid.isValid() && isVersionGreaterThan(version, "2.17.0"))
+      return super.mapVersion(version);
+    else return null;
   }
 }

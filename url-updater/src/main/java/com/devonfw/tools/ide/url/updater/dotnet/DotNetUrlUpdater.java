@@ -52,12 +52,10 @@ public class DotNetUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected void collectVersionsFromJson(GithubTags jsonItem, Collection<String> versions) {
-
-    for (GithubTag item : jsonItem) {
-      String version = item.getRef().replace("refs/tags/", "");
-      if(version.matches("v\\d+\\.\\d+\\.\\d+"))
-        addVersion(version, versions);
-    }
+  protected String mapVersion(String version) {
+    if (version.matches("v\\d+\\.\\d+\\.\\d+"))
+      return super.mapVersion(version);
+    else
+      return null;
   }
 }

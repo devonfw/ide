@@ -32,9 +32,9 @@ public class VsCodeUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String mapVersion(String version) {
 
-    if (version.matches("\\d+\\.\\d+\\.\\d+")) {
-      return version;
-    }
-    else return null;
+    if (version.matches("\\d+\\.\\d+\\.\\d+"))
+      return super.mapVersion(version);
+    else
+      return null;
   }
 }
