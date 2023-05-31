@@ -380,13 +380,13 @@ function doStartEclipse() {
       start "eclipse" /B ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" "${eclipse_args[@]}"
     else
       # shellcheck disable=SC2086
-      ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}"
+      ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}" 
     fi
   elif [ "${start_mode}" = "log" ]
     then
       "${ECLIPSE}" -consoleLog -nosplash -configuration "${configuration_path}" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}"
   else
-    echo "Please specify how you want to start eclipse, either in gui or log mode"
+    doFail "Please specify how you want to start eclipse, either in gui or log mode"
   fi
 }
 
@@ -415,8 +415,9 @@ function doImportEclipse() {
   fi
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+  ECLIPSE_VMARGS="${ECLIPSE_VMARGS} -DdevonImportPath=\"${import_path}\" -DdevonImportWorkingSet=\"${importWorkingSets}\""
   # shellcheck disable=SC2086
-  doStartEclipse log -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  doStartEclipse log -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -vmargs "${ECLIPSE_VMARGS}"
 }
 
 # $1: id
