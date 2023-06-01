@@ -1283,7 +1283,8 @@ function doInstall() {
       local version_prefix_tmp
       version_prefix_tmp="${version_prefix//./[.]}"
       local resolved_version
-      resolved_version="$(grep "^${version_prefix_tmp}[^0-9]" "${available_versions}" | head -n 1)"
+      local regex="0-9"
+      resolved_version="$(grep "^${version_prefix_tmp}[^$regex]" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
