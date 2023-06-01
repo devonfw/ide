@@ -1,12 +1,7 @@
 package com.devonfw.tools.ide.url.updater.dotnet;
 
-import com.devonfw.tools.ide.github.GithubTag;
-import com.devonfw.tools.ide.github.GithubTags;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
-import com.devonfw.tools.ide.version.VersionIdentifier;
-
-import java.util.Collection;
 
 /**
  * {@link GithubUrlUpdater} for Microsoft .NET core.

@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.devonfw.tools.ide.github.GithubTag;
 import com.devonfw.tools.ide.github.GithubTags;
-import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link JsonUrlUpdater} for github projects.

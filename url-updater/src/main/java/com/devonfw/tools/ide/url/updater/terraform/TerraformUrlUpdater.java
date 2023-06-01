@@ -2,7 +2,6 @@ package com.devonfw.tools.ide.url.updater.terraform;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
-import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link GithubUrlUpdater} for terraform.

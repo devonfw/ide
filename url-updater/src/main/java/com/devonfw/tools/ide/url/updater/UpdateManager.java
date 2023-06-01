@@ -52,7 +52,7 @@ public class UpdateManager {
 
   private final UrlRepository urlRepository;
 
-  private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AwsUrlUpdater(),
+  private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(), new DockerDesktopUrlUpdater(),
       new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
       new GraalVmUrlUpdater(), new GradleUrlUpdater(), new HelmUrlUpdater(), new IntellijUltimateUrlUpdater(),
