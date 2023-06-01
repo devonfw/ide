@@ -1280,11 +1280,15 @@ function doInstall() {
     local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
     then
-      local version_prefix_tmp
-      version_prefix_tmp="${version_prefix//./[.]}"
       local resolved_version
       local regex="0-9"
-      resolved_version="$(grep "^${version_prefix_tmp}[^$regex]" "${available_versions}" | head -n 1)"
+      if [[ ${version_prefix:(-2)} =~ [$regex] ]]
+      then
+        version_prefix="${version_prefix::-1}[^$regex]*"
+      else
+        version_prefix="${version_prefix::-1}"
+      fi
+      resolved_version="$(grep "^${version_prefix//./[.]}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
