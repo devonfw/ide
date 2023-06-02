@@ -60,14 +60,14 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   private boolean doUpdateVersions(UrlVersion urlVersion, String baseUrl) {
 
     boolean ok;
-    ok = doAddVersion(urlVersion, baseUrl + "win32-x86_64.zip", WINDOWS, X64, "");
+    ok = doAddVersion(urlVersion, baseUrl + "win32-x86_64.zip", WINDOWS, X64);
     if (!ok) {
       return false;
     }
-    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-x86_64.tar.gz", LINUX, X64, "");
-    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-aarch64.tar.gz", LINUX, ARM64, "");
-    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-x86_64.tar.gz", MAC, X64, "");
-    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-aarch64.tar.gz", MAC, ARM64, "");
+    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-x86_64.tar.gz", LINUX, X64);
+    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-aarch64.tar.gz", LINUX, ARM64);
+    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-x86_64.tar.gz", MAC, X64);
+    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-aarch64.tar.gz", MAC, ARM64);
     return ok;
   }
 
