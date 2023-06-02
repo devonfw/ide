@@ -1272,16 +1272,22 @@ function doInstall() {
     else
       doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
     fi
-  elif [ "${version:${#version}-1}" = "*" ]
+  elif [ "${version:(-1)}" = "*" ]
   then
     doDebug "Resolving version prefix ${version}"
-    local version_prefix="${version:0:${#version}-1}"
+    local version_prefix="${version::-1}" # remove last character (*)
     doUpdateMirrors
     local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
     if [ -e "${available_versions}" ]
     then
+      local regex_digit="0-9"
+      local version_prefix_regex="^${version_prefix//./[.]}"
+      if [[ ${version_prefix:(-1)} =~ [${regex_digit}] ]]
+      then
+        version_prefix_regex="${version_prefix_regex}[^${regex_digit}]"
+      fi
       local resolved_version
-      resolved_version="$(grep "^${version_prefix}[^0-9]" "${available_versions}" | head -n 1)"
+      resolved_version="$(grep "${version_prefix_regex}" "${available_versions}" | head -n 1)"
       if [ -n "${resolved_version}" ]
       then
         doDebug "Resolved version prefix ${version} to ${resolved_version}"
