@@ -62,6 +62,8 @@ By configuring additional plugins with `plugin_active=false` you can give your d
 In addition, these plugins are recommended to the user by recommendation https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions[recommendation feature] of VS Code.
 Be aware that the recommendations feature only works for the main workspace.
 
+All plugins are installed separately in `plugins/vscode`.
+
 === cleaning plugins on update
 
 If you want to strictly manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:

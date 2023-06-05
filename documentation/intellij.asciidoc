@@ -74,3 +74,5 @@ So consider the governance of your project and talk to your technical lead befor
 
 As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer.
 By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
+
+All plugins are installed separately in `plugins/intellij`.
