@@ -16,13 +16,10 @@ public class NpmUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
+    
+    doAddVersion(urlVersion, "https://registry.npmjs.org/npm/-/npm-${version}.tgz");
 
-    String baseUrl = "https://nodejs.org/dist/v${version}/node-v${version}";
-    doUpdateVersion(urlVersion, baseUrl + "-win-x64.zip", WINDOWS, X64);
-    doUpdateVersion(urlVersion, baseUrl + "-darwin-x64.tar.gz", MAC, X64);
-    doUpdateVersion(urlVersion, baseUrl + ".pkg", MAC, ARM64);
-    doUpdateVersion(urlVersion, baseUrl + "-linux-x64.tar.xz", LINUX, X64);
   }
 
   @Override
@@ -34,6 +31,12 @@ public class NpmUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected Pattern getVersionPattern() {
 
-    return Pattern.compile("(\\d\\.\\d{1,2}\\.\\d+)");
+    return Pattern.compile("npm-(\\d\\.\\d{1,2}\\.\\d+)");
+  }
+
+  @Override
+  protected String getVersionPrefixToRemove() {
+
+    return "npm-";
   }
 }

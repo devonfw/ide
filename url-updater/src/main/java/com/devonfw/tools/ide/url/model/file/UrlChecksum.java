@@ -37,7 +37,7 @@ public class UrlChecksum extends AbstractUrlFile {
    */
   public String getChecksum() {
 
-    return checksum;
+    return this.checksum;
   }
 
   /**
@@ -63,10 +63,13 @@ public class UrlChecksum extends AbstractUrlFile {
   @Override
   protected void doSave() {
 
+    if ((this.checksum == null) || this.checksum.isEmpty()) {
+      return;
+    }
     Path path = getPath();
     try (BufferedWriter bw = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING,
         StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
-      bw.write(getChecksum() + "\n");
+      bw.write(this.checksum + "\n");
 
     } catch (IOException e) {
       throw new IllegalStateException("Failed to save file " + path, e);

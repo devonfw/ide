@@ -21,22 +21,13 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String mapVersion(String version) {
+  protected void addVersion(UrlVersion urlVersion) {
 
-    if (version.startsWith("v")) {
-      version = version.substring(1);
-    }
-    return version;
-  }
-
-  @Override
-  protected void updateVersion(UrlVersion urlVersion) {
-
-    String baseUrl = "https://get.helm.sh/helm-v${version}-";
-    doUpdateVersion(urlVersion, baseUrl + "windows-amd64.zip", WINDOWS);
-    doUpdateVersion(urlVersion, baseUrl + "linux-amd64.tar.gz", LINUX);
-    doUpdateVersion(urlVersion, baseUrl + "darwin-amd64.tar.gz", MAC);
-    doUpdateVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
+    String baseUrl = "https://get.helm.sh/helm-${version}-";
+    doAddVersion(urlVersion, baseUrl + "windows-amd64.zip", WINDOWS);
+    doAddVersion(urlVersion, baseUrl + "linux-amd64.tar.gz", LINUX);
+    doAddVersion(urlVersion, baseUrl + "darwin-amd64.tar.gz", MAC);
+    doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
   }
 
 }

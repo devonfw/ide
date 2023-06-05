@@ -29,7 +29,7 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void updateVersion(UrlVersion urlVersion) {
+  protected void addVersion(UrlVersion urlVersion) {
 
     // archive
     String version = urlVersion.getName();
@@ -60,14 +60,14 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   private boolean doUpdateVersions(UrlVersion urlVersion, String baseUrl) {
 
     boolean ok;
-    ok = doUpdateVersion(urlVersion, baseUrl + "win32-x86_64.zip", WINDOWS, X64);
+    ok = doAddVersion(urlVersion, baseUrl + "win32-x86_64.zip", WINDOWS, X64);
     if (!ok) {
       return false;
     }
-    ok = doUpdateVersion(urlVersion, baseUrl + "linux-gtk-x86_64.tar.gz", LINUX, X64);
-    ok = doUpdateVersion(urlVersion, baseUrl + "linux-gtk-aarch64.tar.gz", LINUX, ARM64);
-    ok = doUpdateVersion(urlVersion, baseUrl + "macosx-cocoa-x86_64.tar.gz", MAC, X64);
-    ok = doUpdateVersion(urlVersion, baseUrl + "macosx-cocoa-aarch64.tar.gz", MAC, ARM64);
+    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-x86_64.tar.gz", LINUX, X64);
+    ok = doAddVersion(urlVersion, baseUrl + "linux-gtk-aarch64.tar.gz", LINUX, ARM64);
+    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-x86_64.tar.gz", MAC, X64);
+    ok = doAddVersion(urlVersion, baseUrl + "macosx-cocoa-aarch64.tar.gz", MAC, ARM64);
     return ok;
   }
 
@@ -80,7 +80,14 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected Pattern getVersionPattern() {
 
-    return Pattern.compile("\\d{4}-\\d{2}");
+    return Pattern.compile("\\d{4}-\\d{2}(\\s\\w{2})?");
+  }
+
+  @Override
+  protected String mapVersion(String version) {
+
+    // TODO remove this hack and get versiosn from reliable API
+    return super.mapVersion(version.replace(" ", "-"));
   }
 
 }
