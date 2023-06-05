@@ -12,6 +12,7 @@ import com.devonfw.tools.ide.url.model.file.UrlChecksum;
 import com.devonfw.tools.ide.url.model.file.UrlDownloadFile;
 import com.devonfw.tools.ide.url.model.file.UrlFile;
 import com.devonfw.tools.ide.url.model.file.UrlStatusFile;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
@@ -67,6 +68,11 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
   public UrlStatusFile getOrCreateStatus() {
 
     return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
+  }
+
+  public VersionIdentifier getVersionIdentifier() {
+
+    return VersionIdentifier.of(getName());
   }
 
   /**

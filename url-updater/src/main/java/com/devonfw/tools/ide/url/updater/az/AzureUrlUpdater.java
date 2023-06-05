@@ -37,8 +37,12 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
 
     version = version.substring(version.lastIndexOf("-") + 1);
     VersionIdentifier vid = VersionIdentifier.of(version);
-    if (vid.isValid() && isVersionGreaterThan(version, "2.17.0"))
+    final VersionIdentifier MIN_AZURE_VID = VersionIdentifier.of("2.17.0");
+    if (vid.isValid() && vid.compareVersion(MIN_AZURE_VID).isGreater()) {
       return super.mapVersion(version);
-    else return null;
+    }
+    else {
+      return null;
+    }
   }
 }

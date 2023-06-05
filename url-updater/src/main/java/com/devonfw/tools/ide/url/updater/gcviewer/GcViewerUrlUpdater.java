@@ -34,9 +34,11 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String mapVersion(String version) {
 
-    if (version.matches("\\d+\\.\\d+(\\.\\d+)?"))
+    if (version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
       return super.mapVersion(version);
-    else
+    }
+    else {
       return null;
+    }
   }
 }

@@ -36,4 +36,5 @@ public class NpmUrlUpdater extends WebsiteUrlUpdater {
 
     return Pattern.compile("(\\d\\.\\d{1,2}\\.\\d+)");
   }
+
 }
