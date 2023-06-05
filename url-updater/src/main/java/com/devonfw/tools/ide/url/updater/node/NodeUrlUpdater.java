@@ -9,6 +9,13 @@ import com.devonfw.tools.ide.version.VersionObject;
  * {@link GithubUrlUpdater} for node.js.
  */
 public class NodeUrlUpdater extends GithubUrlUpdater {
+  
+  private static final VersionIdentifier MIN_NODE_VID = VersionIdentifier.of("v3.9.9");
+  
+  private static final VersionIdentifier MIN_WIN_ARM_VID = VersionIdentifier.of("v19.9.9");
+  
+  private static final VersionIdentifier MIN_MAC_ARM_VID = VersionIdentifier.of("v15.9.9");
+
   @Override
   protected String getTool() {
 
@@ -37,9 +44,6 @@ public class NodeUrlUpdater extends GithubUrlUpdater {
   protected void addVersion(UrlVersion urlVersion) {
 
     VersionIdentifier vid = urlVersion.getVersionIdentifier();
-    final VersionIdentifier MIN_NODE_VID = VersionIdentifier.of("v3.9.9");
-    final VersionIdentifier MIN_WIN_ARM_VID = VersionIdentifier.of("v19.9.9");
-    final VersionIdentifier MIN_MAC_ARM_VID = VersionIdentifier.of("v15.9.9");
 
     if (vid.compareVersion(MIN_NODE_VID).isGreater()) {
       String baseUrl = "https://nodejs.org/dist/${version}/node-${version}-";
