@@ -7,7 +7,8 @@ The `vscode` commandlet allows to install, configure, and launch https://code.vi
 To launch VSCode for your current workspace and `devonfw-ide` installation, simply run:
 `devon vscode`
 
-You may also supply additional arguments as `devon vscode «args»`. These are explained by the following table:
+You may also supply additional arguments as `devon vscode «args»`.
+These are explained by the following table:
 
 .Usage of `devon vscode`
 [options="header"]
@@ -24,7 +25,6 @@ You may also supply additional arguments as `devon vscode «args»`. These are e
 |`create-script` |create launch script for this IDE, your current workspace and your OS
 |=======================
 
-
 == plugins
 
 To be productive with VS Code you need plugins (called `extensions` in VS Code).
@@ -32,6 +32,7 @@ Of course `devonfw-ide` can automate this for your:
 In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/vscode/plugins[vscode/plugins] (click this link to see more examples and see which plugins come by default).
 Here you can create a properties file for each plugin.
 This is an example https://github.com/devonfw/ide-settings/blob/master/vscode/plugins/devonfw-extension-pack.properties[devonfw-extension-pack.properties]:
+
 ```
 plugin_id=devonfw.devonfw-extension-pack
 plugin_active=true
@@ -51,17 +52,20 @@ See the `settings/vscode/plugins` folder for possible values of «plugin-name».
 
 In general you should try to stick with the configuration pre-defined by your project.
 But some plugins may be considered as personal flavor and are typically not predefined by the project config.
-Such plugins should be shipped with your link:settings.asciidoc[settings] as described above with `plugin_active=false` allowing you to easily install it manually. Surely, you can easily add plugins via the UI of VS code.
+Such plugins should be shipped with your link:settings.asciidoc[settings] as described above with `plugin_active=false` allowing you to easily install it manually.
+Surely, you can easily add plugins via the UI of VS code.
 However, be aware that some plugins may collect sensitive data or could introduce other vulnerabilities.
 So consider the governance of your project and talk to your technical lead before installing additional plugins that are not pre-defined in your link:settings.asciidoc[settings].
 
 As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer.
 By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
-In addition, these plugins are recommended to the user by recommendation https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions[recommendation feature] of VS Code. Be aware that the recommendations feature only works for the main workspace. 
+In addition, these plugins are recommended to the user by recommendation https://code.visualstudio.com/docs/editor/extension-marketplace#_workspace-recommended-extensions[recommendation feature] of VS Code.
+Be aware that the recommendations feature only works for the main workspace.
 
 === cleaning plugins on update
 
 If you want to strictly manage the plugins for `VS code` in your project, you can create or edit the file `settings/vscode/plugins` in your link:settings.asciidoc[settings] and add this variable:
+
 ```
 clean_plugins_on_update=true
 ```
