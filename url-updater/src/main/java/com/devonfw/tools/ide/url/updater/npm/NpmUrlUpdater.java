@@ -39,4 +39,5 @@ public class NpmUrlUpdater extends WebsiteUrlUpdater {
 
     return "npm-";
   }
+
 }
