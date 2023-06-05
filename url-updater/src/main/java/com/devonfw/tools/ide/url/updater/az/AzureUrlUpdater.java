@@ -8,6 +8,9 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  * {@link GithubUrlUpdater} for Azure-CLI.
  */
 public class AzureUrlUpdater extends GithubUrlUpdater {
+  
+  private static final VersionIdentifier MIN_AZURE_VID = VersionIdentifier.of("2.17.0");
+
   @Override
   protected String getTool() {
 
@@ -37,7 +40,6 @@ public class AzureUrlUpdater extends GithubUrlUpdater {
 
     version = version.substring(version.lastIndexOf("-") + 1);
     VersionIdentifier vid = VersionIdentifier.of(version);
-    final VersionIdentifier MIN_AZURE_VID = VersionIdentifier.of("2.17.0");
     if (vid.isValid() && vid.compareVersion(MIN_AZURE_VID).isGreater()) {
       return super.mapVersion(version);
     }
