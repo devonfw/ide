@@ -36,8 +36,7 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
 
     if (version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
       return super.mapVersion(version);
-    }
-    else {
+    } else {
       return null;
     }
   }
