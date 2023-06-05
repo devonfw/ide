@@ -9,7 +9,7 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class HelmUrlUpdater extends GithubUrlUpdater {
 
-  private final VersionIdentifier MIN_MAC_ARM_VID = VersionIdentifier.of("3.4.0");
+  private static final VersionIdentifier MIN_MAC_ARM_VID = VersionIdentifier.of("3.4.0");
 
   @Override
   protected String getTool() {
