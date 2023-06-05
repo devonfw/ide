@@ -70,6 +70,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
     return (UrlStatusFile) getOrCreateChild(UrlStatusFile.STATUS_JSON);
   }
 
+  /**
+   *
+   * @return the {@link VersionIdentifier}
+   */
   public VersionIdentifier getVersionIdentifier() {
 
     return VersionIdentifier.of(getName());

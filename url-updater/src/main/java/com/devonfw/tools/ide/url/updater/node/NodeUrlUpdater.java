@@ -45,13 +45,13 @@ public class NodeUrlUpdater extends GithubUrlUpdater {
       String baseUrl = "https://nodejs.org/dist/${version}/node-${version}-";
       doAddVersion(urlVersion, baseUrl + "win-x64.zip", WINDOWS);
       if (vid.compareVersion(MIN_WIN_ARM_VID).isGreater()) {
-        doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64,"");
+        doAddVersion(urlVersion, baseUrl + "win-arm64.zip", WINDOWS, ARM64);
       }
       doAddVersion(urlVersion, baseUrl + "linux-x64.tar.gz", LINUX);
-      doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64,"");
+      doAddVersion(urlVersion, baseUrl + "linux-arm64.tar.gz", LINUX, ARM64);
       doAddVersion(urlVersion, baseUrl + "darwin-x64.tar.gz", MAC);
       if (vid.compareVersion(MIN_MAC_ARM_VID).isGreater()) {
-        doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64,"");
+        doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
       }
     }
   }

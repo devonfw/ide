@@ -15,7 +15,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
-import com.devonfw.tools.ide.version.VersionIdentifier;
 import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -576,16 +575,4 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected abstract void addVersion(UrlVersion urlVersion);
 
-  /**
-   * @param baseVersion the base version (e.g. "1.0.0").
-   * @param compareToVersion the version to compare with (e.g. "2.5.3").
-   * @return boolean if the baseVersion is greater than compareToVersion.
-   */
-  protected boolean isVersionGreaterThan(String baseVersion, String compareToVersion) {
-    VersionIdentifier vid = VersionIdentifier.of(baseVersion);
-    if (vid.compareVersion(VersionIdentifier.of(compareToVersion)).isGreater())
-      return true;
-    else
-      return false;
-  }
 }

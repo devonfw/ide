@@ -41,6 +41,7 @@ public class HelmUrlUpdater extends GithubUrlUpdater {
       doAddVersion(urlVersion, baseUrl + "darwin-arm64.tar.gz", MAC, ARM64);
     }
   }
+
   @Override
   protected String mapVersion(String version) {
 
