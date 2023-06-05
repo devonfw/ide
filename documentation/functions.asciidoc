@@ -361,13 +361,13 @@ Determines whether the actual version is contained in the security file for the 
 Determines whether a version is in a version range.
 
 === doGetLatestSoftwareVersion
-Determines the latest available version of a software and write it in the variable "latest_version".
+Determines the latest available version of software and returns it. If a prefix is given, it will be taken into account.
 
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
 === doGetSoftwareEdition
-Determines the currently in the environment configured edition of a software and write it in the variable "edition".
+Determines the currently in the environment configured edition of a software and returns it.
 
 === doGetSoftwareVersion
 Determines the currently installed version of a software and prints it out for the end-user.
