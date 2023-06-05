@@ -8,6 +8,11 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  * {@link GithubUrlUpdater} for lazydocker.
  */
 public class LazyDockerUrlUpdater extends GithubUrlUpdater {
+  
+  private static final VersionIdentifier MIN_WIN_VID = VersionIdentifier.of("0.7.4");
+  
+  private static final VersionIdentifier MIN_ARM_VID = VersionIdentifier.of("0.15.0");
+
   @Override
   protected String getTool() {
 
@@ -36,10 +41,7 @@ public class LazyDockerUrlUpdater extends GithubUrlUpdater {
   protected void addVersion(UrlVersion urlVersion) {
 
     VersionIdentifier vid = urlVersion.getVersionIdentifier();
-    final VersionIdentifier MIN_WIN_VID = VersionIdentifier.of("0.7.4");
-    final VersionIdentifier MIN_ARM_VID = VersionIdentifier.of("0.15.0");
     String baseUrl = "https://github.com/jesseduffield/lazydocker/releases/download/v${version}/lazydocker_${version}_";
-
     if (vid.compareVersion(MIN_WIN_VID).isGreater()) {
       doAddVersion(urlVersion, baseUrl + "Windows_x86_64.zip", WINDOWS, X64);
     }
