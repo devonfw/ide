@@ -20,6 +20,8 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile> {
 
+  private VersionIdentifier versionIdentifier;
+  
   /**
    * The constructor.
    *
@@ -76,7 +78,10 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    */
   public VersionIdentifier getVersionIdentifier() {
 
-    return VersionIdentifier.of(getName());
+    if (this.versionIdentifier == null) {
+      this.versionIdentifier = VersionIdentifier.of(getName());
+    }
+    return this.versionIdentifier;
   }
 
   /**
