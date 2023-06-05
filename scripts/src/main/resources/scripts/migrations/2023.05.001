@@ -24,10 +24,10 @@ function doAdaptConfigurationFiles() {
   if [ "${?}" != "0" ]
   then
     mv "${configuration_file}".tmp "${configuration_file}"
-  fi
-  if [ "${configuration_file}" = "~/devon.properties" ]
-  then
-    doWarning "Due to the changes in the devon.properties file in the user home directory, it is necessary to update all devonfw IDE installations to avoid errors."
+    if [ "${configuration_file}" = "~/devon.properties" ]
+    then
+      doWarning "Due to the changes in the devon.properties file in the user home directory, it is necessary to update all devonfw IDE installations to avoid errors."
+    fi
   fi
 }
 
