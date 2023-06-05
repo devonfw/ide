@@ -1861,11 +1861,11 @@ function doGetLatestSoftwareVersion() {
   edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
-    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print; | awk -F'/' '{print $NF}' | sort -rV | head -1)"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV | head -1)"
   else
     prefix="${prefix:0:${#prefix}-1}"
     prefix="${prefix/./[.]}"
-    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print; | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
   fi
   echo "${version}"
 } 
@@ -1938,7 +1938,7 @@ function doListSoftwareVersions() {
     edition=$(doGetSoftwareEdition "${software}")
     local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
     declare -a versions
-    versions=("$(find "${versions_path}" -mindepth 1 -maxdepth 1 -print; | awk -F'/' '{print $NF}' | sort -rV)")
+    versions=("$(find "${versions_path}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)")
     local anz_versions
     anz_versions="$(echo "${versions[@]}" | wc -w )"
     if [ ! -d "${versions_path}" ]
