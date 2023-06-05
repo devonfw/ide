@@ -38,11 +38,11 @@ function doSonar() {
   then
     if [ "${1}" = "start" ]
     then
-      # "${SONARQUBE_HOME}/bin/windows-x86-64/StartNTService.bat"
+      #"${SONARQUBE_HOME}/bin/windows-x86-64/SonarService.bat"
       "${SONARQUBE_HOME}/bin/windows-x86-64/StartSonar.bat"
     elif [ "${1}" = "stop" ]
     then
-      "${SONARQUBE_HOME}/bin/windows-x86-64/StopNTService.bat"
+      "${SONARQUBE_HOME}/bin/windows-x86-64/SonarService.bat" stop
     else
       doFail "Unknown sonar command: ${1}"
     fi
