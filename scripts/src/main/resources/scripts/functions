@@ -1780,26 +1780,6 @@ function doRequireWsl() {
   doFail "${error}\nTo fix this follow these instructions:\nhttps://docs.microsoft.com/en-us/windows/wsl/install-win10"
 }
 
-# $1: name of the tool (commandlet name)
-# echos name of the tool folder (in mirrors or software)
-function doGetToolFolderName() {
-  local tool="${1/*\//}"
-  if [ "${tool}" = "mvn" ]
-  then
-    tool="maven"
-  elif [ "${tool}" = "node" ]
-  then
-    tool="nodejs"
-  elif [ "${tool}" = "sonar" ]
-  then
-    tool="sonarqube"
-  elif [ "${tool}" = "cobigen" ]
-  then
-    tool="cobigen-cli"
-  fi
-  echo "${tool}"
-}
-
 # $1: software
 # $2: version command
 # $3: commandlet name
@@ -1999,15 +1979,15 @@ function doParseOption() {
     then
       if [ "${2}" = "list" ]
       then
-        doListSoftwareVersions "$(doGetToolFolderName "${0}")"
+        doListSoftwareVersions "${0/*\//}"
         exit
       elif [ "${2}" = "set" ]
       then
-        doSetSoftwareVersion "$(doGetToolFolderName "${0}")" "${3}" "${0/*\//}"
+        doSetSoftwareVersion "${0/*\//}" "${3}" "${0/*\//}"
         exit
       elif [ "${2}" = "get" ] || [ -z "${2}" ]
       then
-        doGetSoftwareVersion "$(doGetToolFolderName "${0}")" "${TOOL_VERSION_COMMAND}" "${0/*\//}"
+        doGetSoftwareVersion "${0/*\//}" "${TOOL_VERSION_COMMAND}" "${0/*\//}"
         exit
       fi
     fi

@@ -12,15 +12,15 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-SONARQUBE_HOME="${DEVON_IDE_HOME}/software/sonarqube"
-TOOL_VERSION_COMMAND="ls '${SONARQUBE_HOME}/lib/sonar-application'-*.jar | sed 's/.*sonar-application-//' | sed 's/\.jar//'"
+SONAR_HOME="${DEVON_IDE_HOME}/software/sonar"
+TOOL_VERSION_COMMAND="ls '${SONAR_HOME}/lib/sonar-application'-*.jar | sed 's/.*sonar-application-//' | sed 's/\.jar//'"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  doInstall "sonarqube" "${SONARQUBE_VERSION}" "${1}" "" "${SONARQUBE_HOME}" "-"
+  doInstall "sonar" "${SONAR_VERSION}" "${1}" "" "${SONAR_HOME}" "-"
   return 0
 }
 
@@ -38,24 +38,24 @@ function doSonar() {
   then
     if [ "${1}" = "start" ]
     then
-      # "${SONARQUBE_HOME}/bin/windows-x86-64/StartNTService.bat"
+      #"${SONARQUBE_HOME}/bin/windows-x86-64/SonarService.bat"
       "${SONARQUBE_HOME}/bin/windows-x86-64/StartSonar.bat"
     elif [ "${1}" = "stop" ]
     then
-      "${SONARQUBE_HOME}/bin/windows-x86-64/StopNTService.bat"
+      "${SONARQUBE_HOME}/bin/windows-x86-64/SonarService.bat" stop
     else
       doFail "Unknown sonar command: ${1}"
     fi
   elif doIsMacOs
   then
-    "${SONARQUBE_HOME}/bin/macosx-universal-64/sonar.sh" "${1}"
+    "${SONAR_HOME}/bin/macosx-universal-64/sonar.sh" "${1}"
   else
-    "${SONARQUBE_HOME}/bin/linux-x86-64/sonar.sh" "${1}"
+    "${SONAR_HOME}/bin/linux-x86-64/sonar.sh" "${1}"
   fi
   if [ "${1}" = "start" ]
   then
     echo "SonarQube is running at localhost on the following port (default 9000):"
-    grep "sonar.web.port" "${SONARQUBE_HOME}/conf/sonar.properties"
+    grep "sonar.web.port" "${SONAR_HOME}/conf/sonar.properties"
   fi
 }
 
