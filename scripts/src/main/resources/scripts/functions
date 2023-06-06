@@ -1864,15 +1864,9 @@ function doSetSoftwareVersion() {
     then
       if [ "${version}" = "latest" ]
       then
-        doUpdateUrls
         version=$(doGetLatestSoftwareVersion "${software}")
       fi
       local software_version_variable="${software}"
-      # temporary workaround for #1098 should be fixed and removed with #1085
-      if [ "${software_version_variable}" = "nodejs" ]
-      then
-        software_version_variable="node"
-      fi
       software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
       local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
       grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
