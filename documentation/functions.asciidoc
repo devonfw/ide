@@ -327,12 +327,6 @@ specified sequence until one of the specified directories exists.
 This directory is then output and the function ends with the return value 0.
 If none of the directories passed exist, the doFail function is called with a corresponding message.
 
-=== doGetToolFolderName
-Takes the name or path to a commandlet and prints the corresponding folder name in `mirrors` or `software`.
-E.g. for `mvn` or `scripts/command/mvn` it will print `maven`.
-For `java` it will simply print `java`.
-Usage: `folder=$(doGetToolFolderName "${tool}")`
-
 === doIsEmptyDirectory
 Checks whether the directory passed as a parameter is empty.
 If the directory is empty, the return value is 0, otherwise 1.
