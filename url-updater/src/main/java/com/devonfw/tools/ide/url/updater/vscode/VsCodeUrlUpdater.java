@@ -29,4 +29,14 @@ public class VsCodeUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "darwin/stable", MAC);
   }
 
+  @Override
+  protected String mapVersion(String version) {
+
+    if (version.matches("\\d+\\.\\d+\\.\\d+")) {
+      return super.mapVersion(version);
+    } else {
+      return null;
+    }
+  }
+
 }
