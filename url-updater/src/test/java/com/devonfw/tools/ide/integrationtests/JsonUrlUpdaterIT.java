@@ -27,7 +27,7 @@ public class JsonUrlUpdaterIT extends Assertions {
   private final static String testdataRoot = "src/test/resources/integrationtests/JsonUrlUpdater";
 
   /** This is the SHA256 checksum of aBody (a placeholder body which gets returned by WireMock) */
-  private static final String EXPECTED_ABODY_CHECKSUM = "de08da1685e537e887fbbe1eb3278fed38aff9da5d112d96115150e8771a0f30";
+  private static final String EXPECTED_ABODY_CHECKSUM = "2bd115c7425d128e24a6cdfc9b6f82762d6e1b7d9868d0974faeaa18b54c3de3";
 
   /**
    * Test of {@link JsonUrlUpdater} for the creation of Android Studio download
@@ -40,30 +40,35 @@ public class JsonUrlUpdaterIT extends Assertions {
   public void testJsonUrlUpdaterCreatesDownloadUrlsAndChecksums(@TempDir Path tempDir) throws IOException {
 
     // given
-    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
-        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
+    //stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
+    //    .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
 
-    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+    stubFor(get(urlMatching("/idea*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("intellij-version.json")))));
+
+    stubFor(any(urlMatching("/idea/idea*")).willReturn(
         aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
-    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+    //AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+    IntellijUrlUpdaterMock updater = new IntellijUrlUpdaterMock();
 
     // when
     updater.update(urlRepository);
 
-    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+    //Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.1");
 
     // then
-    assertThat(androidStudioVersionsPath.resolve("status.json")).exists();
-    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists();
+    assertThat(intellijVersionsPath.resolve("status.json")).exists();
+    assertThat(intellijVersionsPath.resolve("linux_x64.urls")).exists();
+    assertThat(intellijVersionsPath.resolve("linux_x64.urls.sha256")).exists();
+    assertThat(intellijVersionsPath.resolve("mac_arm64.urls")).exists();
+    assertThat(intellijVersionsPath.resolve("mac_arm64.urls.sha256")).exists();
+    assertThat(intellijVersionsPath.resolve("mac_x64.urls")).exists();
+    assertThat(intellijVersionsPath.resolve("mac_x64.urls.sha256")).exists();
+    assertThat(intellijVersionsPath.resolve("windows_x64.urls")).exists();
+    assertThat(intellijVersionsPath.resolve("windows_x64.urls.sha256")).exists();
 
   }
 
@@ -79,18 +84,21 @@ public class JsonUrlUpdaterIT extends Assertions {
       throws IOException {
 
     // given
-    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
-        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
+    //stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
+    //    .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
 
-    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(aResponse().withStatus(404)));
+    stubFor(get(urlMatching("/idea*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("intellij-version.json")))));
+
+    stubFor(get(urlMatching("/idea/idea*")).willReturn(aResponse().withStatus(404)));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
-    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
-
+    // AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+    IntellijUrlUpdaterMock updater = new IntellijUrlUpdaterMock();
     // when
     updater.update(urlRepository);
 
-    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+    Path androidStudioVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.3");
 
     // then
     assertThat(androidStudioVersionsPath).doesNotExist();
@@ -108,19 +116,20 @@ public class JsonUrlUpdaterIT extends Assertions {
   public void testJsonUrlUpdaterWithMissingChecksumGeneratesChecksum(@TempDir Path tempDir) throws IOException {
 
     // given
-    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
-        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version-without-checksum.json")))));
+    stubFor(get(urlMatching("/idea*")).willReturn(aResponse().withStatus(200)
+        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("intellij-version-withoutchecksum.json")))));
 
-    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
+    stubFor(any(urlMatching("/idea/idea*")).willReturn(
         aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
-    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+    //AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+    IntellijUrlUpdaterMock updater = new IntellijUrlUpdaterMock();
 
     // when
     updater.update(urlRepository);
 
-    Path androidStudioVersionsPath = tempDir.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+    Path androidStudioVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.1");
 
     // then
     assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists()

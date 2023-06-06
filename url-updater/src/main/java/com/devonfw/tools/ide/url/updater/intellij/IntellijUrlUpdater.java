@@ -18,7 +18,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +64,8 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
                   addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
                 } else if (os.equals("mac")) {
                   addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
+                } else if (os.equals("macM1")) {
+                  addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
                 }
               }
               urlVersion.save();
