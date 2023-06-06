@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.url.updater.tomcat;
 
 import java.util.regex.Pattern;
 
+import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
 
@@ -18,15 +19,13 @@ public class TomcatUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    doAddVersion(urlVersion,
-//    "https://github.com/apache/tomcat/releases/tag/${version}");
-//        "https://archive.apache.org/dist/tomcat/tomcat-10/${version}/src/apache-tomcat-${version}-src.tar.gz");
+    doAddVersion(urlVersion, "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${version}/src/apache-tomcat-${version}-src.${ext}");
   }
 
   @Override
   protected String getVersionUrl() {
 
-    return "https://tomcat.apache.org/whichversion.html";
+    return "https://github.com/apache/tomcat/tags";
   }
 
   @Override
