@@ -45,4 +45,14 @@ public class DotNetUrlUpdater extends GithubUrlUpdater {
 
     return "sdk";
   }
+
+  @Override
+  protected String mapVersion(String version) {
+    if (version.matches("v\\d+\\.\\d+\\.\\d+")) {
+      return super.mapVersion(version);
+    }
+    else {
+      return null;
+    }
+  }
 }

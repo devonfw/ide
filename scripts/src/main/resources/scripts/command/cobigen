@@ -44,7 +44,7 @@ function doRunCLI() {
 }
 
 # CLI
-COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/cobigen-cli"
+COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/cobigen"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
 then
   echo "Setup CobiGen CLI."
