@@ -30,4 +30,14 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
 
     return "GCViewer";
   }
+
+  @Override
+  protected String mapVersion(String version) {
+
+    if (version.matches("\\d+\\.\\d+(\\.\\d+)?")) {
+      return super.mapVersion(version);
+    } else {
+      return null;
+    }
+  }
 }
