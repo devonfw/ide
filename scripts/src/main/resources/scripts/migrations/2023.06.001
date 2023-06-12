@@ -57,7 +57,7 @@ else
 	doWarning "Plugins directory already exists!"
 fi
 
-find "${DEVON_IDE_HOME}"/software/ -maxdepth 0 -type d -name "*-plugins" -print | while read found_folder
+find "${DEVON_IDE_HOME}"/software -maxdepth 1 -type d -name "*-plugins" -print | while read found_folder
 do
   doWarning "Moving plugin folder: ${found_folder}"
   stripped_path=${found_folder##*/}
