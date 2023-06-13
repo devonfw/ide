@@ -182,6 +182,9 @@ If homebrew is installed (`brew` command found), the desired tool will be instal
 Otherwise, the function will fail with an error message guiding the user to install homebrew.
 
 === doDownload
+Selects doDownloadUrl or doDownloadMirror depending on whether the urls directory exists or not
+
+=== doDownloadMirror
 Downloads an artifact from the internet.
 If the URL is not provided as first argument, it will use the `mirrors` config to automatically determine the URL from the other arguments.
 
@@ -197,6 +200,9 @@ If the URL is not provided as first argument, it will use the `mirrors` config t
 |`$8`   |ext     |The optional extension (e.g. 'tar.gz' or 'zip').
 |`$9`   |filename|The optional filename to save the downloaded file to.
 |=======================
+
+=== doDownloadUrl
+Same functionality as doDownloadMirror except that it uses urls instead of mirrors
 
 === doDownloadInternal
 Takes the URL as the first parameter, a temporary name for the file to be downloaded as the second, and the target directory in which the file is to be stored as the third parameter.
