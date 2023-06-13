@@ -298,12 +298,15 @@ The first three parameters are taken directly into variables and removed from th
 If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory.
 Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
 
-=== doUpdateMirrors
-Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
-
 === doUnzip
 Checks if an unzip program is installed, and if not, installs the program.
 The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
+
+=== doUpdateMirrors
+Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
+
+=== doUpdateUrls
+Uses xref:doGitPullOrClone[] to clone or pull `urls` ensuring that everything is up-to-date.
 
 == Functions on system PATH, files, or folders
 
@@ -351,8 +354,14 @@ Determines whether the actual version is contained in the security file for the 
 === doCheckVersionRange
 Determines whether a version is in a version range.
 
+=== doGetLatestSoftwareVersion
+Determines the latest available version of software and returns it. If a prefix is given, it will be taken into account.
+
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
+
+=== doGetSoftwareEdition
+Determines the currently in the environment configured edition of a software and returns it.
 
 === doGetSoftwareVersion
 Determines the currently installed version of a software and prints it out for the end-user.
