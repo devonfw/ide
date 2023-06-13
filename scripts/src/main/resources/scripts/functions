@@ -740,15 +740,15 @@ function doDownloadUrl() {
 
     local url_file
     url_file="${urls_software_dir}/${os}_${arch}.urls"
-    if [ ! -f "$(eval echo ${url_file})" ]
+    if [ ! -f "$(eval echo "${url_file}")" ]
     then 
       url_file="${urls_software_dir}/${os}.urls"
-      if [ ! -f "$(eval echo ${url_file})" ]
+      if [ ! -f "$(eval echo "${url_file}")" ]
       then 
         url_file="${urls_software_dir}/urls"
       fi
     fi
-    if [ ! -f "$(eval echo ${url_file})" ]
+    if [ ! -f "$(eval echo "${url_file}")" ]
     then
       doFail "No url file found at ${urls_software_dir}"
     fi 
@@ -790,8 +790,10 @@ function doDownloadUrl() {
         fi
         if [ -z "${ext}" ]
         then
-          local urlfilename="${download_url/*\//}"
-          local urlfileext="$(doGetExtension "${download_url}")"
+          local urlfilename
+          urlfilename="${download_url/*\//}"
+          local urlfileext
+          urlfileext="$(doGetExtension "${download_url}")"
           if [ "${urlfilename}" == "${urlfileext}" ] || [ "${urlfileext}" == "" ]
           then
             if doIsMacOs
@@ -815,8 +817,8 @@ function doDownloadUrl() {
       then
         local checksum_downloadfile
         local checksum
-        checksum_downloadfile="$(sha256sum ${target_dir}/${filename} | cut -d" " -f1)"
-        checksum="$(cat ${DEVON_IDE_HOME}/urls/${software}/${edition}/${version}/${os}_${arch}.urls.sha256)"
+        checksum_downloadfile="$(sha256sum "${target_dir}"/"${filename}" | cut -d" " -f1)"
+        checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/${os}_${arch}.urls.sha256)"
         if [ "${checksum_downloadfile}" != "${checksum}" ]
         then
           doFail "Downloaded file has the wrong checksum"

@@ -48,8 +48,8 @@ function doSetup() {
         fi
         doDownload "https://bootstrap.pypa.io/get-pip.py" "${PIP_HOME}" "pip" "${version}" "" "pip" "" "" "pip-${version}-pip.py"
         cd "${PIP_HOME}" || exit 255
-        doDevonCommand python pip-${version}-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
-        rm -rf "${PIP_HOME}/pip-${version}-pip.py"
+        doDevonCommand python pip-"${version}"-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
+        rm -rf "${PIP_HOME}/pip-"${version}"-pip.py"
       else
         doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
         cd "${PIP_HOME}" || exit 255
