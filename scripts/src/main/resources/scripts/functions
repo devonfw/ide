@@ -784,7 +784,7 @@ function doDownloadUrl() {
         then
           filename="${filename}-${edition}"
         fi
-        if [ "${os}" != "-" ] && [ -n "c" ]
+        if [ "${os}" != "-" ] && [ -n "${os}" ]
         then
           filename="${filename}-${os}"
         fi
@@ -834,8 +834,8 @@ function doDownloadUrl() {
     then
       local checksum_downloadfile
       local checksum
-      checksum_downloadfile="$(sha256sum ${target_dir}/${filename} | cut -d" " -f1)"
-      checksum="$(cat ${DEVON_IDE_HOME}/urls/${software}/${edition}/${version}/${os}_${arch}.urls.sha256)"
+      checksum_downloadfile="$(sha256sum "${target_dir}"/"${filename}" | cut -d" " -f1)"
+      checksum="$(cat ${DEVON_IDE_HOME}/urls/"${software}"/"${edition}"/"${version}"/${os}_${arch}.urls.sha256)"
       if [ "${checksum_downloadfile}" != "${checksum}" ]
       then
         doFail "Downloaded file has the wrong checksum"
