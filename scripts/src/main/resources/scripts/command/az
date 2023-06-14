@@ -11,19 +11,37 @@ then
 fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-TOOL_VERSION_COMMAND="az -v"
+AZ_HOME="${DEVON_IDE_HOME}/software/az"
+if doIsWindows
+then
+  AZ_RUN="${AZ_HOME}/Scripts/az.bat"
+else
+  AZ_RUN="${AZ_HOME}/Scripts/az"
+fi
+TOOL_VERSION_COMMAND="${AZ_RUN} -v"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
 function doSetup() {
-  if [ "${1}" != "silent" ] || [[ ! $(command -v az) =~ ${DEVON_IDE_HOME}/software/ ]]
+  TOOL_VERSION_COMMAND="-"
+  doInstall "az" "${AZ_VERSION}" "${1}" "" "${AZ_HOME}"
+  ERR="${?}"
+  if ! doIsWindows && ! doIsMacOs
   then
-    doDevonCommand pip install azure-cli az
-    setConfig
+    if [ "${ERR}" = 0 ]
+    then
+     doRunCommand "${AZ_HOME}/install -i ${AZ_HOME} -b ${AZ_HOME}"
+     rm -rf "${AZ_HOME}"/install "${AZ_HOME}"/dist
+    fi
   fi
-  if [ "${1}" != "silent" ] && ! doIsQuiet
+  if [ "${ERR}" = 0 ]
   then
-    doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of azure cli"
+    setConfig
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      TOOL_VERSION_COMMAND="${AZ_RUN} -v"
+      doRunCommand "${TOOL_VERSION_COMMAND}" "verify installation of az"
+    fi
   fi
 }
 
@@ -40,8 +58,7 @@ function setConfig() {
 
 function doRun() {
   doSetup silent
-  doEcho "Running: az ${*}" 
-  az "${@}"
+  doRunCommand "${AZ_RUN} ${*}"
 }
 
 case ${1} in
