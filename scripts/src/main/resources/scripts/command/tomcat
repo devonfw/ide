@@ -17,32 +17,31 @@ TOOL_VERSION_COMMAND="tomcat version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
+# Call tomcat with specified arguments.
+function doRun() {
+  doSetup silent
+  doRunCommand "${TOMCAT_HOME}/bin/tomcat ${*}"
+}
+
 # $1: optional silent mode
 function doSetup() {
-  export TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
-  doInstall "tomcat" "1.8.10" "${1}"
+  doInstall "tomcat" "${TOMCAT_VERSION}" "${1}"
   return 0
 }
 
 # CLI
-if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
-then
+case "${1}" in 
+"help" | "-h")
   echo "Install Tomcat."
   echo
   echo "Arguments:"
-  echo " setup          setup Tomcat (install and verify)"
-elif [ -z "${1}" ] || [ "${1}" = "setup" ]
-then
+  echo " setup          install tomcat on your machine."
+  echo " «args»         call tomcat with the specified arguments. Call tomcat --help for details or use tomcat directly as preferred."
+;;
+"setup" | "s" | "")
   doSetup "${2}"
-else
-  doFail "Unknown argument ${1}"
-fi
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitH
+;;
+*)
+  doRun "${@}"
+;;
+esac
