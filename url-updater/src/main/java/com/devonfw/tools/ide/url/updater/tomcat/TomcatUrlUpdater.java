@@ -4,12 +4,13 @@ import java.util.regex.Pattern;
 
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
-import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
+import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
 
 /**
- * {@link WebsiteUrlUpdater} for Tomcat.
+ * {@link GithubUrlUpdater} for Tomcat.
  */
-public class TomcatUrlUpdater extends WebsiteUrlUpdater {
+public class TomcatUrlUpdater extends GithubUrlUpdater {
+
   @Override
   protected String getTool() {
 
@@ -17,21 +18,25 @@ public class TomcatUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
-  protected void addVersion(UrlVersion urlVersion) {
+  protected String doGetVersionUrl() {
 
+    return "https://github.com/" + getGithubOrganization() + "/" + getGithubRepository() + "/tags";
+  }
+
+  @Override
+  protected void addVersion(UrlVersion urlVersion) {
     doAddVersion(urlVersion, "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${version}/src/apache-tomcat-${version}-src.${ext}");
   }
 
   @Override
-  protected String getVersionUrl() {
+  protected String getGithubOrganization() {
 
-    return "https://github.com/apache/tomcat/tags";
+    return "apache";
   }
 
   @Override
-  protected Pattern getVersionPattern() {
+  protected String getGithubRepository() {
 
-    return Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(\\.|-)[0-9]+");
-
+    return "tomcat";
   }
 }
