@@ -31,7 +31,7 @@ public class TomcatUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected Pattern getVersionPattern() {
 
-    return Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(\\.|-)M[0-9]+");
+    return Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(\\.|-)[0-9]+");
 
   }
 }
