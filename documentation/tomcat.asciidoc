@@ -3,7 +3,7 @@ toc::[]
 
 = Tomcat
 
-The `Tomcat` commandlet allows to install and setup https://tomcat.apache.org/[tomcat]. 
+The `Tomcat` commandlet allows to install install, configure, and launch https://tomcat.apache.org/[tomcat].
 
 The arguments (`devon tomcat «args»`) are explained by the following table:
 
@@ -12,5 +12,6 @@ The arguments (`devon tomcat «args»`) are explained by the following table:
 |=======================
 |*Argument(s)*      |*Meaning*
 |`setup`            |setup Tomcat (install or update and verify),  via `TOMCAT_VERSION` (use `devon tomcat version list` to get available versions or `devon tomcat version set [TAB]` to set version with auto-completion)
-|`«args»`           |run Tomcat with the given `«args»`
+|`start`            |start Tomcat
+|`stop`             |stop Tomcat
 |=======================

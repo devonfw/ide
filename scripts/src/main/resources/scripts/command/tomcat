@@ -10,38 +10,85 @@ then
   exit
 fi
 
+
+
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
+export CATALINA_HOME="${DEVON_IDE_HOME}/software/tomcat"
 TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
-TOOL_VERSION_COMMAND="tomcat version"
+TOMCAT="${TOMCAT_HOME}/bin/startup.bat"
+TOMCAT="catalina.sh"
+if doIsWindows
+then
+  TOMCAT="catalina.bat"
+fi
+TOOL_VERSION_COMMAND="${TOMCAT_HOME}/bin/${TOMCAT} version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
-# Call tomcat with specified arguments.
-function doRun() {
-  doSetup silent
-  doRunCommand "${TOMCAT_HOME}/bin/tomcat ${*}"
-}
-
 # $1: optional silent mode
 function doSetup() {
+  doDevonCommand java setup silent
   doInstall "tomcat" "${TOMCAT_VERSION}" "${1}"
   return 0
 }
 
+function doStart() {
+   # dosetup silent
+   # doRunCommand "${TOMCAT_HOME}/bin/startup.bat"#
+   doTomcat start
+}
+
+function doStop() {
+    doTomcat stop
+}
+
+function doTomcat() {
+    doSetup silent
+    if doIsWindows
+    then
+      if [ "${1}" = "start" ]
+      then
+        "${TOMCAT_HOME}/bin/startup.bat"
+      elif [ "${1}" = "stop" ]
+      then
+        "${TOMCAT_HOME}/bin/shutdown.bat"
+      else
+        doFail "Unknown tomcat command: ${1}"
+      fi
+    elif doIsMacOs
+    then
+      "${TOMCAT_HOME}/bin/startup.sh" "${1}"
+    else
+      "${TOMCAT_HOME}/bin/startup.sh" "${1}"
+    fi
+    if [ "${1}" = "start" ]
+    then
+      echo "Tomcat is running at localhost on the following port (default 8080):"
+      grep 'Connector port=' "${TOMCAT_HOME}/conf/server.xml" | awk -F'"' '{print $2}'| head -1
+
+    fi
+}
+
 # CLI
-case "${1}" in 
-"help" | "-h")
-  echo "Install Tomcat."
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run Tomcat on local machine."
   echo
   echo "Arguments:"
-  echo " setup          install tomcat on your machine."
-  echo " «args»         call tomcat with the specified arguments. Call tomcat --help for details or use tomcat directly as preferred."
-;;
-"setup" | "s" | "")
+  echo " start                          start tomcat on your machine"
+  echo " stop                           stop tomcat on your machine"
+  echo " setup                          install tomcat on your machine (install, verify)"
+
+elif [ "${1}" = "setup" ]
+then
   doSetup "${2}"
-;;
-*)
-  doRun "${@}"
-;;
-esac
+elif [ "${1}" = "start" ]
+then
+  doStart
+elif [ "${1}" = "stop" ]
+then
+  doStop
+else
+  doFail "undefined argument ${*}"
+fi
