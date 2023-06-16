@@ -48,21 +48,5 @@ do
   doAdaptConfigurationFiles "${foundfile}"
 done
 
-plugins_path="${DEVON_IDE_HOME}/plugins"
-
-if [ ! -d "${plugins_path}" ]
-then
-	mkdir "${plugins_path}"
-else
-	doWarning "Plugins directory already exists!"
-fi
-
-find "${DEVON_IDE_HOME}"/software -maxdepth 1 -type d -name "*-plugins" -print | while read found_folder
-do
-  doWarning "Moving plugin folder: ${found_folder}"
-  stripped_path=${found_folder##*/}
-  tool_name=${stripped_path%-plugins}
-  mv "${found_folder}" "$plugins_path"
-  mv "${plugins_path}/${stripped_path}" "${plugins_path}/${tool_name}"
-  doSuccess "Successfully moved: ${found_folder} to: ${plugins_path}/${tool_name}"
-done
+mv "${DEVON_IDE_HOME}/software/vscode-extensions" "${DEVON_IDE_HOME}/plugins/vscode"
+mv "${DEVON_IDE_HOME}/software/intellij-plugins" "${DEVON_IDE_HOME}/plugins/intellij"
