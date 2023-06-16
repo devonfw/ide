@@ -48,5 +48,12 @@ do
   doAdaptConfigurationFiles "${foundfile}"
 done
 
-mv "${DEVON_IDE_HOME}/software/vscode-extensions" "${DEVON_IDE_HOME}/plugins/vscode"
-mv "${DEVON_IDE_HOME}/software/intellij-plugins" "${DEVON_IDE_HOME}/plugins/intellij"
+if [ -d "${DEVON_IDE_HOME}/software/vscode-extensions" ]
+then
+  mv "${DEVON_IDE_HOME}/software/vscode-extensions" "${DEVON_IDE_HOME}/plugins/vscode"
+fi
+
+if [ -d "${DEVON_IDE_HOME}/software/intellij-plugins" ]
+then
+  mv "${DEVON_IDE_HOME}/software/intellij-plugins" "${DEVON_IDE_HOME}/plugins/intellij"
+fi
