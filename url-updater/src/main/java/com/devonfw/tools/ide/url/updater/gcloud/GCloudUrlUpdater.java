@@ -1,46 +1,42 @@
 package com.devonfw.tools.ide.url.updater.gcloud;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
-import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
+import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 import java.util.regex.Pattern;
 
-public class GCloudUrlUpdater extends WebsiteUrlUpdater {
+public class GCloudUrlUpdater extends GithubUrlUpdater {
+
+  private static final VersionIdentifier MIN_GCLOUD_VID = VersionIdentifier.of("200.0.0");
 
   @Override
   protected String getTool() {
 
-    return "gcloud";
+    return "google-cloud-sdk";
+  }
+
+  @Override
+  protected String getGithubOrganization() {
+
+    return "twistedpair";
   }
 
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    String baseUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${version}-${os}-";
+    VersionIdentifier vid = urlVersion.getVersionIdentifier();
 
-    doAddVersion(urlVersion, baseUrl + "x86_64.zip", WINDOWS);
-    //TODO add Linux and MacOS
-  }
+    if (vid.compareVersion(MIN_GCLOUD_VID).isGreater()) {
+      String baseUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${version}-";
 
-  @Override
-  protected String getVersionUrl() {
+      doAddVersion(urlVersion, baseUrl + "windows-x86_64.zip", WINDOWS);
+      doAddVersion(urlVersion, baseUrl + "linux-x86_64.tar.gz", LINUX);
+      doAddVersion(urlVersion, baseUrl + "linux-arm.tar.gz", LINUX, ARM64);
+      doAddVersion(urlVersion, baseUrl + "darwin-x86_64.tar.gz", MAC);
+      doAddVersion(urlVersion, baseUrl + "darwin-arm.tar.gz", MAC, ARM64);
 
-    return "https://cloud.google.com/sdk/docs/release-notes";
-  }
-
-  @Override
-  protected Pattern getVersionPattern() {
-
-    return Pattern.compile("(\\d+\\.\\d+\\.\\d+)");
-  }
-
-  @Override
-  protected String mapVersion(String version) {
-
-    if (version.matches("\\d{3,}\\.\\d+\\.\\d+")) {
-      return super.mapVersion(version);
-    } else {
-      return null;
     }
   }
+
 }
