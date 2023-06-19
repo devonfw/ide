@@ -13,6 +13,8 @@ We try to make it as simple as possible for you. However, there are some minimal
 ** On MacOS you only need to download and install https://git-scm.com/download/mac[git for mac].
 
 == Download
+NOTE: Currently this sonatype download service is broken (`here` link below will not work). As a workaround go to https://github.com/devonfw/ide/releases[releases] and click the latest direct download link. Sorry for any inconvenience.
+
 The latest release of `devonfw-ide` can be downloaded from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] (You can find all releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[maven central]).
 
 == Install
