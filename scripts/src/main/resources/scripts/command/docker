@@ -50,7 +50,8 @@ function doSetup() {
     fi
     return 0
   fi
-  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
+#  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
+  if [ "${DOCKER_EDITION}" != "docker" ]
   then
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
