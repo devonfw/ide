@@ -46,15 +46,13 @@ public final class Environment extends EnvCommand {
         propertiesPaths.add(DEVON_IDE_HOME+"/settings/projects/*.properties");
         for (String propertiesPath : propertiesPaths) {
             File file = new File(propertiesPath);
-            try {
-                if (file.exists()) {
-                    this.properties.load(new FileInputStream(propertiesPath));
-                }
-            }
-                catch (IOException e){
+            if (file.exists()) {
+                try (FileInputStream propertiesInputStream = new FileInputStream(propertiesPath)) {
+                    this.properties.load(propertiesInputStream);
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
+            }
         }
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
