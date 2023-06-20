@@ -14,6 +14,8 @@ include::variables.asciidoc[leveloffset=2]
 
 include::cli.asciidoc[leveloffset=2]
 
+include::android-studio.asciidoc[leveloffset=3]
+
 include::aws.asciidoc[leveloffset=3]
 
 include::az.asciidoc[leveloffset=3]

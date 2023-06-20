@@ -33,7 +33,7 @@ There are link:variables.asciidoc[variables] that can be used for Eclipse. These
 |=======================
 |*Variable*|*Meaning*
 |*`ECLIPSE_VERSION`*|The version of the tool Eclipse to install and use.
-|*`ECLIPSE_EDITION_TYPE`*|The edition of the tool Eclipse to install and use. You can choose between Java for standard edition or JEE for enterprise edition.
+|*`ECLIPSE_EDITION`*|The edition of the tool Eclipse to install and use. The edition of the tool Eclipse to install and use. By default the jave edition will be used. Further editions will come up soon.
 |*`EXTRA_JAVA_VERSION`|You can set this to a different (newer) version of Java used to launch your IDE (other than `JAVA_VERSION` that is used to build your project)
 |=======================
 

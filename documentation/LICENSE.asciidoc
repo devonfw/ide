@@ -53,6 +53,7 @@ The following table shows the components that may be used. The column `inclusion
 |https://github.com/devonfw/devon4ng[devon4ng] |Optional|https://github.com/devonfw/devon4ng/blob/master/LICENSE.txt[ASL 2.0]
 |https://github.com/devonfw/devon4node[devon4node] |Optional|https://github.com/devonfw/devon4node/blob/develop/LICENSE.txt[ASL 2.0]
 |https://www.jetbrains.com/idea/[IntelliJ IDEA] |Optional|https://www.jetbrains.com/opensource/idea/[ASL 2.0]
+|https://developer.android.com/studio[Android Studio] |Optional|https://developer.android.com/license[ASL 2.0]
 |http://www.jasypt.org/[jasypt] |Optional|http://www.jasypt.org/license.html[ASL 2.0]
 |https://www.docker.com/[docker]|Optional|https://docs.docker.com/engine/#licensing[ASL 2.0] and https://www.docker.com/legal/docker-software-end-user-license-agreement[EULA]
 |https://kubernetes.io/[kubernetes]|Optional|https://github.com/kubernetes/kubernetes/blob/master/LICENSE[ASL 2.0]
