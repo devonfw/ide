@@ -125,26 +125,24 @@ public class Functions {
                 System.out.println("Artifact already exists at " + target + "\nTo force update please delete the file and run again.");
                 return;
             }
-            InputStream in = new BufferedInputStream(downloadUrl.openStream());
-            FileOutputStream out = new FileOutputStream(tmpFile);
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            while ((count = in.read(buffer, 0, 1024)) != -1) {
-                out.write(buffer, 0, count);
+            try(InputStream in = new BufferedInputStream(downloadUrl.openStream());
+                FileOutputStream out = new FileOutputStream(tmpFile)){
+                byte[] buffer = new byte[1024];
+                int count = 0;
+                while ((count = in.read(buffer, 0, 1024)) != -1) {
+                    out.write(buffer, 0, count);
+                }
+                if (!targetFile.getParentFile().exists()) {
+                    targetFile.getParentFile().mkdirs();
+                }
+                targetFile.delete();
+                File tmpFileObj = new File(tmpFile);
+                tmpFileObj.renameTo(targetFile);
+                System.out.println("Download of " + downloadFilename + " from " + url + " succeeded.");
+                extract(targetFolder + downloadFilename, DEVON_SOFTWARE_DIR + software);
+                createOrUpdateVersionFile(software, version, DEVON_SOFTWARE_DIR + software);
             }
-            out.flush();
-            out.close();
-            in.close();
-            if (!targetFile.getParentFile().exists()) {
-                targetFile.getParentFile().mkdirs();
-            }
-            targetFile.delete();
-            File tmpFileObj = new File(tmpFile);
-            tmpFileObj.renameTo(targetFile);
-            System.out.println("Download of " + downloadFilename + " from " + url + " succeeded.");
-            extract(targetFolder + downloadFilename, DEVON_SOFTWARE_DIR + software);
-            createOrUpdateVersionFile(software, version, DEVON_SOFTWARE_DIR + software);
-        } catch (IOException e) {
+        }catch (IOException e) {
             System.err.println("Failed to download " + url + " with exception " + e.getMessage());
             e.printStackTrace();
         }
