@@ -52,7 +52,7 @@ In some cases, a project might need a (proprietary) tool(s) that (are) not suppo
 As a solution for this need, `devonfw-ide` let's you configure custom tools via the `DEVON_IDE_CUSTOM_TOOLS` link:variables.asciidoc[variable]. It can be defined in link:configuration.asciidoc[`devon.properties`] of your link:settings.asciidoc[settings] git repository as an array of the custom tools you need to add.
 Each entry applies:
 
-* It needs to have the form `«tool»:«version»[:all][:«repository-url»]`
+* It needs to have the form `«tool»:«version»[:all]:[«repository-url»]`
 * The first entry must have the `«repository-url»` included which is used as default
 * Further entries will inherit this default if omitted
 * This URL is used in the same way as described above for a software xref:repository[repository].
@@ -61,7 +61,7 @@ Each entry applies:
 
 As an example, we define it in `${DEVON_IDE_HOME}/settings/devon.properties`:
 ```
-DEVON_IDE_CUSTOM_TOOLS=(jboss-eap:7.1.4.GA:all:https://host.tld/projects/my-project firefox:70.0.1)
+DEVON_IDE_CUSTOM_TOOLS=(jboss-eap:7.1.4.GA:all:https://host.tld/projects/my-project firefox:70.0.1:)
 ```
 This will download and extract the following content to your `software` folder:
 
