@@ -434,29 +434,31 @@ public class Functions {
     }
 
     private static void extractZip(File file, Path targetPath) {
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(file))) {
-            ZipEntry entry;
-            while ((entry = zipInputStream.getNextEntry()) != null) {
-                File f = targetPath.resolve(entry.getName()).toFile();
-                if (entry.isDirectory()) {
-                    if (!f.isDirectory() && !f.mkdirs()) {
-                        throw new IOException("Failed to create directory " + f);
-                    }
-                } else {
-                    File parent = f.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("Failed to create directory " + parent);
-                    }
-                    try (OutputStream outputStream = Files.newOutputStream(f.toPath())) {
-                        byte[] buffer = new byte[1024];
-                        int len;
-                        while ((len = zipInputStream.read(buffer)) > 0) {
-                            outputStream.write(buffer, 0, len);
+        try(FileInputStream fileInputStream = new FileInputStream(file)){
+            try (ZipInputStream zipInputStream = new ZipInputStream(fileInputStream)) {
+                ZipEntry entry;
+                while ((entry = zipInputStream.getNextEntry()) != null) {
+                    File f = targetPath.resolve(entry.getName()).toFile();
+                    if (entry.isDirectory()) {
+                        if (!f.isDirectory() && !f.mkdirs()) {
+                            throw new IOException("Failed to create directory " + f);
+                        }
+                    } else {
+                        File parent = f.getParentFile();
+                        if (!parent.isDirectory() && !parent.mkdirs()) {
+                            throw new IOException("Failed to create directory " + parent);
+                        }
+                        try (OutputStream outputStream = Files.newOutputStream(f.toPath())) {
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            while ((len = zipInputStream.read(buffer)) > 0) {
+                                outputStream.write(buffer, 0, len);
+                            }
                         }
                     }
                 }
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
