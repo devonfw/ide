@@ -52,6 +52,8 @@ public class UpdateManager {
 
   private final UrlRepository urlRepository;
 
+  private final Long timeout;
+
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(), new DockerDesktopUrlUpdater(),
       new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
@@ -65,10 +67,12 @@ public class UpdateManager {
    * The constructor.
    *
    * @param pathToRepository the {@link Path} to the {@code ide-urls} repository to update.
+   * @param timeout for GitHub actions in seconds
    */
-  public UpdateManager(Path pathToRepository) {
+  public UpdateManager(Path pathToRepository, long timeout) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
+    this.timeout = timeout;
   }
 
   /**
@@ -78,6 +82,7 @@ public class UpdateManager {
 
     for (AbstractUrlUpdater updater : this.updaters) {
       try {
+        updater.setTimeout(timeout);
         updater.update(this.urlRepository);
       } catch (Exception e) {
         logger.error("Failed to update {}", updater.getToolWithEdition(), e);

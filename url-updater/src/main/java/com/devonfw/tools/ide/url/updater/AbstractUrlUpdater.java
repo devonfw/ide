@@ -62,6 +62,20 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
+  /** The default timeout for the GitHub actions url-update job */
+  public static final long DEFAULT_TIMEOUT = 60;
+
+  /** The timeout for the GitHub actions url-update job */
+  private long timeout;
+
+  /**
+   * @param timeout to set for the GitHub actions url-update job
+   */
+  public void setTimeout(long timeout) {
+
+    this.timeout = timeout;
+  }
+
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
    */
@@ -432,11 +446,24 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
+   * Sets a default timeout and retrieves a corresponding final timestamp for it
+   *
+   * @return the ending time
+   */
+  public long retrieveFinalTimeout() {
+
+    if (this.timeout == 0) {
+      this.timeout = DEFAULT_TIMEOUT;
+    }
+
+    return System.currentTimeMillis() + this.timeout * 1000;
+  }
+
+  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
    */
-  @Override
   public void update(UrlRepository urlRepository) {
 
     UrlTool tool = urlRepository.getOrCreateChild(getTool());
@@ -445,7 +472,11 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     Set<String> versions = getVersions();
     String toolWithEdition = getToolWithEdition();
     logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
+
     for (String version : versions) {
+      if (System.currentTimeMillis() < retrieveFinalTimeout()){
+        break;
+      }
       if (edition.getChild(version) == null) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);

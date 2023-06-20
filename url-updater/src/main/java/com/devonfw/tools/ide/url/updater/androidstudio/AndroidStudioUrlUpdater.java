@@ -57,6 +57,9 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
 
       for (AndroidJsonItem item : items) {
         String version = item.getVersion();
+        if (System.currentTimeMillis() < retrieveFinalTimeout()){
+          break;
+        }
         if (edition.getChild(version) == null) {
           try {
             UrlVersion urlVersion = edition.getOrCreateChild(version);
