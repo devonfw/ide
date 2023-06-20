@@ -718,7 +718,6 @@ function doDownloadUrl() {
         os="linux"
       fi
     fi
-
     edition=$(doGetSoftwareEdition "${software}")
     local latest_version
     if [ "${version}" = "latest" ]
@@ -829,13 +828,16 @@ function doDownloadUrl() {
       local result=${?}
       if [ "${result}" = 0 ] || [ "${result}" = 255 ]
       then
-        local checksum_downloadfile
-        local checksum
-        checksum_downloadfile="$(shasum -a 256 "${target_dir}"/"${filename}" | cut -d" " -f1)"
-        checksum="$(cat "${url_file}".sha256)"
-        if [ "${checksum_downloadfile}" != "${checksum}" ]
+        if [ "${version}" != "latest" ]
         then
-          doFail "Downloaded file has the wrong checksum"
+          local checksum_downloadfile
+          local checksum
+          checksum_downloadfile="$(shasum -a 256 "${target_dir}"/"${filename}" | cut -d" " -f1)"
+          checksum="$(cat "${url_file}".sha256)"
+          if [ "${checksum_downloadfile}" != "${checksum}" ]
+          then
+            doFail "Downloaded file has the wrong checksum"
+          fi
         fi
         return ${result}
       fi
