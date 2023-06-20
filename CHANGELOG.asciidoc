@@ -6,7 +6,8 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
-* https://github.com/devonfw/ide/issues/1158[#1158]: Projects main-branch is always checked out  
+* https://github.com/devonfw/ide/issues/1147[#1147]: Separates plugins from software folder
+* https://github.com/devonfw/ide/issues/1158[#1158]: Projects main-branch is always checked out
 * https://github.com/devonfw/ide/issues/1118[#1118]: Add milestone versions of Eclipse
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/44?closed=1[milestone 2023.05.001].
@@ -56,7 +57,7 @@ The full list of changes for this release can be found in https://github.com/dev
 Release with new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/1066[#1066]: devon.bat stopped adding PATH
-* https://github.com/devonfw/ide/issues/1043[#1043]: Environment variables defined in devon.properties are not available in devonfw CMD 
+* https://github.com/devonfw/ide/issues/1043[#1043]: Environment variables defined in devon.properties are not available in devonfw CMD
 * https://github.com/devonfw/ide/issues/982[#982]: Add plugin recommendation feature to vscode
 * https://github.com/devonfw/ide/issues/971[#971]: Ability to run "migration script" on update
 * https://github.com/devonfw/ide/issues/991[#991]: Integrate openrewrite feature
@@ -83,6 +84,7 @@ The full list of changes for this release can be found in https://github.com/dev
 == 2022.12.001
 
 Release with new features and bugfixes:
+
 * https://github.com/devonfw/ide/issues/992[#992]: aws does not install a different version
 * https://github.com/devonfw/ide/issues/964[#964]: make aws config local
 * https://github.com/devonfw/ide/issues/1020[#1020]: Windows bat error handling broken and odd effects
@@ -109,7 +111,7 @@ New release with awesome new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/826[#826]: List available versions for a tool
 * https://github.com/devonfw/ide/issues/878[#878]: Use default tool version from `available-versions`
-* https://github.com/devonfw/ide/issues/893[#893]: Ability to configure version prefix 
+* https://github.com/devonfw/ide/issues/893[#893]: Ability to configure version prefix
 * https://github.com/devonfw/ide/issues/908[#908]: AWS CLI integration for MacOS and bugfix for win/linux
 * https://github.com/devonfw/ide/issues/940[#940]: Make doInstall even more generic
 * https://github.com/devonfw/ide/issues/935[#935]: doDevonCommand should use doFail instead of doAskToContinue
@@ -141,7 +143,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/898[#898]: AWS can not be installed
 * https://github.com/devonfw/ide/pull/882[#882]: Fixing NPE by updating mvn default version to 3.8.4
 * https://github.com/devonfw/ide/issues/409[#409]: Redo PATH adaptation if devon.bat is not in PATH
-* https://github.com/devonfw/ide/issues/866[#866]:  scripts folder not added to PATH if setup.bat called from powershell
+* https://github.com/devonfw/ide/issues/866[#866]: scripts folder not added to PATH if setup.bat called from powershell
 * https://github.com/devonfw/ide/issues/880[#880]: Customize the trigger of the integration tests
 * https://github.com/devonfw/ide/issues/879[#879]: Renaming integration-tests and adding badges
 * https://github.com/devonfw/ide/issues/751[#751]: Documentation of functions
@@ -156,7 +158,7 @@ New release with various improvements and bugfixes:
 * https://github.com/devonfw/ide/issues/840[#840]: Pip Integration and fixing package installation
 * https://github.com/devonfw/ide/issues/713[#713]: Python integration
 * https://github.com/devonfw/ide/issues/706[#706]: Folder ${M2_REPO} gets created
-* https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03 
+* https://github.com/devonfw/ide/issues/817[#817]: Update Eclipse to 2022-03
 * https://github.com/devonfw/ide/pull/796[#796]: update sonarqube to 9.4.0.54424
 * https://github.com/devonfw/ide/issues/794[#794]: Improve installation process of Rancher Desktop and VPNKit
 * https://github.com/devonfw/ide/issues/738[#738]: CLI Lazy Docker integration
@@ -324,7 +326,7 @@ The full list of changes for this release can be found in https://github.com/dev
 Update with the following bugfixes and improvements:
 
 * https://github.com/devonfw/ide/issues/522[#522]: update devon4j to 2020.12.002 and create migration to this version
-* https://github.com/devonfw/ide/pull/524[#524]: workaround for bug in git for windows 
+* https://github.com/devonfw/ide/pull/524[#524]: workaround for bug in git for windows
 * https://github.com/devonfw/ide/issues/520[#520]: update default version of java to 11.0.9.1_1
 * https://github.com/devonfw/ide/issues/514[#514]: Remove or adjust AnyEditTools plugin update site
 * https://github.com/devonfw/ide/issues/480[#480]: Eclipse import to wrong workspace
