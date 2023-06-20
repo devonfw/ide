@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# Script to setup devonfw-ide environment. Will actually be sourced,
+# hash bang only for filetype detection and editor syntax support
+
+# $1: path of properties file to load
+# $2: optional prefix to add to variables
+# $3: optional arg to export all variables if not empty 
+function doLoadProperties() {
+  if ! [ -f "${1}" ]
+  then
+    return
+  fi
+  if test "$(tail -c 1 "${1}" | wc -l)" -eq 0
+  then
+    echo "Appending missing newline to ${1}"
+    echo >> "${1}"
+  fi
+  local key
+  local value
+  local export_key
+  while IFS='=' read -r key value
+  do
+    if [ -n "${key}" ] && [ "${key:0:1}" != "#" ]
+    then
+      key="${key//$'\r'}"
+      value="${value//$'\r'}"
+      export_key=""
+      if [ "${value:0:1}" = "~" ]
+      then
+        value=${HOME}${value:1}
+      fi
+      if [ "${key:0:7}" = "export " ]
+      then
+        export_key="true"
+        key="${key:7}"
+      elif [ -n "${3}" ]
+      then
+        export_key="true"
+      fi
+      key="${2}${key/./_}"
+      if [ -z "${value}" ]
+      then
+        if [ -n "${key}" ]
+        then
+          unset "${key}"
+        fi
+      else
+        if [ "${OSTYPE}" = "cygwin" ] || [ "${OSTYPE}" = "msys" ]
+        then
+          if [[ "${value}" =~ ^[A-Za-z]:[\\/] ]]
+          then
+            value="$(cygpath "${value}")"
+          fi
+        fi
+        if [ "${value:0:1}" != "(" ] && [ "${value:0:1}" != '"' ]
+        then
+          value=\"${value}\"
+        fi
+        eval "${key}=${value}"
+        if [ "${export_key}" = "true" ] && [ -z "${2}" ]
+        then
+          # shellcheck disable=SC2086,SC2163
+          export ${key?}
+        fi
+      fi
+    fi
+  done < "${1}"
+}
+
+function doUpdatePath() {
+  if [ -z "${DEVON_OLD_PATH}" ]
+  then
+    export DEVON_OLD_PATH="${PATH}"
+  else
+    if [[ "${DEVON_OLD_PATH}" == *"C:\\WINDOWS"* ]]
+    then
+      # https://github.com/devonfw/ide/issues/49
+      DEVON_OLD_PATH=
+      IFS=':'
+      set -f
+      for dir in ${PATH}
+      do
+        if [[ "${dir}" != "${DEVON_IDE_HOME}"* ]]
+        then
+          if [ -z "${DEVON_OLD_PATH}" ]
+          then
+            DEVON_OLD_PATH="${dir}"
+          else
+            DEVON_OLD_PATH="${DEVON_OLD_PATH}:${dir}"
+          fi
+        fi
+      done
+      set +f
+      unset IFS
+      export DEVON_OLD_PATH
+    fi
+    PATH="${DEVON_OLD_PATH}"
+  fi
+  # Setup path
+  SOFTWARE_PATH=${DEVON_IDE_HOME}/software
+  for SOFTWARE_FOLDER in "${SOFTWARE_PATH}"/*
+  do
+    if [ "${SOFTWARE_FOLDER}" != "${SOFTWARE_PATH}/extra" ]
+    then
+      if [ -d "${SOFTWARE_FOLDER}/bin" ]
+      then
+        PATH="${SOFTWARE_FOLDER}/bin:${PATH}"
+      else
+        PATH="${SOFTWARE_FOLDER}:${PATH}"
+      fi
+      # Load custom configuration of software
+      if [ -e "${SOFTWARE_FOLDER}/ide-config" ]
+      then
+        # shellcheck disable=SC1090,SC1091
+        source "${SOFTWARE_FOLDER}/ide-config"
+      fi
+    fi
+  done
+  
+  # node.js support
+  if [ -d "${DEVON_IDE_HOME}/software/nodejs" ]
+  then
+    PATH="${PATH}:$(npm bin -g 2> /dev/null)"
+  fi
+}
+
+# determine proper home directory
+DEVON_HOME_DIR=~
+if [ "${OSTYPE}" = "cygwin" ]
+then
+  DEVON_HOME_DIR="$(cygpath "${USERPROFILE}")"
+fi
+# load and setup configuration
+doLoadProperties "${DEVON_IDE_HOME}/scripts/devon.properties" "" "${@}"
+doLoadProperties "${DEVON_HOME_DIR}/devon.properties" "" "${@}"
+doLoadProperties "${DEVON_IDE_HOME}/devon.properties" "" "${@}"
+doLoadProperties "${SETTINGS_PATH}/devon.properties" "" "${@}"
+if [ -z "${WORKSPACE}" ]
+then
+  WORKSPACE=main
+fi
+export WORKSPACE
+export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
+if [ ! -d "${WORKSPACE_PATH}" ]
+then
+  if [ "${WORKSPACE}" = "main" ]
+  then
+    echo "Creating main workspace directory"
+    mkdir -p "${WORKSPACE_PATH}"
+  else
+    echo "Workspace ${WORKSPACE} does not exist"
+  fi
+fi
+doLoadProperties "${WORKSPACE_PATH}/devon.properties" "" "${@}"
+doUpdatePath
+# load user settings late so variables like M2_REPO can be overridden
+doLoadProperties "${DEVON_IDE_HOME}/conf/devon.properties" "" "${@}"
+
+export PATH

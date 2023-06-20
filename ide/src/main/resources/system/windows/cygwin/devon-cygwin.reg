@@ -1,0 +1,10 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin]
+@="Open devonfw Cygwin Bash Here"
+[HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin\command]
+@="C:\\cygwin64\\bin\\mintty.exe -i /Cygwin-Terminal.ico C:\\cygwin64\\bin\\bash.exe --login -c \"cd \\\"%V\\\" ; exec bash -rcfile ~/.bashrc\""
+[HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin]
+@="Open devonfw Cygwin Bash Here"
+[HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin\command]
+@="C:\\cygwin64\\bin\\mintty.exe -i /Cygwin-Terminal.ico C:\\cygwin64\\bin\\bash.exe --login -c \"cd \\\"%V\\\" ; exec bash -rcfile ~/.bashrc\""

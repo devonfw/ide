@@ -1,0 +1,23 @@
+Windows Registry Editor Version 5.00
+
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cmd]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cmd]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_ps]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_ps]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin\command]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_cmd]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_cmd\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_cmd]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_cmd\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_gitbash]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_gitbash\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_gitbash]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_gitbash\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_ps]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\shell\devon_wt_ps\command]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_ps]
+[-HKEY_CURRENT_USER\SOFTWARE\Classes\Directory\Background\shell\devon_wt_ps\command]
+

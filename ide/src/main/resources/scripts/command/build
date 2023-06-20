@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doBuild() {
+  doDevonCommand "${@}"
+}
+
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Run build job."
+  echo "The build tool is auto-detected from according configuration files:"
+  echo " pom.xml              maven (mvnw if present, mvn otherwise)"
+  echo " build.gradle         gradle (gradlew if present, otherwise gradle)"
+  echo " package.json         npm"
+  echo
+  echo "Arguments:"
+  echo "                      run the default build if no arguments are given. Needs to succeed for definition-of-done."
+  echo " «args»               run the build with the given arguments."
+  echo
+  echo "Options:"
+  exit
+fi
+
+if [ -f pom.xml ]
+then
+  doBuild mvn "${@}"
+elif [ -f build.gradle ]
+then
+  doBuild gradle "${@}"
+elif [ -f package.json ]
+then
+  if [ -f yarn.lock ]
+  then
+    doBuild yarn "${@}"
+  else
+    doBuild npm "${@}"
+  fi
+else
+  doFail "Currently not in a buildable project or build system could not be auto-detected"
+fi

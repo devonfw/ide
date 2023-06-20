@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  if [ "${1}" != "silent" ] || [[ ! $(command -v az) =~ ${DEVON_IDE_HOME}/software/ ]]
+  then
+    doDevonCommand pip install azure-cli az
+    setConfig
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "az -v" "verify installation of azure cli"
+  fi
+}
+
+function setConfig() {
+  local az_config_dir="${DEVON_IDE_HOME}/conf/.azure"
+  local az_config_export="export AZURE_CONFIG_DIR=${az_config_dir}"
+  if ! grep -q "${az_config_export}" "${DEVON_IDE_HOME}/conf/devon.properties"
+  then
+    doRunCommand "${az_config_export}"
+    echo -e "\n${az_config_export}" >> "${DEVON_IDE_HOME}/conf/devon.properties"
+    doEcho "Location of Azure's configuration file is set to ${az_config_dir}"
+  fi
+}
+
+function doRun() {
+  doSetup silent
+  doEcho "Running: az ${*}" 
+  az "${@}"
+}
+
+case ${1} in
+"help" | "-h")
+  echo "Install Azure CLI."
+  echo
+  echo "Arguments:"
+  echo " setup                    install Azure CLI on your machine."
+  echo " <<args>>                 call Azure CLI with the specified arguments. Call az --help for details or use Azure CLI directly as preferred."
+  echo
+;;
+
+"setup" | "s")
+  doSetup "${2}"
+;;
+
+*)
+  doRun "${@}"
+;;
+esac

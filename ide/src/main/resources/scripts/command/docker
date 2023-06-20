@@ -1,0 +1,245 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {  
+  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
+  then
+    echo "Rancher Desktop set as option"
+    if uname -r | grep -i microsoft
+    then 
+      doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+    else
+      if doIsRancherInstalled
+      then
+        if [ "${1}" != "silent" ] && ! doIsQuiet
+        then
+          #give the User the installation location when using linux or mac
+          if doIsWindows
+          then
+            doEnsureVpnKitInstallation
+            doEcho "Rancher Desktop is already installed"
+          else
+            doEcho "Rancher Desktop is already installed at $(command -v docker)"
+          fi
+        fi
+      else
+        doRequireNotBatch
+        local version="${RANCHER_VERSION}"
+        if [ -z "${version}" ]
+        then
+          version="1.4.1"
+          latestversion=$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com/rancher-sandbox/rancher-desktop/releases/latest | sed 's/.*\([0-9]\.[0-9]\.[0-9]\).*/\1/')
+          doVersionCompare "${latestversion}" "${version}"
+          VersCompRes=${?}
+          if [ "${VersCompRes}" = 1 ]
+          then
+            version=${latestversion}
+          fi
+        fi
+        local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
+        doInstall "-" "${rancher_install_dir}" "rancher" "${version}" 
+        if doIsWindows
+        then
+          doSetVpnKitStartupInstaller
+          doEcho "Installing Rancher Desktop for Windows..."
+          # ensures installation of vpnkit if user directly restarts computer for enabling wsl
+          doRunCommand "${rancher_install_dir}/rancher-${version}-windows.exe" 
+          #check if vpnkit is already installed
+          doEnsureVpnKitInstallation
+        elif doIsMacOs
+        then
+          # shellcheck disable=SC2016
+          doRunCommand 'cp -a "${rancher_install_dir}"/*.app /Applications/'
+        else
+          doRunCommand "cp -a \"${rancher_install_dir}/.\" \"${DEVON_IDE_HOME}/software/docker/\""
+          doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
+        fi
+        read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      fi
+    fi
+  else
+    if doIsDockerInstalled 
+    then
+      if [ "${1}" != "silent" ] && ! doIsQuiet
+      then
+        doEcho "docker is already installed at $(command -v docker)"
+        docker version
+      fi
+    else
+      doRequireNotBatch
+      local version="${DOCKER_VERSION:-stable}"
+      local code
+      if doIsWindows
+      then
+        code="Docker%20Desktop%20Installer"
+      elif doIsMacOs
+      then
+        code="Docker"
+      else
+        doFail "Sorry, docker-installation support is not yet implemented for your OS. Please use Rancher Desktop instead, or install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+      fi
+      doDownload "-" "" "docker" "${version}" "" "${code}"
+      if doIsWindows
+      then
+        doEchoStep "Installing Docker Desktop for Windows..."
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-win.exe"
+      elif doIsMacOs
+      then
+        doEchoStep "Installing Docker Desktop for MacOS..."
+        local mount_dir="${DEVON_IDE_HOME}/updates/volume"
+        mkdir -p "${mount_dir}"
+        doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
+        doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
+        doRunCommand "hdiutil detach -force '${mount_dir}'"
+      fi
+      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+    fi
+  fi
+}
+
+
+# Call Docker with specified arguments.   
+function doRun() {
+  doSetup silent
+  doEcho "Running: docker ${*}"
+  docker "${@}"
+}
+
+# OS independent check if docker is installed.
+function doIsDockerInstalled() {
+  if command -v docker &> /dev/null
+  then 
+    return
+  else
+    return 255
+  fi
+}
+
+function doEnsureVpnKitInstallation {
+  #check if vpnkit is already installed
+  if ! doIsVpnKitInstalled
+  then
+    doInstallVpnKit         
+    #if still not installed, reboot needed for WSL feature, so we set a startup script to install after reboot
+    if ! doIsVpnKitInstalled
+    then 
+      doSetVpnKitStartupInstaller
+    fi
+  fi
+}
+
+#OS independent check if Rancher Desktop is installed.
+#On Windows the user has to reboot the computer once after a RD installation for the function to work properly
+function doIsRancherInstalled() {
+    if doIsWindows
+    then
+      touch tmp-res-install-query rd-install-test.ps1
+      # shellcheck disable=SC2016,2028
+      echo 'if($env:Path -like "*Rancher Desktop*") { set-content .\tmp-res-install-query "installed"} else {set-content .\tmp-res-install-query "not"}' > rd-install-test.ps1
+      powershell.exe -Command ".\rd-install-test.ps1"
+      installvar=$(awk 'NR=1' tmp-res-install-query)
+      rm tmp-res-install-query rd-install-test.ps1
+      if [ "${installvar}" = "installed" ]
+      then
+        return 
+      else
+        return 255
+      fi
+    else
+      if command -v rancher-desktop &> /dev/null
+      then
+        return
+      else
+        return 255
+      fi
+    fi
+}
+
+
+function doIsVpnKitInstalled() {
+  # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
+  result=$(wsl -l | tr -d '\0' | grep wsl-vpnkit)
+  if [[ "${result}" == *"wsl-vpnkit"* ]]
+  then
+    return 0
+  else 
+    return 255
+  fi
+}
+
+
+#To make sure that as many windows users as possible are able to run this command, we use the ${APPDATA} variable to get into the startup folder 
+function doSetVpnKitStartupInstaller() {
+  {
+    echo '@ECHO OFF'
+    echo "start \"\" \"${EXEPATH}\\git-bash.exe\\\" -c \"cd \"${DEVON_IDE_HOME}\" && devon docker setup  && /usr/bin/bash --login -i\""
+    # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
+    echo '(goto) 2>nul & del "%~f0"' 
+  } > VpnKitInstaller.bat
+
+  mv VpnKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
+
+  #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
+}
+
+
+function doInstallVpnKit() {
+  #get latest version of the vpnkit and download its tar.gz file
+  local partialUrl
+  # shellcheck disable=SC1083  
+  partialUrl=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/sakai135/wsl-vpnkit/releases/latest)
+  local VpnVersion=${partialUrl##*/}
+  local downloadUrl="https://github.com/sakai135/wsl-vpnkit/releases/download/${VpnVersion}/wsl-vpnkit.tar.gz"
+  curl -fL "${downloadUrl}" -o "wsl-vpnkit.tar.gz"
+
+  #write a powershell-script
+  #go to an actual windows path for the powershell command by using pushd to be able to get back easily with popd
+  #execute command to start wsl-vpnkit
+  #redirect messages that won't be helpful for user
+  # shellcheck disable=SC1083,SC2129,SC2016
+  {
+    echo 'mv -Force wsl-vpnkit.tar.gz $env:USERPROFILE\wsl-vpnkit.tar.gz | Out-Null' 
+    echo 'pushd $env:USERPROFILE | Out-Null'
+    echo 'wsl --import wsl-vpnkit $env:USERPROFILE\wsl-vpnkit wsl-vpnkit.tar.gz --version 2 | Out-Null'
+    echo 'popd | Out-Null'
+    echo 'wsl.exe -d wsl-vpnkit service wsl-vpnkit start | Out-Null' 
+  } > vpnkit-setup.ps1
+
+  #execute the powershell-script 
+  # shellcheck disable=2091
+  powershell.exe -Command ".\vpnkit-setup.ps1"
+  rm vpnkit-setup.ps1
+}
+
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup docker."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup docker on your machine (global installation)."
+  echo " «args»                   call docker with the specified arguments. Call docker help for details or use docker directly as preferred."
+  echo 
+;;
+"setup" | "s" | "")
+  doSetup setup "${2}"
+;;
+*)
+   doRun "${@}"
+;;
+esac

@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup create generate db cicd help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if [ "${1}" != "silent" ] || [ ! -d "${NODE_HOME}" ]
+  then
+    local version="${NODE_VERSION:-v14.17.6}"
+    doInstall "-" "${NODE_HOME}" "nodejs" "${version}"
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    local node_binary="${NODE_HOME}/node.exe"
+    if [ ! -x "${node_binary}" ]
+    then
+      node_binary="${NODE_HOME}/bin/node"
+    fi
+    doRunCommand "'${node_binary}' -v" "verify installation of node.js"
+  fi
+}
+
+function doSetupDevon4node() {
+  if ! command -v devon4node &> /dev/null
+  then
+    doDevonCommand yarn setup silent
+    doDevonCommand npm install -g @devon4node/cli@latest
+  fi
+}
+
+function doRun() {
+  doSetup silent
+  doEcho "Running: node ${*}"
+  if doIsQuiet
+  then
+    node "${@}" > /dev/null
+  else
+    node "${@}"
+  fi
+}
+
+NODE_HOME="${DEVON_IDE_HOME}/software/node"
+
+#CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup or run NodeJS."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup NodeJS (install and verify)"
+  echo " create «name» [«args»]   create a new devon4node application (same as devon4node new)"
+  echo " generate «s» [«args»]    generate devon4node components using the schematic «s» (same as devon4node generate)"
+  echo " db «c» [«args»]          execute a TypeORM command «c» (same as devon4node db)"
+  echo " cicd «args»              generate cicd files for the current devon4node project: $PWD"
+  echo " «args»                   call NodeJS with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+;;
+"setup" | "s")
+  doSetup "${2}"
+;;
+"create" | "c")
+  shift
+  doSetupDevon4node
+  devon4node new "${@}"
+;;
+"generate" | "g")
+  doSetupDevon4node
+  devon4node "${@}"
+;;
+"db")
+  doSetupDevon4node
+  devon4node "${@}"
+;;
+"cicd")
+  shift
+  doDevonCommand cicdgen node "${*}"
+;;
+*)
+  doRun "${@}"
+;;
+esac

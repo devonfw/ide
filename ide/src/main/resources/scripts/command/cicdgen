@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup update java ng node help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if command -v cicdgen &> /dev/null && [ "${1}" != "update" ]
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "cicdgen is already installed at $(command -v cicdgen)"
+      return
+    fi
+  else
+    doDevonCommand npm install -g @devonfw/cicdgen@latest
+  fi
+}
+
+doRunCicdgen() {
+  doSetup silent
+  cicdgen generate "${@}"
+}
+
+function printCicdgenHelp() {
+  echo "Setup or update cicdgen CLI."
+  echo
+  echo "Arguments:"
+  echo "setup                 setup cicdgen (install and verify)"
+  echo "update                update cicdgen (reinstall with @latest version and verify)"
+  echo "java «args»           generate cicd files for the current devon4java project: $PWD"
+  echo "ng «args»             generate cicd files for the current devon4ng project: $PWD"
+  echo "node «args»           generate cicd files for the current devon4node project: $PWD"
+  echo "«args»                call cicdgen with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+}
+
+#CLI
+case ${1} in 
+"help" | "-h")
+  printCicdgenHelp
+;;
+"setup" | "s")
+  doSetup setup
+;;
+"update")
+  doSetup update
+;;
+"java")
+  shift
+  doRunCicdgen devon4j "${@}"
+;;
+"ng")
+  shift
+  doRunCicdgen devon4ng "${@}"
+;;
+"node")
+  shift
+  doRunCicdgen devon4node "${@}"
+;;
+*)
+  doSetup
+  cicdgen "${@}"
+;;
+esac

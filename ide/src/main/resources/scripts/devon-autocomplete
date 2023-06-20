@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+DEVON_IDE_PATH=${DEVON_IDE_HOME}/scripts
+
+local cur commandlist options
+COMPREPLY=()
+cur="${COMP_WORDS[COMP_CWORD]}"
+
+# prepare options
+options="-b --batch -f --force -d --debug -q --quiet"
+for (( i=0; i<$COMP_CWORD; i++ ))
+do
+  options="${options/${COMP_WORDS[$i]}/}"
+done
+
+if [ $COMP_CWORD -le 1 ]; then
+  # show all possible scripts
+  commandlist=$(\ls ${DEVON_IDE_PATH}/command/)
+  COMPREPLY=( $(compgen -W "${commandlist} help" -- ${cur}) )
+else
+  if [ $COMP_CWORD -eq 2 ]; then
+    # script specific first level completion
+    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist)
+  else
+    # script specific > 2 level completion
+    # remove flags (-*) if flags has been specified before
+    parameter=()
+    for value in "${COMP_WORDS[@]:2}"
+    do
+      [[ $value != -* ]] && parameter+=($value)
+    done
+    commandlist=$(${DEVON_IDE_PATH}/command/${COMP_WORDS[1]} shortlist ${parameter[@]})
+  fi
+  if [ -z "${commandlist}" ]; then
+    # only completion for flags
+    COMPREPLY=( $(compgen -W "${options}" -- ${cur}) )
+  else
+    # list only script completion if exist
+    COMPREPLY=( $(compgen -W "${commandlist}" -- ${cur}) )
+  fi
+fi

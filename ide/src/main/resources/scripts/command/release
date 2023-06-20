@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doGitHasUncomittedChanges() {
+  ! git diff-index --quiet HEAD || [ -n "$(git status -s)" ]
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Build and deploy a release from the current project."
+  echo
+  echo "Arguments:"
+  echo "...        optional arguments are directly passed to the build command (e.g. mvn) as additional arguments."
+  echo
+  echo "Options:"
+  exit
+fi
+
+if doGitHasUncomittedChanges
+then
+  doFail "Your local git repository has uncommitted changes. Please use 'git stash' and rerun on clean repo."
+fi
+
+if git remote -v | grep -q -e "github.com/$(whoami)" -e "upstream"
+then
+  git remote -v
+  doConfirmWarning "You seem to work on a fork. Releases should be done on the original repository!\nWe strongly recommend to abort and rerun on original repository."
+fi
+
+if [ -z "${force}" ] 
+then
+  if ! doDevonCommand build check-top-level-project
+  then
+    doFail "Release has to be performed from the top-level project or using force option."
+  fi
+fi
+
+doEcho "Trying to determine current version of your project..."
+current_version="$(doDevonCommand build -q get-version)" || doFail "Failed to determine version. You need to run 'mvn install' before.\n${current_version}"
+if doIsDevVersion "${current_version}" 
+then
+  doEcho "Current version is ${current_version} so we are assuming the version is not tracked in your version control."
+  doEcho "Existing tags are:"
+  git --no-pager tag --list
+  read -r -p "Please enter release version: " release_version
+  echo
+  next_version="${current_version}"
+else
+  release_version="${current_version/-SNAPSHOT/}"
+  next_version=$(doGetNextVersion "${release_version}")
+fi
+if [ "${current_version}" = "${release_version}-SNAPSHOT" ]
+then
+  next_version="${next_version}-SNAPSHOT"
+fi
+if [ "${current_version}" = "${release_version}" ]
+then
+  doConfirmWarning "Current version is not a SNAPSHOT version!"
+fi
+while true
+do
+  echo "Current version: ${current_version}"
+  echo "Release version: ${release_version}"
+  echo "Next version: ${next_version}"
+  if [ "${next_version/-SNAPSHOT/}" == "${next_version}" ]
+  then
+    doWarning "Next version is not a SNAPSHOT version!"
+  fi
+  echo
+  if doIsDevVersion "${current_version}"
+  then
+    break
+  fi
+  if doAskToContinue "Is next version correct?" "return"
+  then
+    break
+  else
+    read -r -p "Please enter next version: " next_version
+    echo
+  fi
+done
+echo
+if doIsDevVersion "${current_version}"
+then
+  export MVN_RELEASE_OPTS="-Drevision=${release_version} ${MVN_RELEASE_OPTS:-clean deploy -Dchangelist= -Pdeploy}"
+else
+  echo "Setting version of your project to ${release_version} ..."
+  doDevonCommand build set-version "${release_version}" "${current_version}" cleanKeepBackup
+  git add -u
+  git commit -m "set release version to ${release_version}"
+fi
+git tag -a "release/${release_version}" -m "tagged version ${release_version}" || doFail "Failed to tag your release!"
+while true
+do
+  echo
+  echo "Building and deploying the release..."
+  doDevonCommandAndReturn build release "${@}"
+  result=${?}
+  if [ "${result}" == 0 ]
+  then
+    break
+  else
+    doEchoAttention "Release build failed!"
+    if ! doAskToContinue "Do you want to retry the build (e.g. in case of a temporary network error)?" "return"
+    then
+      doFail "Release build failed and process aborted!\nYou should reset your local commits via 'git reset HEAD^'."
+    fi
+  fi
+done
+if doIsDevVersion "${current_version}"
+then
+  doEcho "Local tag needs to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
+else
+  echo "Setting version of your project to ${next_version} ..."
+  doDevonCommand build set-version "${next_version}" "${current_version}" ""
+  git add -u
+  git commit -m "set next version to ${next_version}"
+  doEcho "Local commits and tag need to be pushed now.\nYou now have the chance to review these changes manually before they are pushed."
+fi
+doAskToContinue
+git push
+git push --tags
+echo "Done."

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if doIsKubernetesInstalled
+  then
+    if [ "${1}" != "silent" ] && ! doIsQuiet
+    then
+      doEcho "Kubernetes is already installed at $(command -v kubectl)"
+      kubectl version
+    fi
+    return
+  fi
+  if doIsWindows || doIsMacOs
+  then
+    doDevonCommand docker setup silent
+  else
+    doFail "Sorry, kubernetes-installation support is not yet implemented for your OS. Please install manually or help devonfw-ide to support it for your OS by contributing a pull-request."
+  fi
+}
+
+
+# Call Kubernetes with specified arguments
+function doRun() {
+  doSetup
+  doEcho "Running: kubectl ${*}"
+  kubectl "${@}"
+}
+
+# OS independent check if Kubernetes is installed.
+function doIsKubernetesInstalled() {
+  if command -v kubectl &> /dev/null
+  then
+    return
+  else
+    return 255
+  fi
+}
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Setup Kubernetes."
+  echo
+  echo "Arguments:"
+  echo " setup                    setup Kubernetes on your machine (global installation)."
+  echo " «args»                   call Kubernetes with the specified arguments. Call kubernetes help for details or use Kubernetes(kubectl) directly as preferred."
+  echo  
+;;
+"setup" | "s" | "")
+  doSetup "${2}"
+;;
+*)
+  doRun "${@}"
+;;
+esac

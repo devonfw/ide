@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup start stop analyze help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${SONARQUBE_HOME}" ]
+  then
+    local version="${SONARQUBE_VERSION:-9.4.0.54424}"
+    doInstall "-" "${SONARQUBE_HOME}" "sonarqube" "${version}" "" "" "-"
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    echo doRunCommand "'${SONAR}' -v" "verify installation of sonarqube"
+  fi
+}
+
+function doStart() {
+  doSonar start
+}
+
+function doStop() {
+  doSonar stop
+}
+
+function doSonar() {
+  doSetup silent
+  if doIsWindows
+  then
+    if [ "${1}" = "start" ]
+    then
+      # "${SONARQUBE_HOME}/bin/windows-x86-64/StartNTService.bat"
+      "${SONARQUBE_HOME}/bin/windows-x86-64/StartSonar.bat"
+    elif [ "${1}" = "stop" ]
+    then
+      "${SONARQUBE_HOME}/bin/windows-x86-64/StopNTService.bat"
+    else
+      doFail "Unknown sonar command: ${1}"
+    fi
+  elif doIsMacOs
+  then
+    "${SONARQUBE_HOME}/bin/macosx-universal-64/sonar.sh" "${1}"
+  else
+    "${SONARQUBE_HOME}/bin/linux-x86-64/sonar.sh" "${1}"
+  fi
+  if [ "${1}" = "start" ]
+  then
+    echo "SonarQube is running at localhost on the following port (default 9000):"
+    grep "sonar.web.port" "${SONARQUBE_HOME}/conf/sonar.properties"
+  fi
+}
+
+function doAnalyze() {
+  doDevonCommand mvn sonar:sonar
+}
+
+# CLI
+SONARQUBE_HOME="${DEVON_IDE_HOME}/software/sonarqube"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run SonarQube server on local machine."
+  echo
+  echo "Arguments:"
+  echo " start                    start local SonarQube server"
+  echo " stop                     stop local SonarQube server"
+  echo " setup                    setup SonarQube (install, verify, configure)"
+  echo " analyze                  analyze current project with SonarQube"
+  echo
+  echo "Options:"
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "start" ]
+then
+  doStart
+elif [ "${1}" = "stop" ]
+then
+  doStop
+elif [ "${1}" = "analyze" ]
+then
+  shift
+  doAnalyze "${@}"
+else
+  doFail "undefined argument ${*}"
+fi

@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# Call Terraform with specified arguments.
+function doRun() {
+  doSetup silent
+  doRunCommand "${TERRAFORM_HOME}/terraform ${*}"
+}
+
+function doSetup() {
+  if [ ! -d "${TERRAFORM_HOME}" ] || [ "${1}" != "silent" ]
+  then
+    # Get leatest release
+    if [ -z "${TERRAFORM_VERSION}" ]
+    then
+      doEcho "Getting latest release..."
+      TERRAFORM_VERSION=$(curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | awk -F ":" '/tag_name/ {print $2}'| awk -F "\"" '{print $2}' | sed 's/v//')
+    fi
+
+    doInstall "-" "${TERRAFORM_HOME}" "terraform" "${TERRAFORM_VERSION}"
+
+    if ! grep terraform ~/.bashrc >/dev/null
+    then
+      terraform -install-autocomplete
+    fi
+  fi
+
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "terraform version"
+  fi 
+
+}
+
+TERRAFORM_HOME="${DEVON_IDE_HOME}/software/terraform"
+
+# CLI
+case ${1} in 
+"help" | "-h")
+  echo "Install terraform."
+  echo
+  echo "Arguments:"
+  echo " setup                    install terraform on your machine."
+  echo " <<args>>                 call terraform with the specified arguments. Call terraform --help for details or use terraform directly as preferred."
+  echo
+;;
+"setup" | "s" | "")
+  doEcho "Installating Terraform..."
+  doSetup
+;;
+*)
+  doRun "${@}"
+;;
+esac

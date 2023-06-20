@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup get-version set-version check-top-level-project release help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  local software_version=${NPM_VERSION}
+  local installed_version
+  if [ -x "${NPM_CMD}" ]
+  then
+    installed_version=$(${NPM_CMD} -version)
+  else 
+    doDevonCommand node setup silent
+    installed_version=$(${NPM_CMD} -version)
+  fi
+
+  if [ -z "${software_version}" ] || [ "${installed_version}" == "${software_version}" ] 
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Version ${installed_version} of npm is already installed at ${NPM_CMD}"
+    fi
+  else
+    local software_dir="${NODE_HOME}/node_modules/npm"
+    doInstall "-" "${software_dir}" "npm" "${software_version}"
+    if [ -f "${NODE_HOME}/npm" ]
+    then 
+      rm "${NODE_HOME}/npm"
+    fi    
+    if [ -f "${NODE_HOME}/npm.cmd" ]
+    then 
+      rm "${NODE_HOME}/npm.cmd"
+    fi
+    if [ -f "${NODE_HOME}/npx" ]
+    then 
+      rm "${NODE_HOME}/npx"
+    fi    
+    if [ -f "${NODE_HOME}/npx.cmd" ]
+    then 
+      rm "${NODE_HOME}/npx.cmd"
+    fi
+    cp "${software_dir}/bin/npm" "${NODE_HOME}"
+    cp "${software_dir}/bin/npm.cmd" "${NODE_HOME}"
+    cp "${software_dir}/bin/npx" "${NODE_HOME}"
+    cp "${software_dir}/bin/npx.cmd" "${NODE_HOME}"
+  fi    
+}
+
+function doGetProjectVersion() {
+  if [ -f package.json ]
+  then
+    local version_line
+    version_line="$(grep "\"version\"" package.json)" || doFail "Could not determine your version! Please check your package.json."
+    # shellcheck disable=SC2001
+    echo "${version_line}" | sed "s/.*:[ ]*\"\([^\"]*\)\".*/\1/"
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doSetProjectVersion() {
+  if [ -f package.json ]
+  then
+    cp package.json package.json.bak
+    sed "s/\"version\"\:[ ]*\"[^\"]*\"/\"version\": \"${1}\"/" package.json.bak > package.json
+    rm package.json.bak
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doCheckTopLevelProject() {
+  if [ ! -f package.json ]
+  then
+    doFail "No package.json - not an npm project."
+  fi
+  # IMHO npm/package.json does not support nested projects (modules)
+}
+
+function doRunBuild() {
+  doSetup silent
+  doEcho "Running: npm ${*}"
+  if doIsQuiet
+  then
+    "${NPM_CMD}" --quiet "${@}"
+  else
+    "${NPM_CMD}" "${@}"
+  fi
+}
+
+function doBuild() {
+  doRunBuild install
+  if doIsPackageJsonContainingScript build
+  then
+    doRunBuild run build
+  fi
+}
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run npm."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup NPM (install and verify)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if you are running on a top-level project or fail if in a module or no NPM project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   run NPM with the given arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+
+if [ -z "${NODE_HOME}" ]
+then
+  NODE_HOME="${DEVON_IDE_HOME}/software/node"
+fi
+
+NPM_CMD="${DEVON_IDE_HOME}/software/node/npm"
+if [ ! -x "${NPM_CMD}" ]
+then
+  NPM_CMD="${DEVON_IDE_HOME}/software/node/bin/npm"
+fi
+
+if [ -z "${1}" ] || [ "${1}" = "build" ]
+then
+  if [ -n "${NPM_BUILD_OPTS}" ]
+  then
+    # shellcheck disable=SC2086
+    doRunBuild ${NPM_BUILD_OPTS}
+  else
+    doBuild
+  fi
+  shift
+  if [ -n "${1}" ]
+  then
+    doRunBuild "${@}"
+  fi
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "get-version" ]
+then
+  doGetProjectVersion
+elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+then
+  shift
+  doSetProjectVersion "${@}"
+elif [ "${1}" = "check-top-level-project" ]
+then
+  shift
+  doCheckTopLevelProject "${@}"
+elif [ "${1}" = "release" ]
+then
+  # shellcheck disable=SC2086
+  doRunBuild ${NPM_RELEASE_OPTS:-release}
+else
+  doRunBuild "${@}"
+fi

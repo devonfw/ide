@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup get-version set-version check-top-level-project release help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  doDevonCommand java setup silent
+  if [ "${1}" != "silent" ] || [ ! -d "${GRADLE_HOME}" ]
+  then
+    local version="${GRADLE_VERSION:-5.5.1}"
+    doInstall "-" "${GRADLE_HOME}" "gradle" "${version}" "" "" "-"
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "'${GRADLE}' -v" "verify installation of gradle"
+  fi
+}
+
+function doGetProjectVersion() {
+  gradle properties -q | grep "version:" | sed "s/version:[ ]*//"
+}
+
+# $1: new version
+# $2: current version
+# $3: optional backup flag (cleanBackup, keepBackup, cleanKeepBackup)
+function doSetProjectVersion() {
+  local current_version="${2}"
+  if [ -z "${2}" ]
+  then
+    current_version="$(doGetProjectVersion)"
+  fi
+  # TODO
+  if [ -f gradle.properties ]
+  then
+    echo TODO
+  fi
+}
+
+function doCheckTopLevelProject() {
+  if [ ! -f build.gralde ]
+  then
+    doEcho "Not in a gradle project: ${PWD}"
+    exit 255
+  fi
+}
+
+function doRunBuild() {
+  local gradle_cmd="${GRADLE}"
+  if [ -x gradlew ]
+  then
+    gradle_cmd="./gradlew"
+  else
+    doSetup silent
+  fi
+  doEcho "Running: ${gradle_cmd} ${*}"
+  if doIsQuiet
+  then
+    "${gradle_cmd}" -q "${@}"
+  else
+    "${gradle_cmd}" "${@}"
+  fi
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run gradle build tool."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup gradle (install, verify, configure)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call gradle with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+GRADLE_HOME="${DEVON_IDE_HOME}/software/gradle"
+GRADLE="${GRADLE_HOME}/bin/gradle"
+if [ -z "${1}" ]
+then
+  # shellcheck disable=SC2086
+  doRunBuild ${GRADLE_BUILD_OPTS:-clean dist}
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+else
+  if [ "${1}" = "get-version" ]
+  then
+    doGetProjectVersion
+  elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+  then
+    shift
+    doSetProjectVersion "${@}"
+  elif [ "${1}" = "check-top-level-project" ]
+  then
+    shift
+    doCheckTopLevelProject "${@}"
+  elif [ "${1}" = "release" ]
+  then
+    # shellcheck disable=SC2086
+    doRunBuild ${GRADLE_RELEASE_OPTS:-clean release}
+  else
+    doRunBuild "${@}"
+  fi
+fi

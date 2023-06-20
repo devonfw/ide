@@ -1,0 +1,6 @@
+Windows Registry Editor Version 5.00
+
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\devon_cygwin\command]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\devon_cygwin\command]

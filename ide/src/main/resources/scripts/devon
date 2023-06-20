@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# Source this script from a linux shell to setup the environment variables for the corresponding project.
+# hash bang only for filetype detection and editor syntax support
+
+if [ "${1}" = "-v" ] || [ "${1}" = "--version" ]
+then
+  # shellcheck disable=SC2007,SC2154
+  echo "$[devon_ide_version]"
+  return 0 2>/dev/null
+  exit 0
+fi
+
+# initialize environment...
+L_PWD=${PWD}
+L_BASEDIR=${PWD}
+while true
+do
+  if [ -f "${PWD}/scripts/environment-project" ] && [ "${PWD: -27}" != "/scripts/src/main/resources" ]
+  then
+    L_RESTDIR=${L_BASEDIR:${#PWD}}
+    WORKSPACE=main
+    if [ "${L_RESTDIR:0:12}" = "/workspaces/" ]
+    then
+      L_RESTDIR=${L_RESTDIR:12}
+      L_RESTDIR=${L_RESTDIR/\/*/}
+      if [ -n "${L_RESTDIR}" ]
+      then
+        L_WKS=${PWD}/workspaces/${L_RESTDIR}
+        if [ -d "${L_WKS}" ]
+        then
+          WORKSPACE="${L_RESTDIR}"
+          export WORKSPACE
+        fi
+      fi
+    fi
+    export DEVON_IDE_HOME="${PWD}"
+    if [ -z "${1}" ]
+    then
+      source scripts/environment-project
+      unset -f doLoadProperties
+      unset -f doUpdatePath
+    fi
+    if [ -z "${1}" ]
+    then
+      echo "devonfw-ide environment variables have been set for ${PWD} in workspace ${WORKSPACE}"
+    fi
+    cd "${L_PWD}" || exit 255
+    break
+  fi
+  L_LINKDIR="$(readlink "${PWD}")"
+  if [ "${?}" = 0 ]
+  then
+    cd "${L_LINKDIR}" || exit 255
+    L_BASEDIR="${PWD}"
+  else
+    cd ..
+  fi
+  if [ "${PWD}" = "/" ]
+  then
+    echo -e "\033[93mYou are not inside a devonfw-ide installation: ${L_PWD}\033[39m"
+    cd "${L_PWD}" || exit 255
+    break
+  fi
+done
+L_PWD=
+L_BASEDIR=
+L_RESTDIR=
+
+# Auto-install ourselves...
+if [ ! -f ~/.devon/devon ]
+then
+  mkdir -p ~/.devon  
+  echo "Copying devon CLI script to your home directory..."
+  cp "${BASH_SOURCE:-$0}" ~/.devon/devon
+  
+  if [ ! -e ~/.bashrc ]
+  then
+    touch ~/.bashrc
+  fi
+  if ! grep -q "alias devon=" ~/.bashrc
+  then
+    echo "Installing devon alias to your .bashrc"
+    echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.bashrc
+  fi
+
+  if [ ! -e ~/.zshrc ]
+  then
+    touch ~/.zshrc
+  fi
+  if ! grep -q "alias devon=" ~/.zshrc
+  then
+    echo "Installing devon alias to your .zshrc"
+    echo -e 'alias devon="source ~/.devon/devon"\ndevon' >> ~/.zshrc
+  fi
+
+  if [ "${OSTYPE:0:6}" = "darwin" ]
+  then
+    if [ ! -e ~/.bash_profile ]
+    then
+      touch ~/.bash_profile
+    fi
+    if ! grep -q "alias devon=" ~/.bash_profile
+    then
+      echo "Installing devon alias to your .bash_profile"
+      echo -e '\nalias devon="source ~/.devon/devon"\ndevon' >> ~/.bash_profile
+    fi
+  fi
+
+  alias devon="source ~/.devon/devon"
+  echo -e "\033[92mThe devon CLI script has been installed to your system.\033[39m"
+  echo "Now in any new shell, you can call devon to setup your IDE environment variables."
+  echo "You can also provide arguments to devon for advanced usage (try calling 'devon help')"
+fi
+if ! [ -f ~/.devon/home ] && [ -n "${DEVON_IDE_HOME}" ]
+then
+  echo "DEVON_IDE_HOME=${DEVON_IDE_HOME}" > ~/.devon/home
+fi
+
+# proceed with CLI
+result=0
+if [ -n "${1}" ]
+then
+  command="${1}"
+  if [ "${1}" = "-h" ] || [ "${1}" = "--help" ]
+  then
+    command="help"
+  fi
+  shift
+  args=
+  if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]
+  then
+    args="${command}"
+    command="help"
+  fi
+  if [ -z "${DEVON_IDE_HOME}" ]
+  then
+    if [ -f ~/.devon/home ]
+    then
+      # shellcheck disable=SC1090
+      source ~/.devon/home
+    fi
+  fi
+  if ! [ -d "${DEVON_IDE_HOME}" ]
+  then
+    echo -e "\033[91mDEVON_IDE_HOME does not exist!\033[39m"
+    if [ -n "${DEVON_IDE_HOME}" ]
+    then
+      echo "It seems as if your original installation (${DEVON_IDE_HOME}) has been moved."
+      if [ -f ~/.devon/home ]
+      then
+        rm ~/.devon/home
+      fi
+    fi
+  fi
+  if [ -f "${DEVON_IDE_HOME}/scripts/command/${command}" ]
+  then
+    if [ ! -x "${DEVON_IDE_HOME}/scripts/command/${command}" ]
+    then
+      echo -e "\033[93mCommand ${command} is not executable. Trying to repair\033[39m"
+      chmod a+x "${DEVON_IDE_HOME}/scripts/command/${command}"
+    fi
+    if [ -n "${args}" ]
+    then
+      "${DEVON_IDE_HOME}/scripts/command/${command}" "${args}"
+      result=${?}
+    else
+      "${DEVON_IDE_HOME}/scripts/command/${command}" "${@}"
+      result=${?}
+    fi
+  else
+    echo -e "\033[91mUnknown command ${command}\033[39m"
+    result=255
+  fi  
+fi
+return ${result} 2>/dev/null
+exit ${result}

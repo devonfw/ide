@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: project to setup (omit for all all projects)
+function doSetup() {
+  if [ -n "${1}" ]
+  then
+    local project_file="${1}"
+    if [ ! -f "${project_file}" ]
+    then
+      project_file="${SETTINGS_PATH}/projects/${1}.properties"
+    fi
+    if [ ! -f "${project_file}" ]
+    then
+      doFail "Could not find ${project_file}"
+    fi
+    doImportProject "${project_file}" "force"
+  elif [ -d "${SETTINGS_PATH}/projects" ]
+  then    
+    local last_cwd file project_force
+    project_force=""
+    if doIsForce
+    then
+      project_force="force"
+    fi
+    last_cwd="${PWD}"
+    for file in "${SETTINGS_PATH}"/projects/*.properties
+    do
+      doImportProject "${file}" "${project_force}"
+    done
+    cd "${last_cwd}" || exit 255
+  fi
+}
+
+# $1: path to properties file
+function doImportProject() {
+  if [ ! -f "${1}" ]
+  then
+    return
+  fi
+  project_path=""
+  project_workingsets=""
+  project_workspace="main"
+  project_git_url=""
+  project_git_branch=""
+  project_build_path="."
+  project_eclipse=""
+  project_build_cmd=""
+  project_active="true"
+  doEcho "Importing from ${file}..."
+  doLoadProperties "${1}" "project_"
+  if [ "${project_active}" != "true" ]
+  then
+    doEcho "Project is not active by default."
+    if [ "${2}" = "force" ]
+    then
+      doEcho "Project setup is forced, hence proceeding..."
+    else
+      doEcho "Skipping project - use force (-f) to setup all projects..."
+      return
+    fi
+  fi
+  if [ -z "${project_path}" ] && [ -z "${project_git_url}" ]
+  then
+    doFail "Invalid project configuration ${1} - both 'path' and 'git_url' have to be defined."
+  fi
+  doDebug "Project (Path: ${project_path}, Url: ${project_git_url}, Branch: ${project_git_branch}, Eclipse: ${project_eclipse}, Workspace: ${project_workspace}, Workingsets: ${project_workingsets})"
+  doDebug "Pull or clone git project ${project_path}..."
+  project_workspace_path="${DEVON_IDE_HOME}/workspaces/${project_workspace}"
+  mkdir -p "${project_workspace_path}"
+  cd "${project_workspace_path}" || exit 255
+  doGitPullOrClone "${project_path}" "${project_git_url}" "${project_git_branch}"
+  doDebug "Building project with devon command: ${project_build_cmd}"
+  if [ -n "${project_build_cmd}" ]
+  then
+    cd "${project_path}/${project_build_path}" || exit 255
+    # shellcheck disable=SC2086
+    doDevonCommand ${project_build_cmd}
+    cd "${project_workspace_path}" || exit 255
+  else
+    doEcho "Build command not set. Skipping build for project."
+  fi
+  if [ "${project_eclipse}" == "import" ] && [ ! -f "${project_path}/.project" ]
+  then
+    export WORKSPACE=${project_workspace}
+    export WORKSPACE_PATH=${DEVON_IDE_HOME}/workspaces/${WORKSPACE}
+    doDevonCommandAndReturn eclipse import "${project_path}" "${project_workingsets}"
+  fi
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup and manage projects of devonfw-ide."
+  echo
+  echo "Arguments:"
+  echo "setup [«project»]                setup or update all or the specified project(s)"
+  exit
+elif [ "${1}" = "setup" ]
+then
+  shift
+  doSetup "${@}"
+elif [ -z "${1}" ]
+then
+  doFail "Unknown argument: ${1}"
+else
+  doFail "Missing arguments. Call 'devon help project' to get help."
+fi

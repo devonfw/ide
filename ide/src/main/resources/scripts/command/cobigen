@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+function doSetup() {
+  # We need Java to run and Maven for installing plug-ins
+  doDevonCommand mvn setup silent
+  if [ "${1}" == "silent" ] && [ -d "${COBIGEN_CLI_HOME}" ]
+  then
+    return
+  fi
+  if [ ! -d "${COBIGEN_CLI_HOME}" ]
+  then
+    doUpgradeMavenArtifact "${COBIGEN_CLI_HOME}" "https://repo.maven.apache.org/maven2/com/devonfw/cobigen" "cli" "${COBIGEN_VERSION:-LATEST}" ".tar.gz"
+    doExtendPath "${COBIGEN_CLI_HOME}"
+    doEcho "To be fully functional please rerun 'devon' command to update your PATH properly."
+  elif [ "${1}" != "silent" ]
+  then
+    doEcho "Software already installed at ${COBIGEN_CLI_HOME}"
+    doEcho "To force install please run devon cobigen setup."
+  fi 
+}
+
+# $@: optional CobiGen arguments
+function doRunCLI() {
+  local cobigen_cmd="cobigen"
+  doEcho "Running: ${cobigen_cmd} ${*}"
+  "${cobigen_cmd}" "${@}"
+  exit ${?}
+}
+
+# CLI
+COBIGEN_CLI_HOME="${DEVON_IDE_HOME}/software/cobigen-cli"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup CobiGen CLI."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup CobiGen CLI (install, verify)"
+  echo " «args»                   call CobiGen CLI with the specified arguments"
+  echo
+  echo "Options:"
+elif [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+else
+  doSetup silent
+  doRunCLI "${@}"
+fi

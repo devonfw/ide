@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup create migrate cicd help"
+  elif [ "${2}" = "migrate" ]
+  then
+    shortlist3="from"
+    if [ -z "${3}" ] || [[ ! " ${shortlist3} " == *" ${3} "* ]]
+    then
+      echo "${shortlist3}"
+    fi
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  export JAVA_HOME="${DEVON_IDE_HOME}/software/java"
+  local version="${JAVA_VERSION:-11.0.13_8}"
+  doSetupJava "${1}" "${version}" "${DEVON_IDE_HOME}/software"
+  if [ -n "${EXTRA_JAVA_VERSION}" ]
+  then
+    if [ "${EXTRA_JAVA_VERSION}" = "${version}" ]
+    then
+      doConfirmWarning "You have configured EXTRA_JAVA_VERSION=${EXTRA_JAVA_VERSION} what is the same as JAVA_VERSION.\nThis does not make any sense. Please revisit your configuration."
+    fi
+    doSetupJava "${1}" "${EXTRA_JAVA_VERSION}" "${DEVON_IDE_HOME}/software/extra"
+  fi
+}
+
+# $1: mode (e.g. 'silent')
+# $2: version
+# $3: software path
+# $4: label (e.g. 'extra Java')
+function doSetupJava() {
+  local mode="${1}"
+  local version="${2}"
+  local path="${3}"
+  local java_path="${path}/java"
+  if [ "${mode}" != "silent" ] || [ ! -d "${java_path}" ]
+  then
+    local code
+    if [ "${version:0:1}" = "8" ]
+    then
+      code="jdk${version/b/-b}"
+    else
+      code="jdk-${version/_/%2B}"
+    fi
+    doInstall "-" "${java_path}" "java" "${version}" "" "${code}"
+    # delete not used jdk for old installations
+    rm -rf "${DEVON_IDE_HOME}/software/jdk"
+  fi
+  if [ "${mode}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "'${java_path}/bin/java' -version" "verify installation of Java"
+  fi
+}
+
+#$@ args (see help)
+function doMigrate() {
+  doRunConfigurator com.devonfw.tools.ide.migrator.Migrator "${@}"
+  exit ${?}
+}
+
+#$@ args (see help)
+function doCreate() {
+  if [ -z "${1}" ]
+  then
+    doFail "Missing arguments for devon4j project creation. Please read the documentation:\nhttps://github.com/devonfw/ide/blob/master/documentation/java.asciidoc#create"
+  fi
+  if [ "$(dirname "${PWD}")" != "${DEVON_IDE_HOME}/workspaces" ]
+  then
+    doWarning "You are currently not directly in a workspace folder. Current location is:\n${PWD}"
+    if doAskToContinue "Create project in main workspace instead?" "return"
+    then
+      cd "${DEVON_IDE_HOME}/workspaces/main" || exit 255
+    fi
+  fi
+  doMavenArchetype "${@}"
+  exit ${?}
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Install and manage Java."
+  echo
+  echo "Arguments:"
+  echo " setup                              setup Java (install and verify)"
+  echo " create «args»                      create new Java project based on devon4j template. If a single argument is provided,"
+  echo "                                    this is the package name and is automatically split into groupId and artifactId. Use"
+  echo "                                    -DdbType=«db» to choose the database. Any option starting with dash is passed as is."
+  echo " migrate [from «version»] [single]  update the current devon4j project to the latest supported version. If for some reasons"
+  echo "                                    the current devonfw version (e.g. oasp4j:2.6.0) can not be auto-detected you may provide"
+  echo "                                    it manually after the 'from' argument. Also the 'single' option allows to migrate only to"
+  echo "                                    the next available version."
+  echo " cicd «args»                        generate cicd files for the current project: $PWD"
+  echo
+  echo "Options:"
+elif [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "create" ]
+then
+  doSetup silent
+  shift
+  doCreate "${@}"
+elif [ "${1}" = "migrate" ]
+then
+  shift
+  doMigrate "${@}"
+elif [ "${1}" = "cicd" ]
+then
+  shift
+  doDevonCommand cicdgen java "${*}"
+else
+  doFail "Unknown argument ${1}"
+fi

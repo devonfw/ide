@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup create cicd help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  doDevonCommand npm setup silent
+  local version=${NG_VERSION:-latest}
+  local installed_version
+  installed_version=$(npm list -g --depth 0 | sed -n -e '/angular\/cli/ s/.*@//p')
+  if [ "${installed_version}" == "${version}" ] 
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Version ${installed_version} of angular-cli (ng) is already installed at ${NG_CMD}."
+    fi
+  elif [ "${1}" != "silent" ] || [ "${version}" != "latest" ]
+  then
+    doEcho "Installing angular-cli ${version}..."
+    doDevonCommand npm install -g "@angular/cli@${version}"
+  fi
+}
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run angular-cli (ng)."
+  echo
+  echo "Arguments:"
+  echo "setup                 setup angular-cli (install and verify)"
+  echo "create                create a new devon4ng project"
+  echo "cicd «args»           generate cicd files for the current devon4ng project: $PWD"
+  echo "«args»                call ng with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+NG_CMD="${DEVON_IDE_HOME}/software/node/ng"
+if [ ! -x "${NG_CMD}" ]
+then
+  NG_CMD="${DEVON_IDE_HOME}/software/node/bin/ng"
+fi
+
+if [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "create" ]
+then
+  shift
+  doSetup silent
+  ng new "${@}"
+elif [ "${1}" = "cicd" ]
+then
+  shift
+  doDevonCommand cicdgen ng "${*}"
+else
+  doSetup silent
+  "${NG_CMD}" "${@}"
+fi

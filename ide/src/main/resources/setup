@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd "$(dirname "${BASH_SOURCE:-$0}")" || exit 255
+echo "Setting up your devonfw-ide in ${PWD}"
+source scripts/devon ide setup "${@}"

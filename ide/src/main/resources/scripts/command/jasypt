@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup encrypt decrypt help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  doDevonCommand java setup silent
+  if [ ! -e "${JASYPT_ARTIFACT}" ]
+  then
+    doEcho "Downloading jasypt version ${JASYPT_VERSION} to local maven repository..."
+    doDevonCommand mvn org.apache.maven.plugins:maven-dependency-plugin:3.1.2:get "-Dartifact=org.jasypt:jasypt:${JASYPT_VERSION}"
+  elif [ "${1}" != "silent" ]
+  then
+    doEcho "Jasypt version ${JASYPT_VERSION} is already installed."
+  fi
+}
+
+function doJasypt() {
+  doSetup silent
+  if [ -z "${2}" ]
+  then
+    local masterpassword
+    read -r -p "Enter masterpassword: " masterpassword
+    local secret
+    read -r -p "Enter secret to encrypt/decrypt: " secret
+    java -cp "${JASYPT_ARTIFACT}" "${1}" algorithm=PBEWITHHMACSHA512ANDAES_256 input=secret ivGeneratorClassName=org.jasypt.iv.RandomIvGenerator "password=${masterpassword}" "input=${secret}"
+  else
+    java -cp "${JASYPT_ARTIFACT}" "${@}"
+  fi
+}
+
+function doDecrypt() {
+  doSetup silent
+  java -cp "${JASYPT_ARTIFACT}" org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI "${@}"
+}
+
+# CLI
+if [ -z "${JASYPT_VERSION}" ]
+then
+  JASYPT_VERSION="1.9.3"
+fi
+JASYPT_ARTIFACT="${M2_REPO}/org/jasypt/jasypt/${JASYPT_VERSION}/jasypt-${JASYPT_VERSION}.jar"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run maven build tool."
+  echo
+  echo "Arguments:"
+  echo " setup                setup jasypt (install into local maven repo)"
+  echo " encrypt              encrypt a secret with a master-password"
+  echo " decrypt              decrypt an encrypted secret with a master-password"
+  echo
+  echo "Options:"
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "encrypt" ]
+then
+  shift
+  doJasypt org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI "${@}"
+elif [ "${1}" = "decrypt" ]
+then
+  shift
+  doJasypt org.jasypt.intf.cli.JasyptPBEStringDecryptionCLI "${@}"
+else
+  doFail "Unknown argument ${1}"
+fi

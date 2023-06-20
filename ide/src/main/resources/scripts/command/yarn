@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup get-version set-version check-top-level-project release help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  local version="${YARN_VERSION:-latest}"
+  local installed_version
+  if command -v yarn &> /dev/null
+  then
+    installed_version="$(yarn -version)"
+  fi
+
+  if [ "${installed_version}" == "${version}" ] 
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "Version ${installed_version} of yarn is already installed at $(command -v yarn)"
+    fi
+  elif [ "${1}" != "silent" ] || [ "${version}" != "latest" ]
+  then
+    doDevonCommand npm setup silent
+    if command -v npm &> /dev/null
+    then
+      doRunCommand "npm install -g yarn@${version}"
+    else
+      doRunCommand "brew install yarn@${version}"
+    fi
+  fi
+}
+
+function doGetProjectVersion() {
+  if [ -f package.json ]
+  then
+    local version_line
+    version_line="$(grep "\"version\"" package.json)" || doFail "Could not determine your version! Please check your package.json."
+    # shellcheck disable=SC2001
+    echo "${version_line}" | sed "s/.*:[ ]*\"\([^\"]*\)\".*/\1/"
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doSetProjectVersion() {
+  if [ -f package.json ]
+  then
+    cp package.json package.json.bak
+    sed "s/\"version\"\:[ ]*\"[^\"]*\"/\"version\": \"${1}\"/" package.json.bak > package.json
+    rm package.json.bak
+  else
+    doFail "No package.json - not an npm project."
+  fi
+}
+
+function doCheckTopLevelProject() {
+  if [ ! -f package.json ]
+  then
+    doFail "No package.json - not an npm project."
+  fi
+  # IMHO npm/package.json does not support nested projects (modules)
+}
+
+function doRunBuild() {
+  doSetup silent
+  doEcho "Running: yarn ${*}"
+  if doIsQuiet
+  then
+    yarn --silent "${@}"
+  else
+    yarn "${@}"
+  fi
+}
+
+function doBuild() {
+  doRunBuild install
+  if doIsPackageJsonContainingScript build
+  then
+    doRunBuild run build
+  fi
+}
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run yarn."
+  echo
+  echo "Arguments:"
+  echo "                          run default build"
+  echo " setup                    setup angular-cli (install and verify)"
+  echo " get-version              get the current project version"
+  echo " set-version «nv» [«cv»]  set the current project version to new version «nv» (assuming current version is «cv»)"
+  echo " check-top-level-project  check if we are running on a top-level project or fail if in a module or no maven project at all"
+  echo " release                  start a clean deploy release build"
+  echo " «args»                   call maven with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+if [ -z "${1}" ] || [ "${1}" = "build" ]
+then
+  if [ -n "${YARN_BUILD_OPTS}" ]
+  then
+    # shellcheck disable=SC2086
+    doRunBuild ${YARN_BUILD_OPTS}
+  else
+    doBuild
+  fi
+  shift
+  if [ -n "${1}" ]
+  then
+    doRunBuild "${@}"
+  fi
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "get-version" ]
+then
+  doGetProjectVersion
+elif [ "${1}" = "set-version" ] && [ -n "${2}" ]
+then
+  shift
+  doSetProjectVersion "${@}"
+elif [ "${1}" = "check-top-level-project" ]
+then
+  shift
+  doCheckTopLevelProject "${@}"
+elif [ "${1}" = "release" ]
+then
+  # shellcheck disable=SC2086
+  doRunBuild ${YARN_RELEASE_OPTS:-release}
+else
+  doRunBuild "${@}"
+fi

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    \ls "$(dirname "${BASH_SOURCE:-$0}")"/
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+echo
+doLogo
+echo
+# shellcheck disable=SC2007,SC2154
+doSuccess "Current version of devon-scripts is $[devon_ide_version]"
+echo
+if [ -z "${1}" ]
+then
+  echo "usage: devon [command [args]]"
+  echo "Setup devonfw IDE environment and optionally launch commands."
+  echo 
+  echo "Commands:"
+  for command in "${DEVON_IDE_HOME}/scripts/command/"*
+  do
+    doEchoOption " $(basename "${command}")"
+  done
+  echo
+  echo "For further details use:"
+  echo "devon help <command>"
+else
+  echo "usage: devon ${1} [options] [args]"
+  echo
+  if [ "${1}" = "help" ]
+  then
+    echo "devon help <command>"
+    echo "Print help for <command>"
+  else
+    doDevonCommand "${1}" help
+    echo " -b | --batch         run in non-interactive mode (do not ask any questions)."
+    echo " -q | --quiet         be quiet and avoid output."
+    echo " -d | --debug         be extra verbose and print more output for debugging."
+    echo " -f | --force         force proceeding even in case of warnings."
+  fi
+fi

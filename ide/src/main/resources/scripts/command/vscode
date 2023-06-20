@@ -1,0 +1,181 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "--all setup add-plugin run start ws-update ws-reverse ws-reverse-add create-script help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+cd "${DEVON_IDE_HOME}" || exit 255
+
+function doSetup() {
+  if [ "${1}" != "silent" ] || [ ! -d "${VSCODE_HOME}" ]
+  then
+    local version="${VSCODE_VERSION:-1.71.0}"
+    doInstall "-" "${VSCODE_HOME}" "vscode" "${version}"
+    if [ "${?}" = 0 ]
+    then
+      if doIsMacOs
+      then
+        mkdir "${VSCODE_HOME}/bin"
+        echo -e "#!/usr/bin/env bash\n\"${VSCODE_HOME}/Visual Studio Code.app/Contents/MacOS/Electron\" \$@" > "${VSCODE_HOME}/bin/code"
+        chmod a+x "${VSCODE_HOME}/bin/code"
+      fi
+    fi
+    cleanupPlugins
+    doAddPlugins
+  fi
+}
+
+function cleanupPlugins() {
+  clean_plugins_on_update="false"
+  doLoadProperties "${SETTINGS_PATH}"/vscode/vscode.properties
+
+  if [ "${clean_plugins_on_update}" = "true" ]
+  then
+    doEcho "Cleaning up all extensions"
+    doRunCommand "rm -Rf ${DEVON_IDE_HOME}/software/vscode-extensions/*"
+  else
+    doEcho "vsCode extensions not configured to be removed on update. If you would like to do so, please create ${SETTINGS_PATH}/vscode/vscode.properties with clean_plugins_on_update=true."
+  fi
+}
+
+function doAddPlugins() {
+  local file
+  local pluginsToInstall
+  for file in "${SETTINGS_PATH}"/vscode/plugins/*.properties
+  do
+    if [ -f "${file}" ]
+    then
+      plugin_id=""
+      plugin_active="true"
+      doLoadProperties "${file}"
+      if [ -z "${plugin_id}" ]
+      then
+        doWarning "Invalid vscode plugin config: ${file}"
+      elif [ "${plugin_active}" = "true" ]
+      then
+        pluginsToInstall="${pluginsToInstall} --install-extension ${plugin_id}"
+      fi
+    fi
+  done
+  doAddPlugin "${pluginsToInstall}"
+}
+
+function doAddPlugin() {
+  if [ -n "${1}" ]
+  then
+    doEchoAttention "Execute plugin installation with following parameters (${1}) into VS code...\nPlease wait until VSCode has successfully installed all plugins.\nYou may then use or close VSCode as you like."
+    doRunVsCode --force "${1}"
+  else
+    doEcho "No plugins to be installed / uninstalled"
+  fi
+}
+
+function doConfigureVsCode() {
+  local mode="${1}"
+  if [ ! -d "${WORKSPACE_PATH}/.vscode" ]
+  then
+    if [ "${mode}" = "-i" ] || [ "${mode}" = "-x" ]
+    then
+      doFail "Workspace ${WORKSPACE} is not initialized.\nReverse merge is not possible."
+    fi
+    mode="-u"
+  fi
+  if [ -n "${mode}" ]
+  then
+    doConfigureWorkspace "${SETTINGS_PATH}/vscode/workspace" "${WORKSPACE_PATH}" "${mode}"
+  fi
+}
+
+function doRunVsCode() {
+  local VSCODE_CONF="${WORKSPACE_PATH}/.vscode/.userdata"
+  if [ ! -d "${VSCODE_CONF}" ]
+  then
+    if [ -d "${DEVON_IDE_HOME}/conf/vscode" ]
+    then
+      doEcho "Migrating ${DEVON_IDE_HOME}/conf/vscode to ${VSCODE_CONF}\nFor details see https://github.com/devonfw/ide/issues/553"
+      cp -a "${DEVON_IDE_HOME}/conf/vscode" "${VSCODE_CONF}"
+    else
+      mkdir -p "${VSCODE_CONF}"
+    fi
+  fi
+  local VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
+  mkdir -p "${VSCODE_EXT}"
+  doRunCommand "'${VSCODE_HOME}/bin/code' --new-window --user-data-dir '${VSCODE_CONF}' --extensions-dir '${VSCODE_EXT}' ${*}"
+}
+
+function doStartVsCode() {
+  doConfigureVsCode -u
+  doEcho "launching VSCode..."
+  doRunVsCode "${WORKSPACE_PATH}"
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Launch Visual Studio Code and/or manage VSCode workspace."
+  echo
+  echo "Arguments:"
+  echo " --all                if provided as first arg then to command will be invoked for each workspace"
+  echo " setup                setup VSCode (install or update)"
+  echo " add-plugin «id»      install an additional plugin (extension)"
+  echo " run | start          launch VSCode IDE (default if no argument is given)"
+  echo " ws-up[date]          update VSCode workspace"
+  echo " ws-re[verse]         reverse merge changes from workspace into settings"
+  echo " ws-reverse-add       reverse merge adding new properties"
+  echo " create-script        create vscode-${WORKSPACE} script if not already exists"
+  echo
+  echo "Options:"
+  exit
+fi
+VSCODE_HOME="${DEVON_IDE_HOME}/software/vscode"
+if [ -z "${1}" ]
+then
+  doSetup
+  doStartVsCode
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+  exit
+fi
+if [ "${1}" = "--all" ]
+then
+  shift
+  doDevonCommandAllWorkspaces vscode "${@}"
+fi
+while [ -n "${1}" ]
+do
+  if [ "${1}" = "run" ] || [ "${1}" = "start" ]
+  then
+    doSetup silent
+    doStartVsCode
+  elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
+  then
+    doConfigureVsCode -u
+  elif [ "${1}" = "ws-re" ] || [ "${1}" = "ws-reverse" ]
+  then
+    doConfigureVsCode -i
+  elif [ "${1}" = "ws-reverse-add" ]
+  then
+    doConfigureVsCode -x
+  elif [ "${1}" = "create-script" ]
+  then
+    doCreateIdeScript vscode
+  elif [ "${1}" = "add-plugin" ]
+  then
+    shift
+    doAddPlugin "${@}"
+    exit ${?}
+  else
+    doFail "Undefined argument: ${1}"
+  fi
+  shift
+done

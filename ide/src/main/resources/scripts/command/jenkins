@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup start stop add remove help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  doDevonCommand java setup silent
+  if [ -d "${JENKINS_HOME}" ]
+  then
+    if [ "${1}" != "silent" ]
+    then
+      echo "Jenkins is already installed at ${JENKINS_HOME}"
+    fi
+  else
+    local version=${JENKINS_VERSION:-latest}
+    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "" "jenkins.war"
+    mkdir -p "${JENKINS_HOME}"
+    doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
+    # http://localhost:9999/jnlpJars/jenkins-cli.jar
+    local cwd="${PWD}"
+    cd "${JENKINS_HOME}" || exit 255
+    doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
+    cd "${cwd}" || exit 255
+  fi
+  if [ "${1}" != "silent" ] && ! doIsQuiet
+  then
+    doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verify installation of Jenkins"
+  fi
+}
+
+function doStart() {
+  doSetup silent
+  doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
+  sleep 15  
+  echo
+  echo "Jenkins is running on http://localhost:${JENKINS_PORT:-9999}"
+}
+
+function doJenkinsCli() {
+  echo java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
+  java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
+}
+
+function doStop() {
+  doJenkinsCli shutdown
+}
+
+# shellcheck disable=SC2120
+function doAdd() {
+  if [ ! -d .git ]
+  then
+    doFail "Not in a top-level git project!"
+  fi
+  local JENKINSFILE="${1:-Jenkinsfile}"
+  if [ ! -f "${JENKINSFILE}" ]
+  then
+    doFail "Could not find Jenkinsfile (${JENKINSFILE})."
+  fi
+  sed "s~@GIT@~file://${PWD}~" "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename "${PWD}")"
+}
+
+function doRemove() {
+  doJenkinsCli delete-job "$(basename "${PWD}")"
+}
+
+# CLI
+JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run Jenkins CI build server on local machine."
+  echo
+  echo "Arguments:"
+  echo " start                    start local Jenkins server"
+  echo " stop                     stop local Jenkins server"
+  echo " setup                    setup Jenkins (install, verify, configure)"
+  echo " add                      add CI job for current project to Jenkins"
+  echo " remove                   remove CI job for current project from Jenkins"
+  echo
+  echo "Options:"
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "start" ]
+then
+  doStart
+elif [ "${1}" = "stop" ]
+then
+  doStop
+elif [ "${1}" = "add" ]
+then
+  shift
+  doAdd "${@}"
+elif [ "${1}" = "remove" ]
+then
+  doRemove
+else
+  doFail "undefined argument ${*}"
+fi

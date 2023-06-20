@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup create cicd help"
+  fi
+  exit
+fi
+
+if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+
+# $1: optional setup
+function doSetup() {
+  if command -v ionic &> /dev/null
+  then
+    if [ "${1}" != "silent" ]
+    then
+      doEcho "ionic-cli (ionic) is already installed at $(command -v ionic)"
+    fi
+  else
+    doDevonCommand npm setup silent
+    local npm_command="${DEVON_IDE_HOME}/software/node/npm"
+    if [ ! -x "${npm_command}" ]
+    then
+      npm_command="${DEVON_IDE_HOME}/software/node/bin/npm"
+    fi
+    doRunCommand "'${npm_command}' install -g @ionic/cli@latest --unsafe" "install ionic-cli"
+  fi
+}
+
+#CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run ionic-cli (ionic)."
+  echo
+  echo "Arguments:"
+  echo "setup                 setup ionic-cli (install and verify)"
+  echo "create                create a new devon4ng ionic project"
+  echo "cicd «args»           generate cicd files for the current devon4ng ionic project: $PWD"
+  echo "«args»                call ionic with the specified arguments"
+  echo
+  echo "Options:"
+  exit
+fi
+
+if [ -z "${1}" ] || [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "create" ]
+then
+  shift
+  doSetup silent
+  ionic start "${@}"
+elif [ "${1}" = "cicd" ]
+then
+  shift
+  doDevonCommand cicdgen ng "${*}"
+else
+  doSetup silent
+  ionic "${@}"
+fi
