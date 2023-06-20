@@ -36,23 +36,14 @@ function doSetup() {
         doEcho "Creating modules.pth..."
         echo -e "../pip\n../setuptools\n../wheel\n../pkg_resources\n" > "${PYTHON_HOME}/modules.pth"
       fi
-      
       # Install pip via python
-      if [ -d "${DEVON_IDE_HOME}/urls" ]
+      doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
+      cd "${PIP_HOME}" || exit 255
+      if [ -d  "${DEVON_IDE_HOME}/urls" ]
       then
-        if [ -z "${PIP_VERSION}" ]
-        then
-          version=$(doGetLatestSoftwareVersion "pip")
-        else
-          version="${PIP_VERSION}"
-        fi
-        doDownload "https://bootstrap.pypa.io/get-pip.py" "${PIP_HOME}" "pip" "${version}" "" "pip" "" "" "pip-${version}-pip.py"
-        cd "${PIP_HOME}" || exit 255
-        doDevonCommand python pip-"${version}"-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
-        rm -rf "${PIP_HOME}/pip-""${version}""-pip.py"
+        doDevonCommand python pip-latest-pip-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
+        rm -rf "${PIP_HOME}/pip-latest-pip-pip.py"
       else
-        doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
-        cd "${PIP_HOME}" || exit 255
         doDevonCommand python pip-latest-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
         rm -rf "${PIP_HOME}/pip-latest-pip.py"
       fi
