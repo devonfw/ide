@@ -47,7 +47,7 @@ public class Functions {
                     licenseAgreement.createNewFile();
                     String licenseText = "On " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd 'at' HH:mm:ss"))
                             + " you accepted the devonfw-ide License.\nhttps://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc";
-                    Files.write(Paths.get(licenseAgreement.getPath()), licenseText.getBytes());
+                    Files.write(Paths.get(licenseAgreement.getPath()), licenseText.getBytes(Charset.defaultCharset()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
