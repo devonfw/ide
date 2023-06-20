@@ -22,7 +22,7 @@ public class UpdateInitiator {
 
     if (args.length == 0) {
       logger.error("Error: Missing path to repository as well as missing timeout as command line arguments.");
-      logger.error("Usage: java UpdateInitiator <path_to_repository>");
+      logger.error("Usage: java UpdateInitiator <path_to_repository> <timeout_in_seconds>");
       System.exit(1);
     }
     String pathToRepo = args[0];
