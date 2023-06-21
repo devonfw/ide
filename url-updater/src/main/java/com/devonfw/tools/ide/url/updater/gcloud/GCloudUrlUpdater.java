@@ -8,6 +8,8 @@ public class GCloudUrlUpdater extends GithubUrlUpdater {
 
   private static final VersionIdentifier MIN_GCLOUD_VID = VersionIdentifier.of("299.0.0");
   private static final VersionIdentifier MIN_ARM_GCLOUD_VID = VersionIdentifier.of("366.0.0");
+  private static final String BASE_URL = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${version}-";
+
 
 
   @Override
@@ -28,14 +30,13 @@ public class GCloudUrlUpdater extends GithubUrlUpdater {
     VersionIdentifier vid = urlVersion.getVersionIdentifier();
 
     if (vid.compareVersion(MIN_GCLOUD_VID).isGreater()) {
-      String baseUrl = "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${version}-";
 
-      doAddVersion(urlVersion, baseUrl + "windows-x86_64.zip", WINDOWS);
-      doAddVersion(urlVersion, baseUrl + "linux-x86_64.tar.gz", LINUX);
-      doAddVersion(urlVersion, baseUrl + "darwin-x86_64.tar.gz", MAC);
+      doAddVersion(urlVersion, BASE_URL + "windows-x86_64.zip", WINDOWS);
+      doAddVersion(urlVersion, BASE_URL + "linux-x86_64.tar.gz", LINUX);
+      doAddVersion(urlVersion, BASE_URL + "darwin-x86_64.tar.gz", MAC);
       if (vid.compareVersion(MIN_ARM_GCLOUD_VID).isGreater()) {
-        doAddVersion(urlVersion, baseUrl + "linux-arm.tar.gz", LINUX, ARM64);
-        doAddVersion(urlVersion, baseUrl + "darwin-arm.tar.gz", MAC, ARM64);
+        doAddVersion(urlVersion, BASE_URL + "linux-arm.tar.gz", LINUX, ARM64);
+        doAddVersion(urlVersion, BASE_URL + "darwin-arm.tar.gz", MAC, ARM64);
       }
     }
   }
