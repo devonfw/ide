@@ -39,7 +39,7 @@ function cleanupPlugins() {
   if [ "${clean_plugins_on_update}" = "true" ]
   then
     doEcho "Cleaning up all extensions"
-    doRunCommand "rm -Rf ${DEVON_IDE_HOME}/software/vscode-extensions/*"
+    doRunCommand "rm -Rf ${DEVON_IDE_HOME}/plugins/vscode/*"
   else
     doEcho "vsCode extensions not configured to be removed on update. If you would like to do so, please create ${SETTINGS_PATH}/vscode/vscode.properties with clean_plugins_on_update=true."
   fi
@@ -126,7 +126,7 @@ function doRunVsCode() {
       mkdir -p "${VSCODE_CONF}"
     fi
   fi
-  local VSCODE_EXT="${DEVON_IDE_HOME}/software/vscode-extensions"
+  local VSCODE_EXT="${DEVON_IDE_HOME}/plugins/vscode"
   mkdir -p "${VSCODE_EXT}"
   doRunCommand "'${VSCODE_HOME}/bin/code' --new-window --user-data-dir '${VSCODE_CONF}' --extensions-dir '${VSCODE_EXT}' ${*}"
 }
