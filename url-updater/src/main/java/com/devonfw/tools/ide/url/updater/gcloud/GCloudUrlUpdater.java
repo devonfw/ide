@@ -30,7 +30,6 @@ public class GCloudUrlUpdater extends GithubUrlUpdater {
     VersionIdentifier vid = urlVersion.getVersionIdentifier();
 
     if (vid.compareVersion(MIN_GCLOUD_VID).isGreater()) {
-
       doAddVersion(urlVersion, BASE_URL + "windows-x86_64.zip", WINDOWS);
       doAddVersion(urlVersion, BASE_URL + "linux-x86_64.tar.gz", LINUX);
       doAddVersion(urlVersion, BASE_URL + "darwin-x86_64.tar.gz", MAC);
