@@ -25,8 +25,8 @@ function doSetup() {
     ERR="${?}"
     if [ "${ERR}" == 0 ]
     then
-      doRunCommand "cp -r ${AZ_HOME}/wbin ${AZ_HOME}/bin"
       setConfig
+      doRunCommand "cmd //c 'mklink /d /j $(cygpath -w "${AZ_HOME}/bin") $(cygpath -w "${AZ_HOME}/wbin")'"
       if [ "${1}" != "silent" ] && ! doIsQuiet
       then
         TOOL_VERSION_COMMAND="${AZ_RUN} -v"
