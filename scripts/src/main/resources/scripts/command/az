@@ -12,12 +12,7 @@ fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 AZ_HOME="${DEVON_IDE_HOME}/software/az"
-if doIsWindows
-then
-  AZ_RUN="${AZ_HOME}/Scripts/az.bat"
-else
-  AZ_RUN="${AZ_HOME}/bin/az"
-fi
+AZ_RUN="${AZ_HOME}/bin/az"
 TOOL_VERSION_COMMAND="${AZ_RUN} -v"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
@@ -30,9 +25,8 @@ function doSetup() {
     ERR="${?}"
     if [ "${ERR}" == 0 ]
     then
+      doRunCommand "cp -r ${AZ_HOME}/wbin ${AZ_HOME}/bin"
       setConfig
-      # workaround for python to add a bin folder
-      doRunCommand "cmd //c 'mklink /d /j $(cygpath -w ${AZ_HOME}/bin) $(cygpath -w "${AZ_HOME}/Scripts")'"
       if [ "${1}" != "silent" ] && ! doIsQuiet
       then
         TOOL_VERSION_COMMAND="${AZ_RUN} -v"
