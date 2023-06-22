@@ -62,18 +62,15 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
-  /** The default timeout for the GitHub actions url-update job */
-  public static final long DEFAULT_TIMEOUT = 60;
-
-  /** The timeout for the GitHub actions url-update job */
-  private long timeout;
+  /** The {@link Duration} expiration time for the GitHub actions url-update job in milliseconds */
+  private Duration expirationTimeInMillis;
 
   /**
-   * @param timeout to set for the GitHub actions url-update job
+   * @param expirationTimeInMillis to set for the GitHub actions url-update job
    */
-  public void setTimeout(long timeout) {
+  public void setExpirationTimeInMillis(Duration expirationTimeInMillis) {
 
-    this.timeout = timeout;
+    this.expirationTimeInMillis = expirationTimeInMillis;
   }
 
   /**
@@ -446,17 +443,24 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
-   * Sets a default timeout and retrieves a corresponding final timestamp for it
+   * Checks if the timeout was expired.
    *
-   * @return the ending time
+   * @return boolean true if timeout was expired, false if not
    */
-  public long retrieveFinalTimeout() {
+  public boolean isTimeoutExpired() {
 
-    if (this.timeout == 0) {
-      this.timeout = DEFAULT_TIMEOUT;
+    if (this.expirationTimeInMillis == null) {
+      return false;
     }
 
-    return System.currentTimeMillis() + this.timeout * 1000;
+    int expirationDiff = Duration.ofMillis(System.currentTimeMillis()).compareTo(this.expirationTimeInMillis);
+
+    if (expirationDiff > 0) {
+      logger.warn("Expiration time of timeout was reached, cancelling update process.");
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -474,9 +478,11 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
 
     for (String version : versions) {
-      if (System.currentTimeMillis() < retrieveFinalTimeout()){
+
+      if (isTimeoutExpired()) {
         break;
       }
+
       if (edition.getChild(version) == null) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);
