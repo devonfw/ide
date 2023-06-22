@@ -50,7 +50,7 @@ public final class Environment extends EnvCommand {
                 try (FileInputStream propertiesInputStream = new FileInputStream(propertiesPath)) {
                     this.properties.load(propertiesInputStream);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new IllegalStateException(e);
                 }
             }
         }
@@ -128,7 +128,7 @@ public final class Environment extends EnvCommand {
                     }
                 }
             } catch (IOException e){
-                e.printStackTrace();
+                throw new IllegalStateException(e);
             }
         }
         if(devonIdeHome.isEmpty() || devonIdeHome == null){
