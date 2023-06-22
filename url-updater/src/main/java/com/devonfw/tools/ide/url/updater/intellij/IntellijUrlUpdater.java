@@ -1,11 +1,5 @@
 package com.devonfw.tools.ide.url.updater.intellij;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 
@@ -107,38 +101,8 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   }
 
   private String getCheckSum(String checksumLink) {
-
-    if (checksumLink != null && !checksumLink.isEmpty()) {
-      try {
-        URL url = new URL(checksumLink);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        int responseCode = connection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-          BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-          String response = null;
-          String line;
-
-          if ((line = reader.readLine()) != null) {
-            response = line.split(" ")[0];
-
-            reader.close();
-            connection.disconnect();
-
-            return response;
-          }
-        }
-      } catch (ProtocolException e) {
-        throw new RuntimeException(e);
-      } catch (MalformedURLException e) {
-        throw new RuntimeException(e);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-
-    }
-    return null;
+    String responseCS = doGetResponseBodyAsString(checksumLink);
+    return responseCS.split(" ")[0];
   }
 
   @Override
