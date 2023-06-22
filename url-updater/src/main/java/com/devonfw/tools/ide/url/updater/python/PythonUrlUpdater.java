@@ -1,10 +1,7 @@
 package com.devonfw.tools.ide.url.updater.python;
 
-import java.util.regex.Pattern;
-
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
-import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
 
 /**
  * {@link GithubUrlUpdater} of Python.
