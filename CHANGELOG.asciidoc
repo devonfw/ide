@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1177[#1177]: Azure installation with MSI   
 * https://github.com/devonfw/ide/issues/1147[#1147]: Separates plugins from software folder
 * https://github.com/devonfw/ide/issues/1158[#1158]: Projects main-branch is always checked out
 * https://github.com/devonfw/ide/issues/1118[#1118]: Add milestone versions of Eclipse
