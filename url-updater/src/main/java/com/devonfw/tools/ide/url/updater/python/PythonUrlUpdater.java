@@ -3,12 +3,16 @@ package com.devonfw.tools.ide.url.updater.python;
 import java.util.regex.Pattern;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
 import com.devonfw.tools.ide.url.updater.WebsiteUrlUpdater;
 
 /**
- * {@link WebsiteUrlUpdater} of Python.
+ * {@link GithubUrlUpdater} of Python.
  */
-public class PythonUrlUpdater extends WebsiteUrlUpdater {
+public class PythonUrlUpdater extends GithubUrlUpdater {
+
+  private static final String BASE_URL = "https://www.python.org/ftp/python/${version}/";
+
   @Override
   protected String getTool() {
 
@@ -16,23 +20,40 @@ public class PythonUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
+  protected String getVersionPrefixToRemove() {
+
+    return "v";
+  }
+
+  @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    String baseUrl = "https://www.python.org/ftp/python/${version}/python-${version}";
-    doAddVersion(urlVersion, baseUrl + "-embed-win32.zip", WINDOWS);
-    doAddVersion(urlVersion, "https://www.python.org/ftp/python/${version}/Python-${version}" + ".tgz");
-  }
-
-  @Override
-  protected String getVersionUrl() {
-
-    return "https://www.python.org/ftp/python/";
+    doAddVersion(urlVersion, BASE_URL + "python-${version}-embed-win32.zip", WINDOWS);
+    doAddVersion(urlVersion, BASE_URL + "Python-${version}.tgz", MAC);
+    doAddVersion(urlVersion, BASE_URL + "Python-${version}.tgz", LINUX);
 
   }
 
   @Override
-  protected Pattern getVersionPattern() {
+  protected String getGithubOrganization() {
 
-    return Pattern.compile("(3\\.\\d+\\.\\d+)");
+    return "python";
+  }
+
+  @Override
+  protected String getGithubRepository() {
+
+    return "cpython";
+  }
+
+  @Override
+  protected String mapVersion(String version) {
+
+    if (version.matches("v\\d+\\.\\d+\\.\\d+")) {
+      return super.mapVersion(version);
+    }
+    else {
+      return null;
+    }
   }
 }
