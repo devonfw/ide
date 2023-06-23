@@ -46,7 +46,6 @@ function doAdaptSoftwareFolder() {
       mv "${DEVON_IDE_HOME}/software/${tool_old}" "${DEVON_IDE_HOME}/software/${tool_new}"
     fi
   fi
-fi
 }
 
 cd "${DEVON_IDE_HOME}"
