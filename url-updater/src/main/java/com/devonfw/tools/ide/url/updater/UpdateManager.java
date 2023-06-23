@@ -12,11 +12,11 @@ import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
 import com.devonfw.tools.ide.url.updater.aws.AwsUrlUpdater;
 import com.devonfw.tools.ide.url.updater.az.AzureUrlUpdater;
 import com.devonfw.tools.ide.url.updater.cobigen.CobigenUrlUpdater;
-import com.devonfw.tools.ide.url.updater.docker.DockerDesktopUrlUpdater;
 import com.devonfw.tools.ide.url.updater.docker.DockerRancherDesktopUrlUpdater;
 import com.devonfw.tools.ide.url.updater.dotnet.DotNetUrlUpdater;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseCppUrlUpdater;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseJavaUrlUpdater;
+import com.devonfw.tools.ide.url.updater.gcloud.GCloudUrlUpdater;
 import com.devonfw.tools.ide.url.updater.gcviewer.GcViewerUrlUpdater;
 import com.devonfw.tools.ide.url.updater.gh.GhUrlUpdater;
 import com.devonfw.tools.ide.url.updater.graalvm.GraalVmUrlUpdater;
@@ -53,8 +53,8 @@ public class UpdateManager {
   private final UrlRepository urlRepository;
 
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
-      new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(), new DockerDesktopUrlUpdater(),
-      new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
+      new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(),
+      new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GCloudUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
       new GraalVmUrlUpdater(), new GradleUrlUpdater(), new HelmUrlUpdater(), new IntellijUltimateUrlUpdater(),
       new IntellijCommunityUrlUpdater(), new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(),
       new KotlincNativeUrlUpdater(), new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(),

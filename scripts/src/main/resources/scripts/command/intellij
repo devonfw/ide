@@ -68,7 +68,7 @@ function doAddPlugin() {
   local pluginUrl="${2}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local intellij_build
-  local install_path="${DEVON_IDE_HOME}/software/intellij-plugins/"
+  local install_path="${DEVON_IDE_HOME}/plugins/intellij/"
   if [ -e "${IDEA_HOME}/build.txt" ]
   then
     intellij_build="$(cat "${IDEA_HOME}/build.txt")"

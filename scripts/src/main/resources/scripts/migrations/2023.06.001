@@ -6,8 +6,7 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   [ -f "${configuration_file}" ] || return
   cat "${configuration_file}" | awk '
-    /MAVEN_HOME/                  {gsub("MAVEN_HOME","MVN_HOME")}
-    /MVN_HOME/, /maven/           {gsub("maven","mvn")}
+    /MAVEN_HOME/, /maven/           {gsub("maven","mvn")}
     /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
     /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
     /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
@@ -31,6 +30,24 @@ function doAdaptConfigurationFiles() {
   fi
 }
 
+function doAdaptSoftwareFolder() {
+  local tool_old=$1
+  local tool_new=$2
+  if [ -d "${DEVON_IDE_HOME}/software/${tool_old}" ]
+  then
+    echo "Tool folder ${tool_old} has been renamed to ${tool_new}."
+    if [ -d "${DEVON_IDE_HOME}/software/${tool_new}" ]
+    then
+      echo "New tool folder also already exist at ${DEVON_IDE_HOME}/software/${tool_new}"
+      echo "This is unexpected. However, we will simply delete the old installation for you from ${DEVON_IDE_HOME}/software/${tool_old}"
+      rm -rf "${DEVON_IDE_HOME}/software/maven"
+    else
+      echo "renaming the tool folder in ${DEVON_IDE_HOME}/software"
+      mv "${DEVON_IDE_HOME}/software/${tool_old}" "${DEVON_IDE_HOME}/software/${tool_new}"
+    fi
+  fi
+}
+
 cd "${DEVON_IDE_HOME}"
 if [ ! -d "${DEVON_IDE_HOME}/urls" ] 
 then
@@ -47,3 +64,26 @@ find "${DEVON_IDE_HOME}"/workspaces/ -mindepth 2 -maxdepth 2 -name devon.propert
 do
   doAdaptConfigurationFiles "${foundfile}"
 done
+
+doAdaptSoftwareFolder "maven" "mvn"
+doAdaptSoftwareFolder "nodejs" "node"
+doAdaptSoftwareFolder "sonarqube" "sonar"
+doAdaptSoftwareFolder "cobigen-cli" "cobigen"
+
+mkdir -p "${DEVON_IDE_HOME}/plugins"
+if [ -d "${DEVON_IDE_HOME}/software/vscode-extensions" ]
+then
+  mv "${DEVON_IDE_HOME}/software/vscode-extensions" "${DEVON_IDE_HOME}/plugins/vscode"
+fi
+
+if [ -d "${DEVON_IDE_HOME}/software/intellij-plugins" ]
+then
+  mv "${DEVON_IDE_HOME}/software/intellij-plugins" "${DEVON_IDE_HOME}/plugins/intellij"
+fi
+
+IDEA_PROPERTIES="${DEVON_IDE_HOME}/settings/intellij/workspace/update/idea.properties"
+if [ -e "${IDEA_PROPERTIES}" ] && grep -q "/software/intellij-plugins" ${IDEA_PROPERTIES}
+then
+  sed "${IDEA_PROPERTIES}" -e 's~/software/intellij-plugins~/plugins/intellij~' > "${IDEA_PROPERTIES}.new"
+  mv -f "${IDEA_PROPERTIES}.new" "${IDEA_PROPERTIES}"
+fi

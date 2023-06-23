@@ -7,7 +7,7 @@ The Azure CLI commandlet allows to install and use https://github.com/Azure/azur
 Call `devon az «args»` is more or less the same as calling `az «args»` but with some advanced features and ensuring that Azure CLI is properly set up for your project.
 
 *ATTENTION:*
-Currently this feature is new and therefore experimental.
+Currently this feature is new and therefore experimental. It only works on windows.
 It may change in incompatible ways in the next releases until we reach a stable state.
 We hope that all is working fine for you.
 However, do not expect everything to work out of the box.
