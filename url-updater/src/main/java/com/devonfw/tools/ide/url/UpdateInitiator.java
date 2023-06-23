@@ -1,7 +1,8 @@
 package com.devonfw.tools.ide.url;
 
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +29,16 @@ public class UpdateInitiator {
     }
 
     String pathToRepo = args[0];
-    long expirationTimeInMillis = 0;
+    Instant expirationTime = null;
 
     if (args.length < 2) {
       logger.warn("Timeout was not set, setting timeout to infinite instead.");
     } else {
       try {
-        long timeout = Long.parseLong(args[1]);
-        expirationTimeInMillis = System.currentTimeMillis() + (timeout * 1000);
-        logger.info("Expiration time was set to: {}.", new Date(expirationTimeInMillis));
+        int timeout = Integer.parseInt(args[1]);
+        Duration duration = Duration.ofSeconds(timeout);
+        expirationTime = Instant.now().plus(duration);
+        logger.info("Timeout was set to: {}.", expirationTime);
       } catch (NumberFormatException e) {
         logger.error("Error: Provided timeout format is not valid.", e);
         System.exit(1);
@@ -50,7 +52,7 @@ public class UpdateInitiator {
       System.exit(1);
     }
 
-    UpdateManager updateManager = new UpdateManager(repoPath, expirationTimeInMillis);
+    UpdateManager updateManager = new UpdateManager(repoPath, expirationTime);
     updateManager.updateAll();
   }
 }
