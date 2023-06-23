@@ -525,11 +525,10 @@ function doDownload() {
     then
       if doIsMacOs 
       then
-        if [ "${arch}" == "arm64" ]
+        if [ "${arch}" = "arm64" ]
         then
+          # ARM64 (A1/A2) on Mac comes with Rosetta that can emulate x64 code, hence we can use this as fallback
           url_file="${urls_software_dir}/${os}_x64.urls"
-        else
-          url_file="${urls_software_dir}/${os}_arm64.urls"
         fi
       fi
     fi
