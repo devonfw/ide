@@ -6,8 +6,7 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   [ -f "${configuration_file}" ] || return
   cat "${configuration_file}" | awk '
-    /MAVEN_HOME/                  {gsub("MAVEN_HOME","MVN_HOME")}
-    /MVN_HOME/, /maven/           {gsub("maven","mvn")}
+    /MAVEN_HOME/, /maven/           {gsub("maven","mvn")}
     /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
     /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
     /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
@@ -48,6 +47,7 @@ do
   doAdaptConfigurationFiles "${foundfile}"
 done
 
+mkdir -p "${DEVON_IDE_HOME}/plugins"
 if [ -d "${DEVON_IDE_HOME}/software/vscode-extensions" ]
 then
   mv "${DEVON_IDE_HOME}/software/vscode-extensions" "${DEVON_IDE_HOME}/plugins/vscode"
@@ -62,5 +62,5 @@ IDEA_PROPERTIES="${DEVON_IDE_HOME}/settings/intellij/workspace/update/idea.prope
 if [ -e "${IDEA_PROPERTIES}" ] && grep -q "/software/intellij-plugins" ${IDEA_PROPERTIES}
 then
   sed "${IDEA_PROPERTIES}" -e 's~/software/intellij-plugins~/plugins/intellij~' > "${IDEA_PROPERTIES}.new"
-  mv -f ""${IDEA_PROPERTIES}.new" "${IDEA_PROPERTIES}"
+  mv -f "${IDEA_PROPERTIES}.new" "${IDEA_PROPERTIES}"
 fi
