@@ -20,7 +20,7 @@ jobs:
         run: |
           cd url-updater
           mvn -B -ntp -Dstyle.color=always install
-          mvn -B -ntp -Dstyle.color=always exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls"
+          mvn -B -ntp -Dstyle.color=always exec:java -Dexec.mainClass="com.devonfw.tools.ide.url.UpdateInitiator" -Dexec.args="../ide-urls 19800"
       - name: Commit and push to ide-urls
         run: |
           cd ide-urls
