@@ -302,9 +302,6 @@ Then the function doReplaceExtractedFile is called with the saved parameters, wi
 Checks if an unzip program is installed, and if not, installs the program.
 The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
 
-=== doUpdateMirrors
-Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
-
 === doUpdateUrls
 Uses xref:doGitPullOrClone[] to clone or pull `urls` ensuring that everything is up-to-date.
 
