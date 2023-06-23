@@ -1,7 +1,6 @@
 package com.devonfw.tools.ide.url.updater;
 
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 
@@ -52,7 +51,7 @@ public class UpdateManager {
 
   private final UrlRepository urlRepository;
 
-  private final Duration expirationTimeInMillis;
+  private final long expirationTimeInMillis;
 
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(),
@@ -69,7 +68,7 @@ public class UpdateManager {
    * @param pathToRepository the {@link Path} to the {@code ide-urls} repository to update.
    * @param expirationTimeInMillis for GitHub actions in milliseconds
    */
-  public UpdateManager(Path pathToRepository, Duration expirationTimeInMillis) {
+  public UpdateManager(Path pathToRepository, long expirationTimeInMillis) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
     this.expirationTimeInMillis = expirationTimeInMillis;

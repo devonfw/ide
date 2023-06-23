@@ -31,6 +31,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
@@ -62,13 +63,13 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
-  /** The {@link Duration} expiration time for the GitHub actions url-update job in milliseconds */
-  private Duration expirationTimeInMillis;
+  /** The expiration time for the GitHub actions url-update job in milliseconds */
+  private long expirationTimeInMillis;
 
   /**
    * @param expirationTimeInMillis to set for the GitHub actions url-update job
    */
-  public void setExpirationTimeInMillis(Duration expirationTimeInMillis) {
+  public void setExpirationTimeInMillis(long expirationTimeInMillis) {
 
     this.expirationTimeInMillis = expirationTimeInMillis;
   }
@@ -449,14 +450,12 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   public boolean isTimeoutExpired() {
 
-    if (this.expirationTimeInMillis == null) {
+    if (this.expirationTimeInMillis == 0) {
       return false;
     }
 
-    int expirationDiff = Duration.ofMillis(System.currentTimeMillis()).compareTo(this.expirationTimeInMillis);
-
-    if (expirationDiff > 0) {
-      logger.warn("Expiration time of timeout was reached, cancelling update process.");
+    if (System.currentTimeMillis() > expirationTimeInMillis) {
+      logger.warn("Expiration time {} of timeout was reached, cancelling update process.", new Date(expirationTimeInMillis));
       return true;
     }
 
