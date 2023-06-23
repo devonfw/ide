@@ -1261,7 +1261,7 @@ function doInstall() {
   then
     doUpdateUrls
     version=$(doGetLatestSoftwareVersion "${software}")
-    doDebug "Resolved latest version of ${software} to ${version} from ${available_versions}"
+    doDebug "Resolved latest version of ${software} to ${version}"
   elif [ "${version:${#version}-1}" = "*" ]
   then
     doUpdateUrls
