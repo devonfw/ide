@@ -50,7 +50,7 @@ function doSetup() {
     fi
     return 0
   fi
-  if [ "${DOCKER_EDITION}" != "DOCKERDESKTOP" ]
+  if [ "${DOCKER_EDITION}" != "docker" ]
   then
     echo "Rancher Desktop set as option"
     if uname -r | grep -i microsoft
@@ -60,16 +60,27 @@ function doSetup() {
       if ! doIsRancherInstalled
       then
         doRequireNotBatch
+        DOCKER_EDITION=rancher
         local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
         TOOL_VERSION_COMMAND="-"
-        doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
+        if [ -d "${DEVON_IDE_HOME}/urls" ]
+        then
+          doInstall "docker" "${DOCKER_VERSION}" "${1}" "rancher" "${rancher_install_dir}"
+        else
+          doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
+        fi
         TOOL_VERSION_COMMAND="docker version"
         if doIsWindows
         then
           doSetVpnKitStartupInstaller
           doEcho "Installing Rancher Desktop for Windows..."
           # ensures installation of vpnkit if user directly restarts computer for enabling wsl
-          doRunCommand "${rancher_install_dir}/rancher-*-windows.exe"
+          if [ -d "${DEVON_IDE_HOME}/urls" ]
+          then
+            doRunCommand "${rancher_install_dir}/docker-${DOCKER_VERSION}-rancher-windows.exe"
+          else
+            doRunCommand "${rancher_install_dir}/rancher-*-windows.exe"
+          fi
           #check if vpnkit is already installed
           doEnsureVpnKitInstallation
         elif doIsMacOs
@@ -86,11 +97,22 @@ function doSetup() {
     if ! doIsDockerInstalled
     then
       doRequireNotBatch
-      doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}"
+      if [ -d "${DEVON_IDE_HOME}/urls" ]
+      then 
+        DOCKER_VERSION=$(doGetLatestSoftwareVersion "docker")
+        doDownload "-" "" "docker" "${DOCKER_VERSION}"
+      else
+        doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}"
+      fi
       if doIsWindows
       then
         doEchoStep "Installing Docker Desktop for Windows..."
+      if [ -d "${DEVON_IDE_HOME}/urls" ]
+      then 
+        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-${DOCKER_VERSION}-docker-windows.exe"
+      else
         doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-windows.exe"
+      fi
       elif doIsMacOs
       then
         doEchoStep "Installing Docker Desktop for MacOS..."
