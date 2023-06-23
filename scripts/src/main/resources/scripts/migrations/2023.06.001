@@ -30,6 +30,25 @@ function doAdaptConfigurationFiles() {
   fi
 }
 
+function doAdaptSoftwareFolder() {
+  local tool_old=$1
+  local tool_new=$2
+  if [ -d "${DEVON_IDE_HOME}/software/${tool_old}" ]
+  then
+    echo "Tool folder ${tool_old} has been renamed to ${tool_new}."
+    if [ -d "${DEVON_IDE_HOME}/software/${tool_new}" ]
+    then
+      echo "New tool folder also already exist at ${DEVON_IDE_HOME}/software/${tool_new}"
+      echo "This is unexpected. However, we will simply delete the old installation for you from ${DEVON_IDE_HOME}/software/${tool_old}"
+      rm -rf "${DEVON_IDE_HOME}/software/maven"
+    else
+      echo "renaming the tool folder in ${DEVON_IDE_HOME}/software"
+      mv "${DEVON_IDE_HOME}/software/${tool_old}" "${DEVON_IDE_HOME}/software/${tool_new}"
+    fi
+  fi
+fi
+}
+
 cd "${DEVON_IDE_HOME}"
 if [ ! -d "${DEVON_IDE_HOME}/urls" ] 
 then
@@ -46,6 +65,11 @@ find "${DEVON_IDE_HOME}"/workspaces/ -mindepth 2 -maxdepth 2 -name devon.propert
 do
   doAdaptConfigurationFiles "${foundfile}"
 done
+
+doAdaptSoftwareFolder "maven" "mvn"
+doAdaptSoftwareFolder "nodejs" "node"
+doAdaptSoftwareFolder "sonarqube" "sonar"
+doAdaptSoftwareFolder "cobigen-cli" "cobigen"
 
 mkdir -p "${DEVON_IDE_HOME}/plugins"
 if [ -d "${DEVON_IDE_HOME}/software/vscode-extensions" ]
