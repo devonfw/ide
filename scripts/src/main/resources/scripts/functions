@@ -609,7 +609,7 @@ function doDownload() {
       local result=${?}
       if [ "${result}" = 0 ] || [ "${result}" = 255 ]
       then
-        if [ "${version}" != "latest" ]
+        if [ -e "${url_file}.sha256" ]
         then
           local checksum_downloadfile
           local checksum
@@ -617,7 +617,14 @@ function doDownload() {
           checksum="$(cat "${url_file}".sha256)"
           if [ "${checksum_downloadfile}" != "${checksum}" ]
           then
-            doFail "Downloaded file has the wrong checksum"
+            doFail "Downloaded file has the wrong checksum!\nExpected ${checksum}\nDownload ${checksum_downloadfile}\nThis could be a man-in-the-middle-attack, a download failure, or a release that has been updated afterwards.\nPlease review carefully.\nExpected checksum can be found at ${url_file}.sha256.\nActual checksum was computed via shasum -a 256 ${target_dir}/${filename}\nInstallation was aborted for security reasons!"
+          fi
+        else 
+          if [ "${version}" != "latest" ]
+          then
+            doEcho "No checksum found at ${url_file}.sha256"
+          else
+            doWarning "No checksum found at ${url_file}.sha256"
           fi
         fi
         return ${result}
