@@ -113,7 +113,7 @@ function doCheckSuccessOfPluginInstall(){
 # return: dependencies that are already installed
 function doCheckPluginsInstalled() {
   local plugin_directory="${DEVON_IDE_HOME}/software/eclipse/plugins"
-  local plugin_custom_directory="${DEVON_IDE_HOME}/software/eclipse-plugins/plugins"
+  local plugin_custom_directory="${DEVON_IDE_HOME}/plugins/eclipse/plugins"
 
   # Remove feature.group from each plugin id
   local plugins="${1//.feature.group/}"
@@ -370,7 +370,8 @@ function doStartEclipse() {
   local start_mode="${1}"
   shift
   local eclipse_args=("$@")
-  local configuration_path="${DEVON_IDE_HOME}/software/eclipse-plugins/configuration/" 
+  local configuration_path="${DEVON_IDE_HOME}/plugins/eclipse/configuration/"
+  mkdir -p "${configuration_path}"
   local default_arguments="${ECLIPSE} -clean -data ${WORKSPACE_PATH} -keyring ~/.eclipse/.keyring -configuration ${configuration_path}"
   if [ "${start_mode}" = "gui" ]
   then
