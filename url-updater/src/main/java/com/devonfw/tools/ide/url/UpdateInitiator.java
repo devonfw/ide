@@ -3,6 +3,7 @@ package com.devonfw.tools.ide.url;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,13 +19,13 @@ public class UpdateInitiator {
 
   /**
    * @param args the command-line arguments. arg[0] points to the {@code ide-urls} repository. arg[1] defines a timeout
-   * for GitHub actions in seconds.
+   * for GitHub actions in Duration string format.
    */
   public static void main(String[] args) {
 
     if (args.length == 0) {
       logger.error("Error: Missing path to repository as well as missing timeout as command line arguments.");
-      logger.error("Usage: java UpdateInitiator <path_to_repository> <timeout_in_seconds>");
+      logger.error("Usage: java UpdateInitiator <path_to_repository> <duration_string_format>");
       System.exit(1);
     }
 
@@ -35,11 +36,10 @@ public class UpdateInitiator {
       logger.warn("Timeout was not set, setting timeout to infinite instead.");
     } else {
       try {
-        int timeout = Integer.parseInt(args[1]);
-        Duration duration = Duration.ofSeconds(timeout);
+        Duration duration = Duration.parse(args[1]);
         expirationTime = Instant.now().plus(duration);
         logger.info("Timeout was set to: {}.", expirationTime);
-      } catch (NumberFormatException e) {
+      } catch (DateTimeParseException e) {
         logger.error("Error: Provided timeout format is not valid.", e);
         System.exit(1);
       }
