@@ -612,10 +612,10 @@ function doDownload() {
         then
           local checksum_downloadfile
           local checksum
-          local shasum = "shasum -a 256"
+          local shasum = "$(shasum -a 256)"
           if doIsWindows
           then
-            shasum = "sha256sum"
+            shasum = "$(sha256sum)"
           fi
           checksum_downloadfile="$("${shasum}" "${target_dir}"/"${filename}" | cut -d" " -f1)"
           checksum="$(cat "${url_file}".sha256)"
