@@ -42,6 +42,13 @@ function doRunInstaller() {
     then
       doRunCommand "$1"
       return
+    elif doIsWindows 
+      locla ext="${1/*\./}"
+      if [ "${ext}" = "msi" ] || [ "${ext}" = "exe" ]
+      then
+        doRunCommand "$1"
+        return
+      fi^
     fi
     shift
   done
@@ -72,7 +79,7 @@ function doSetup() {
   then
     DOCKER_EDITION="rancher"
     # TODO what all is this for? IMHO we can remove the following IF statement and doIsRancherInstalled function
-    if ! doIsRancherInstalled
+    if doIsRancherInstalled
     then
       doEcho "Rancher-Desktop is already installed!"
       return
