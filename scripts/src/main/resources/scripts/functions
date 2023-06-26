@@ -631,7 +631,7 @@ function doDownload() {
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
       local checksum
-      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/${os}_${arch}.urls.sha256)"
+      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/"${os}"_"${arch}".urls.sha256)"
       doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
       return "${result}"
     fi
