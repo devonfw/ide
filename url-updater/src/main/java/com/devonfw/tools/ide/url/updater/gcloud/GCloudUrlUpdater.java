@@ -16,6 +16,12 @@ public class GCloudUrlUpdater extends GithubUrlUpdater {
   @Override
   protected String getTool() {
 
+    return "gcloud";
+  }
+
+  @Override
+  protected String getGithubRepository() {
+
     return "google-cloud-sdk";
   }
 
