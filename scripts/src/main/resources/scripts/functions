@@ -477,6 +477,13 @@ function doDownload() {
   mkdir -p "${target_dir}"
   local tmp_file
   tmp_file=$(mktemp -ut "${software}-${version}.XXXXXX")
+  local shasum
+  if doIsMacOs
+  then
+    shasum="shasum -a 256"
+  else
+    shasum="sha256sum"
+  fi
   if [ "${url}" = "" ] || [ "${url}" = "-" ]
   then
     if [ -z "${arch}" ]
@@ -612,11 +619,6 @@ function doDownload() {
         then
           local checksum_downloadfile
           local checksum
-          local shasum="shasum -a 256"
-          if doIsWindows
-          then
-            shasum="sha256sum"
-          fi
           checksum_downloadfile="$("${shasum}" "${target_dir}"/"${filename}" | cut -d" " -f1)"
           checksum="$(cat "${url_file}".sha256)"
           if [ "${checksum_downloadfile}" != "${checksum}" ]
@@ -642,7 +644,7 @@ function doDownload() {
     then
       local checksum_downloadfile
       local checksum
-      checksum_downloadfile="$(sha256sum "${target_dir}"/"${filename}" | cut -d" " -f1)"
+      checksum_downloadfile="$("${shasum}" "${target_dir}"/"${filename}" | cut -d" " -f1)"
       checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/"${os}"_"${arch}".urls.sha256)"
       if [ "${checksum_downloadfile}" != "${checksum}" ]
       then
