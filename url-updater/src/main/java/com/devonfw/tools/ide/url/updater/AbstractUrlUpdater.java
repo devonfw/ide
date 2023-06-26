@@ -466,6 +466,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    *
    * @param urlRepository the {@link UrlRepository} to update
    */
+  @Override
   public void update(UrlRepository urlRepository) {
 
     UrlTool tool = urlRepository.getOrCreateChild(getTool());
