@@ -647,7 +647,7 @@ function doVerifyChecksums() {
   local download_file_path="${1}"
   local checksum="${2}"
   local url_file="${3}"
-  if ! doIsMacOs
+  if doIsMacOs
   then
     shasum="shasum -a 256"
   fi
