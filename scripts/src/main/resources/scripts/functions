@@ -619,7 +619,7 @@ function doDownload() {
         then
           local checksum_downloadfile
           local checksum
-          checksum_downloadfile="$("${shasum}" "${target_dir}"/"${filename}" | cut -d" " -f1)"
+          checksum_downloadfile="$(eval "${shasum}" "${target_dir}"/"${filename}" | cut -d" " -f1)"
           checksum="$(cat "${url_file}".sha256)"
           if [ "${checksum_downloadfile}" != "${checksum}" ]
           then
