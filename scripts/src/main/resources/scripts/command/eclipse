@@ -113,6 +113,7 @@ function doCheckSuccessOfPluginInstall(){
 # return: dependencies that are already installed
 function doCheckPluginsInstalled() {
   local plugin_directory="${DEVON_IDE_HOME}/software/eclipse/plugins"
+  local plugin_custom_directory="${DEVON_IDE_HOME}/plugins/eclipse/plugins"
 
   # Remove feature.group from each plugin id
   local plugins="${1//.feature.group/}"
@@ -126,7 +127,7 @@ function doCheckPluginsInstalled() {
     plugin=${plugin/\.feature*/}
 
     local plugin_dependencies
-    plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
+    plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* "${plugin_custom_directory}"/*"${plugin}".* 2>/dev/null)
     # Remove last word after dot
     while [[ "${plugin}" == *.* ]]; do
       if [ "${plugin}" == "org.eclipse" ] || [ "${plugin}" == "org.apache" ] || [ "${plugin}" == "com" ] || [ "${plugin}" == "org" ] || [ "${plugin}" == "net" ]
@@ -134,7 +135,7 @@ function doCheckPluginsInstalled() {
         break
       fi
       local new_plugin_dependencies
-      new_plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* 2>/dev/null)
+      new_plugin_dependencies=$(ls -1 "${plugin_directory}"/*"${plugin}".* "${plugin_custom_directory}"/*"${plugin}".* 2>/dev/null)
       if [ -n "${new_plugin_dependencies}" ]
       then
         plugin_dependencies="${plugin_dependencies}\n${new_plugin_dependencies}"
@@ -143,7 +144,7 @@ function doCheckPluginsInstalled() {
     done
   done
   # Remove plugin_directory from plugin variable
-  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_directory}/||g")
+  plugin_dependencies=$(echo -e "${plugin_dependencies}" | sed "s|${plugin_directory}/||g" | sed "s|${plugin_custom_directory}/||g")
   echo -e "${plugin_dependencies}" | sort -u
 }
 
@@ -183,7 +184,7 @@ function doInvokeEclipse() {
   shift
   local eclipse_args=("$@")
   local debug_info
-  debug_info=$("${ECLIPSE}" -consoleLog -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application "${application}" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
+  debug_info=$(doStartEclipse log -application "${application}" "${eclipse_args[@]}" | grep '^!MESSAGE' | sed 's/^!MESSAGE //')
   local exit_code=$?
   if [ $exit_code -ne 0 ];
   then
@@ -334,7 +335,6 @@ function doConfigureEclipse() {
   fi
 }
 
-
 function doAddPlugin() {
   local plugin_id="${1}"
   local plugin_url="${2}"
@@ -357,16 +357,37 @@ function doAddPlugin() {
     fi
   fi
 }
-function doStartEclipse() {
+
+function doLaunchEclipse() {
   doConfigureEclipse -u
   echo "launching Eclipse in workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
-  if doIsWindows
+  doStartEclipse gui -showlocation "${WORKSPACE}"
+}
+
+# $1: start eclipse in gui or log mode
+# $@: further parameters 
+function doStartEclipse() {
+  local start_mode="${1}"
+  shift
+  local eclipse_args=("$@")
+  local configuration_path="${DEVON_IDE_HOME}/plugins/eclipse/configuration/"
+  mkdir -p "${configuration_path}"
+  local default_arguments="${ECLIPSE} -clean -data ${WORKSPACE_PATH} -keyring ~/.eclipse/.keyring -configuration ${configuration_path}"
+  if [ "${start_mode}" = "gui" ]
   then
-    # shellcheck disable=SC2086
-    start "eclipse" /B "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" -showlocation "${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS}
+    if doIsWindows
+    then
+      # shellcheck disable=SC2086
+      start "eclipse" /B ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/javaw" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}"
+    else
+      # shellcheck disable=SC2086
+      ${default_arguments} -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}"
+    fi
+  elif [ "${start_mode}" = "log" ]
+    then
+      "${ECLIPSE}" -consoleLog -nosplash -configuration "${configuration_path}" -vm "${ECLIPSE_JAVA_HOME}/bin/java" "${eclipse_args[@]}" -vmargs "${ECLIPSE_VMARGS}"
   else
-    # shellcheck disable=SC2086
-    "${ECLIPSE}" -clean -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -showlocation "${DEVON_IDE_HOME/*\//}/${WORKSPACE}" -vmargs ${ECLIPSE_VMARGS} &
+    doFail "Please specify how you want to start eclipse, either in gui or log mode"
   fi
 }
 
@@ -395,8 +416,9 @@ function doImportEclipse() {
   fi
   importWorkingSets="${2}"
   echo "Starting eclipse import for ${import_path} into workspace ${WORKSPACE} at ${WORKSPACE_PATH}"
+  ECLIPSE_VMARGS="${ECLIPSE_VMARGS} -DdevonImportPath=\"${import_path}\" -DdevonImportWorkingSet=\"${importWorkingSets}\""
   # shellcheck disable=SC2086
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}" -keyring ~/.eclipse/.keyring -vm "${ECLIPSE_JAVA_HOME}/bin/java" -vmargs -DdevonImportPath="${import_path}" -DdevonImportWorkingSet="${importWorkingSets}" ${ECLIPSE_VMARGS}
+  doStartEclipse log -application org.eclipse.ant.core.antRunner -buildfile "${DEVON_IDE_HOME}/scripts/lib_script/import.xml" -data "${WORKSPACE_PATH}"
 }
 
 # $1: id
@@ -415,8 +437,8 @@ function doMirrorUpdateSite() {
   fi
   local timestamp
   timestamp=$(date +'%Y-%m-%d')
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
-  "${ECLIPSE}" -nosplash -vm "${ECLIPSE_JAVA_HOME}/bin/java" -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}" -vmargs "${ECLIPSE_VMARGS}"
+  doStartEclipse log -application org.eclipse.equinox.p2.metadata.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}"
+  doStartEclipse log -application org.eclipse.equinox.p2.artifact.repository.mirrorApplication -source "${mir_plugin_url}" -destination "${DEVON_DOWNLOAD_DIR}/update-sites/${mir_plugin_id}-${timestamp}"
   local result
   result="${?}"
   if [ "$?" != 0 ]
@@ -468,7 +490,7 @@ fi
 if [ -z "${1}" ]
 then
   doSetup silent
-  doStartEclipse
+  doLaunchEclipse
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
@@ -483,7 +505,7 @@ while [ -n "${1}" ]; do
   if [ "${1}" = "run" ] || [ "${1}" = "start" ]
   then
     doSetup silent
-    doStartEclipse
+    doLaunchEclipse
   elif [ "${1}" = "ws-up" ] || [ "${1}" = "ws-update" ]
   then
     doConfigureEclipse -u
