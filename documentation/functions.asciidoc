@@ -432,6 +432,9 @@ E.g. `doIsPrefix "foo/bar" "foo/bar/some"` will be true but `doIsPrefix "/foo/ba
 === doParseOption
 Checks whether the parameter passed to it 
 
+=== doVerifyChecksums
+Creates a sha256 checksum for a file and compares it to the given checksum 
+
 * is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0.
 * is the option version.
 In this case, it does the handling to `list`, `get`, or `set` the version and exits the program.
