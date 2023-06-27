@@ -643,13 +643,13 @@ function doDownload() {
 # $2: verified checksum
 # $3: url_file
 function doVerifyChecksums() {
-  local shasum="sha256sum"
+  local shasum="shasum -a 256"
   local download_file_path="${1}"
   local checksum="${2}"
   local url_file="${3}"
-  if doIsMacOs
+  if doIsWindows
   then
-    shasum="shasum -a 256"
+    shasum="sha256sum"
   fi
   local checksum_downloadfile="$(eval "${shasum}" "${download_file_path}" | cut -d" " -f1)"
   if [ "${checksum_downloadfile}" != "${checksum}" ]
@@ -658,9 +658,7 @@ function doVerifyChecksums() {
   else
     doSuccess "Checksum ${checksum_downloadfile} is correct"
   fi
-
 }
-
 
 # $1: URL to download
 # $2: path to tmp-file to download to
