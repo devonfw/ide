@@ -796,6 +796,36 @@ function doExtract() {
   fi
 }
 
+# $n: the executable to run (may be expaneded glob pattern(s))
+function doRunFirstExecutable() {
+  local installer="$1"
+  while [ -n "$1" ]
+  do
+    if [ -x "$1" ]
+    then
+      doRunCommand "$1"
+      return
+    elif doIsWindows 
+      local ext="${1/*\./}"
+      if [ "${ext}" = "msi" ]
+      then
+        installer="$(cygpath -w "$1")"
+        msiexec //i "${installer}" //quiet
+        if [ "$?" = 0 ]
+        then
+          return
+        fi
+      elif [ "${ext}" = "exe" ]
+      then
+        doRunCommand "$1"
+        return
+      fi
+    fi
+    shift
+  done
+  doFail "Installation failed from ${installer}"
+}
+
 # $1: the file to unzip
 # $2: target_dir
 function doUnzip() {

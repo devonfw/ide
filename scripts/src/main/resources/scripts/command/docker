@@ -34,27 +34,6 @@ function doResolveDownloadUrl() {
   echo "${url//\$\{code\}/${code}}"
 }
 
-function doRunInstaller() {
-  local installer="$1"
-  while [ -n "$1" ]
-  do
-    if [ -x "$1" ]
-    then
-      doRunCommand "$1"
-      return
-    elif doIsWindows 
-      locla ext="${1/*\./}"
-      if [ "${ext}" = "msi" ] || [ "${ext}" = "exe" ]
-      then
-        doRunCommand "$1"
-        return
-      fi^
-    fi
-    shift
-  done
-  doFail "Installation failed from ${installer}"
-}
-
 # $1: optional setup
 function doSetup() {
   if command -v docker >/dev/null 2>&1
@@ -96,7 +75,7 @@ function doSetup() {
     then
       doSetVpnKitStartupInstaller
     fi
-    doRunInstaller "${install_dir}/"*
+    doRunFirstExecutable "${install_dir}/"*
     if [ "${DOCKER_EDITION}" = "rancher" ]
     then
       doEnsureVpnKitInstallation
@@ -105,7 +84,7 @@ function doSetup() {
   then
     doRunCommand "mv '${install_dir}/*.app' /Applications/"
   else
-    doRunInstaller "${install_dir}/"*
+    doRunFirstExecutable "${install_dir}/"*
   fi
   read -r -p "Docker has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
 }
