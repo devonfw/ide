@@ -651,7 +651,8 @@ function doVerifyChecksums() {
   then
     shasum="sha256sum"
   fi
-  local checksum_downloadfile="$(eval "${shasum}" "${download_file_path}" | cut -d" " -f1)"
+  local checksum_downloadfile
+  checksum_downloadfile="$(eval "${shasum}" "${download_file_path}" | cut -d" " -f1)"
   if [ "${checksum_downloadfile}" != "${checksum}" ]
   then
     doFail "Downloaded file has the wrong checksum!\nExpected ${checksum}\nDownload ${checksum_downloadfile}\nThis could be a man-in-the-middle-attack, a download failure, or a release that has been updated afterwards.\nPlease review carefully.\nExpected checksum can be found at ${url_file}.sha256.\nActual checksum was computed via ${shasum} ${download_file_path}\nInstallation was aborted for security reasons!"
