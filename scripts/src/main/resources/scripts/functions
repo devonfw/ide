@@ -805,7 +805,8 @@ function doRunFirstExecutable() {
     then
       doRunCommand "$1"
       return
-    elif doIsWindows 
+    elif doIsWindows
+    then
       local ext="${1/*\./}"
       if [ "${ext}" = "msi" ]
       then
