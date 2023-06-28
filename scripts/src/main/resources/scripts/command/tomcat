@@ -18,10 +18,7 @@ export CATALINA_HOME="${DEVON_IDE_HOME}/software/tomcat"
 TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
 TOMCAT="${TOMCAT_HOME}/bin/startup.bat"
 TOMCAT="catalina.sh"
-if doIsWindows
-then
-  TOMCAT="catalina.bat"
-fi
+
 TOOL_VERSION_COMMAND="${TOMCAT_HOME}/bin/${TOMCAT} version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
