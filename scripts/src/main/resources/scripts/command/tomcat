@@ -45,23 +45,17 @@ function doStop() {
 
 function doTomcat() {
     doSetup silent
-    if doIsWindows
+
+    if [ "${1}" = "start" ]
     then
-      if [ "${1}" = "start" ]
-      then
-        "${TOMCAT_HOME}/bin/startup.bat"
-      elif [ "${1}" = "stop" ]
-      then
-        "${TOMCAT_HOME}/bin/shutdown.bat"
-      else
-        doFail "Unknown tomcat command: ${1}"
-      fi
-    elif doIsMacOs
+      "${TOMCAT_HOME}/bin/startup.sh"
+    elif [ "${1}" = "stop" ]
     then
-      "${TOMCAT_HOME}/bin/startup.sh" "${1}"
+      "${TOMCAT_HOME}/bin/shutdown.sh"
     else
-      "${TOMCAT_HOME}/bin/startup.sh" "${1}"
+      doFail "Unknown tomcat command: ${1}"
     fi
+
     if [ "${1}" = "start" ]
     then
       echo "Tomcat is running at localhost on the following port (default 8080):"
