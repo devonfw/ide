@@ -18,12 +18,6 @@ public class TomcatUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String doGetVersionUrl() {
-
-    return "https://github.com/" + getGithubOrganization() + "/" + getGithubRepository() + "/tags";
-  }
-
-  @Override
   protected void addVersion(UrlVersion urlVersion) {
     doAddVersion(urlVersion, "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${version}/src/apache-tomcat-${version}-src.${ext}");
   }
