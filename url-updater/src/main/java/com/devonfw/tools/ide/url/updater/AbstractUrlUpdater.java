@@ -161,7 +161,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os,
       SystemArchitecture architecture) {
 
-    return doAddVersion(urlVersion, downloadUrl, os, architecture, "", "");
+    return doAddVersion(urlVersion, downloadUrl, os, architecture, "");
   }
 
   /**
@@ -175,10 +175,12 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @return {@code true} if the version was successfully updated, {@code false} otherwise.
    */
   protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os, SystemArchitecture architecture,
-      String checksum, String major) {
+      String checksum) {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
+    String major = urlVersion.getVersionIdentifier().getStart().getDigits();
+    url = url.replace("${major}", major);
     if (os != null) {
       url = url.replace("${os}", os.toString());
     }
