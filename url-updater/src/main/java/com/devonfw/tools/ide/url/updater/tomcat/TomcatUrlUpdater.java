@@ -19,7 +19,7 @@ public class TomcatUrlUpdater extends GithubUrlUpdater {
 
   @Override
   protected void addVersion(UrlVersion urlVersion) {
-    doAddVersion(urlVersion, "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${version}/bin/apache-tomcat-${version}.${ext}");
+    doAddVersion(urlVersion, "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${version}/bin/apache-tomcat-${version}.zip");
   }
 
   @Override
