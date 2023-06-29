@@ -5,7 +5,7 @@ if [ "${1}" = "shortlist" ]
 then
   if [ -z "${2}" ]
   then
-    echo "setup version help"
+    echo "setup start stop version help"
   fi
   exit
 fi
@@ -16,10 +16,9 @@ fi
 source "$(dirname "${0}")"/../functions
 export CATALINA_HOME="${DEVON_IDE_HOME}/software/tomcat"
 TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
-TOMCAT="${TOMCAT_HOME}/bin/startup.bat"
-TOMCAT="catalina.sh"
+TOMCAT="${TOMCAT_HOME}/bin/catalina.sh"
 
-TOOL_VERSION_COMMAND="${TOMCAT_HOME}/bin/${TOMCAT} version"
+TOOL_VERSION_COMMAND="${TOMCAT} version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
@@ -57,7 +56,6 @@ function doTomcat() {
     then
       echo "Tomcat is running at localhost on the following port (default 8080):"
       grep 'Connector port=' "${TOMCAT_HOME}/conf/server.xml" | awk -F'"' '{print $2}'| head -1
-
     fi
 }
 
@@ -70,7 +68,6 @@ then
   echo " start                          start tomcat on your machine"
   echo " stop                           stop tomcat on your machine"
   echo " setup                          install tomcat on your machine (install, verify)"
-
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
