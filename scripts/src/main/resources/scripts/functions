@@ -443,12 +443,6 @@ function doDevonCommandAndReturn() {
   fi
 }
 
-function doUpdateMirrors() {
-  local mirrors_dir="${DEVON_IDE_HOME}/mirrors"
-  doDebug "Cloning or updating download mirrors"
-  doGitPullOrClone "${mirrors_dir}" "${DEVON_MIRRORS:-https://github.com/devonfw/ide-mirrors.git}"
-}
-
 function doUpdateUrls() {
   local urls_dir="${DEVON_IDE_HOME}/urls"
   doDebug "Cloning or updating download urls"
@@ -489,6 +483,10 @@ function doDownload() {
     then
       arch="$(uname -m)"
     fi
+    if [ "${arch}" = "x86_64" ]
+    then 
+      arch="x64"
+    fi
     if [ -z "${os}" ]
     then
       if doIsMacOs
@@ -498,129 +496,80 @@ function doDownload() {
       then
         os="windows"
       else
-        os="${OSTYPE}"
+        os="linux"
       fi
     fi
-    doUpdateMirrors
-    local mirrors_software_dir="${DEVON_IDE_HOME}/mirrors/${software}"
-    if [ ! -d "${mirrors_software_dir}" ]
+    edition=$(doGetSoftwareEdition "${software}")
+    local latest_version
+    if [ "${version}" = "latest" ]
     then
-      doFail "No mirror is configured at ${mirrors_software_dir}"
-    fi
-    local mirrors_override_dir="${mirrors_software_dir}"
-    local folder
-    local result
-    if [ -e "${mirrors_software_dir}/versions" ]
-    then
-      while IFS='<' read -r folder version_limit
-      do
-        if [ "${version_limit}" = '*' ]
-        then
-          result=2
-        else
-          doVersionCompare "${version}" "${version_limit}"
-          result=${?}
-        fi
-        # ${version} < ${version_limit} ?
-        if [ "${result}" = 2 ]
-        then
-          mirrors_override_dir="${mirrors_software_dir}/${folder}"
-          if [ ! -d "${mirrors_override_dir}" ]
-          then
-            doWarning "Configured version folder does not exist: ${mirrors_override_dir}"
-          fi
-          break;
-        fi
-      done < "${mirrors_software_dir}/versions"
-    fi
-    if [ "${mirrors_override_dir}" != "${mirrors_software_dir}" ]
-    then
-      doDebug "For software ${software} in version ${version} the mirror config is overridden by ${mirrors_override_dir}"
-    fi
-    # remap architecture
-    local mirrors_arch
-    local arch_new="${arch}"
-    mirrors_arch="$(doGetFirstExistingPath "${mirrors_override_dir}/arch-mappings" "${mirrors_software_dir}/arch-mappings" "${DEVON_IDE_HOME}/mirrors/arch-mappings")"
-    if [ -e "${mirrors_arch}" ]
-    then
-      while IFS="=" read -r key value
-      do
-        if [ "${key}" = "${arch_new}" ] || [ "${key}" = '*' ]
-        then
-          doDebug "Remapped architecture from ${arch_new} to ${value} for software ${software} in version ${version}"
-          arch_new="${value}"
-          break
-        fi
-      done < "${mirrors_arch}"
-    fi
-    # map OS to ext(ension)
-    local mirrors_ext
-    mirrors_ext="$(doGetFirstExistingPath "${mirrors_override_dir}/ext-mappings" "${mirrors_software_dir}/ext-mappings")"
-    if [ -e "${mirrors_ext}" ]
-    then
-      while IFS="=" read -r key value
-      do
-        if [ "${key}" = "${os}" ] || [ "${key}" = '*' ]
-        then
-          doDebug "Mapped extension to ${value} for OS ${os} and software ${software} in version ${version}"
-          ext="${value}"
-          break
-        fi
-      done < "${mirrors_ext}"
-    fi
-    # remap operating system
-    local mirrors_os
-    local os_new="${os}"
-    mirrors_os="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/os-mappings" "${mirrors_software_dir}/os-mappings" "${DEVON_IDE_HOME}/mirrors/os-mappings")"
-    local key
-    local value
-    while IFS="=" read -r key value
-    do
-      if [ "${key}" = "${os_new}" ] || [ "${key}" = '*' ]
+      latest_version="$(doGetLatestSoftwareVersion "${software}")"
+      if [ -n "${latest_version}" ]
       then
-        doDebug "Remapped OS from ${os_new} to ${value} for software ${software} in version ${version}"
-        os_new="${value}"
-        break
+        version="${latest_version}"
+      else
+        doFail "No latest version found at ${DEVON_IDE_HOME}/urls/${software}/${edition}"
       fi
-    done < "${mirrors_os}"
-    # get mirror URLs
-    local mirrors_urls
-    mirrors_urls="$(doGetFirstExistingPathOrFail "${mirrors_override_dir}/urls" "${mirrors_software_dir}/urls")"
-    doDebug "Reading mirror URLs from ${mirrors_urls}"
+    fi
+    local urls_software_dir="${DEVON_IDE_HOME}/urls/${software}/${edition}/${version}"
 
-    local major="${version//[^0-9]*}"
-    local mirror
-    local mirrors
-    declare -a mirrors
-    while IFS= read -r mirror
+    if [ ! -d "${urls_software_dir}" ]
+    then
+      doFail "No url is configured at ${urls_software_dir}"
+    fi
+
+    local url_file
+    url_file="${urls_software_dir}/${os}_${arch}.urls"
+
+    if [ ! -f "${url_file}" ]
+    then
+      if doIsMacOs 
+      then
+        if [ "${arch}" = "arm64" ]
+        then
+          # ARM64 (A1/A2) on Mac comes with Rosetta that can emulate x64 code, hence we can use this as fallback
+          url_file="${urls_software_dir}/${os}_x64.urls"
+        fi
+      fi
+    fi
+
+    if [ ! -f "${url_file}" ]
+    then
+      url_file="${urls_software_dir}/${os}.urls"
+      if [ ! -f "${url_file}" ]
+      then 
+        url_file="${urls_software_dir}/urls"
+      fi
+    fi
+    if [ ! -f "${url_file}" ]
+    then
+      doFail "No url file found at ${urls_software_dir}"
+    fi 
+
+    local url
+    declare -a urls
+    while IFS= read -r url
     do
-      mirrors[i]="${mirror}"
+      urls[i]="${url}"
       ((++i))
-    done < "${mirrors_urls}"
-    # suffle mirrors to choose mirrors in random order and distribute load
-    local size="${#mirrors[*]}"
+    done < "${url_file}"
+
+    # suffle urls to choose urls in random order and distribute load
+    local size="${#urls[*]}"
     local rand
     local tmp
     local i
     for ((i=size-1; i>0; i--))
     do
       rand=$((RANDOM%(size+1)))
-      tmp="${mirrors[i]}"
-      mirrors[i]="${mirrors[rand]}"
-      mirrors[rand]="${tmp}"
+      tmp="${urls[i]}"
+      urls[i]="${urls[rand]}"
+      urls[rand]="${tmp}"
     done
-    # download from mirrors, try next mirror on error
-    for mirror in "${mirrors[@]}"
-    do
-      local mirror_url="${mirror}"
-      mirror_url="${mirror_url//\$\{os\}/${os_new}}"
-      mirror_url="${mirror_url//\$\{version\}/${version}}"
-      mirror_url="${mirror_url//\$\{arch\}/${arch_new}}"
-      mirror_url="${mirror_url//\$\{ext\}/${ext}}"
-      mirror_url="${mirror_url//\$\{edition\}/${edition}}"
-      mirror_url="${mirror_url//\$\{major\}/${major}}"
-      mirror_url="$(doResolveDownloadUrl "${mirror_url}" "${version}" "${os_new}" "${arch_new}" "${edition}")"
 
+    # download from urls, try next url on error
+    for download_url in "${urls[@]}"
+    do
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
@@ -632,30 +581,83 @@ function doDownload() {
         then
           filename="${filename}-${os}"
         fi
-        if [ -n "${ext}" ]
+        if [ -z "${ext}" ]
         then
-          filename="${filename}.${ext}"
-        else
-          doWarning "No filename extension configured for ${software} in version ${version}"
-          filename="${filename}.$(doGetExtension "${mirror_url}")"
+          local urlfilename
+          urlfilename="${download_url/*\//}"
+          local urlfileext
+          urlfileext="$(doGetExtension "${download_url}")"
+          if [ "${urlfilename}" == "${urlfileext}" ] || [ "${urlfileext}" == "" ]
+          then
+            if doIsMacOs
+            then
+              ext="zip"
+            elif doIsWindows
+            then
+              ext="zip"
+            else
+              ext="tgz"
+            fi
+          else
+            ext="${urlfileext}"
+          fi
         fi
+        filename="${filename}.${ext}"
       fi
-      doDownloadInternal "${mirror_url}" "${tmp_file}" "${target_dir}" "${filename}"
+      doDownloadInternal "${download_url}" "${tmp_file}" "${target_dir}" "${filename}"
       local result=${?}
       if [ "${result}" = 0 ] || [ "${result}" = 255 ]
       then
+        if [ -e "${url_file}.sha256" ]
+        then
+          local checksum
+          checksum="$(cat "${url_file}".sha256)"
+          doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
+        else 
+          if [ "${version}" != "latest" ]
+          then
+            doEcho "No checksum found at ${url_file}.sha256"
+          else
+            doWarning "No checksum found at ${url_file}.sha256"
+          fi
+        fi
         return ${result}
       fi
     done
-    doFail "Download of ${software} in version ${version} failed after trying ${#mirrors[*]} mirror(s)."
+    doFail "Download of ${software} in version ${version} failed after trying ${#urls[*]} url(s)."
   else
     doDownloadInternal "${url}" "${tmp_file}" "${target_dir}" "${filename}"
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
+      local checksum
+      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/"${os}"_"${arch}".urls.sha256)"
+      doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
       return "${result}"
     fi
     doFail "Failed to download ${filename} from ${1}" "${result}"
+  fi
+}
+
+# $1: path of download file
+# $2: verified checksum
+# $3: url_file
+function doVerifyChecksums() {
+  local shasum="shasum -a 256"
+  local download_file_path="${1}"
+  local checksum="${2}"
+  local url_file="${3}"
+  if doIsWindows
+  then
+    shasum="sha256sum"
+  fi
+  local checksum_downloadfile
+  checksum_downloadfile="$(eval "${shasum}" "${download_file_path}" | cut -d" " -f1)"
+  if [ "${checksum_downloadfile}" != "${checksum}" ]
+  then
+    doFail "Downloaded file has the wrong checksum!\nExpected ${checksum}\nDownload ${checksum_downloadfile}\nThis could be a man-in-the-middle-attack, a download failure, or a release that has been updated afterwards.\nPlease review carefully.\nExpected checksum can be found at ${url_file}.sha256.\nActual checksum was computed via ${shasum} ${download_file_path}\nInstallation was aborted for security reasons!"
+  else
+    doSuccess "Checksum ${checksum_downloadfile} is correct"
   fi
 }
 
@@ -1269,40 +1271,21 @@ function doInstall() {
   fi
   if [ -z "${version}" ]
   then
-    doUpdateMirrors
-    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
-    if [ -e "${available_versions}" ]
-    then
-      version="$(head -n 1 "${available_versions}")"
-      doDebug "Resolved latest version of ${software} to ${version} from ${available_versions}"
-    else
-      doFail "Version is unspecified for ${software} but could not be found in ${available_versions}."
-    fi
-  elif [ "${version:(-1)}" = "*" ]
+    doUpdateUrls
+    version=$(doGetLatestSoftwareVersion "${software}")
+    doDebug "Resolved latest version of ${software} to ${version}"
+  elif [ "${version:${#version}-1}" = "*" ]
   then
+    doUpdateUrls
     doDebug "Resolving version prefix ${version}"
-    local version_prefix="${version::-1}" # remove last character (*)
-    doUpdateMirrors
-    local available_versions="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
-    if [ -e "${available_versions}" ]
+    edition=$(doGetSoftwareEdition "${software}")
+    resolved_version=$(doGetLatestSoftwareVersion "${software}" "${version}")
+    if [ -n "${resolved_version}" ]
     then
-      local regex_digit="0-9"
-      local version_prefix_regex="^${version_prefix//./[.]}"
-      if [[ ${version_prefix:(-1)} =~ [${regex_digit}] ]]
-      then
-        version_prefix_regex="${version_prefix_regex}[^${regex_digit}]"
-      fi
-      local resolved_version
-      resolved_version="$(grep "${version_prefix_regex}" "${available_versions}" | head -n 1)"
-      if [ -n "${resolved_version}" ]
-      then
-        doDebug "Resolved version prefix ${version} to ${resolved_version}"
-        version="${resolved_version}"
-      else
-        doFail "Could not resolve version prefix ${version} : no matching version found in ${available_versions}"
-      fi
+      doDebug "Resolved version prefix ${version} to ${resolved_version}"
+      version="${resolved_version}"
     else
-      doFail "Could not resolve version prefix ${version} : missing file ${available_versions}"
+      doFail "Could not resolve version prefix ${version} : no matching version found in ${DEVON_IDE_HOME}/urls/${software}/${edition}/"
     fi
   fi
   local version_file="${target_path}/.devon.software.version"
@@ -1858,47 +1841,21 @@ function doSetSoftwareVersion() {
   local version="${2}"
   local commandlet="${3}"
   local edition
-  if [ -d "${DEVON_IDE_HOME}/urls" ]
+  if [ -n "${version}" ]
   then
-    if [ -n "${version}" ]
+    if [ "${version}" = "latest" ]
     then
-      if [ "${version}" = "latest" ]
-      then
-        version=$(doGetLatestSoftwareVersion "${software}")
-      fi
-      local software_version_variable="${software}"
-      software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
-      local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
-      grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
-      mv "${devon_properties}.tmp" "${devon_properties}"
-      echo "${software_version_variable}=${version}" >> "${devon_properties}"
-      doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
-    else
-      doError "You have to specify the version you want to set."
+      version=$(doGetLatestSoftwareVersion "${software}")
     fi
+    local software_version_variable="${software}"
+    software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
+    local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
+    grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
+    mv "${devon_properties}.tmp" "${devon_properties}"
+    echo "${software_version_variable}=${version}" >> "${devon_properties}"
+    doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
   else
-    if [ -n "${version}" ]
-    then
-      if [ "${version}" = "latest" ]
-      then
-        doUpdateMirrors
-        version="$(head -n 1 "${DEVON_IDE_HOME}/mirrors/${software}/available-versions")"
-      fi
-      local software_version_variable="${software}"
-      # temporary workaround for #1098 should be fixed and removed with #1085
-      if [ "${software_version_variable}" = "nodejs" ]
-      then
-        software_version_variable="node"
-      fi
-      software_version_variable="$(echo "${software_version_variable}" | awk '{print toupper($0)}')_VERSION"
-      local devon_properties="${DEVON_IDE_HOME}/settings/devon.properties"
-      grep -v "${software_version_variable}" "${devon_properties}" > "${devon_properties}.tmp"
-      mv "${devon_properties}.tmp" "${devon_properties}"
-      echo "${software_version_variable}=${version}" >> "${devon_properties}"
-      doEchoInteraction "${software_version_variable}=${version} has been set in ${devon_properties}\nTo install that version call the following command:\ndevon ${commandlet} setup"
-    else
-      doError "You have to specify the version you want to set."
-    fi
+    doError "You have to specify the version you want to set."
   fi
 }
 
@@ -1906,41 +1863,23 @@ function doSetSoftwareVersion() {
 function doListSoftwareVersions() {
   local software="${1}"
   local edition
-  if [ -d "${DEVON_IDE_HOME}/urls" ]
+  doUpdateUrls
+  edition=$(doGetSoftwareEdition "${software}")
+  local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
+  declare -a versions
+  versions=("$(find "${versions_path}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)")
+  local anz_versions
+  anz_versions="$(echo "${versions[@]}" | wc -w )"
+  if [ ! -d "${versions_path}" ]
   then
-    doUpdateUrls
-    edition=$(doGetSoftwareEdition "${software}")
-    local versions_path="${DEVON_IDE_HOME}/urls/${software}/${edition}"
-    declare -a versions
-    versions=("$(find "${versions_path}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)")
-    local anz_versions
-    anz_versions="$(echo "${versions[@]}" | wc -w )"
-    if [ ! -d "${versions_path}" ]
-    then
-      doError "No versions available at ${versions_path}"
-    else
-      echo "${versions[@]}" | head -20 | pr -4 -t -s | column -t
-      if [ "${anz_versions}" -ge 20 ]
-      then
-        doEcho "Only the 20 latest versions are displayed."
-        doAskToContinue "Do you want to see all versions?"
-        echo "${versions[@]}" | less
-      fi
-    fi
+    doError "No versions available at ${versions_path}"
   else
-    doUpdateMirrors
-    local versions_path="${DEVON_IDE_HOME}/mirrors/${software}/available-versions"
-    if [ ! -f "${versions_path}" ]
+    echo "${versions[@]}" | head -20 | pr -4 -t -s | column -t
+    if [ "${anz_versions}" -ge 20 ]
     then
-      doError "No versions available at ${versions_path}"
-    elif [ "$(wc -l "${versions_path}" | awk '{print $1}')" -lt 20 ]
-    then
-      pr -4 -t -s "${versions_path}" | column -t
-    else
-      head -n 20 "${versions_path}" | pr -4 -t -s | column -t
       doEcho "Only the 20 latest versions are displayed."
       doAskToContinue "Do you want to see all versions?"
-      less "${versions_path}"
+      echo "${versions[@]}" | less
     fi
   fi
 }

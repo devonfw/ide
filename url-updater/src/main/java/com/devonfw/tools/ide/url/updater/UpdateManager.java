@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
+import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ import com.devonfw.tools.ide.url.updater.docker.DockerRancherDesktopUrlUpdater;
 import com.devonfw.tools.ide.url.updater.dotnet.DotNetUrlUpdater;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseCppUrlUpdater;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseJavaUrlUpdater;
+import com.devonfw.tools.ide.url.updater.gcloud.GCloudUrlUpdater;
 import com.devonfw.tools.ide.url.updater.gcviewer.GcViewerUrlUpdater;
 import com.devonfw.tools.ide.url.updater.gh.GhUrlUpdater;
 import com.devonfw.tools.ide.url.updater.graalvm.GraalVmUrlUpdater;
@@ -52,12 +54,12 @@ public class UpdateManager {
 
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(),
-      new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
+      new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GCloudUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
       new GraalVmUrlUpdater(), new GradleUrlUpdater(), new HelmUrlUpdater(), new IntellijUrlUpdater(),
-      new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(), new KotlincNativeUrlUpdater(),
-      new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(), new NpmUrlUpdater(), new OcUrlUpdater(),
-      new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(), new DockerRancherDesktopUrlUpdater(),
-      new SonarUrlUpdater(), new TerraformUrlUpdater(), new VsCodeUrlUpdater());
+      new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(),
+      new KotlincNativeUrlUpdater(), new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(),
+      new NpmUrlUpdater(), new OcUrlUpdater(), new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(),
+      new DockerRancherDesktopUrlUpdater(), new SonarUrlUpdater(), new TerraformUrlUpdater(), new VsCodeUrlUpdater());
 
   /**
    * The constructor.
