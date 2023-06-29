@@ -161,7 +161,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os,
       SystemArchitecture architecture) {
 
-    return doAddVersion(urlVersion, downloadUrl, os, architecture, "");
+    return doAddVersion(urlVersion, downloadUrl, os, architecture, "", "");
   }
 
   /**
