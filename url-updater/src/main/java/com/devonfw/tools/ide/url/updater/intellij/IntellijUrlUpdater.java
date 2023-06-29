@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
-  private final static String JSON_URL = "https://data.services.jetbrains.com/products?code=IIU%2CIIC&release.type=release&_=1682672979887";
+  private final static String JSON_URL = "https://data.services.jetbrains.com/products?code=IIU%2CIIC&release.type=release";
 
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
@@ -89,10 +89,14 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
       return "community";
   }
 
-  private void addVersionEachOs(UrlVersion url, Map<String, IntellijJsonDownloadsItem> downloads, String json_os,
+  /**
+   * Get link and link for the checksum for each OS, which are seperate nodes in the json
+   *
+   * */
+  private void addVersionEachOs(UrlVersion url, Map<String, IntellijJsonDownloadsItem> downloads, String jsonOS,
       OperatingSystem os, SystemArchitecture systemArchitecture) {
 
-    Map<String, Object> osValues = downloads.get(json_os).getOs_values();
+    Map<String, Object> osValues = downloads.get(jsonOS).getOs_values();
     String link = osValues.get("link").toString();
     String checkSumLink = osValues.get("checksumLink").toString();
     String cs = getCheckSum(checkSumLink);
@@ -100,6 +104,9 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   }
 
+  /**
+   * Follows link and gets body as string which contains checksum
+   * */
   private String getCheckSum(String checksumLink) {
     String responseCS = doGetResponseBodyAsString(checksumLink);
     return responseCS.split(" ")[0];
@@ -125,6 +132,6 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   @Override
   protected void collectVersionsFromJson(IntellijJsonObject jsonItem, Collection<String> versions) {
-
+    throw new IllegalStateException();
   }
 }
