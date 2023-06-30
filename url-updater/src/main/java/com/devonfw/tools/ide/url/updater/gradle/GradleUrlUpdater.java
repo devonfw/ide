@@ -22,6 +22,10 @@ public class GradleUrlUpdater extends WebsiteUrlUpdater {
 
   private final static String HASH_VERSION_URL = "https://gradle.org/release-checksums";
 
+  private final static String DOWNLOAD_URL = "https://services.gradle.org/distributions/gradle-${version}-bin.zip";
+
+  private String responseBody;
+
   @Override
   protected String getVersionUrl() {
 
@@ -43,15 +47,20 @@ public class GradleUrlUpdater extends WebsiteUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    String responseBody = doGetResponseBodyAsString(HASH_VERSION_URL);
+    if (responseBody == null) {
+      responseBody = doGetResponseBodyAsString(HASH_VERSION_URL);
+    }
 
     String hashSum = "";
-    if (responseBody.isEmpty()) {
+    if (responseBody != null && !responseBody.isEmpty()) {
       hashSum = doGetHashSumForVersion(responseBody, urlVersion.getName());
     }
 
-    doAddVersion(urlVersion, "https://services.gradle.org/distributions/gradle-${version}-bin.zip", null, null,
-        hashSum);
+    if (hashSum.isEmpty()) {
+      doAddVersion(urlVersion, DOWNLOAD_URL);
+    } else {
+      doAddVersion(urlVersion, DOWNLOAD_URL, null, null, hashSum);
+    }
 
   }
 
