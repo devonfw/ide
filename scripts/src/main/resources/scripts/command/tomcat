@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# autocompletion list
+if [ "${1}" = "shortlist" ]
+then
+  if [ -z "${2}" ]
+  then
+    echo "setup start stop version help"
+  fi
+  exit
+fi
+
+
+
+# shellcheck source=scripts/functions
+source "$(dirname "${0}")"/../functions
+export CATALINA_HOME="${DEVON_IDE_HOME}/software/tomcat"
+TOMCAT_HOME="${DEVON_IDE_HOME}/software/tomcat"
+TOMCAT="${TOMCAT_HOME}/bin/catalina.sh"
+
+TOOL_VERSION_COMMAND="${TOMCAT} version"
+# shellcheck source=scripts/commandlet-cli
+source "$(dirname "${0}")"/../commandlet-cli
+
+# $1: optional silent mode
+function doSetup() {
+  doDevonCommand java setup silent
+  doInstall "tomcat" "${TOMCAT_VERSION}" "${1}"
+  return 0
+}
+
+function doStart() {
+   # dosetup silent
+   # doRunCommand "${TOMCAT_HOME}/bin/startup.bat"#
+   doTomcat start
+}
+
+function doStop() {
+    doTomcat stop
+}
+
+function doTomcat() {
+    doSetup silent
+
+    if [ "${1}" = "start" ]
+    then
+      "${TOMCAT_HOME}/bin/startup.sh"
+    elif [ "${1}" = "stop" ]
+    then
+      "${TOMCAT_HOME}/bin/shutdown.sh"
+    else
+      doFail "Unknown tomcat command: ${1}"
+    fi
+
+    if [ "${1}" = "start" ]
+    then
+      echo "Tomcat is running at localhost on the following port (default 8080):"
+      grep 'Connector port=' "${TOMCAT_HOME}/conf/server.xml" | awk -F'"' '{print $2}'| head -1
+    fi
+}
+
+# CLI
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+then
+  echo "Setup or run Tomcat on local machine."
+  echo
+  echo "Arguments:"
+  echo " start                          start tomcat on your machine"
+  echo " stop                           stop tomcat on your machine"
+  echo " setup                          install tomcat on your machine (install, verify)"
+elif [ "${1}" = "setup" ]
+then
+  doSetup "${2}"
+elif [ "${1}" = "start" ]
+then
+  doStart
+elif [ "${1}" = "stop" ]
+then
+  doStop
+else
+  doFail "undefined argument ${*}"
+fi
