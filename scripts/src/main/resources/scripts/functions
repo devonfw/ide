@@ -610,14 +610,9 @@ function doDownload() {
       then
         if [ -e "${url_file}.sha256" ]
         then
-          local checksum_downloadfile
           local checksum
-          checksum_downloadfile="$(shasum -a 256 "${target_dir}"/"${filename}" | cut -d" " -f1)"
           checksum="$(cat "${url_file}".sha256)"
-          if [ "${checksum_downloadfile}" != "${checksum}" ]
-          then
-            doFail "Downloaded file has the wrong checksum!\nExpected ${checksum}\nDownload ${checksum_downloadfile}\nThis could be a man-in-the-middle-attack, a download failure, or a release that has been updated afterwards.\nPlease review carefully.\nExpected checksum can be found at ${url_file}.sha256.\nActual checksum was computed via shasum -a 256 ${target_dir}/${filename}\nInstallation was aborted for security reasons!"
-          fi
+          doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
         else 
           if [ "${version}" != "latest" ]
           then
@@ -635,17 +630,34 @@ function doDownload() {
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
-      local checksum_downloadfile
       local checksum
-      checksum_downloadfile="$(sha256sum "${target_dir}"/"${filename}" | cut -d" " -f1)"
-      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/${os}_${arch}.urls.sha256)"
-      if [ "${checksum_downloadfile}" != "${checksum}" ]
-      then
-        doFail "Downloaded file has the wrong checksum"
-      fi
+      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/"${os}"_"${arch}".urls.sha256)"
+      doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
       return "${result}"
     fi
     doFail "Failed to download ${filename} from ${1}" "${result}"
+  fi
+}
+
+# $1: path of download file
+# $2: verified checksum
+# $3: url_file
+function doVerifyChecksums() {
+  local shasum="shasum -a 256"
+  local download_file_path="${1}"
+  local checksum="${2}"
+  local url_file="${3}"
+  if doIsWindows
+  then
+    shasum="sha256sum"
+  fi
+  local checksum_downloadfile
+  checksum_downloadfile="$(eval "${shasum}" "${download_file_path}" | cut -d" " -f1)"
+  if [ "${checksum_downloadfile}" != "${checksum}" ]
+  then
+    doFail "Downloaded file has the wrong checksum!\nExpected ${checksum}\nDownload ${checksum_downloadfile}\nThis could be a man-in-the-middle-attack, a download failure, or a release that has been updated afterwards.\nPlease review carefully.\nExpected checksum can be found at ${url_file}.sha256.\nActual checksum was computed via ${shasum} ${download_file_path}\nInstallation was aborted for security reasons!"
+  else
+    doSuccess "Checksum ${checksum_downloadfile} is correct"
   fi
 }
 

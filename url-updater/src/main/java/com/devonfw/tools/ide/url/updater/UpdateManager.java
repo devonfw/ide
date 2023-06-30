@@ -39,6 +39,7 @@ import com.devonfw.tools.ide.url.updater.python.PythonUrlUpdater;
 import com.devonfw.tools.ide.url.updater.quarkus.QuarkusUrlUpdater;
 import com.devonfw.tools.ide.url.updater.sonar.SonarUrlUpdater;
 import com.devonfw.tools.ide.url.updater.terraform.TerraformUrlUpdater;
+import com.devonfw.tools.ide.url.updater.tomcat.TomcatUrlUpdater;
 import com.devonfw.tools.ide.url.updater.vscode.VsCodeUrlUpdater;
 
 /**
@@ -62,7 +63,7 @@ public class UpdateManager {
       new IntellijCommunityUrlUpdater(), new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(),
       new KotlincNativeUrlUpdater(), new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(),
       new NpmUrlUpdater(), new OcUrlUpdater(), new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(),
-      new DockerRancherDesktopUrlUpdater(), new SonarUrlUpdater(), new TerraformUrlUpdater(), new VsCodeUrlUpdater());
+      new DockerRancherDesktopUrlUpdater(), new SonarUrlUpdater(), new TerraformUrlUpdater(), new TomcatUrlUpdater(), new VsCodeUrlUpdater());
 
   /**
    * The constructor.
