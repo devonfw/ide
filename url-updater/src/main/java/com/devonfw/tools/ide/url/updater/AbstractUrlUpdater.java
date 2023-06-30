@@ -62,6 +62,17 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
+  /** The {@link Instant} expiration time for the GitHub actions url-update job */
+  private Instant expirationTime;
+
+  /**
+   * @param expirationTime to set for the GitHub actions url-update job
+   */
+  public void setExpirationTime(Instant expirationTime) {
+
+    this.expirationTime = expirationTime;
+  }
+
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
    */
@@ -434,6 +445,25 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
+   * Checks if the timeout was expired.
+   *
+   * @return boolean true if timeout was expired, false if not
+   */
+  public boolean isTimeoutExpired() {
+
+    if (this.expirationTime == null) {
+      return false;
+    }
+
+    if (Instant.now().isAfter(expirationTime)) {
+      logger.warn("Expiration time of timeout was reached, cancelling update process.");
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
@@ -447,7 +477,13 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     Set<String> versions = getVersions();
     String toolWithEdition = getToolWithEdition();
     logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
+
     for (String version : versions) {
+
+      if (isTimeoutExpired()) {
+        break;
+      }
+
       if (edition.getChild(version) == null) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);

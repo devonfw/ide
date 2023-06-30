@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.url.updater;
 
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class UpdateManager {
 
   private final UrlRepository urlRepository;
 
+  private final Instant expirationTime;
+
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(),
       new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GCloudUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
@@ -66,10 +69,12 @@ public class UpdateManager {
    * The constructor.
    *
    * @param pathToRepository the {@link Path} to the {@code ide-urls} repository to update.
+   * @param expirationTime for GitHub actions url-update job
    */
-  public UpdateManager(Path pathToRepository) {
+  public UpdateManager(Path pathToRepository, Instant expirationTime) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
+    this.expirationTime = expirationTime;
   }
 
   /**
@@ -79,6 +84,7 @@ public class UpdateManager {
 
     for (AbstractUrlUpdater updater : this.updaters) {
       try {
+        updater.setExpirationTime(this.expirationTime);
         updater.update(this.urlRepository);
       } catch (Exception e) {
         logger.error("Failed to update {}", updater.getToolWithEdition(), e);
