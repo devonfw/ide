@@ -179,6 +179,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
+    String major = urlVersion.getVersionIdentifier().getStart().getDigits();
+    url = url.replace("${major}", major);
     if (os != null) {
       url = url.replace("${os}", os.toString());
     }
