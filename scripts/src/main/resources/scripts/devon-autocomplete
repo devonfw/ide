@@ -51,6 +51,10 @@ else
         then
           edition="${tool}"
         fi
+        local myPwd="${PWD}"
+        cd "${DEVON_IDE_HOME}/urls"
+        git pull -q
+        cd "${myPwd}"
         if [ -d "${DEVON_IDE_HOME}/urls/${tool}/${edition}" ]
         then
           commandlist=("$(find "${DEVON_IDE_HOME}/urls/${tool}/${edition}" -mindepth 1 -maxdepth 1 | awk -F'/' '{print $NF}' | sort -rV)")
