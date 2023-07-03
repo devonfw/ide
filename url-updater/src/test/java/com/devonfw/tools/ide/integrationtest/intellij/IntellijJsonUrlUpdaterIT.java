@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.integrationtest.Intellij;
+package com.devonfw.tools.ide.integrationtest.intellij;
 
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
