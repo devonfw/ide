@@ -1,8 +1,5 @@
 package com.devonfw.tools.ide.url.updater.intellij;
 
-import java.net.URL;
-import java.util.*;
-
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
@@ -15,13 +12,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 /**
- *  {@link IntellijUrlUpdater} base class for IntelliJ.
+ * {@link IntellijUrlUpdater} base class for IntelliJ.
  */
 public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   private static final String VERSION_BASE_URL = "https://data.services.jetbrains.com";
-  private final static String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
+
+  private static final String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
 
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
@@ -52,15 +54,20 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
             try {
               UrlVersion urlVersion = edition.getOrCreateChild(version);
               for (String os : downloads.keySet()) {
-                if (os.equals("windowsZip")) {
-                  addVersionEachOs(urlVersion, downloads, "windowsZip", OperatingSystem.WINDOWS,
-                      SystemArchitecture.X64);
-                } else if (os.equals("linux")) {
-                  addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
-                } else if (os.equals("mac")) {
-                  addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
-                } else if (os.equals("macM1")) {
-                  addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
+                switch (os) {
+                  case "windowsZip":
+                    addVersionEachOs(urlVersion, downloads, "windowsZip", OperatingSystem.WINDOWS,
+                        SystemArchitecture.X64);
+                    break;
+                  case "linux":
+                    addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
+                    break;
+                  case "mac":
+                    addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
+                    break;
+                  case "macM1":
+                    addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
+                    break;
                 }
               }
               urlVersion.save();
@@ -91,16 +98,15 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   }
 
   /**
-   * Get link and link for the checksum for each OS, which are seperate nodes in the json
-   *
-   * */
+   * Get link and link for the checksum for each OS, which are separate nodes in the json
+   */
   private void addVersionEachOs(UrlVersion url, Map<String, IntellijJsonDownloadsItem> downloads, String jsonOS,
       OperatingSystem os, SystemArchitecture systemArchitecture) {
 
     Map<String, Object> osValues = downloads.get(jsonOS).getOs_values();
     String link = osValues.get("link").toString();
     String checkSumLink = osValues.get("checksumLink").toString();
-    if (checkSumLink.isEmpty()){
+    if (checkSumLink.isEmpty()) {
       doAddVersion(url, link, os, systemArchitecture);
     } else {
       String cs = getCheckSum(checkSumLink);
@@ -111,8 +117,9 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   /**
    * Follows link and gets body as string which contains checksum
-   * */
+   */
   private String getCheckSum(String checksumLink) {
+
     String responseCS = doGetResponseBodyAsString(checksumLink);
     return responseCS.split(" ")[0];
   }
@@ -130,10 +137,10 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   }
 
   /**
-   *
-   * @return
+   * @return String of version base URL
    */
   protected String getVersionBaseUrl() {
+
     return VERSION_BASE_URL;
   }
 
@@ -145,6 +152,7 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   @Override
   protected void collectVersionsFromJson(IntellijJsonObject jsonItem, Collection<String> versions) {
+
     throw new IllegalStateException();
   }
 }
