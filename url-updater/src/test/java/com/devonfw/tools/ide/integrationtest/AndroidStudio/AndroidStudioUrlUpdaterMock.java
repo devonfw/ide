@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.integrationtests;
+package com.devonfw.tools.ide.integrationtest.AndroidStudio;
 
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;

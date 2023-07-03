@@ -20,7 +20,8 @@ import org.slf4j.LoggerFactory;
  */
 public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
-  private final static String JSON_URL = "https://data.services.jetbrains.com/products?code=IIU%2CIIC&release.type=release";
+  private static final String VERSION_BASE_URL = "https://data.services.jetbrains.com";
+  private final static String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
 
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
@@ -33,8 +34,8 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
     UrlTool tool = urlRepository.getOrCreateChild(getTool());
     try {
-      URL jsonURL = new URL(JSON_URL);
-      IntellijJsonObject[] jsonObj = MAPPER.readValue(jsonURL, IntellijJsonObject[].class);
+      String response = doGetResponseBodyAsString(doGetVersionUrl());
+      IntellijJsonObject[] jsonObj = MAPPER.readValue(response, IntellijJsonObject[].class);
       // Has 2 elements, 1. Ultimate Edition, 2. Community Edition
       for (int i = 0; i <= jsonObj.length - 1; i++) {
         if (i == 1)
@@ -99,8 +100,12 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
     Map<String, Object> osValues = downloads.get(jsonOS).getOs_values();
     String link = osValues.get("link").toString();
     String checkSumLink = osValues.get("checksumLink").toString();
-    String cs = getCheckSum(checkSumLink);
-    doAddVersion(url, link, os, systemArchitecture, cs);
+    if (checkSumLink.isEmpty()){
+      doAddVersion(url, link, os, systemArchitecture);
+    } else {
+      String cs = getCheckSum(checkSumLink);
+      doAddVersion(url, link, os, systemArchitecture, cs);
+    }
 
   }
 
@@ -121,7 +126,15 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   @Override
   protected String doGetVersionUrl() {
 
-    return JSON_URL;
+    return getVersionBaseUrl() + "/" + JSON_URL;
+  }
+
+  /**
+   *
+   * @return
+   */
+  protected String getVersionBaseUrl() {
+    return VERSION_BASE_URL;
   }
 
   @Override
