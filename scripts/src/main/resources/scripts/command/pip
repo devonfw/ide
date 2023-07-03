@@ -36,12 +36,17 @@ function doSetup() {
         doEcho "Creating modules.pth..."
         echo -e "../pip\n../setuptools\n../wheel\n../pkg_resources\n" > "${PYTHON_HOME}/modules.pth"
       fi
-      
       # Install pip via python
       doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
       cd "${PIP_HOME}" || exit 255
-      doDevonCommand python pip-latest-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
-      rm -rf "${PIP_HOME}/pip-latest-pip.py"
+      if [ -d  "${DEVON_IDE_HOME}/urls" ]
+      then
+        doDevonCommand python pip-latest-pip-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
+        rm -rf "${PIP_HOME}/pip-latest-pip-pip.py"
+      else
+        doDevonCommand python pip-latest-pip.py --no-warn-script-location "--target=${PIP_HOME}" 
+        rm -rf "${PIP_HOME}/pip-latest-pip.py"
+      fi
       doExtendPath "${PIP_HOME}"
     else
       doEcho "Your operating system is unsupported!"
