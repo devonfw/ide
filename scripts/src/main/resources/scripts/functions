@@ -1845,6 +1845,7 @@ function doSetSoftwareVersion() {
   then
     if [ "${version}" = "latest" ]
     then
+      doUpdateUrls
       version=$(doGetLatestSoftwareVersion "${software}")
     fi
     local software_version_variable="${software}"
