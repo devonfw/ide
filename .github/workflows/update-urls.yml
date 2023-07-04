@@ -26,11 +26,11 @@ jobs:
           cd ide-urls
           git config --global user.name ${{ secrets.BUILD_USER }}
           git config --global user.email ${{ secrets.BUILD_USER_EMAIL }}
-          git add .
-          git commit -m "Update urls"
-          if [ $? = 0 ]
+          if [ "$(git status -z)" = "" ]
           then
-            git push
+            echo "No changes, nothing to commit."
           else
-            echo "Commit failed. Most probably no changes and nothing to do."
+            git add .
+            git commit -m "Update urls"
+            git push
           fi
