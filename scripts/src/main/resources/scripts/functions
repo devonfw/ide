@@ -1853,7 +1853,6 @@ function doGetLatestSoftwareVersion() {
   local prefix="${2}"
   local edition
   local version
-  doUpdateUrls
   edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
