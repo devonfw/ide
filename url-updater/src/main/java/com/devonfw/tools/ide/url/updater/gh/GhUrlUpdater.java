@@ -33,8 +33,10 @@ public class GhUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "linux_amd64.tar.gz", LINUX, X64);
     doAddVersion(urlVersion, baseUrl + "linux_arm64.tar.gz", LINUX, ARM64);
     doAddVersion(urlVersion, baseUrl + "macOS_amd64.tar.gz", MAC, X64);
+    doAddVersion(urlVersion, baseUrl + "macOS_amd64.zip", MAC, X64);
     if (vid.compareVersion(MIN_MAC_ARM_VID).isGreater()) {
       doAddVersion(urlVersion, baseUrl + "macOS_arm64.tar.gz", MAC, ARM64);
+      doAddVersion(urlVersion, baseUrl + "macOS_arm64.zip", MAC, ARM64);
     }
   }
 
