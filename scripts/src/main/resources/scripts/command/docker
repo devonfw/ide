@@ -50,99 +50,50 @@ function doSetup() {
     fi
     return 0
   fi
+  if uname -r | grep -i microsoft
+  then
+    doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
+  fi
   if [ "${DOCKER_EDITION}" != "docker" ]
   then
-    echo "Rancher Desktop set as option"
-    if uname -r | grep -i microsoft
+    DOCKER_EDITION="rancher"
+    # TODO what all is this for? IMHO we can remove the following IF statement and doIsRancherInstalled function
+    if doIsRancherInstalled
     then
-      doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
-    else
-      if ! doIsRancherInstalled
-      then
-        doRequireNotBatch
-        DOCKER_EDITION=rancher
-        local rancher_install_dir="${DEVON_IDE_HOME}/updates/install/rancherdesktop"
-        TOOL_VERSION_COMMAND="-"
-        if [ -d "${DEVON_IDE_HOME}/urls" ]
-        then
-          doInstall "docker" "${DOCKER_VERSION}" "${1}" "rancher" "${rancher_install_dir}"
-        else
-          doInstall "rancher" "${RANCHER_VERSION}" "${1}" "" "${rancher_install_dir}"
-        fi
-        TOOL_VERSION_COMMAND="docker version"
-        if doIsWindows
-        then
-          doSetVpnKitStartupInstaller
-          doEcho "Installing Rancher Desktop for Windows..."
-          # ensures installation of vpnkit if user directly restarts computer for enabling wsl
-          if [ -d "${DEVON_IDE_HOME}/urls" ]
-          then
-            doRunCommand "${rancher_install_dir}/docker-${DOCKER_VERSION}-rancher-windows.exe"
-          else
-            doRunCommand "${rancher_install_dir}/rancher-*-windows.exe"
-          fi
-          #check if vpnkit is already installed
-          doEnsureVpnKitInstallation
-        elif doIsMacOs
-        then
-          doRunCommand "cp -a '${rancher_install_dir}/*.app' /Applications/"
-        else
-          doRunCommand "cp -a '${rancher_install_dir}/.' '${DEVON_IDE_HOME}/software/docker/'"
-          doRunCommand "${DEVON_IDE_HOME}/software/docker/rancher-desktop"
-        fi
-        read -r -p "Rancher Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
-      fi
-    fi
-  else
-    if ! doIsDockerInstalled
-    then
-      doRequireNotBatch
-      if [ -d "${DEVON_IDE_HOME}/urls" ]
-      then 
-        DOCKER_VERSION=$(doGetLatestSoftwareVersion "docker")
-        doDownload "-" "" "docker" "${DOCKER_VERSION}"
-      else
-        doDownload "-" "" "docker" "${DOCKER_VERSION:-stable}"
-      fi
-      if doIsWindows
-      then
-        doEchoStep "Installing Docker Desktop for Windows..."
-      if [ -d "${DEVON_IDE_HOME}/urls" ]
-      then 
-        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-${DOCKER_VERSION}-docker-windows.exe"
-      else
-        doRunCommand "${DEVON_DOWNLOAD_DIR}/docker-stable-windows.exe"
-      fi
-      elif doIsMacOs
-      then
-        doEchoStep "Installing Docker Desktop for MacOS..."
-        local mount_dir="${DEVON_IDE_HOME}/updates/volume"
-        mkdir -p "${mount_dir}"
-        doRunCommand "hdiutil attach -quiet -nobrowse -mountpoint '${mount_dir}' '${DEVON_DOWNLOAD_DIR}/Docker.dmg'"
-        doRunCommand "cp -a '${mount_dir}'/*.app /Applications/"
-        doRunCommand "hdiutil detach -force '${mount_dir}'"
-      fi
-      read -r -p "Docker Desktop has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+      doEcho "Rancher-Desktop is already installed!"
+      return
     fi
   fi
+  local install_dir="${DEVON_IDE_HOME}/updates/install/docker"
+  rm -rf "${install_dir}"
+  TOOL_VERSION_COMMAND="-"
+  doInstall "docker" "${DOCKER_VERSION}" "${1}" "${DOCKER_EDITION}" "${install_dir}" "" "noUnpack"
+  TOOL_VERSION_COMMAND="docker version"
+  if doIsWindows 
+  then
+    if [ "${DOCKER_EDITION}" = "rancher" ]
+    then
+      doSetVpnKitStartupInstaller
+    fi
+    doRunFirstExecutable "${install_dir}/"*
+    if [ "${DOCKER_EDITION}" = "rancher" ]
+    then
+      doEnsureVpnKitInstallation
+    fi
+  elif doIsMacOs
+  then
+    doRunCommand "mv '${install_dir}/*.app' /Applications/"
+  else
+    doRunFirstExecutable "${install_dir}/"*
+  fi
+  read -r -p "Docker has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
 }
-
 
 # Call Docker with specified arguments.   
 function doRun() {
   doSetup silent
   doEcho "Running: docker ${*}"
   docker "${@}"
-}
-
-# OS independent check if docker is installed.
-function doIsDockerInstalled() {
-  if command -v docker &> /dev/null
-  then 
-    return
-  else
-    return 255
-  fi
 }
 
 function doEnsureVpnKitInstallation {
@@ -185,7 +136,6 @@ function doIsRancherInstalled() {
     fi
 }
 
-
 function doIsVpnKitInstalled() {
   # echo $result=$(wsl -l -v | % {$_.replace("`0", '')} | Select-String 'wsl-vpnkit')
   result=$(wsl -l | tr -d '\0' | grep wsl-vpnkit)
@@ -197,7 +147,6 @@ function doIsVpnKitInstalled() {
   fi
 }
 
-
 #To make sure that as many windows users as possible are able to run this command, we use the ${APPDATA} variable to get into the startup folder 
 function doSetVpnKitStartupInstaller() {
   {
@@ -206,12 +155,9 @@ function doSetVpnKitStartupInstaller() {
     # echo "start \"\" "C:\Program Files\Git\git-bash.exe" -c "cd /c/projects/my-project/ide-devon && devon docker setup  && /usr/bin/bash --login -i""
     echo '(goto) 2>nul & del "%~f0"' 
   } > VpnKitInstaller.bat
-
   mv VpnKitInstaller.bat "${APPDATA}"/Microsoft/Windows/Start\ Menu/Programs/Startup/
-
   #we won't need a message telling the user to restart for full functionality and a working wsl feature, because Rancher Desktop already does
 }
-
 
 function doInstallVpnKit() {
   #get latest version of the vpnkit and download its tar.gz file
@@ -240,7 +186,6 @@ function doInstallVpnKit() {
   powershell.exe -Command ".\vpnkit-setup.ps1"
   rm vpnkit-setup.ps1
 }
-
 
 # CLI
 case ${1} in 
