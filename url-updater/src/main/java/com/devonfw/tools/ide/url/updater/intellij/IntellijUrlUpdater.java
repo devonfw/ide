@@ -25,11 +25,12 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
 
   private static final String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
 
+  private static final String ULTIMATE_EDITION = "ultimate";
+  private static final String COMMUNITY_EDITION = "community";
+
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
   private static final Logger logger = LoggerFactory.getLogger(IntellijUrlUpdater.class);
-
-  private boolean editionSwitch = false;
 
   @Override
   public void update(UrlRepository urlRepository) {
@@ -39,46 +40,69 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
       String response = doGetResponseBodyAsString(doGetVersionUrl());
       IntellijJsonObject[] jsonObj = MAPPER.readValue(response, IntellijJsonObject[].class);
       // Has 2 elements, 1. Ultimate Edition, 2. Community Edition
-      for (int i = 0; i <= jsonObj.length - 1; i++) {
-        if (i == 1)
-          editionSwitch = true;
-        UrlEdition edition = tool.getOrCreateChild(getEdition());
-        updateExistingVersions(edition);
-        String toolWithEdition = getToolWithEdition();
+      IntellijJsonObject ultimateRelease;
+      IntellijJsonObject communityRelease;
 
-        List<IntellijJsonReleases> releases = jsonObj[i].getReleases();
-        for (IntellijJsonReleases r : releases) {
-          String version = r.getVersion();
-          Map<String, IntellijJsonDownloadsItem> downloads = r.getDownloads();
-          if (edition.getChild(version) == null) {
-            try {
-              UrlVersion urlVersion = edition.getOrCreateChild(version);
-              for (String os : downloads.keySet()) {
-                switch (os) {
-                  case "windowsZip":
-                    addVersionEachOs(urlVersion, downloads, "windowsZip", OperatingSystem.WINDOWS,
-                        SystemArchitecture.X64);
-                    break;
-                  case "linux":
-                    addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
-                    break;
-                  case "mac":
-                    addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
-                    break;
-                  case "macM1":
-                    addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
-                    break;
-                }
-              }
-              urlVersion.save();
-            } catch (Exception e) {
-              logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, e);
-            }
-          }
+      if (jsonObj.length == 2) {
+        ultimateRelease = jsonObj[0];
+        communityRelease = jsonObj[1];
+        UrlEdition edition;
+
+        if (ultimateRelease != null) {
+          edition = tool.getOrCreateChild(ULTIMATE_EDITION);
+          addVersionForEdition(ultimateRelease, edition);
+        }
+
+        if (communityRelease != null) {
+          edition = tool.getOrCreateChild(COMMUNITY_EDITION);
+          addVersionForEdition(communityRelease, edition);
         }
       }
+
     } catch (Exception e) {
       throw new IllegalStateException("Error while getting versions from JSON API " + JSON_URL, e);
+    }
+  }
+
+  /**
+   * Adds a version for the provided {@link UrlEdition}
+   *
+   * @param release the {@link IntellijJsonObject}
+   * @param edition the {@link UrlEdition}
+   */
+  private void addVersionForEdition(IntellijJsonObject release, UrlEdition edition) {
+
+    updateExistingVersions(edition);
+    String toolWithEdition = getToolWithEdition();
+
+    List<IntellijJsonReleases> releases = release.getReleases();
+    for (IntellijJsonReleases r : releases) {
+      String version = r.getVersion();
+      Map<String, IntellijJsonDownloadsItem> downloads = r.getDownloads();
+      if (edition.getChild(version) == null) {
+        try {
+          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          for (String os : downloads.keySet()) {
+            switch (os) {
+              case "windowsZip":
+                addVersionEachOs(urlVersion, downloads, "windowsZip", OperatingSystem.WINDOWS, SystemArchitecture.X64);
+                break;
+              case "linux":
+                addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
+                break;
+              case "mac":
+                addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
+                break;
+              case "macM1":
+                addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
+                break;
+            }
+          }
+          urlVersion.save();
+        } catch (Exception e) {
+          logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, e);
+        }
+      }
     }
   }
 
@@ -86,15 +110,6 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   protected void addVersion(UrlVersion urlVersion) {
 
     throw new IllegalStateException();
-  }
-
-  @Override
-  protected String getEdition() {
-
-    if (editionSwitch)
-      return "ultimate";
-    else
-      return "community";
   }
 
   /**
