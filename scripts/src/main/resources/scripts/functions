@@ -813,6 +813,7 @@ function doRunFirstExecutable() {
   local installer="$1"
   while [ -n "$1" ]
   do
+    doDebug "Trying to execute $1"
     if [ -x "$1" ]
     then
       doRunCommand "$1"
@@ -820,10 +821,11 @@ function doRunFirstExecutable() {
     elif doIsWindows
     then
       local ext="${1/*\./}"
+      doDebug "Detected extension ${ext}"
       if [ "${ext}" = "msi" ]
       then
         installer="$(cygpath -w "$1")"
-        msiexec //i "${installer}" //quiet
+        doRunCommand "msiexec //i '${installer}'"
         if [ "$?" = 0 ]
         then
           return
