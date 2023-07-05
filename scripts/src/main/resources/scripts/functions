@@ -808,6 +808,39 @@ function doExtract() {
   fi
 }
 
+# $n: the executable to run (may be expaneded glob pattern(s))
+function doRunFirstExecutable() {
+  local installer="$1"
+  while [ -n "$1" ]
+  do
+    doDebug "Trying to execute $1"
+    if [ -x "$1" ]
+    then
+      doRunCommand "$1"
+      return
+    elif doIsWindows
+    then
+      local ext="${1/*\./}"
+      doDebug "Detected extension ${ext}"
+      if [ "${ext}" = "msi" ]
+      then
+        installer="$(cygpath -w "$1")"
+        doRunCommand "msiexec //i '${installer}'"
+        if [ "$?" = 0 ]
+        then
+          return
+        fi
+      elif [ "${ext}" = "exe" ]
+      then
+        doRunCommand "$1"
+        return
+      fi
+    fi
+    shift
+  done
+  doFail "Installation failed from ${installer}"
+}
+
 # $1: the file to unzip
 # $2: target_dir
 function doUnzip() {
@@ -1820,7 +1853,6 @@ function doGetLatestSoftwareVersion() {
   local prefix="${2}"
   local edition
   local version
-  doUpdateUrls
   edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
@@ -1845,6 +1877,7 @@ function doSetSoftwareVersion() {
   then
     if [ "${version}" = "latest" ]
     then
+      doUpdateUrls
       version=$(doGetLatestSoftwareVersion "${software}")
     fi
     local software_version_variable="${software}"

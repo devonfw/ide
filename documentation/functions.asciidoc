@@ -168,6 +168,11 @@ It will use xref:doResult[] using the `message` (`$2`) to handle the result of t
 |`$3`   |dir     |Optional working directory where to execute the command.
 |=======================
 
+=== doRunFirstExecutable
+Runs the first executable from the given arguments. It supports executables but can also run EXE and MSI files on windows.
+It will only return if the execution was successful. Otherwise it will always exit.
+For example `doRunFirstExecutable "${dir}/"*.msi "${dir}/"*.exe` will run the first found MSI or EXE file from the directory `${dir}`.
+
 == Functions for IO operations (download, install, backup, extract, load, save)
 
 === doBackup
