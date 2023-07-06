@@ -530,7 +530,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     boolean modified = false;
     String toolWithEdition = getToolWithEdition();
     Instant now = Instant.now();
-    for (UrlFile child : urlVersion.getChildren()) {
+    for (UrlFile<?> child : urlVersion.getChildren()) {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {
