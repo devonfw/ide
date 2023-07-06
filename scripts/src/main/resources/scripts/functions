@@ -573,7 +573,7 @@ function doDownload() {
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
-        if [ -n "${edition}" ]
+        if [ -n "${edition}" ] && [ "${edition}" != "${software}" ]
         then
           filename="${filename}-${edition}"
         fi
