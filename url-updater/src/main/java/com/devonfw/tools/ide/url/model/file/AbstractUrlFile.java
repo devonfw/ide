@@ -1,12 +1,16 @@
 package com.devonfw.tools.ide.url.model.file;
 
 import com.devonfw.tools.ide.url.model.AbstractUrlArtifactWithParent;
-import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.url.model.folder.AbstractUrlFolder;
+import com.devonfw.tools.ide.url.model.folder.UrlFolder;
 
 /**
  * Abstract base implementation of {@link UrlFile}.
+ *
+ * @param <P> type of the {@link #getParent() parent} {@link UrlFolder folder}.
  */
-public abstract class AbstractUrlFile extends AbstractUrlArtifactWithParent<UrlVersion> implements UrlFile {
+public abstract class AbstractUrlFile<P extends AbstractUrlFolder<?>> extends AbstractUrlArtifactWithParent<P>
+    implements UrlFile<P> {
 
   /**
    * {@code true} if modified and changes are unsaved, {@code false} otherwise.
@@ -19,7 +23,7 @@ public abstract class AbstractUrlFile extends AbstractUrlArtifactWithParent<UrlV
    * @param parent the {@link #getParent() parent folder}.
    * @param name the {@link #getName() filename}.
    */
-  public AbstractUrlFile(UrlVersion parent, String name) {
+  public AbstractUrlFile(P parent, String name) {
 
     super(parent, name);
     this.modified = true;

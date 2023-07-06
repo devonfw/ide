@@ -223,8 +223,7 @@ function doCheckSoftwareSecurityVersion() {
       then
         software_info="${software} with edition ${edition}"
       fi
-      mymessage="You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
-      doReportVersionSecurityWarning "${mymessage}"
+      doReportVersionSecurityWarning "You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
     fi
   fi
 }

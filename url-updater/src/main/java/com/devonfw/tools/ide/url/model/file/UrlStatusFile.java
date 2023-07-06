@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * {@link UrlFile} for the "status.json" file.
  */
-public class UrlStatusFile extends AbstractUrlFile {
+public class UrlStatusFile extends AbstractUrlFile<UrlVersion> {
 
   /**
    * Constant {@link UrlStatusFile#getName() filename}.
@@ -40,7 +40,7 @@ public class UrlStatusFile extends AbstractUrlFile {
    */
   public StatusJson getStatusJson() {
 
-    return statusJson;
+    return this.statusJson;
   }
 
   /**

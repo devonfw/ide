@@ -1,5 +1,23 @@
 package com.devonfw.tools.ide.url.updater;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.url.model.file.UrlChecksum;
@@ -16,23 +34,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
 import com.google.common.base.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
@@ -88,7 +89,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   /**
    * @return the combination of {@link #getTool() tool} and {@link #getEdition() edition} but simplified if both are
-   * equal.
+   *         equal.
    */
   protected final String getToolWithEdition() {
 
@@ -210,6 +211,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected boolean isSuccess(HttpResponse<?> response) {
 
+    if (response == null) {
+      return false;
+    }
     return response.statusCode() == 200;
   }
 
@@ -368,7 +372,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param urlVersion the {@link UrlVersion} instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
-   * initially added).
+   *        initially added).
    */
   @SuppressWarnings("null") // Eclipse is too stupid to check this
   private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
@@ -455,7 +459,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
       return false;
     }
 
-    if (Instant.now().isAfter(expirationTime)) {
+    if (Instant.now().isAfter(this.expirationTime)) {
       logger.warn("Expiration time of timeout was reached, cancelling update process.");
       return true;
     }
@@ -526,7 +530,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     boolean modified = false;
     String toolWithEdition = getToolWithEdition();
     Instant now = Instant.now();
-    for (UrlFile child : urlVersion.getChildren()) {
+    for (UrlFile<?> child : urlVersion.getChildren()) {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {
@@ -580,8 +584,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
-        "-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;

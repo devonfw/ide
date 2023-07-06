@@ -27,6 +27,42 @@ public interface VersionObject<T> extends Comparable<T> {
   VersionComparisonResult compareVersion(T other);
 
   /**
+   * @param other the other version to compare to.
+   * @return true if this version is greater than the given one.
+   */
+  default boolean isGreater(T other) {
+
+    return compareVersion(other).isGreater();
+  }
+
+  /**
+   * @param other the other version to compare to.
+   * @return true if this version is less than the given one.
+   */
+  default boolean isLess(T other) {
+
+    return compareVersion(other).isLess();
+  }
+
+  /**
+   * @param other the other version to compare to.
+   * @return true if this version is greater than or equal to the given one.
+   */
+  default boolean isGreaterOrEqual(T other) {
+
+    return !compareVersion(other).isLess();
+  }
+
+  /**
+   * @param other the other version to compare to.
+   * @return true if this version is less than or equal to the given one.
+   */
+  default boolean isLessOrEqual(T other) {
+
+    return !compareVersion(other).isGreater();
+  }
+
+  /**
    * @return {@code true} if this {@link VersionObject} itself is valid according to version scheme best-practices,
    *         {@code false} otherwise. Invalid {@link VersionObject}s can still be parsed and compared in a deterministic
    *         way but results may not always be perfect.

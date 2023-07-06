@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.url.model.folder;
 
 import com.devonfw.tools.ide.url.model.AbstractUrlFolderWithParent;
+import com.devonfw.tools.ide.url.model.file.UrlSecurityFile;
 
 /**
  * An {@link UrlFolder} representing the actual edition of a {@link UrlTool}. The default edition may have the same
@@ -9,8 +10,7 @@ import com.devonfw.tools.ide.url.model.AbstractUrlFolderWithParent;
  */
 public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion> {
 
-  /** {@link #getName() Name} of security file. */
-  public static final String FILENAME_SECURITY = "security";
+  private UrlSecurityFile securityFile;
 
   /**
    * The constructor.
@@ -31,19 +31,30 @@ public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion>
   @Override
   protected UrlVersion newChild(String name) {
 
-    if (FILENAME_SECURITY.equals(name)) {
-      // return new UrlSecurityFile(this);
-    }
     return new UrlVersion(this, name);
   }
 
-  @Override
-  protected boolean isAllowedChild(String name, boolean folder) {
+  /**
+   * @return the {@link UrlSecurityFile} of this {@link UrlEdition}. Will be lazily initialized on the first call of
+   *         this method. If the file exists, it will be loaded, otherwise it will be empty and only created on save if
+   *         data was added.
+   */
+  public UrlSecurityFile getSecurityFile() {
 
-    if (FILENAME_SECURITY.equals(name)) {
-      return true;
+    if (this.securityFile == null) {
+      this.securityFile = new UrlSecurityFile(this);
+      load(this.securityFile);
     }
-    return super.isAllowedChild(name, folder);
+    return this.securityFile;
+  }
+
+  @Override
+  public void save() {
+
+    super.save();
+    if (this.securityFile != null) {
+      this.securityFile.save();
+    }
   }
 
 }
