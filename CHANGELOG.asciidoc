@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/941[#941]: New approach for ide-mirrors
 * https://github.com/devonfw/ide/issues/1114[#1114]: Separate eclipse plugins and keep software installation pristine
 * https://github.com/devonfw/ide/issues/1158[#1158]: Projects main-branch is always checked out  
 * https://github.com/devonfw/ide/issues/1177[#1177]: Azure installation with MSI   
