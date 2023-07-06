@@ -47,13 +47,11 @@ import com.devonfw.tools.ide.url.updater.vscode.VsCodeUrlUpdater;
  * crawlers for different tools and services, To use the UpdateManager, simply create an instance with the path to the
  * repository as a parameter and call the {@link #updateAll()} method.
  */
-public class UpdateManager {
+public class UpdateManager extends AbstractProcessorWithTimeout {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
   private final UrlRepository urlRepository;
-
-  private final Instant expirationTime;
 
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
       new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(), new EclipseCppUrlUpdater(),
@@ -73,7 +71,7 @@ public class UpdateManager {
   public UpdateManager(Path pathToRepository, Instant expirationTime) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
-    this.expirationTime = expirationTime;
+    setExpirationTime(expirationTime);
   }
 
   /**
@@ -82,8 +80,11 @@ public class UpdateManager {
   public void updateAll() {
 
     for (AbstractUrlUpdater updater : this.updaters) {
+      if (isTimeoutExpired()) {
+        break;
+      }
       try {
-        updater.setExpirationTime(this.expirationTime);
+        updater.setExpirationTime(getExpirationTime());
         updater.update(this.urlRepository);
       } catch (Exception e) {
         logger.error("Failed to update {}", updater.getToolWithEdition(), e);

@@ -39,7 +39,7 @@ import com.google.common.base.Objects;
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
  * updating tool versions, and checking if download URLs work.
  */
-public abstract class AbstractUrlUpdater implements UrlUpdater {
+public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout implements UrlUpdater {
 
   private static final Duration TWO_DAYS = Duration.ofDays(2);
 
@@ -62,17 +62,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
-
-  /** The {@link Instant} expiration time for the GitHub actions url-update job */
-  private Instant expirationTime;
-
-  /**
-   * @param expirationTime to set for the GitHub actions url-update job
-   */
-  public void setExpirationTime(Instant expirationTime) {
-
-    this.expirationTime = expirationTime;
-  }
 
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
@@ -446,25 +435,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     if (modified) {
       urlStatusFile.setStatusJson(statusJson); // hack to set modified (better solution welcome)
     }
-  }
-
-  /**
-   * Checks if the timeout was expired.
-   *
-   * @return boolean true if timeout was expired, false if not
-   */
-  public boolean isTimeoutExpired() {
-
-    if (this.expirationTime == null) {
-      return false;
-    }
-
-    if (Instant.now().isAfter(this.expirationTime)) {
-      logger.warn("Expiration time of timeout was reached, cancelling update process.");
-      return true;
-    }
-
-    return false;
   }
 
   /**
