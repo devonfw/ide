@@ -26,7 +26,7 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   private static final String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
 
   private static final String ULTIMATE_EDITION = "ultimate";
-  private static final String COMMUNITY_EDITION = "community";
+  private static final String COMMUNITY_EDITION = "intellij";
 
   private static final ObjectMapper MAPPER = JsonMapping.create();
 
