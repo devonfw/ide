@@ -25,7 +25,13 @@ source "$(dirname "${0}")"/../commandlet-cli
 # $1: optional silent mode
 function doSetup() {
   doDevonCommand java setup silent
+  TOOL_VERSION_COMMAND="-"
   doInstall "tomcat" "${TOMCAT_VERSION}" "${1}"
+  if doIsMacOs
+  then
+    chmod +x $(ls -1 "${TOMCAT_HOME}"/bin/*.sh)
+  fi
+  "${TOMCAT}" version
   return 0
 }
 
