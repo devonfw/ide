@@ -29,7 +29,7 @@ function doSetup() {
   doInstall "tomcat" "${TOMCAT_VERSION}" "${1}"
   if doIsMacOs
   then
-    find "${TOMCAT_HOME}"/bin -name *.sh -exec chmod +x {} \;
+    find "${TOMCAT_HOME}"/bin -name '*.sh' -exec chmod +x {} \;
   fi
   "${TOMCAT}" version
   return 0
