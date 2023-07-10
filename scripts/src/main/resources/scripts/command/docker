@@ -54,6 +54,11 @@ function doSetup() {
   then
     doFail "It seems that you are running the setup from inside a WSL shell.\nPlease use git-bash for that purpose. Otherwise your OS will be interpreted as Linux"
   fi
+  if [ "${DOCKER_EDITION}" = "DOCKERDESKTOP" ]
+  then
+    doWarning "You are still using the legacy property value 'DOCKERDESKTOP' for DOCKER_EDITION.\nThe new property value name is 'docker' as described in the documentation.\nPlease update your devon.properties (what should have happened automatically on update of devonfw-ide scripts)."
+    DOCKER_EDITION="docker"
+  fi
   if [ "${DOCKER_EDITION}" != "docker" ]
   then
     DOCKER_EDITION="rancher"
