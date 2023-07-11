@@ -35,6 +35,5 @@ public class JmcUrlUpdater extends GithubUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "win32.win32.x86_64.zip", WINDOWS);
     doAddVersion(urlVersion, baseUrl + "macosx.cocoa.x86_64.tar.gz", MAC);
     doAddVersion(urlVersion, baseUrl + "linux.gtk.x86_64.tar.gz", LINUX);
-
   }
 }
