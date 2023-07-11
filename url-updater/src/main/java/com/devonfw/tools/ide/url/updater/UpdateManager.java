@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import com.devonfw.tools.ide.url.updater.python.PythonUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,6 @@ import com.devonfw.tools.ide.url.updater.node.NodeUrlUpdater;
 import com.devonfw.tools.ide.url.updater.npm.NpmUrlUpdater;
 import com.devonfw.tools.ide.url.updater.oc.OcUrlUpdater;
 import com.devonfw.tools.ide.url.updater.pip.PipUrlUpdater;
-import com.devonfw.tools.ide.url.updater.python.PythonUrlUpdater;
 import com.devonfw.tools.ide.url.updater.quarkus.QuarkusUrlUpdater;
 import com.devonfw.tools.ide.url.updater.sonar.SonarUrlUpdater;
 import com.devonfw.tools.ide.url.updater.terraform.TerraformUrlUpdater;

@@ -69,4 +69,21 @@ public class UpdateManagerIT extends Assertions {
     assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists();
 
   }
+  @Test
+  public void testPythonURl (@TempDir Path tempPath) throws IOException{
+    // given
+    stubFor(get(urlMatching("/actions/python-versions/main/.*")).willReturn(aResponse().withStatus(200)
+            .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("python-version.json")))));
+
+    stubFor(get(urlMatching("/actions/python-versions/releases/download/.*")).willReturn(aResponse().withStatus(200)
+            .withBody("aBody")));
+
+    UrlRepository urlRepository = UrlRepository.load(tempPath);
+    PythonUrlUpdaterMock pythomupdaterMock = new PythonUrlUpdaterMock();
+    pythomupdaterMock.update(urlRepository);
+    Path pythonPath = tempPath.resolve("python").resolve("python").resolve("3.12.0-beta.2");
+
+
+
+  }
 }
