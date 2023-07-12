@@ -6,17 +6,20 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   [ -f "${configuration_file}" ] || return
   cat "${configuration_file}" | awk '
-    /MAVEN_HOME/, /maven/           {gsub("maven","mvn")}
-    /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
-    /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
-    /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
-    /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
-    /INTELLIJ_EDITION_TYPE/       {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
-    /INTELLIJ_EDITION/, /c/       {gsub("c","intellij")}
-    /INTELLIJ_EDITION/, /u/       {gsub("u","ultimate")}
-    /ECLIPSE_EDITION_TYPE/        {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
-    /ECLIPSE_EDITION/, /java/     {gsub("java","eclipse")}
-    /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","docker")}
+    /MAVEN_HOME/ && /maven/               {gsub("maven","mvn")}
+    /MAVEN_VERSION/                       {gsub("MAVEN_VERSION","MVN_VERSION")}
+    /SONARQUBE_HOME/                      {gsub("SONARQUBE_HOME","SONAR_HOME")}
+    /SONAR_HOME/ && /sonarqube/           {gsub("sonarqube","sonar")}
+    /SONARQUBE_VERSION/                   {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
+    /^INTELLIJ_EDITION_TYPE/              {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
+    /^INTELLIJ_EDITION/ && /c/            {gsub("c","intellij")}
+    /^INTELLIJ_EDITION/ && /C/            {gsub("C","intellij")}
+    /^INTELLIJ_EDITION/ && /u/            {gsub("u","ultimate")}
+    /^INTELLIJ_EDITION/ && /U/            {gsub("U","ultimate")};
+    /^ECLIPSE_EDITION_TYPE/               {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
+    /^ECLIPSE_EDITION/ && /java/          {gsub("java","eclipse")}
+    /^ECLIPSE_EDITION/ && /JAVA/          {gsub("JAVA","eclipse")}
+    /DOCKERDESKTOP/                       {gsub("DOCKERDESKTOP","docker")}
     {print $0}
   ' > "${configuration_file}".tmp
   diff "${configuration_file}".tmp "${configuration_file}" >/dev/null 2>&1
