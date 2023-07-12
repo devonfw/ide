@@ -5,8 +5,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
-import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
-import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +23,7 @@ import com.devonfw.tools.ide.url.updater.gh.GhUrlUpdater;
 import com.devonfw.tools.ide.url.updater.graalvm.GraalVmUrlUpdater;
 import com.devonfw.tools.ide.url.updater.gradle.GradleUrlUpdater;
 import com.devonfw.tools.ide.url.updater.helm.HelmUrlUpdater;
+import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
 import com.devonfw.tools.ide.url.updater.java.JavaUrlUpdater;
 import com.devonfw.tools.ide.url.updater.jenkins.JenkinsUrlUpdater;
 import com.devonfw.tools.ide.url.updater.kotlinc.KotlincNativeUrlUpdater;
@@ -48,22 +47,20 @@ import com.devonfw.tools.ide.url.updater.vscode.VsCodeUrlUpdater;
  * crawlers for different tools and services, To use the UpdateManager, simply create an instance with the path to the
  * repository as a parameter and call the {@link #updateAll()} method.
  */
-public class UpdateManager {
+public class UpdateManager extends AbstractProcessorWithTimeout {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
   private final UrlRepository urlRepository;
 
-  private final Instant expirationTime;
-
   private final List<AbstractUrlUpdater> updaters = Arrays.asList(new AndroidStudioUrlUpdater(), new AwsUrlUpdater(),
-      new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(),
-      new EclipseCppUrlUpdater(), new EclipseJavaUrlUpdater(), new GCloudUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
+      new AzureUrlUpdater(), new CobigenUrlUpdater(), new DotNetUrlUpdater(), new EclipseCppUrlUpdater(),
+      new EclipseJavaUrlUpdater(), new GCloudUrlUpdater(), new GcViewerUrlUpdater(), new GhUrlUpdater(),
       new GraalVmUrlUpdater(), new GradleUrlUpdater(), new HelmUrlUpdater(), new IntellijUrlUpdater(),
-      new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(),
-      new KotlincNativeUrlUpdater(), new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(),
-      new NpmUrlUpdater(), new OcUrlUpdater(), new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(),
-      new DockerRancherDesktopUrlUpdater(), new SonarUrlUpdater(), new TerraformUrlUpdater(), new TomcatUrlUpdater(), new VsCodeUrlUpdater());
+      new JavaUrlUpdater(), new JenkinsUrlUpdater(), new KotlincUrlUpdater(), new KotlincNativeUrlUpdater(),
+      new LazyDockerUrlUpdater(), new MvnUrlUpdater(), new NodeUrlUpdater(), new NpmUrlUpdater(), new OcUrlUpdater(),
+      new PipUrlUpdater(), new PythonUrlUpdater(), new QuarkusUrlUpdater(), new DockerRancherDesktopUrlUpdater(),
+      new SonarUrlUpdater(), new TerraformUrlUpdater(), new TomcatUrlUpdater(), new VsCodeUrlUpdater());
 
   /**
    * The constructor.
@@ -74,7 +71,7 @@ public class UpdateManager {
   public UpdateManager(Path pathToRepository, Instant expirationTime) {
 
     this.urlRepository = UrlRepository.load(pathToRepository);
-    this.expirationTime = expirationTime;
+    setExpirationTime(expirationTime);
   }
 
   /**
@@ -83,8 +80,11 @@ public class UpdateManager {
   public void updateAll() {
 
     for (AbstractUrlUpdater updater : this.updaters) {
+      if (isTimeoutExpired()) {
+        break;
+      }
       try {
-        updater.setExpirationTime(this.expirationTime);
+        updater.setExpirationTime(getExpirationTime());
         updater.update(this.urlRepository);
       } catch (Exception e) {
         logger.error("Failed to update {}", updater.getToolWithEdition(), e);

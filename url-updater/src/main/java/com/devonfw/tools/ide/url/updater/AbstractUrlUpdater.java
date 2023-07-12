@@ -1,5 +1,23 @@
 package com.devonfw.tools.ide.url.updater;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.url.model.file.UrlChecksum;
@@ -16,29 +34,12 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
 import com.google.common.base.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
  * updating tool versions, and checking if download URLs work.
  */
-public abstract class AbstractUrlUpdater implements UrlUpdater {
+public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout implements UrlUpdater {
 
   private static final Duration TWO_DAYS = Duration.ofDays(2);
 
@@ -62,17 +63,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
 
-  /** The {@link Instant} expiration time for the GitHub actions url-update job */
-  private Instant expirationTime;
-
-  /**
-   * @param expirationTime to set for the GitHub actions url-update job
-   */
-  public void setExpirationTime(Instant expirationTime) {
-
-    this.expirationTime = expirationTime;
-  }
-
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
    */
@@ -88,7 +78,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   /**
    * @return the combination of {@link #getTool() tool} and {@link #getEdition() edition} but simplified if both are
-   * equal.
+   *         equal.
    */
   protected final String getToolWithEdition() {
 
@@ -210,6 +200,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected boolean isSuccess(HttpResponse<?> response) {
 
+    if (response == null) {
+      return false;
+    }
     return response.statusCode() == 200;
   }
 
@@ -368,7 +361,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param urlVersion the {@link UrlVersion} instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
-   * initially added).
+   *        initially added).
    */
   @SuppressWarnings("null") // Eclipse is too stupid to check this
   private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
@@ -445,25 +438,6 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
-   * Checks if the timeout was expired.
-   *
-   * @return boolean true if timeout was expired, false if not
-   */
-  public boolean isTimeoutExpired() {
-
-    if (this.expirationTime == null) {
-      return false;
-    }
-
-    if (Instant.now().isAfter(expirationTime)) {
-      logger.warn("Expiration time of timeout was reached, cancelling update process.");
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
@@ -526,7 +500,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     boolean modified = false;
     String toolWithEdition = getToolWithEdition();
     Instant now = Instant.now();
-    for (UrlFile child : urlVersion.getChildren()) {
+    for (UrlFile<?> child : urlVersion.getChildren()) {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {
@@ -580,8 +554,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
-        "-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;

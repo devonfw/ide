@@ -18,10 +18,10 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  * An {@link UrlFolder} representing the actual version of an {@link UrlEdition}. Examples for the {@link #getName()
  * name} of such version could be "1.6.2" or "17.0.5_8".
  */
-public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile> {
+public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<?>> {
 
   private VersionIdentifier versionIdentifier;
-  
+
   /**
    * The constructor.
    *
@@ -99,7 +99,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile>
    * @param name The name of the {@link UrlFile} object that should be created.
    */
   @Override
-  protected UrlFile newChild(String name) {
+  protected UrlFile<?> newChild(String name) {
 
     if (Objects.equals(name, UrlStatusFile.STATUS_JSON)) {
       return new UrlStatusFile(this);
