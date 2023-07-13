@@ -109,7 +109,13 @@ function doConfigureAndroidStudio() {
   fi
   if [ -n "${mode}" ]
   then
-    doConfigureWorkspace "${SETTINGS_PATH}/android-studio/workspace" "${WORKSPACE_PATH}" "${mode}"
+    local settings_workspace="${SETTINGS_PATH}/android-studio/workspace"
+    if [ -d "${settings_workspace}" ]
+    then
+      doConfigureWorkspace "${settings_workspace}" "${WORKSPACE_PATH}" "${mode}"
+    else
+      doWarning "There is no workspace folder in ${settings_workspace}. Launching Android Studio without changing any workspace settings..."
+    fi
   fi
 }
 
