@@ -6,17 +6,20 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   [ -f "${configuration_file}" ] || return
   cat "${configuration_file}" | awk '
-    /MAVEN_HOME/, /maven/           {gsub("maven","mvn")}
-    /MAVEN_VERSION/               {gsub("MAVEN_VERSION","MVN_VERSION")}
-    /SONARQUBE_HOME/              {gsub("SONARQUBE_HOME","SONAR_HOME")}
-    /SONAR_HOME/, /sonarqube/     {gsub("sonarqube","sonar")}
-    /SONARQUBE_VERSION/           {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
-    /INTELLIJ_EDITION_TYPE/       {gsub("INTELLIJ_EDITION_TYPE","INTELLIJ_EDITION")}
-    /INTELLIJ_EDITION/, /c/       {gsub("c","intellij")}
-    /INTELLIJ_EDITION/, /u/       {gsub("u","ultimate")}
-    /ECLIPSE_EDITION_TYPE/        {gsub("ECLIPSE_EDITION_TYPE","ECLIPSE_EDITION")}
-    /ECLIPSE_EDITION/, /java/     {gsub("java","eclipse")}
-    /DOCKERDESKTOP/               {gsub("DOCKERDESKTOP","docker")}
+    /MAVEN_HOME/ && /maven/               {gsub("maven","mvn")}
+    /MAVEN_VERSION/                       {gsub("MAVEN_VERSION","MVN_VERSION")}
+    /SONARQUBE_HOME/                      {gsub("SONARQUBE_HOME","SONAR_HOME")}
+    /SONAR_HOME/ && /sonarqube/           {gsub("sonarqube","sonar")}
+    /SONARQUBE_VERSION/                   {gsub("SONARQUBE_VERSION","SONAR_VERSION")}
+    /^INTELLIJ_EDITION_TYPE/ && /c/       {print"INTELLIJ_EDITION=intellij"}
+    /^INTELLIJ_EDITION_TYPE/ && /u/       {print"INTELLIJ_EDITION=ultimate"}
+    /^INTELLIJ_EDITION_TYPE/ && /C/       {print"INTELLIJ_EDITION=intellij"}
+    /^INTELLIJ_EDITION_TYPE/ && /U/       {print"INTELLIJ_EDITION=ultimate"}
+    /^ECLIPSE_EDITION_TYPE/ && /java/     {print"ECLIPSE_EDITION=java"}
+    /^ECLIPSE_EDITION_TYPE/ && /JAVA/     {print"ECLIPSE_EDITION=java"}
+    /^ECLIPSE_EDITION_TYPE/ && /cpp/      {print"ECLIPSE_EDITION=cpp"}
+    /^ECLIPSE_EDITION_TYPE/ && /CPP/      {print"ECLIPSE_EDITION=cpp"}
+    /DOCKERDESKTOP/                       {gsub("DOCKERDESKTOP","docker")}
     {print $0}
   ' > "${configuration_file}".tmp
   diff "${configuration_file}".tmp "${configuration_file}" >/dev/null 2>&1
