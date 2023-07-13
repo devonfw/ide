@@ -575,4 +575,5 @@ else
 fi
 
 echo
+echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
 doSuccess "Completed ${*}"
