@@ -114,7 +114,7 @@ function doConfigureAndroidStudio() {
     then
       doConfigureWorkspace "${settings_workspace}" "${WORKSPACE_PATH}" "${mode}"
     else
-      doWarning "There is no workspace folder in ${settings_workspace}. Launch Android Studio with default settings..."
+      doWarning "There is no workspace folder in ${settings_workspace}. Launching Android Studio without changing any workspace settings..."
     fi
   fi
 }
