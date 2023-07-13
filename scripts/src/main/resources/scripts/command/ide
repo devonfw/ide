@@ -575,5 +575,6 @@ else
 fi
 
 echo
+# shellcheck disable=SC2007
 echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
 doSuccess "Completed ${*}"
