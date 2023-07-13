@@ -6,7 +6,7 @@ function doAdaptConfigurationFiles() {
   configuration_file="${1}"
   [ -f "${configuration_file}" ] || return
   cat "${configuration_file}" | awk '
-    /ECLIPSE_EDITION=java/                {gsub("java","eclipse")}
+    /^ECLIPSE_EDITION=java/                {gsub("java","eclipse")}
     {print $0}
   ' > "${configuration_file}".tmp
   diff "${configuration_file}".tmp "${configuration_file}" >/dev/null 2>&1
