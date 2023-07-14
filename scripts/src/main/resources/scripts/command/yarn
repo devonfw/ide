@@ -31,7 +31,7 @@ function doSetup() {
     then
       doEcho "Version ${installed_version} of yarn is already installed at $(command -v yarn)"
     fi
-  elif [ "${1}" != "silent" ] || [ "${version}" != "latest" ]
+  elif [ "${version}" != "latest" ] || [ -z "${installed_version}" ]
   then
     doDevonCommand npm setup silent
     if command -v npm &> /dev/null
