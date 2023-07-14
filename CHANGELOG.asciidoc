@@ -9,6 +9,11 @@ All who read this are encouraged to skip the `2023.07.001` release and instead i
 
 * https://github.com/devonfw/ide/issues/1260[#1260]: Migration 2023.07.001 buggy
 
+Additional small bugfixes:
+
+* https://github.com/devonfw/ide/issues/1258[#1258]: Error opening android-studio: Could not find templates path
+* https://github.com/devonfw/ide/issues/1259[#1259]: Android-Studio does not separate plugins
+
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/45?closed=1[milestone 2023.07.002].
 
 == 2023.07.001
