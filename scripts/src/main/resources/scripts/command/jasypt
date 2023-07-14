@@ -54,7 +54,7 @@ then
   JASYPT_VERSION="1.9.3"
 fi
 JASYPT_ARTIFACT="${M2_REPO}/org/jasypt/jasypt/${JASYPT_VERSION}/jasypt-${JASYPT_VERSION}.jar"
-if [ "${1}" = "-h" ] || [ "${1}" = "help" ]
+if [ "${1}" = "-h" ] || [ "${1}" = "help" ] || [ -z "${1}" ]
 then
   echo "Setup or run maven build tool."
   echo
