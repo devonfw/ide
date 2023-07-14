@@ -2,6 +2,10 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.07.003
+
+* https://github.com/devonfw/ide/issues/1246[#1246]: Fix yarn installation
+
 == 2023.07.002
 
 ATTENTION: With `2023.07.001` we introduced a bug in a migration script.
