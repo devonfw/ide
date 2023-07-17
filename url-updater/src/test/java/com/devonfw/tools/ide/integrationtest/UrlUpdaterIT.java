@@ -34,14 +34,13 @@ public class UrlUpdaterIT extends Assertions {
 
     stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
 
-    Path repoPath = Paths.get(testdataRoot);
-    UrlRepository urlRepository = UrlRepository.load(repoPath);
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
     UrlUpdaterMock updater = new UrlUpdaterMock();
 
     // when
     updater.update(urlRepository);
 
-    Path versionsPath = repoPath.resolve("mocked").resolve("mocked").resolve("1.0");
+    Path versionsPath = tempDir.resolve("mocked").resolve("mocked").resolve("1.0");
 
     // then
     assertThat(versionsPath.resolve("status.json")).exists();
@@ -58,7 +57,7 @@ public class UrlUpdaterIT extends Assertions {
     Files.deleteIfExists(versionsPath.resolve("linux_x64.urls.sha256"));
 
     // re-initialize UrlRepository
-    UrlRepository urlRepositoryNew = UrlRepository.load(repoPath);
+    UrlRepository urlRepositoryNew = UrlRepository.load(tempDir);
     updater.update(urlRepositoryNew);
 
     assertThat(versionsPath.resolve("linux_x64.urls")).exists();
