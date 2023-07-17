@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.07.003
+
+Release with new features and bugfixes:
+
+* TODO
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/46?closed=1[milestone 2023.07.003].
+
 == 2023.07.002
 
 ATTENTION: With `2023.07.001` we introduced a bug in a migration script.
