@@ -4,7 +4,11 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 == 2023.07.003
 
+Release with new features and bugfixes:
+
 * https://github.com/devonfw/ide/issues/1246[#1246]: Fix yarn installation
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/46?closed=1[milestone 2023.07.003].
 
 == 2023.07.002
 
