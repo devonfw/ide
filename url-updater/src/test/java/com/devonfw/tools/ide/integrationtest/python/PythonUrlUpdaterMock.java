@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.integrationtests;
+package com.devonfw.tools.ide.integrationtest.python;
 
 import com.devonfw.tools.ide.url.updater.python.PythonUrlUpdater;
 
