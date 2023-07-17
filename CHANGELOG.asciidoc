@@ -2,6 +2,29 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.07.003
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1247[#1247]: Fix Jenkins, SonarQube, Jasypt is not working without args
+* https://github.com/devonfw/ide/issues/1246[#1246]: Fix yarn installation
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/46?closed=1[milestone 2023.07.003].
+
+== 2023.07.002
+
+ATTENTION: With `2023.07.001` we introduced a bug in a migration script.
+All who read this are encouraged to skip the `2023.07.001` release and instead install `2023.07.002` or later due to this bug:
+
+* https://github.com/devonfw/ide/issues/1260[#1260]: Migration 2023.07.001 buggy
+
+Additional small bugfixes:
+
+* https://github.com/devonfw/ide/issues/1258[#1258]: Error opening android-studio: Could not find templates path
+* https://github.com/devonfw/ide/issues/1259[#1259]: Android-Studio does not separate plugins
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/45?closed=1[milestone 2023.07.002].
+
 == 2023.07.001
 
 Release with new features and bugfixes:
@@ -14,7 +37,7 @@ Release with new features and bugfixes:
 * https://github.com/devonfw/ide/issues/1106[#1106]: configure security warnings for ide-urls
 * https://github.com/devonfw/ide/issues/1143: Add support for Tomcat
 
-The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/44?closed=1[milestone 2023.05.001].
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/44?closed=1[milestone 2023.07.001].
 
 == 2023.04.001
 
