@@ -56,7 +56,7 @@ fi
 JASYPT_ARTIFACT="${M2_REPO}/org/jasypt/jasypt/${JASYPT_VERSION}/jasypt-${JASYPT_VERSION}.jar"
 if [ "${1}" = "-h" ] || [ "${1}" = "help" ] || [ -z "${1}" ]
 then
-  echo "Setup or run maven build tool."
+  echo "Setup or run jasypt encryption tool."
   echo
   echo "Arguments:"
   echo " setup                setup jasypt (install into local maven repo)"
