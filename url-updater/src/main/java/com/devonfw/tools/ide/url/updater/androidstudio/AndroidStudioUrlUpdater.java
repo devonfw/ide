@@ -62,7 +62,7 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
           break;
         }
 
-        if (edition.getChild(version) == null) {
+        if (edition.getChild(version) == null || edition.isMissingOs(version,null)) {
           try {
             UrlVersion urlVersion = edition.getOrCreateChild(version);
             for (AndroidJsonDownload download : item.getDownload()) {

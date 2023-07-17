@@ -280,6 +280,17 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
 
     boolean success = isValidDownload(url, tool, version, response);
 
+    // Checks if checksum for URL is already existing
+    UrlDownloadFile urlDownloadFile = urlVersion.getUrls(os, architecture);
+    if (urlDownloadFile != null) {
+      UrlChecksum urlChecksum = urlVersion.getChecksum(urlDownloadFile.getName());
+      if (urlChecksum != null) {
+        logger.warn("Checksum is already existing for: {}, skipping.", url);
+        doUpdateStatusJson(success, statusCode, urlVersion, url, true);
+        return true;
+      }
+    }
+
     if (success) {
       if (checksum == null || checksum.isEmpty()) {
         String contentType = response.headers().firstValue("content-type").orElse("undefined");
@@ -458,7 +469,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         break;
       }
 
-      if (edition.getChild(version) == null) {
+      if (edition.getChild(version) == null || edition.isMissingOs(version, null)) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);
           addVersion(urlVersion);
