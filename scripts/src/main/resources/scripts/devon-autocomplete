@@ -43,20 +43,21 @@ else
       elif [ "${parameter[1]}" = "set" ] && [ "${arg_count}" = 4 ]
       then
         local tool="${COMP_WORDS[1]}"
-        if [ "${tool}" = "mvn" ]
+        local editionVar
+        editionVar="$(echo "${tool/-/_}" | awk '{print toupper($0)}')_EDITION"
+        local edition
+        edition="${!editionVar}"
+        if [ -z "${edition}" ]
         then
-          tool="maven"
-        elif [ "${tool}" = "node" ]
-        then
-          tool="nodejs"
-        elif [ "${tool}" = "sonar" ]
-        then
-          tool="sonarqube"
+          edition="${tool}"
         fi
-        
-        if [ -f "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions" ]
+        local myPwd="${PWD}"
+        cd "${DEVON_IDE_HOME}/urls"
+        git pull -q
+        cd "${myPwd}"
+        if [ -d "${DEVON_IDE_HOME}/urls/${tool}/${edition}" ]
         then
-          commandlist=$(cat "${DEVON_IDE_HOME}/mirrors/${tool}/available-versions")
+          commandlist=("$(find "${DEVON_IDE_HOME}/urls/${tool}/${edition}" -mindepth 1 -maxdepth 1 | awk -F'/' '{print $NF}' | sort -rV)")
         fi
       fi
     else

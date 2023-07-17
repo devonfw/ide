@@ -30,7 +30,15 @@ cd "${DEVON_IDE_HOME}" || exit 255
 
 function doSetup() {
   doDevonCommand java setup silent
-  doInstall "intellij" "${INTELLIJ_VERSION}" "${1}" "${INTELLIJ_EDITION_TYPE:-C}"
+  if [ -z "${INTELLIJ_EDITION}" ] && [ -n "${INTELLIJ_EDITION_TYPE}" ]
+  then
+    doWarning "You are still using the legacy property INTELLIJ_EDITION_TYPE.\nThe new property name is INTELLIJ_EDITION with values 'ultimate' or 'intellij' as described in the documentation.\nPlease update your devon.properties (what should have happened automatically on update of devonfw-ide scripts)."
+    if [ "${INTELLIJ_EDITION_TYPE}" = "U" ]
+    then
+      INTELLIJ_EDITION="ultimate"
+    fi
+  fi
+  doInstall "intellij" "${INTELLIJ_VERSION}" "${1}" "${INTELLIJ_EDITION}"
   if [ "${?}" = 0 ]
   then
     if  [ -f "${IDEA_HOME}/bin/idea.sh" ]
@@ -68,7 +76,7 @@ function doAddPlugin() {
   local pluginUrl="${2}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local intellij_build
-  local install_path="${DEVON_IDE_HOME}/software/intellij-plugins/"
+  local install_path="${DEVON_IDE_HOME}/plugins/intellij/"
   if [ -e "${IDEA_HOME}/build.txt" ]
   then
     intellij_build="$(cat "${IDEA_HOME}/build.txt")"

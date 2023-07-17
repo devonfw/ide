@@ -168,6 +168,11 @@ It will use xref:doResult[] using the `message` (`$2`) to handle the result of t
 |`$3`   |dir     |Optional working directory where to execute the command.
 |=======================
 
+=== doRunFirstExecutable
+Runs the first executable from the given arguments. It supports executables but can also run EXE and MSI files on windows.
+It will only return if the execution was successful. Otherwise it will always exit.
+For example `doRunFirstExecutable "${dir}/"*.msi "${dir}/"*.exe` will run the first found MSI or EXE file from the directory `${dir}`.
+
 == Functions for IO operations (download, install, backup, extract, load, save)
 
 === doBackup
@@ -298,12 +303,12 @@ The first three parameters are taken directly into variables and removed from th
 If the last parameter is a single directory and, on MacOS, not a directory with a name like *.app, it is taken as the source directory.
 Then the function doReplaceExtractedFile is called with the saved parameters, with source directory, target directory and backup directory.
 
-=== doUpdateMirrors
-Uses xref:doGitPullOrClone[] to clone or pull `mirrors` ensuring that everything is up-to-date.
-
 === doUnzip
 Checks if an unzip program is installed, and if not, installs the program.
 The file specified in the first parameter is then unpacked into the directory specified in the second parameter.
+
+=== doUpdateUrls
+Uses xref:doGitPullOrClone[] to clone or pull `urls` ensuring that everything is up-to-date.
 
 == Functions on system PATH, files, or folders
 
@@ -326,12 +331,6 @@ Takes a list of directories as a parameter and then checks in the
 specified sequence until one of the specified directories exists.
 This directory is then output and the function ends with the return value 0.
 If none of the directories passed exist, the doFail function is called with a corresponding message.
-
-=== doGetToolFolderName
-Takes the name or path to a commandlet and prints the corresponding folder name in `mirrors` or `software`.
-E.g. for `mvn` or `scripts/command/mvn` it will print `maven`.
-For `java` it will simply print `java`.
-Usage: `folder=$(doGetToolFolderName "${tool}")`
 
 === doIsEmptyDirectory
 Checks whether the directory passed as a parameter is empty.
@@ -357,8 +356,14 @@ Determines whether the actual version is contained in the security file for the 
 === doCheckVersionRange
 Determines whether a version is in a version range.
 
+=== doGetLatestSoftwareVersion
+Determines the latest available version of software and returns it. If a prefix is given, it will be taken into account.
+
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
+
+=== doGetSoftwareEdition
+Determines the currently in the environment configured edition of a software and returns it.
 
 === doGetSoftwareVersion
 Determines the currently installed version of a software and prints it out for the end-user.
@@ -431,6 +436,9 @@ E.g. `doIsPrefix "foo/bar" "foo/bar/some"` will be true but `doIsPrefix "/foo/ba
 
 === doParseOption
 Checks whether the parameter passed to it 
+
+=== doVerifyChecksums
+Creates a sha256 checksum for a file and compares it to the given checksum 
 
 * is one of the options -b, -f, -d or -q and accordingly sets the associated variable batch, force, debug or quiet and terminates the function with the return value 0.
 * is the option version.

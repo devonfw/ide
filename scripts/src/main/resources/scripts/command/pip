@@ -36,7 +36,6 @@ function doSetup() {
         doEcho "Creating modules.pth..."
         echo -e "../pip\n../setuptools\n../wheel\n../pkg_resources\n" > "${PYTHON_HOME}/modules.pth"
       fi
-      
       # Install pip via python
       doDownload "-" "${PIP_HOME}" "pip" "latest" "" "pip"
       cd "${PIP_HOME}" || exit 255

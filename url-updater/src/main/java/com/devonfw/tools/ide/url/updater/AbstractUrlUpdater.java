@@ -1,5 +1,23 @@
 package com.devonfw.tools.ide.url.updater;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.url.model.file.UrlChecksum;
@@ -16,29 +34,12 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
 import com.google.common.base.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
  * updating tool versions, and checking if download URLs work.
  */
-public abstract class AbstractUrlUpdater implements UrlUpdater {
+public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout implements UrlUpdater {
 
   private static final Duration TWO_DAYS = Duration.ofDays(2);
 
@@ -77,7 +78,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   /**
    * @return the combination of {@link #getTool() tool} and {@link #getEdition() edition} but simplified if both are
-   * equal.
+   *         equal.
    */
   protected final String getToolWithEdition() {
 
@@ -127,7 +128,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments (OS independent).
    *
-   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param downloadUrl the URL of the download for the tool.
    * @return true if the version was successfully updated, false otherwise.
    */
@@ -139,20 +140,35 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the {@link UrlVersion} instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param downloadUrl the URL of the download for the tool.
    * @param os the {@link OperatingSystem} for the tool (can be null).
    * @return true if the version was successfully updated, false otherwise.
    */
   protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os) {
 
-    return doAddVersion(urlVersion, downloadUrl, os, null, "");
+    return doAddVersion(urlVersion, downloadUrl, os, null);
   }
 
   /**
    * Updates a tool version with the given arguments.
    *
-   * @param urlVersion the UrlVersion instance to update.
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
+   * @param downloadUrl the URL of the download for the tool.
+   * @param os the {@link OperatingSystem} for the tool (can be null).
+   * @param architecture the optional {@link SystemArchitecture}.
+   * @return true if the version was successfully updated, false otherwise.
+   */
+  protected boolean doAddVersion(UrlVersion urlVersion, String downloadUrl, OperatingSystem os,
+      SystemArchitecture architecture) {
+
+    return doAddVersion(urlVersion, downloadUrl, os, architecture, "");
+  }
+
+  /**
+   * Updates a tool version with the given arguments.
+   *
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
    * @param url the URL of the download for the tool.
    * @param os the optional {@link OperatingSystem}.
    * @param architecture the optional {@link SystemArchitecture}.
@@ -164,6 +180,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
+    String major = urlVersion.getVersionIdentifier().getStart().getDigits();
+    url = url.replace("${major}", major);
     if (os != null) {
       url = url.replace("${os}", os.toString());
     }
@@ -172,11 +190,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     }
     url = url.replace("${edition}", getEdition());
 
-    if (checksum.isEmpty()) {
-      return checkDownloadUrl(url, urlVersion, os, architecture);
-    } else {
-      return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
-    }
+    return checkDownloadUrl(url, urlVersion, os, architecture, checksum);
 
   }
 
@@ -186,18 +200,74 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected boolean isSuccess(HttpResponse<?> response) {
 
+    if (response == null) {
+      return false;
+    }
     return response.statusCode() == 200;
   }
 
   /**
-   * Checks the download URL and takes the provided checksum into account instead of downloading the file and generating
-   * the checksum from it
+   * Checks if the download file checksum is still valid
+   *
+   * @param url String of the URL to check
+   * @param urlVersion the {@link UrlVersion} with the {@link UrlVersion#getName() version-number} to process.
+   * @param os the {@link OperatingSystem}
+   * @param architecture the {@link SystemArchitecture}
+   * @param checksum String of the new checksum to check
+   * @param tool String of the tool
+   * @param version String of the version
+   * @return {@code true} if update of checksum was successful, {@code false} otherwise.
+   */
+  private static boolean isChecksumStillValid(String url, UrlVersion urlVersion, OperatingSystem os,
+      SystemArchitecture architecture, String checksum, String tool, String version) {
+
+    UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
+    UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
+    String oldChecksum = urlChecksum.getChecksum();
+
+    if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+      logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
+          tool, version, url, checksum, oldChecksum);
+      return false;
+    } else {
+      urlDownloadFile.addUrl(url);
+      urlChecksum.setChecksum(checksum);
+    }
+    return true;
+  }
+
+  /**
+   * Checks if the content type is valid (not of type text)
+   *
+   * @param url String of the url to check
+   * @param tool String of the tool name
+   * @param version String of the version
+   * @param response the {@link HttpResponse}.
+   * @return {@code true} if the content type is not of type text, {@code false} otherwise.
+   */
+  private boolean isValidDownload(String url, String tool, String version, HttpResponse<?> response) {
+
+    if (isSuccess(response)) {
+      String contentType = response.headers().firstValue("content-type").orElse("undefined");
+      if (contentType.startsWith("text")) {
+        logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+            contentType, url);
+        return false;
+      }
+    } else {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Checks the download URL by checksum or by downloading the file and generating the checksum from it
    *
    * @param url the URL of the download to check.
    * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
    * @param os the {@link OperatingSystem}
    * @param architecture the {@link SystemArchitecture}
-   * @param checksum String of the checksum to use
    * @return {@code true} if the download was checked successfully, {@code false} otherwise.
    */
   private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
@@ -205,82 +275,26 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     HttpResponse<?> response = doCheckDownloadViaHeadRequest(url);
     int statusCode = response.statusCode();
-    boolean success = isSuccess(response);
     String tool = getToolWithEdition();
     String version = urlVersion.getName();
-    String contentType = response.headers().firstValue("content-type").orElse("undefined");
-    if (success && contentType.startsWith("text")) {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
-      success = false;
-    }
+
+    boolean success = isValidDownload(url, tool, version, response);
+
     if (success) {
-      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      urlDownloadFile.addUrl(url);
-      urlChecksum.setChecksum(checksum);
-      String oldChecksum = urlChecksum.getChecksum();
-
-      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
-        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
-            tool, version, url, checksum, oldChecksum);
-        success = false;
-      } else {
-        urlDownloadFile.addUrl(url);
-        urlChecksum.setChecksum(checksum);
+      if (checksum == null || checksum.isEmpty()) {
+        String contentType = response.headers().firstValue("content-type").orElse("undefined");
+        checksum = doGenerateChecksum(doGetResponseAsStream(url), url, version, contentType);
       }
-    }
 
-    doUpdateStatusJson(success, statusCode, urlVersion, url, false);
+      success = isChecksumStillValid(url, urlVersion, os, architecture, checksum, tool, version);
+    }
 
     if (success) {
       urlVersion.save();
     }
 
-    return success;
-  }
-
-  /**
-   * Checks the download URL by downloading the file and generating the checksum from it
-   *
-   * @param url the URL of the download to check.
-   * @param urlVersion the {@link UrlVersion} where to store the collected information like status and checksum.
-   * @param os the {@link OperatingSystem}
-   * @param architecture the {@link SystemArchitecture}
-   * @return {@code true} if the download was checked successfully, {@code false} otherwise.
-   */
-  private boolean checkDownloadUrl(String url, UrlVersion urlVersion, OperatingSystem os,
-      SystemArchitecture architecture) {
-
-    HttpResponse<InputStream> response = doGetResponseAsStream(url);
-    int statusCode = response.statusCode();
-    boolean success = isSuccess(response);
-    String contentType = response.headers().firstValue("content-type").orElse("undefined");
-    String tool = getToolWithEdition();
-    String version = urlVersion.getName();
-    if (success && contentType.startsWith("text")) {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
-      success = false;
-    }
-    if (success) {
-      String checksum = doGenerateChecksum(response, url, version, contentType);
-      UrlDownloadFile urlDownloadFile = urlVersion.getOrCreateUrls(os, architecture);
-      UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
-      String oldChecksum = urlChecksum.getChecksum();
-      if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
-        logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
-            tool, version, url, checksum, oldChecksum);
-        success = false;
-      } else {
-        urlDownloadFile.addUrl(url);
-        urlChecksum.setChecksum(checksum);
-      }
-    }
     doUpdateStatusJson(success, statusCode, urlVersion, url, false);
-    if (success) {
-      urlVersion.save();
-    }
+
     return success;
   }
 
@@ -333,7 +347,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
       return this.client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (Exception e) {
-      logger.error("Failed to preform HEAD request of URL {}", url, e);
+      logger.error("Failed to perform HEAD request of URL {}", url, e);
       return null;
     }
   }
@@ -347,7 +361,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param urlVersion the {@link UrlVersion} instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
-   * initially added).
+   *        initially added).
    */
   @SuppressWarnings("null") // Eclipse is too stupid to check this
   private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
@@ -437,7 +451,13 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     Set<String> versions = getVersions();
     String toolWithEdition = getToolWithEdition();
     logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
+
     for (String version : versions) {
+
+      if (isTimeoutExpired()) {
+        break;
+      }
+
       if (edition.getChild(version) == null) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);
@@ -480,7 +500,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     boolean modified = false;
     String toolWithEdition = getToolWithEdition();
     Instant now = Instant.now();
-    for (UrlFile child : urlVersion.getChildren()) {
+    for (UrlFile<?> child : urlVersion.getChildren()) {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {
@@ -534,8 +554,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
-        "-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;

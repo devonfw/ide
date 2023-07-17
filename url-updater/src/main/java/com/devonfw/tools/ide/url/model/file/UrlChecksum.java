@@ -11,7 +11,7 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 /**
  * {@link AbstractUrlFile} for the checksum of a binary download file.
  */
-public class UrlChecksum extends AbstractUrlFile {
+public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
 
   /** The file extension of the checksum file (including the dot). */
   public static final String EXTENSION = ".sha256";

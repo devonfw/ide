@@ -33,13 +33,8 @@ These are explained by the following table:
 |=======================
 |*Variable*|*Meaning*
 |*`INTELLIJ_VERSION`*|The version of the tool IntelliJ to install and use.
-|*`INTELLIJ_EDITION_TYPE`*|The edition of the tool IntelliJ to install and use.
-The value `C` mean Community edition and the value `U` mean Ultimate edition.
-The Ultimate edition requires a license.
-The user has to buy the license separately, and it is not part of devonfw-ide.
-The devonfw-ide only supports download and installation.
+|*`INTELLIJ_EDITION`*|The edition of the tool IntelliJ to install and use. By default the Community edition will be installed. If you want to use the Ultimate Edition, the value has to be set to `ultimate`. The Ultimate edition requires a license. The user has to buy the license separately and it is not part of devonfw-ide. The devonfw-ide only supports download and installation.
 |*`EXTRA_JAVA_VERSION`*|You can set this to a different (newer) version of Java used to launch your IDE (other than `JAVA_VERSION` that is used to build your project)
-|=======================
 
 == plugins
 
@@ -48,6 +43,7 @@ Of course `devonfw-ide` can automate this for your:
 In your link:settings.asciidoc[settings] git repository create a folder https://github.com/devonfw/ide-settings/tree/master/intellij/plugins[intellij/plugins] (click this link to see more examples and see which plugins come by default).
 Here you can create a properties file for each plugin.
 This is an example https://github.com/devonfw/ide-settings/blob/master/intellij/plugins/scala.properties[scala.properties]:
+
 ```
 plugin_id=org.intellij.scala
 plugin_active=false
@@ -73,3 +69,5 @@ So consider the governance of your project and talk to your technical lead befor
 
 As maintainer of the link:settings.asciidoc[settings] for your project you should avoid to ship too many plugins that may waste resources but are not used by every developer.
 By configuring additional plugins with `plugin_active=false` you can give your developers the freedom to install some additional plugins easily.
+
+All plugins are installed separately in `plugins/intellij`.
