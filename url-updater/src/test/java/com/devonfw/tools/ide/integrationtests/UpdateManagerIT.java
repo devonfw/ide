@@ -25,65 +25,65 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 @WireMockTest(httpPort = 8080)
 public class UpdateManagerIT extends Assertions {
 
-  /**
-   * Test resource location
-   */
-  private final static String testdataRoot = "src/test/resources/integrationtests/UpdateManager";
+    /**
+     * Test resource location
+     */
+    private final static String testdataRoot = "src/test/resources/integrationtests/UpdateManager";
 
-  /**
-   * Test of {@link UpdateManager} using a simple {@link JsonUrlUpdater} for the creation of Android Studio download
-   * URLs.
-   *
-   * @param tempDir Path to a temporary directory
-   *
-   * @throws IOException test fails
-   */
-  @Test
-  public void testUpdateManager(@TempDir Path tempDir) throws IOException {
+    /**
+     * Test of {@link UpdateManager} using a simple {@link JsonUrlUpdater} for the creation of Android Studio download
+     * URLs.
+     *
+     * @param tempDir Path to a temporary directory
+     * @throws IOException test fails
+     */
+    @Test
+    public void testUpdateManager(@TempDir Path tempDir) throws IOException {
 
-    // given
-    stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
-        .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
+        // given
+        stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200).withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
 
-    stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*"))
-        .willReturn(aResponse().withStatus(200).withBody("aBody")));
+        stubFor(get(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
 
-    Path repoPath = tempDir;
-    UrlRepository urlRepository = UrlRepository.load(repoPath);
-    AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
+        Path repoPath = tempDir;
+        UrlRepository urlRepository = UrlRepository.load(repoPath);
+        AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
 
-    // when
-    updater.update(urlRepository);
+        // when
+        updater.update(urlRepository);
 
-    Path androidStudioVersionsPath = repoPath.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
+        Path androidStudioVersionsPath = repoPath.resolve("android-studio").resolve("android-studio").resolve("2023.1.1.2");
 
-    // then
-    assertThat(androidStudioVersionsPath.resolve("status.json")).exists();
-    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("linux_x64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("mac_x64.urls.sha256")).exists();
-    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls")).exists();
-    assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists();
+        // then
+        assertThat(androidStudioVersionsPath.resolve("status.json")).exists();
+        assertThat(androidStudioVersionsPath.resolve("linux_x64.urls")).exists();
+        assertThat(androidStudioVersionsPath.resolve("linux_x64.urls.sha256")).exists();
+        assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls")).exists();
+        assertThat(androidStudioVersionsPath.resolve("mac_arm64.urls.sha256")).exists();
+        assertThat(androidStudioVersionsPath.resolve("mac_x64.urls")).exists();
+        assertThat(androidStudioVersionsPath.resolve("mac_x64.urls.sha256")).exists();
+        assertThat(androidStudioVersionsPath.resolve("windows_x64.urls")).exists();
+        assertThat(androidStudioVersionsPath.resolve("windows_x64.urls.sha256")).exists();
 
-  }
-  @Test
-  public void testPythonURl (@TempDir Path tempPath) throws IOException{
-    // given
-    stubFor(get(urlMatching("/actions/python-versions/main/.*")).willReturn(aResponse().withStatus(200)
-            .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("python-version.json")))));
+    }
 
-    stubFor(get(urlMatching("/actions/python-versions/releases/download/.*")).willReturn(aResponse().withStatus(200)
-            .withBody("aBody")));
+    /**
+     * Test Python JsonUrlUpdater
+     * @param tempPath
+     * @throws IOException
+     */
+    @Test
+    public void testPythonURl(@TempDir Path tempPath) throws IOException {
+        // given
+        stubFor(get(urlMatching("/actions/python-versions/main/.*")).willReturn(aResponse().withStatus(200).withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("python-version.json")))));
 
-    UrlRepository urlRepository = UrlRepository.load(tempPath);
-    PythonUrlUpdaterMock pythomupdaterMock = new PythonUrlUpdaterMock();
-    pythomupdaterMock.update(urlRepository);
-    Path pythonPath = tempPath.resolve("python").resolve("python").resolve("3.12.0-beta.2");
+        stubFor(get(urlMatching("/actions/python-versions/releases/download/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
+
+        UrlRepository urlRepository = UrlRepository.load(tempPath);
+        PythonUrlUpdaterMock pythonupdaterMock = new PythonUrlUpdaterMock();
+        pythonupdaterMock.update(urlRepository);
+        Path pythonPath = tempPath.resolve("python").resolve("python").resolve("3.12.0-beta.2");
 
 
-
-  }
+    }
 }

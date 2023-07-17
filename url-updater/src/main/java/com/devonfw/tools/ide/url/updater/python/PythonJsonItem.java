@@ -1,12 +1,13 @@
 package com.devonfw.tools.ide.url.updater.python;
 
-import com.devonfw.tools.ide.common.JsonObject;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-
+/**
+ * Json file Object for Python content, Mapping just the needed Properties
+ */
 public class PythonJsonItem  {
 
 

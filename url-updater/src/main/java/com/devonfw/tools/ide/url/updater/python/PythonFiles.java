@@ -2,6 +2,9 @@ package com.devonfw.tools.ide.url.updater.python;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Files array in the python json file. Mapping just the needed A
+ */
 public class PythonFiles {
 
     @JsonProperty("filename")
@@ -29,7 +32,7 @@ public class PythonFiles {
         return arch;
     }
 
-    public String getDownload_url() {
+    public String getDownloadUrl() {
         return download_url;
     }
 }

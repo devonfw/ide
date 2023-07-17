@@ -4,6 +4,9 @@ import com.devonfw.tools.ide.common.JsonObject;
 
 import java.util.List;
 
+/**
+ * the object of the Python Json File
+ */
 public class PythonJsonObject implements JsonObject {
 
 
