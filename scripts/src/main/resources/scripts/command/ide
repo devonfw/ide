@@ -49,13 +49,15 @@ function doUpdateScripts() {
   doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
   if [ "${?}" = 0 ]
   then
-    if [ "${target_version}" = "LATEST" ]
+    doVersionCompare "${my_ide_version}" "${current_devon_version}"
+    if [ "${?}" = 1 ]
     then
       cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
     fi
     if doIsWindows
     then
-      if [ "${target_version}" = "LATEST" ]
+    doVersionCompare "${my_ide_version}" "${current_devon_version}"
+    if [ "${?}" = 1 ]
       then
         cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
       fi
