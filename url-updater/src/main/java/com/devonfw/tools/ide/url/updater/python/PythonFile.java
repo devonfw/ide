@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Files array in the python json file. Mapping just the needed properties
  */
-public class PythonFiles {
+public class PythonFile {
 
   @JsonProperty("filename")
   private String filename;

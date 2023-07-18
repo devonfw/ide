@@ -1,6 +1,5 @@
 package com.devonfw.tools.ide.url.updater.python;
 
-import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
@@ -86,7 +85,7 @@ public class PythonUrlUpdater extends JsonUrlUpdater<PythonJsonObject> {
         if (edition.getChild(version) == null) {
           try {
             UrlVersion urlVersion = edition.getOrCreateChild(version);
-            for (PythonFiles download : result.getFiles()) {
+            for (PythonFile download : result.getFiles()) {
               if (download.getPlatform().equals("win32") && download.getArch().equals("x64")) {
                 doAddVersion(urlVersion, download.getDownloadUrl(), WINDOWS, X64);
               } else if (download.getPlatform().equals("linux") && download.getArch().equals("x64")) {

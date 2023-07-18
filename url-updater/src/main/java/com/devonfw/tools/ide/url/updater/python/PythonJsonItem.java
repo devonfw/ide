@@ -13,14 +13,14 @@ public class PythonJsonItem {
   private String version;
 
   @JsonProperty("files")
-  private List<PythonFiles> files;
+  private List<PythonFile> files;
 
   public String getVersion() {
 
     return this.version;
   }
 
-  public List<PythonFiles> getFiles() {
+  public List<PythonFile> getFiles() {
 
     return files;
   }
