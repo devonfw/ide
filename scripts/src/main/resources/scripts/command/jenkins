@@ -92,7 +92,7 @@ then
 elif [ "${1}" = "setup" ]
 then
   doSetup "${2}"
-elif [ "${1}" = "start" ]
+elif [ "${1}" = "start" ] || [ -z "${1}" ]
 then
   doStart
 elif [ "${1}" = "stop" ]
