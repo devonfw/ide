@@ -11,9 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +60,10 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
+
+  /** List of OS types which need to be checked for existence */
+  private static final Set<String> osTypes = new HashSet<>(Arrays.asList("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls",
+      "windows_x64.urls"));
 
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
@@ -449,6 +451,43 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   }
 
   /**
+   * Retrieves OS types, can be used to overwrite current OS types
+   *
+   * @param osTypesOverwrite List of OS types to overwrite
+   * @return List of OS types
+   */
+  protected Set<String> retrieveOsTypes(Set<String> osTypesOverwrite) {
+
+    if (osTypesOverwrite != null && !osTypesOverwrite.isEmpty()) {
+      return osTypesOverwrite;
+    } else {
+      return osTypes;
+    }
+  }
+
+  /**
+   * Checks if an OS type was missing
+   *
+   * @param urlRepository {@link UrlRepository}
+   * @param version String of version folder
+   * @param osTypesOverwrite Set of OS types to overwrite
+   * @return true if an OS type was missing, false if not
+   */
+  public boolean isMissingOs(UrlRepository urlRepository, String version, Set<String> osTypesOverwrite) {
+
+    UrlTool tool = urlRepository.getChild(getTool());
+    UrlEdition edition = tool.getChild(getEdition());
+    boolean check = false;
+    if (edition.getChild(version) != null){
+      Set<String> childNames = edition.getChild(version).getChildNames();
+      Set<String> osTypes = retrieveOsTypes(osTypesOverwrite);
+      // invert result of containsAll to avoid negative condition
+      check = !childNames.containsAll(osTypes);
+    }
+    return check;
+  }
+
+  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
@@ -469,7 +508,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         break;
       }
 
-      if (edition.getChild(version) == null || edition.isMissingOs(version, null)) {
+      if (edition.getChild(version) == null || isMissingOs(urlRepository, version, null)) {
         try {
           UrlVersion urlVersion = edition.getOrCreateChild(version);
           addVersion(urlVersion);
