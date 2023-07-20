@@ -34,6 +34,14 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   }
 
   /**
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
+   */
+  public UrlDownloadFile getOrCreateUrls() {
+
+    return getOrCreateUrls(null, null);
+  }
+
+  /**
    * @param os the optional {@link OperatingSystem}.
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
    */
@@ -46,14 +54,19 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
    * @param os the optional {@link OperatingSystem}.
    * @param arch the architecture (e.g. "x64" or "arm64").
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
-   *         exist.
+   *     exist.
    */
   public UrlDownloadFile getOrCreateUrls(OperatingSystem os, SystemArchitecture arch) {
 
-    if ((os == null) && (arch == null)) {
-      return getOrCreateUrls();
-    }
-    return (UrlDownloadFile) getOrCreateChild(os + "_" + SystemArchitecture.orDefault(arch) + ".urls");
+    return (UrlDownloadFile) getOrCreateChild(getUrlsFileName(os, arch));
+  }
+
+  /**
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls".
+   */
+  public UrlDownloadFile getUrls() {
+
+    return getUrls(null, null);
   }
 
   /**
@@ -63,26 +76,20 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
    */
   public UrlDownloadFile getUrls(OperatingSystem os, SystemArchitecture arch) {
 
+    return (UrlDownloadFile) getChild(getUrlsFileName(os, arch));
+  }
+
+  /**
+   * @param os the optional {@link OperatingSystem}.
+   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @return String of the format "«os»_«arch».urls".
+   */
+  public static String getUrlsFileName(OperatingSystem os, SystemArchitecture arch) {
+
     if ((os == null) && (arch == null)) {
-      return getUrls();
+      return "urls";
     }
-    return (UrlDownloadFile) getChild(os + "_" + SystemArchitecture.orDefault(arch) + ".urls");
-  }
-
-  /**
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
-   */
-  public UrlDownloadFile getOrCreateUrls() {
-
-    return (UrlDownloadFile) getOrCreateChild("urls");
-  }
-
-  /**
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls".
-   */
-  public UrlDownloadFile getUrls() {
-
-    return (UrlDownloadFile) getChild("urls");
+    return os + "_" + SystemArchitecture.orDefault(arch) + ".urls";
   }
 
   /**
@@ -94,7 +101,6 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   }
 
   /**
-   *
    * @return the {@link VersionIdentifier}
    */
   public VersionIdentifier getVersionIdentifier() {
