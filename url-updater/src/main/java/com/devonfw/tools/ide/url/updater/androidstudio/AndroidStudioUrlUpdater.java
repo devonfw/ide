@@ -62,9 +62,10 @@ public class AndroidStudioUrlUpdater extends JsonUrlUpdater<AndroidJsonObject> {
           break;
         }
 
-        if (edition.getChild(version) == null || isMissingOs(urlRepository, version,null)) {
+        UrlVersion urlVersion = edition.getChild(version);
+        if (urlVersion == null || isMissingOs(urlVersion)) {
           try {
-            UrlVersion urlVersion = edition.getOrCreateChild(version);
+            urlVersion = edition.getOrCreateChild(version);
             for (AndroidJsonDownload download : item.getDownload()) {
 
               if (download.getLink().contains("windows.zip")) {

@@ -11,7 +11,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,14 +60,17 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   /** {@link SystemArchitecture#ARM64}. */
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
 
+  /** List of URL file names dependent on OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_PER_OS = new HashSet<>(
+      Arrays.asList("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls", "windows_x64.urls"));
+
+  /** List of URL file names independent of OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = new HashSet<>();
+
   /** The {@link HttpClient} for HTTP requests. */
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
 
   private static final Logger logger = LoggerFactory.getLogger(AbstractUrlUpdater.class);
-
-  /** List of OS types which need to be checked for existence */
-  private static final Set<String> osTypes = new HashSet<>(Arrays.asList("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls",
-      "windows_x64.urls"));
 
   /**
    * @return the name of the {@link UrlTool tool} handled by this updater.
@@ -451,40 +458,37 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   }
 
   /**
-   * Retrieves OS types, can be used to overwrite current OS types
-   *
-   * @param osTypesOverwrite List of OS types to overwrite
-   * @return List of OS types
+   * @return Set of URL file names (dependency on OS file names can be overriden with isOsDependent())
    */
-  protected Set<String> retrieveOsTypes(Set<String> osTypesOverwrite) {
-
-    if (osTypesOverwrite != null && !osTypesOverwrite.isEmpty()) {
-      return osTypesOverwrite;
+  protected Set<String> getUrlFilenames() {
+    if (isOsDependent()) {
+      return URL_FILENAMES_PER_OS;
     } else {
-      return osTypes;
+      return URL_FILENAMES_OS_INDEPENDENT;
     }
   }
 
   /**
-   * Checks if an OS type was missing
+   * Checks if we are dependent on OS URL file names, can be overriden to disable OS dependency
    *
-   * @param urlRepository {@link UrlRepository}
-   * @param version String of version folder
-   * @param osTypesOverwrite Set of OS types to overwrite
+   * @return true if we want to check for missing OS URL file names, false if not
+   */
+  protected boolean isOsDependent() {
+    return true;
+  }
+
+  /**
+   * Checks if an OS URL file name was missing in {@link UrlVersion}
+   *
+   * @param urlVersion the {@link UrlVersion} to check
    * @return true if an OS type was missing, false if not
    */
-  public boolean isMissingOs(UrlRepository urlRepository, String version, Set<String> osTypesOverwrite) {
+  public boolean isMissingOs(UrlVersion urlVersion) {
 
-    UrlTool tool = urlRepository.getChild(getTool());
-    UrlEdition edition = tool.getChild(getEdition());
-    boolean check = false;
-    if (edition.getChild(version) != null){
-      Set<String> childNames = edition.getChild(version).getChildNames();
-      Set<String> osTypes = retrieveOsTypes(osTypesOverwrite);
+      Set<String> childNames = urlVersion.getChildNames();
+      Set<String> osTypes = getUrlFilenames();
       // invert result of containsAll to avoid negative condition
-      check = !childNames.containsAll(osTypes);
-    }
-    return check;
+      return !childNames.containsAll(osTypes);
   }
 
   /**
@@ -508,9 +512,10 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         break;
       }
 
-      if (edition.getChild(version) == null || isMissingOs(urlRepository, version, null)) {
+      UrlVersion urlVersion = edition.getChild(version);
+      if (urlVersion == null || isMissingOs(urlVersion)) {
         try {
-          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          urlVersion = edition.getOrCreateChild(version);
           addVersion(urlVersion);
           urlVersion.save();
         } catch (Exception e) {
