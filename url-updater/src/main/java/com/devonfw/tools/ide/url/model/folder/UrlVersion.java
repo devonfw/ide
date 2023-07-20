@@ -113,11 +113,19 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
 
   /**
    * @param urlsFilename the {@link #getName() filename} of the URLs file.
+   * @return String of {@link #getName() filename} of the URLs file with added extension.
+   */
+  public String getChecksumFilename(String urlsFilename){
+    return urlsFilename + UrlChecksum.EXTENSION;
+  }
+
+  /**
+   * @param urlsFilename the {@link #getName() filename} of the URLs file.
    * @return the existing or newly created and added {@link UrlChecksum} file.
    */
   public UrlChecksum getOrCreateChecksum(String urlsFilename) {
 
-    return (UrlChecksum) getOrCreateChild(urlsFilename + UrlChecksum.EXTENSION);
+    return (UrlChecksum) getOrCreateChild(getChecksumFilename(urlsFilename));
   }
 
   /**
@@ -126,7 +134,7 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
    */
   public UrlChecksum getChecksum(String urlsFilename) {
 
-    return (UrlChecksum) getChild(urlsFilename + UrlChecksum.EXTENSION);
+    return (UrlChecksum) getChild(getChecksumFilename(urlsFilename));
   }
 
   /**
