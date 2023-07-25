@@ -44,29 +44,6 @@ function doUpdateMetaFile() {
   fi
 }
 
-function doUpdateScripts() {
-  # shellcheck disable=SC2007,SC2154
-  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
-  if [ "${?}" = 0 ]
-  then
-    doVersionCompare "${my_ide_version}" "${current_devon_version}"
-    if [ "${?}" = 1 ]
-    then
-      cp "${DEVON_IDE_HOME}/scripts/devon" ~/.devon/devon
-    fi
-    if doIsWindows
-    then
-    doVersionCompare "${my_ide_version}" "${current_devon_version}"
-    if [ "${?}" = 1 ]
-      then
-        cp "${DEVON_IDE_HOME}/scripts/devon.bat" "${USERPROFILE}/scripts/devon.bat"
-      fi
-      doWarning "To prevent windows file locking errors, we update async in background now.\nPlease wait a minute and then rerun 'devon ide update' to complete."
-      exit 0
-    fi
-  fi
-}
-
 function doUpdateSettings() {
   local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git"
   if [ ! -d "${SETTINGS_PATH}" ]
@@ -536,7 +513,11 @@ then
     fi
     if [ "${2}" = "scripts" ]
     then
-      doUpdateScripts
+      doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
+      if [ "${?}" = 0 ]
+      then
+        doUpdateCli
+      fi
     elif [ "${2}" = "settings" ]
     then
       doUpdateSettings
