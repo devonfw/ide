@@ -6,8 +6,13 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1287[#1287]: initial setup fails because urls is not cloned
 * https://github.com/devonfw/ide/issues/1247[#1247]: Fix Jenkins, SonarQube, Jasypt is not working without args
 * https://github.com/devonfw/ide/issues/1246[#1246]: Fix yarn installation
+* https://github.com/devonfw/ide/issues/1283[#1283]: checksum verification prevents intellij plugin installation
+* https://github.com/devonfw/ide/issues/1276[#1276]: checksum verification for custom software repository
+* https://github.com/devonfw/ide/issues/1285[#1285]: Complete alignment of tool-names in scripts
+* https://github.com/devonfw/ide/issues/1164[#1164]: devon jenkins stop fails
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/46?closed=1[milestone 2023.07.003].
 
