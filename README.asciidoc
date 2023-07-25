@@ -61,6 +61,7 @@ endif::[]
 //video::NG6TAmksBGI[youtube, width=640, height=360]
 // end::you[]
 
+See also our latest video https://vimeo.com/808368450/88d4af9d18[devon ide update @ RISE]
 
 == Documentation
 
