@@ -62,11 +62,11 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
 
   /** List of URL file names dependent on OS which need to be checked for existence */
-  private static final Set<String> URL_FILENAMES_PER_OS = new HashSet<>(
-      Arrays.asList("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls", "windows_x64.urls"));
+  private static final Set<String> URL_FILENAMES_PER_OS = Set.of("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls",
+      "windows_x64.urls");
 
   /** List of URL file name independent of OS which need to be checked for existence */
-  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = new HashSet<>(List.of("urls"));
+  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = Set.of("urls");
 
   /** The {@link HttpClient} for HTTP requests. */
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
@@ -462,6 +462,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
    * @return Set of URL file names (dependency on OS file names can be overriden with isOsDependent())
    */
   protected Set<String> getUrlFilenames() {
+
     if (isOsDependent()) {
       return URL_FILENAMES_PER_OS;
     } else {
@@ -475,6 +476,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
    * @return true if we want to check for missing OS URL file names, false if not
    */
   protected boolean isOsDependent() {
+
     return true;
   }
 
@@ -486,10 +488,10 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
    */
   public boolean isMissingOs(UrlVersion urlVersion) {
 
-      Set<String> childNames = urlVersion.getChildNames();
-      Set<String> osTypes = getUrlFilenames();
-      // invert result of containsAll to avoid negative condition
-      return !childNames.containsAll(osTypes);
+    Set<String> childNames = urlVersion.getChildNames();
+    Set<String> osTypes = getUrlFilenames();
+    // invert result of containsAll to avoid negative condition
+    return !childNames.containsAll(osTypes);
   }
 
   /**
@@ -610,8 +612,8 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
-        || vLower.contains("-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
+        "-insiders")) {
       return null;
     }
     return version;
