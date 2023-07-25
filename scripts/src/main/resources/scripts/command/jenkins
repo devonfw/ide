@@ -27,14 +27,19 @@ function doSetup() {
       echo "Jenkins is already installed at ${JENKINS_HOME}"
     fi
   else
-    local version=${JENKINS_VERSION:-latest}
-    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "jenkins.war"
-    mkdir -p "${JENKINS_HOME}"
-    doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
-    # http://localhost:9999/jnlpJars/jenkins-cli.jar
+    # shellcheck disable=SC2034
+    TOOL_VERSION_COMMAND="-"
+    doInstall "jenkins" "${JENKINS_VERSION}" "" "" "" "" "noUnpack" "" "" "jenkins.war"
     local cwd="${PWD}"
     cd "${JENKINS_HOME}" || exit 255
-    doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
+    local version=${JENKINS_VERSION}
+    if [ -z "${JENKINS_VERSION}" ]
+    then
+      version="$(doGetLatestSoftwareVersion "jenkins")"
+    fi
+    doRunCommand "jar xf jenkins.war WEB-INF/lib/cli-${version}.jar"
+    doRunCommand "mv 'WEB-INF/lib/cli-${version}.jar' 'jenkins-cli.jar'"
+    doRunCommand "rm -rf WEB-INF/"
     cd "${cwd}" || exit 255
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
