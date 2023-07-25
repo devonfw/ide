@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -64,8 +65,8 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   private static final Set<String> URL_FILENAMES_PER_OS = new HashSet<>(
       Arrays.asList("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls", "windows_x64.urls"));
 
-  /** List of URL file names independent of OS which need to be checked for existence */
-  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = new HashSet<>();
+  /** List of URL file name independent of OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = new HashSet<>(List.of("urls"));
 
   /** The {@link HttpClient} for HTTP requests. */
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
