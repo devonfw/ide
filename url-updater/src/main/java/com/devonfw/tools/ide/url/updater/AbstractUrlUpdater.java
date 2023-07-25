@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -33,7 +34,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
-import com.google.common.base.Objects;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
@@ -225,7 +225,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
     UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
     String oldChecksum = urlChecksum.getChecksum();
 
-    if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+    if ((oldChecksum != null) && !Objects.equals(oldChecksum, checksum)) {
       logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
           tool, version, url, checksum, oldChecksum);
       return false;
@@ -411,7 +411,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         if (errorStatus == null) {
           modified = true;
         } else {
-          if (!Objects.equal(code, errorStatus.getCode())) {
+          if (!Objects.equals(code, errorStatus.getCode())) {
             logger.warn("For tool {} and version {} the error status-code changed from {} to {} for URL {}.", tool,
                 version, code, errorStatus.getCode(), code, url);
             modified = true;
