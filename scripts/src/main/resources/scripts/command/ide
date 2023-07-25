@@ -322,6 +322,8 @@ function doSetup() {
     doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
+  # shellcheck disable=SC2007
+  echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
 }
 
 function doUpdateProjects() {
