@@ -67,10 +67,12 @@ function doJenkinsCli() {
   then
     admin_password="$(cat "${JENKINS_HOME}"/secrets/initialAdminPassword)"
   fi
+  local auth_file="${JENKINS_HOME}/auth_file"
+  echo "admin:${admin_password}" > "${JENKINS_HOME}/auth_file"
   local jenkins_cli_command="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins-cli.jar'"
-  echo "${jenkins_cli_command}" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}" "${@}"
+  echo "${jenkins_cli_command}" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "@${auth_file}" "${@}"
   # shellcheck disable=SC2145
-  doRunCommand "${jenkins_cli_command} -s 'http://localhost:${JENKINS_PORT:-9999}' -auth '${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}' ${@}"
+  doRunCommand "${jenkins_cli_command} -s 'http://localhost:${JENKINS_PORT:-9999}' -auth '@${auth_file}' ${@}"
 }
 
 function doStop() {
