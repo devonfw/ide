@@ -4,19 +4,30 @@ toc::[]
 = Docker
 
 The Docker commandlet allows to install and use https://www.docker.com/[Docker].
-On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly as a prerequisite. In case of using Rancher Desktop the process of enabling WSL and installing a WSL distribution will be handled by Rancher Desktop.
-This commandlet also offers the installation of https://rancherdesktop.io/[Rancher Desktop], which works on Windows, Mac and Linux.
-To run the tools installed and managed by Rancher Desktop it is necessary to have Rancher Desktop up and running.  
-To assure that you are able to use these tools directly after startup, you can add Rancher Desktop to the startup programs
-of your Operating System. Such instructions will be given below inside the sections for Windows, Mac and Linux.
+Please note that besides the sandbox concept of devonfw-ide, docker is a global installation on your system.
+When uninstalling devonfw-ide, you may have to manually uninstall Docker if you do not need it anymore.
 
-*ATTENTION:*
-Currently this feature is new and therefore experimental.
-It may change in incompatible ways in the next releases until we reach a stable state.
-We hope that all is working fine for you.
-However, do not expect everything to work out of the box.
-In case you are facing issues (e.g. network problems with Cisco AnyConnect, etc.) please give us feedback so we can improve.
+== Editions
+We support two editions of docker:
 
+.Editions of docker
+[options="header"]
+|=======================
+|*config (devon.properties)* |*Meaning*
+|`DOCKER_EDITION=docker`     |Will install docker-desktop what requires a license and does *NOT* support Linux.
+|`DOCKER_EDITION=rancher`    |Will install https://rancherdesktop.io/[Rancher Desktop] that is free for private and commerical use (default if `DOCKER_EDITION` is not set).
+|=======================
+
+== Important notice
+On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly.
+The installer should do that automatically for you but if something goes wrong or you still have `WSL 1` instead you might end up with https://stackoverflow.com/questions/70953842/error-wsl-exe-exited-with-code-4294967295-on-installing-rancher-desktop[strange errors].
+In such case you need to run `wsl --update` from an administrative shell.
+
+To run the `docker` command after the installation, it is necessary that the docker daemon is up and running.
+In Docker-Desktop you can enable or disable autostart in the `Preferences` (gear icon in the title bar) at the `General` tab via the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]).
+For Rancher-Desktop you can manually add it to the https://tunecomp.net/add-program-to-startup-windows-11-windows-10/[Windows Startup] (auto-start).
+
+== Usage
 
 The arguments (`devon docker «args»`) are explained by the following table:
 
@@ -25,26 +36,34 @@ The arguments (`devon docker «args»`) are explained by the following table:
 |=======================
 |*Argument(s)*             |*Meaning*
 |`setup`                   |setup Docker (install and verify) as per above flow.
-|`«args»`                  |call docker with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
+|`«args»`                  |call `docker` with the specified arguments. Call `docker help` for details or use docker directly as preferred." (`«args»`)
 |=======================
 
+After Docker is installed, run `docker help` to get started and use the online documentations and resources on the web to get familiar with Docker.
+It is not our intention to repeat this here.
+
+Please note that the `docker` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
+
 == Setup
-
-The Docker commandlet will install Docker Desktop or Rancher Desktop automatically.
-This depends on how the variable DOCKER_EDITION was set. We chose to set Rancher Desktop as standard
-for our installation, due to it being license free compared to Docker Desktop while offering a similar tool set. Please read the document link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] motivating why we added Rancher Desktop to the docker commandlet or read the section 'Docker Desktop' if you want to use Docker Desktop instead.
-
+The Docker commandlet will install Docker-Desktop or Rancher-Desktop automatically.
+This depends on how the variable DOCKER_EDITION was set.
+We chose to set Rancher-Desktop as default for our installation, due to it being license free and supporting all operating-systems including Linux.
+See link:docker-desktop-alternative.asciidoc[docker-desktop-alternative] for a rationale with further details.
 
 === Docker Desktop
-
-Docker Desktop can still be used by setting the variable DOCKER_EDITION equal to "docker". 
-This can be done by your projects ide-admin in the link:usage.asciidoc#developer[settings file]. If you want to switch from Rancher Desktop to Docker Desktop, then add a line with the following content 
-"DOCKER_EDITION=docker" 
-(without the quotes around the allocation) to the file devon.properties located at the path ${DEVON_IDE_HOME}/conf/devon.properties.
+Docker-Desktop will be installed if the variable `DOCKER_EDITION` is set to `docker`.
+It requires a license for commercial use so you should only use it, in case you have such license.
+Further, it does not support Linux so in that case you can either install `docker` manually via your operating-system package-manager or use Rancher-Desktop instead.
+An advantage of Docker-Desktop is its advanced GUI that brings much better usability than rancher-desktop and the fact that it solves potential VPN issues out of the box.
 
 === Rancher Desktop 
+Rancher-Desktop will be installed if the variable `DOCKER_EDITION` is set to `rancher` (or more precicsely not set to `docker`).
+It is free for private and commercial use and supports all major operating systems (Windows, MacOS, and Linux).
+Like Docker-Desktop it comes with a nice GUI that however is rather basic.
+Please note that if you are using link:intellij.asciidoc[intellij] ultimate edition, this also ships with a very powerful Docker integration.
 
-The installation of Rancher Desktop will be handled with the help of a graphical user interface. After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
+The installation of Rancher Desktop will be handled with the help of a graphical user interface.
+After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
 
 image::images/RDInstallerInfoWindow.png[]
 
@@ -57,7 +76,6 @@ the installation process starts, which will look like this:
 
 image::images/RDInstallPic2.png[]
 
-
 After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings".
 Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
 
@@ -68,66 +86,29 @@ There you can choose the WSL Shells you want Rancher Desktop to work on.
 
 image::images/WSLdistrosRD.png[]
 
-Besides that the tools like docker or kubectl should 
-directly work with CMD or Powershell.
+Besides that the tools like `docker` or `kubectl` should directly work in your shell on Windows.
 
-
-Please note that besides the sandbox concept of devonfw-ide this is a global installation on your system.
-When uninstalling devonfw-ide, you may have to manually uninstall Docker and Kubernetes, or Rancher Desktop if you do not need it anymore. At least uninstalling Rancher Desktop should leave way less remains if you did not install one of the related software  Rancher Desktop offers separately.
-
-If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows. E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
+==== VPN Fix
+If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows.
+E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
 
 image::images/RDWaitingForServices.png[]
 
-To fix this common issue related to WSL2, we included this https://github.com/sakai135/wsl-vpnkit[wsl-vpnkit] to the installation of Rancher Desktop. If you still run into problems, then please disconnect from your VPN, start Rancher Desktop and wait untill the progress bar disappears
+If you are experiencing issues with VPN (e.g. Cisco Any Connect) you can fix this as described https://github.com/rancher-sandbox/rancher-desktop/issues/1899#issuecomment-1109128277[here].
 
-image::images/RDCompletedStartup.png[]
-
-or, when using Windows, untill you see a small blue Rancher Desktop icon in your Notification Area (in the following picture it is on the right bottom of the screen next to the taskbar). 
-
-image::images/RDCompletedIconNotificArea.png[]
-
-After that you can reconnect to your VPN.
-If you still run into problems, while using Kubernetes, one possible workaround with git-bash in Windows is to use a wsl-distribution.
-For this you can download and install the wsl distribution Ubuntu (latest LTS version, in the following example `20.04 LTS`) and then prefix troublesome commands with `wsl -d ubuntu20.04`.
-So to run `kubectl get pods` you can execute `wsl -d ubuntu20.04 kubectl get pods`.
-If you set this distribution as main wsl-distribution via "wsl --set-default ubuntu20.04",
-then you will only need "wsl " as prefix afterwards.
-So `wsl -d ubuntu20.04 kubectl get pods` reduces to "wsl kubectl get pods".
-If you have to deal with this for multiple commands, simply start a shell inside ubuntu via WSL and keep working there:
-```
-wsl -d ubuntu20.04
-devon
-kubectl get pods
-...
-```
-
-=== requirements
+=== Requirements
 Running Docker and especially link:kubectl.asciidoc[Kubernetes] on your machine in the background will require quite some resources.
 This will allocate at least 2GB of additional RAM.
 
 You will need at least 8GB of total RAM while we recommend to use 16GB+.
 
 You may also tune and scale it to your needs.
-When using Docker Desktop (Windows or MacOS) simply go to the https://docs.docker.com/docker-for-windows/#resources[resources tab in the settings]. 
+When using Docker Desktop (Windows or MacOS) simply go to the https://docs.docker.com/docker-for-windows/#resources[resources tab in the settings].
 It will depend on your usage frequency if you want to have it running in the background all the time.
 This is a balance between resource utilization and convenience.
 If you use Docker and Kubernetes on your local machine on a daily basis this makes sense.
 
 In case you only use Docker rarely, you can save resources by stopping it when not needed after it has been installed.
-
-=== Windows and macOS
-For Windows 10 you can use the following https://www.dell.com/support/kbdoc/de-de/000124550/how-to-add-app-to-startup-in-windows-10[Instructions on how to set startup programs for Windows 10], so that Rancher Desktop starts with your OS.
-
-To enable or disable autostart, you can launch Docker Desktop on Windows or MacOS go to the `Preferences` (gear icon in the title bar). Then in the `General` tab you can check or uncheck the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]). When autostart is disabled and you launch Docker Desktop it will notice and ask you to start the service or do this automatically for you.
-On Windows you can also manually tweak this:
-
-* Hit `[windows][r]`
-* Enter `services.msc`
-* Confirm with `OK`
-* In the services app search for the Docker Desktop Service in the list and select it.
-* Now you can start or stop the service by clicking on the according link text.
-* Also when right clicking on Docker Desktop Service and selecting `Options` from the context-menu, you can change the start type to `automatic` or `manual`.
 
 ==== Mac A1
 Have a look at the https://www.makeuseof.com/tag/add-remove-delay-startup-items-mac/[Instructions on how to set startup programs for MacOS] to make Rancher Desktop run directly after starting up your OS.
@@ -145,12 +126,4 @@ Docker Desktop isn't available for Linux, but Rancher Desktop can be used as com
 
 To make the usage of Rancher Desktop more comfortable and reliable let your operating system run it after starting up your system.
 On many Linux distributions you can just go to your menu (usually by clicking the icon at your screens left bottom), type "startup" and start your systems GUI-startup manager, if popping up. At the following website you can find some https://www.simplified.guide/linux/automatically-run-program-on-startup[examples or other options on how to set startup programs for some Linux distributions].
-
-== usage
-Once installed via setup, you can run Docker from any shell of your OS directly. If you use Rancher Desktop just
-make sure that Rancher Desktop runs in the background.
-Run `docker help` to get started and use the online documentations and resources on the web to get familiar with Docker.
-It is not our intention to repeat this here.
-
-Please note that the `docker` commandlet is a link:cli.asciidoc#command-wrapper[command wrapper].
 
