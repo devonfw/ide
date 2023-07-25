@@ -13,7 +13,8 @@ fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 JENKINS_CLI_HOME="${DEVON_IDE_HOME}/software/jenkins"
-TOOL_VERSION_COMMAND="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins.war' --version"
+JENKINS_COMMAND="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins.war'"
+TOOL_VERSION_COMMAND="${JENKINS_COMMAND} --version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
@@ -48,13 +49,13 @@ function doSetup() {
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins.war' --version" "verify installation of Jenkins"
+    doRunCommand "${JENKINS_COMMAND} --version" "verify installation of Jenkins"
   fi
 }
 
 function doStart() {
   doSetup silent
-  doRunCommand "java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins.war' --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
+  doRunCommand "${JENKINS_COMMAND} --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
   sleep 15
   echo
   echo "Jenkins is running on http://localhost:${JENKINS_PORT:-9999}"
@@ -64,10 +65,12 @@ function doJenkinsCli() {
   local admin_password="admin"
   if [ -f "${JENKINS_HOME}/secrets/initialAdminPassword" ]
   then
-    admin_password="`cat ${JENKINS_HOME}/secrets/initialAdminPassword`"
+    admin_password="$(cat "${JENKINS_HOME}"/secrets/initialAdminPassword)"
   fi
-  echo java -Duser.home=${JENKINS_HOME} -jar "${JENKINS_CLI_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}" "${@}"
-  java -Duser.home=${JENKINS_HOME} -jar "${JENKINS_CLI_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}" "${@}"
+  local jenkins_cli_command="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins-cli.jar'"
+  echo "${jenkins_cli_command}" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}" "${@}"
+  # shellcheck disable=SC2145
+  doRunCommand "${jenkins_cli_command} -s 'http://localhost:${JENKINS_PORT:-9999}' -auth '${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-${admin_password}}' ${@}"
 }
 
 function doStop() {
