@@ -16,24 +16,6 @@ TOOL_VERSION_COMMAND="docker version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
-# $1: URL
-# $2: resolved version
-# $3: resolved os
-# $4: resolved arch
-# $5: optional software edition
-function doResolveDownloadUrl() {
-  local url="${1}"
-  local version="${2}"
-  local code
-  if doIsWindows
-  then
-    code="Docker%20Desktop%20Installer"
-  else
-    code="Docker"
-  fi
-  echo "${url//\$\{code\}/${code}}"
-}
-
 # $1: optional setup
 function doSetup() {
   if command -v docker >/dev/null 2>&1
