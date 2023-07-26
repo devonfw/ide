@@ -6,7 +6,7 @@ toc::[]
 
 The `software` folder contains the third party tools for your IDE such as link:mvn.asciidoc[maven], link:npm.asciidoc[npm], link:java.asciidoc[java], etc.
 With respect to the link:LICENSE.asciidoc[licensing terms] you may create a custom archive containing a `devonfw-ide` together with the required software.
-However, to be platform independent and allow lightweight updates, the `devonfw-ide` is capable to download and link:install.asciidoc[install] the software automatically for you.
+However, to be platform independent and allow lightweight updates, the `devonfw-ide` is capable to download and link:setup.asciidoc[install] the software automatically for you.
 
 == Repository
 
