@@ -28,7 +28,7 @@ function doSetup() {
       echo "Jenkins is already installed at ${JENKINS_CLI_HOME}"
     fi
   else
-    if [ ! -f "${JENKINS_HOME}" ]
+    if [ ! -d "${JENKINS_HOME}" ]
     then
       doRunCommand "mkdir '${JENKINS_HOME}'"
     fi
