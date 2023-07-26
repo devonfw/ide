@@ -1252,15 +1252,6 @@ function doGitPullOrClone() {
   fi
 }
 
-# $1: URL
-# $2: resolved version
-# $3: resolved os
-# $4: resolved arch
-# $5: optional software edition
-function doResolveDownloadUrl() {
-  echo "${1}"
-}
-
 #  $1: name of software
 #  $2: version of software
 #  $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
