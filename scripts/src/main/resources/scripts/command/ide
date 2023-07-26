@@ -541,7 +541,11 @@ then
       doUpdateProjects
     elif [ "${2}" = "all" ]
     then
-      doUpdateScripts
+      doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
+      if [ "${?}" = 0 ]
+      then
+        doUpdateCli
+      fi
       doUpdateSettings
       doUpdateSoftware
       doUpdateProjects
