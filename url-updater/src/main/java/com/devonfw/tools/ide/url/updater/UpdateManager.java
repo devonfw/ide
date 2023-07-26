@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
-import com.devonfw.tools.ide.url.updater.jmc.JmcUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,7 @@ import com.devonfw.tools.ide.url.updater.helm.HelmUrlUpdater;
 import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
 import com.devonfw.tools.ide.url.updater.java.JavaUrlUpdater;
 import com.devonfw.tools.ide.url.updater.jenkins.JenkinsUrlUpdater;
+import com.devonfw.tools.ide.url.updater.jmc.JmcUrlUpdater;
 import com.devonfw.tools.ide.url.updater.kotlinc.KotlincNativeUrlUpdater;
 import com.devonfw.tools.ide.url.updater.kotlinc.KotlincUrlUpdater;
 import com.devonfw.tools.ide.url.updater.lazydocker.LazyDockerUrlUpdater;
