@@ -1378,15 +1378,8 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    local debugMsg="Received download file ${DOWNLOAD_FILENAME}"
-    if [ -z "${target_filename}" ]
-    then
-      doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}"
-      doDebug "${debugMsg}"
-    else
-      doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}" "${target_filename}"
-      doDebug "${debugMsg} with file name ${target_filename}"
-    fi
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}" "${target_filename}"
+    doDebug "Received download file ${DOWNLOAD_FILENAME} with file name ${target_filename}"
     if [ -n "${noUnpack}" ]
     then
       doDebug "Download shall not be extracted, hence copying ${DOWNLOAD_FILENAME} to ${install_path}"
