@@ -1,14 +1,32 @@
 package com.devonfw.tools.ide.url.updater.python;
 
+import com.devonfw.tools.ide.json.mapping.JsonMapping;
+import com.devonfw.tools.ide.url.model.folder.UrlEdition;
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
-import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
+import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 /**
- * {@link GithubUrlUpdater} of Python.
+ * The {@Link JsonUrlUpdater} for Python
  */
-public class PythonUrlUpdater extends GithubUrlUpdater {
+public class PythonUrlUpdater extends JsonUrlUpdater<PythonJsonObject> {
 
-  private static final String BASE_URL = "https://www.python.org/ftp/python/${version}/";
+  /**
+   * The base Url of the Python versions Json
+   */
+  private String VERSION_BASE_URL = "https://raw.githubusercontent.com";
+
+  private final static String VERSION_FILENAME = "actions/python-versions/main/versions-manifest.json";
+
+  final static ObjectMapper MAPPER = JsonMapping.create();
+
+  private static final Logger logger = LoggerFactory.getLogger(PythonUrlUpdater.class);
 
   @Override
   protected String getTool() {
@@ -17,40 +35,82 @@ public class PythonUrlUpdater extends GithubUrlUpdater {
   }
 
   @Override
-  protected String getVersionPrefixToRemove() {
-
-    return "v";
-  }
-
-  @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    doAddVersion(urlVersion, BASE_URL + "python-${version}-embed-win32.zip", WINDOWS);
-    doAddVersion(urlVersion, BASE_URL + "Python-${version}.tgz", MAC);
-    doAddVersion(urlVersion, BASE_URL + "Python-${version}.tgz", LINUX);
+    throw new IllegalStateException();
+  }
+
+  /**
+   * @return String of version base Url
+   */
+  protected String getVersionBaseUrl() {
+
+    return this.VERSION_BASE_URL;
+  }
+
+  @Override
+  protected String doGetVersionUrl() {
+
+    return getVersionBaseUrl() + "/" + VERSION_FILENAME;
+  }
+
+  @Override
+  protected Class<PythonJsonObject> getJsonObjectType() {
+
+    return PythonJsonObject.class;
+  }
+
+  @Override
+  protected void collectVersionsFromJson(PythonJsonObject jsonItem, Collection<String> versions) {
+
+    throw new IllegalStateException();
 
   }
 
   @Override
-  protected String getGithubOrganization() {
+  public void update(UrlRepository urlRepository) {
 
-    return "python";
-  }
+    UrlTool tool = urlRepository.getOrCreateChild(getTool());
 
-  @Override
-  protected String getGithubRepository() {
+    String url = doGetVersionUrl();
+    try {
+      UrlEdition edition = tool.getOrCreateChild(getEdition());
+      updateExistingVersions(edition);
+      String toolWithEdition = getToolWithEdition();
+      String response = doGetResponseBodyAsString(url);
+      PythonJsonItem[] res = MAPPER.readValue(response, PythonJsonItem[].class);
 
-    return "cpython";
-  }
+      for (PythonJsonItem result : res) {
+        String version = result.getVersion();
+        if (edition.getChild(version) == null) {
+          try {
+            UrlVersion urlVersion = edition.getOrCreateChild(version);
+            for (PythonFile download : result.getFiles()) {
+              if (download.getPlatform().equals("win32") && download.getArch().equals("x64")) {
+                doAddVersion(urlVersion, download.getDownloadUrl(), WINDOWS, X64);
+              } else if (download.getPlatform().equals("linux") && download.getArch().equals("x64")) {
+                doAddVersion(urlVersion, download.getDownloadUrl(), LINUX, X64);
+              } else if (download.getPlatform().equals("darwin") && download.getArch().equals("arm64")) {
+                doAddVersion(urlVersion, download.getDownloadUrl(), MAC, ARM64);
+              } else {
+                logger.info("Unknown architecture for tool {} version {} and download {}.", toolWithEdition, version,
+                    download.getDownloadUrl());
+              }
 
-  @Override
-  protected String mapVersion(String version) {
+            }
+            urlVersion.save();
+          } catch (Exception exp) {
+            logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, exp);
 
-    if (version.matches("v\\d+\\.\\d+\\.\\d+")) {
-      return super.mapVersion(version);
+          }
+        }
+
+      }
+
+    } catch (Exception e) {
+      throw new IllegalStateException("Error while getting versions from JSON API " + url, e);
     }
-    else {
-      return null;
-    }
+
   }
+
 }
