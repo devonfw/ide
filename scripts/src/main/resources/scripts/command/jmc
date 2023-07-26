@@ -18,7 +18,7 @@ source "$(dirname "${0}")"/../commandlet-cli
 
 # Call jmc with specified arguments.
 function doRun() {
-  if [ -z "$(ls -A ${JMC_HOME})" ]
+  if [ -z "$(ls -A "${JMC_HOME}")" ]
   then
     doSetup silent
   fi
