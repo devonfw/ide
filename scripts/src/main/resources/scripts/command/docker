@@ -52,11 +52,17 @@ function doSetup() {
   local install_dir="${DEVON_IDE_HOME}/updates/install/docker"
   rm -rf "${install_dir}"
   TOOL_VERSION_COMMAND="-"
-  doInstall "docker" "${DOCKER_VERSION}" "${1}" "${DOCKER_EDITION}" "${install_dir}" "" "noUnpack"
+  local noUnpack="noUnpack"
+  if doIsMacOs
+  then
+    # on MacOS both editions of docker come as *.dmg file that needs to be extracted
+    noUnpack=""
+  fi
+  doInstall "docker" "${DOCKER_VERSION}" "${1}" "${DOCKER_EDITION}" "${install_dir}" "" "${noUnpack}"
   TOOL_VERSION_COMMAND="docker version"
   if doIsMacOs
   then
-    doRunCommand "mv '${install_dir}/*.app' /Applications/"
+    doMoveFirstDirectory "/Applications/" "${install_dir}"/*
   else
     doRunFirstExecutable "${install_dir}/"*
   fi
