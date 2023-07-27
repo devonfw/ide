@@ -383,7 +383,23 @@ function doUpdateSoftware() {
             repo="${default_repo}"
           fi
         fi
-        doInstall "${software}" "${software_version}" "silent" "" "${DEVON_IDE_HOME}/software/${software}" "${os}" "" "${repo}"
+        if [[ ${repo} == http* ]]
+        then
+          if [ -n "$DEVON_CUSTOM_SOFTWARE_RESPOSITORY" ]
+          then
+            custom_software_repository="$DEVON_CUSTOM_SOFTWARE_RESPOSITORY"
+          else
+            if [ "$(uname)" == "Darwin" ]
+                          then
+              custom_software_repository="/mnt/software"
+            else
+              custom_software_repository="/software"
+            fi
+          fi
+          cp "${repo}" "${DEVON_IDE_HOME}/${custom_software_repository}/${software}"
+        else
+          doInstall "${software}" "${software_version}" "silent" "" "${DEVON_IDE_HOME}/software/${software}" "${os}" "" "${repo}"
+        fi
       fi
     fi
   done
