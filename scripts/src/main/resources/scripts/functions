@@ -223,8 +223,7 @@ function doCheckSoftwareSecurityVersion() {
       then
         software_info="${software} with edition ${edition}"
       fi
-      mymessage="You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
-      doReportVersionSecurityWarning "${mymessage}"
+      doReportVersionSecurityWarning "You are using the tool ${software_info} in version ${version} that has vulnerabilities. Please update the tool to state safe and secure.\nFor further details and recent information have a look at the following webpage:\nhttps://github.com/devonfw/ide/blob/master/documentation/vulnerabilities.asciidoc\n\n"
     fi
   fi
 }
@@ -573,7 +572,7 @@ function doDownload() {
       if [ -z "${filename}" ]
       then
         filename="${software}-${version}"
-        if [ -n "${edition}" ]
+        if [ -n "${edition}" ] && [ "${edition}" != "${software}" ]
         then
           filename="${filename}-${edition}"
         fi
@@ -630,9 +629,6 @@ function doDownload() {
     result=${?}
     if [ "${result}" = 0 ] || [ "${result}" = 255 ]
     then
-      local checksum
-      checksum="$(cat "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}"/"${version}"/"${os}"_"${arch}".urls.sha256)"
-      doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
       return "${result}"
     fi
     doFail "Failed to download ${filename} from ${1}" "${result}"
@@ -806,6 +802,39 @@ function doExtract() {
   else
     doSuccess "Successfully extracted archive ${filename} to ${target_dir}"
   fi
+}
+
+# $n: the executable to run (may be expaneded glob pattern(s))
+function doRunFirstExecutable() {
+  local installer="$1"
+  while [ -n "$1" ]
+  do
+    doDebug "Trying to execute $1"
+    if [ -x "$1" ]
+    then
+      doRunCommand "$1"
+      return
+    elif doIsWindows
+    then
+      local ext="${1/*\./}"
+      doDebug "Detected extension ${ext}"
+      if [ "${ext}" = "msi" ]
+      then
+        installer="$(cygpath -w "$1")"
+        doRunCommand "msiexec //i '${installer}'"
+        if [ "$?" = 0 ]
+        then
+          return
+        fi
+      elif [ "${ext}" = "exe" ]
+      then
+        doRunCommand "$1"
+        return
+      fi
+    fi
+    shift
+  done
+  doFail "Installation failed from ${installer}"
 }
 
 # $1: the file to unzip
@@ -1223,15 +1252,6 @@ function doGitPullOrClone() {
   fi
 }
 
-# $1: URL
-# $2: resolved version
-# $3: resolved os
-# $4: resolved arch
-# $5: optional software edition
-function doResolveDownloadUrl() {
-  echo "${1}"
-}
-
 # $1: name of software
 # $2: version of software
 # $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
@@ -1269,14 +1289,13 @@ function doInstall() {
     doGitPullOrClone "${target_path}" "${url}"
     return
   fi
+  doUpdateUrls
   if [ -z "${version}" ]
   then
-    doUpdateUrls
     version=$(doGetLatestSoftwareVersion "${software}")
     doDebug "Resolved latest version of ${software} to ${version}"
   elif [ "${version:${#version}-1}" = "*" ]
   then
-    doUpdateUrls
     doDebug "Resolving version prefix ${version}"
     edition=$(doGetSoftwareEdition "${software}")
     resolved_version=$(doGetLatestSoftwareVersion "${software}" "${version}")
@@ -1820,7 +1839,6 @@ function doGetLatestSoftwareVersion() {
   local prefix="${2}"
   local edition
   local version
-  doUpdateUrls
   edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
@@ -1845,6 +1863,7 @@ function doSetSoftwareVersion() {
   then
     if [ "${version}" = "latest" ]
     then
+      doUpdateUrls
       version=$(doGetLatestSoftwareVersion "${software}")
     fi
     local software_version_variable="${software}"

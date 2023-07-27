@@ -1,5 +1,27 @@
 package com.devonfw.tools.ide.url.updater;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.url.model.file.UrlChecksum;
@@ -15,30 +37,12 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
-import com.google.common.base.Objects;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpClient.Redirect;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
  * updating tool versions, and checking if download URLs work.
  */
-public abstract class AbstractUrlUpdater implements UrlUpdater {
+public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout implements UrlUpdater {
 
   private static final Duration TWO_DAYS = Duration.ofDays(2);
 
@@ -56,6 +60,13 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   /** {@link SystemArchitecture#ARM64}. */
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
+
+  /** List of URL file names dependent on OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_PER_OS = Set.of("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls",
+      "windows_x64.urls");
+
+  /** List of URL file name independent of OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = Set.of("urls");
 
   /** The {@link HttpClient} for HTTP requests. */
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
@@ -77,7 +88,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
   /**
    * @return the combination of {@link #getTool() tool} and {@link #getEdition() edition} but simplified if both are
-   * equal.
+   *         equal.
    */
   protected final String getToolWithEdition() {
 
@@ -179,6 +190,8 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
 
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
+    String major = urlVersion.getVersionIdentifier().getStart().getDigits();
+    url = url.replace("${major}", major);
     if (os != null) {
       url = url.replace("${os}", os.toString());
     }
@@ -197,6 +210,9 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    */
   protected boolean isSuccess(HttpResponse<?> response) {
 
+    if (response == null) {
+      return false;
+    }
     return response.statusCode() == 200;
   }
 
@@ -219,7 +235,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
     String oldChecksum = urlChecksum.getChecksum();
 
-    if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+    if ((oldChecksum != null) && !Objects.equals(oldChecksum, checksum)) {
       logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
           tool, version, url, checksum, oldChecksum);
       return false;
@@ -273,6 +289,17 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     String version = urlVersion.getName();
 
     boolean success = isValidDownload(url, tool, version, response);
+
+    // Checks if checksum for URL is already existing
+    UrlDownloadFile urlDownloadFile = urlVersion.getUrls(os, architecture);
+    if (urlDownloadFile != null) {
+      UrlChecksum urlChecksum = urlVersion.getChecksum(urlDownloadFile.getName());
+      if (urlChecksum != null) {
+        logger.warn("Checksum is already existing for: {}, skipping.", url);
+        doUpdateStatusJson(success, statusCode, urlVersion, url, true);
+        return true;
+      }
+    }
 
     if (success) {
       if (checksum == null || checksum.isEmpty()) {
@@ -355,7 +382,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
    * @param urlVersion the {@link UrlVersion} instance to create or refresh the status JSON file for.
    * @param url the checked download URL.
    * @param update - {@code true} in case the URL was updated (verification), {@code false} otherwise (version/URL
-   * initially added).
+   *        initially added).
    */
   @SuppressWarnings("null") // Eclipse is too stupid to check this
   private void doUpdateStatusJson(boolean success, int statusCode, UrlVersion urlVersion, String url, boolean update) {
@@ -405,7 +432,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
         if (errorStatus == null) {
           modified = true;
         } else {
-          if (!Objects.equal(code, errorStatus.getCode())) {
+          if (!Objects.equals(code, errorStatus.getCode())) {
             logger.warn("For tool {} and version {} the error status-code changed from {} to {} for URL {}.", tool,
                 version, code, errorStatus.getCode(), code, url);
             modified = true;
@@ -432,6 +459,42 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
   }
 
   /**
+   * @return Set of URL file names (dependency on OS file names can be overriden with isOsDependent())
+   */
+  protected Set<String> getUrlFilenames() {
+
+    if (isOsDependent()) {
+      return URL_FILENAMES_PER_OS;
+    } else {
+      return URL_FILENAMES_OS_INDEPENDENT;
+    }
+  }
+
+  /**
+   * Checks if we are dependent on OS URL file names, can be overriden to disable OS dependency
+   *
+   * @return true if we want to check for missing OS URL file names, false if not
+   */
+  protected boolean isOsDependent() {
+
+    return true;
+  }
+
+  /**
+   * Checks if an OS URL file name was missing in {@link UrlVersion}
+   *
+   * @param urlVersion the {@link UrlVersion} to check
+   * @return true if an OS type was missing, false if not
+   */
+  public boolean isMissingOs(UrlVersion urlVersion) {
+
+    Set<String> childNames = urlVersion.getChildNames();
+    Set<String> osTypes = getUrlFilenames();
+    // invert result of containsAll to avoid negative condition
+    return !childNames.containsAll(osTypes);
+  }
+
+  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
@@ -445,10 +508,17 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     Set<String> versions = getVersions();
     String toolWithEdition = getToolWithEdition();
     logger.info("For tool {} we found the following versions : {}", toolWithEdition, versions);
+
     for (String version : versions) {
-      if (edition.getChild(version) == null) {
+
+      if (isTimeoutExpired()) {
+        break;
+      }
+
+      UrlVersion urlVersion = edition.getChild(version);
+      if (urlVersion == null || isMissingOs(urlVersion)) {
         try {
-          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          urlVersion = edition.getOrCreateChild(version);
           addVersion(urlVersion);
           urlVersion.save();
         } catch (Exception e) {
@@ -488,7 +558,7 @@ public abstract class AbstractUrlUpdater implements UrlUpdater {
     boolean modified = false;
     String toolWithEdition = getToolWithEdition();
     Instant now = Instant.now();
-    for (UrlFile child : urlVersion.getChildren()) {
+    for (UrlFile<?> child : urlVersion.getChildren()) {
       if (child instanceof UrlDownloadFile) {
         Set<String> urls = ((UrlDownloadFile) child).getUrls();
         for (String url : urls) {

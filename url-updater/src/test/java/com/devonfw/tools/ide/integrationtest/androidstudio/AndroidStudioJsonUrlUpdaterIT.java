@@ -1,8 +1,8 @@
-package com.devonfw.tools.ide.integrationtests;
+package com.devonfw.tools.ide.integrationtest.androidstudio;
 
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
+import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,22 +16,21 @@ import java.nio.file.Paths;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 /**
- * Test class for integrations of the {@link JsonUrlUpdater}
+ * Test class for integrations of the {@link AndroidStudioUrlUpdater
  */
 @WireMockTest(httpPort = 8080)
-public class JsonUrlUpdaterIT extends Assertions {
+public class AndroidStudioJsonUrlUpdaterIT extends Assertions {
 
   /**
    * Test resource location
    */
-  private final static String testdataRoot = "src/test/resources/integrationtests/JsonUrlUpdater";
+  private final static String testdataRoot = "src/test/resources/integrationtest/AndroidStudioJsonUrlUpdater";
 
   /** This is the SHA256 checksum of aBody (a placeholder body which gets returned by WireMock) */
   private static final String EXPECTED_ABODY_CHECKSUM = "2bd115c7425d128e24a6cdfc9b6f82762d6e1b7d9868d0974faeaa18b54c3de3";
 
   /**
-   * Test of {@link JsonUrlUpdater} for the creation of Android Studio download
-   * URLs and checksums.
+   * Test of {@link JsonUrlUpdater} for the creation of {@link AndroidStudioUrlUpdater download URLs and checksums.
    *
    * @param tempDir Path to a temporary directory
    * @throws IOException test fails
@@ -73,8 +72,9 @@ public class JsonUrlUpdaterIT extends Assertions {
   }
 
   /**
-   * Test if the {@link JsonUrlUpdater} for Android Studio can handle downloads with missing checksums (generate
-   * checksum from download file if no checksum was provided)
+   * Test if the {@link JsonUrlUpdater} for
+   * {@link AndroidStudioUrlUpdater can handle downloads with missing checksums (generate checksum from download file if
+   * no checksum was provided)
    *
    * @param tempDir Path to a temporary directory
    * @throws IOException test fails
@@ -106,8 +106,8 @@ public class JsonUrlUpdaterIT extends Assertions {
   }
 
   /**
-   * Test if the {@link JsonUrlUpdater} for {@link AndroidStudioUrlUpdater} can handle downloads with missing checksums (generate
-   * checksum from download file if no checksum was provided)
+   * Test if the {@link JsonUrlUpdater} for {@link AndroidStudioUrlUpdater} can handle downloads with missing checksums
+   * (generate checksum from download file if no checksum was provided)
    *
    * @param tempDir Path to a temporary directory
    * @throws IOException test fails

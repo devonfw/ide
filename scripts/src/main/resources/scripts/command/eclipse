@@ -257,7 +257,15 @@ function doSetup() {
       fi
     fi
   fi
-  doInstall "eclipse" "${ECLIPSE_VERSION}" "${silent}" "${ECLIPSE_EDITION_TYPE:-java}"
+  if [ -z "${ECLIPSE_EDITION}" ] && [ -n "${ECLIPSE_EDITION_TYPE}" ]
+  then
+    doWarning "You are still using the legacy property ECLIPSE_EDITION_TYPE.\nThe new property name is ECLIPSE_EDITION with values 'eclipse' (default java edition) or 'cpp' as described in the documentation.\nPlease update your devon.properties (what should have happened automatically on update of devonfw-ide scripts)."
+    if [ "${ECLIPSE_EDITION_TYPE}" = "java" ]
+    then
+      ECLIPSE_EDITION="eclipse"
+    fi
+  fi
+  doInstall "eclipse" "${ECLIPSE_VERSION}" "${silent}" "${ECLIPSE_EDITION}"
   if [ "${?}" = 0 ]
   then
     doAddPlugins

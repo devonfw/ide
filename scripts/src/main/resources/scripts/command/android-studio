@@ -65,7 +65,7 @@ function doAddPlugin() {
   local pluginId="${1}"
   local download_dir="${DEVON_DOWNLOAD_DIR}"
   local android_studio_build
-  local install_path="${DEVON_IDE_HOME}/software/android-studio-plugins/"
+  local install_path="${DEVON_IDE_HOME}/plugins/android-studio/"
   if [ -e "${ANDROID_STUDIO_HOME}/build.txt" ]
   then
     android_studio_build="$(cat "${ANDROID_STUDIO_HOME}/build.txt")"
@@ -109,7 +109,13 @@ function doConfigureAndroidStudio() {
   fi
   if [ -n "${mode}" ]
   then
-    doConfigureWorkspace "${SETTINGS_PATH}/android-studio/workspace" "${WORKSPACE_PATH}" "${mode}"
+    local settings_workspace="${SETTINGS_PATH}/android-studio/workspace"
+    if [ -d "${settings_workspace}" ]
+    then
+      doConfigureWorkspace "${settings_workspace}" "${WORKSPACE_PATH}" "${mode}"
+    else
+      doWarning "There is no workspace folder in ${settings_workspace}. Launching Android Studio without changing any workspace settings..."
+    fi
   fi
 }
 

@@ -19,9 +19,9 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
  * <li>urls</li>
  * </ul>
  */
-public class UrlDownloadFile extends AbstractUrlFile {
+public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> {
 
-  private final Set<String> urls = new HashSet<>();
+  private final Set<String> urls;
 
   /**
    * The constructor.
@@ -32,6 +32,7 @@ public class UrlDownloadFile extends AbstractUrlFile {
   public UrlDownloadFile(UrlVersion parent, String name) {
 
     super(parent, name);
+    this.urls = new HashSet<>();
   }
 
   /**

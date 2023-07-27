@@ -39,9 +39,8 @@ sudo yum install git-core curl
 *** On MacOS you only need to download and install https://git-scm.com/download/mac[git for mac].
 
 === Install
-NOTE: Currently this sonatype download service is broken (`here` link below will not work). As a workaround go to https://github.com/devonfw/ide/releases[releases] and click the latest direct download link. Sorry for any inconvenience.
 
-** Download the latest version of `devonfw-ide` from https://repository.sonatype.org/service/local/artifact/maven/redirect?r=central-proxy&g=com.devonfw.tools.ide&a=devonfw-ide-scripts&v=LATEST&p=tar.gz[here] and extract it to a folder of your choice.
+** Download the latest version of `devonfw-ide` from https://github.com/devonfw/ide/releases[here] and extract it to a folder of your choice.
 +
 (You can find all Releases in https://repo.maven.apache.org/maven2/com/devonfw/tools/ide/devonfw-ide-scripts/[Maven Central])
 ** Run the `setup` in this folder (On Windows you can double click on `setup.bat`)
@@ -61,6 +60,7 @@ endif::[]
 //video::NG6TAmksBGI[youtube, width=640, height=360]
 // end::you[]
 
+See also our latest video https://vimeo.com/808368450/88d4af9d18[devon ide update @ RISE]
 
 == Documentation
 
