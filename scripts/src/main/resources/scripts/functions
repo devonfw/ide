@@ -837,24 +837,6 @@ function doRunFirstExecutable() {
   doFail "Installation failed from ${installer}"
 }
 
-# $1: the target directory to move to
-# $2-$n: the source directory to move (may be expaneded glob pattern(s))
-function doMoveFirstDirectory() {
-  local target="$1"
-  shift
-  local source="$1"
-  while [ -n "$1" ]
-  do
-    if [ -d "$1" ]
-    then
-      doRunCommand "mv '${1}' '${target}'"
-      return
-    fi
-    shift
-  done
-  doFail "Faild to move directory $source to $target"
-}
-
 # $1: the file to unzip
 # $2: target_dir
 function doUnzip() {
@@ -1445,8 +1427,10 @@ function doInstall() {
   if [ ! -d "${target_path}/bin" ] && doIsMacOs
   then
     local contents="Contents"
-    if ! [ -d "${target_path}/${contents}" ]
+    if ! [ -d "${target_path}/${contents}" ] && ! [ -d "${target_path}/Docker.app" ] && ! [ -d "${target_path}/Rancher Desktop.app" ]
     then
+      doFail "sucks!"
+      doDebug "Searching for Conntents folder in ${target_path}"
       pushd "${target_path}" > /dev/null || exit 255
       # doGetFirstExistingPath does not have options
       # shellcheck disable=SC2035

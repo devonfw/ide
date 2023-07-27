@@ -327,16 +327,6 @@ Checks whether the file extension of the file specified in the parameter is an e
 .exe .msi .pkg or .bat.
 If so, the function returns 0, otherwise 255.
 
-=== doMoveFirstDirectory
-Moves a directory resolved from a glob pattern to a target folder.
-Example `doMoveFirstDirectory "${target_folder}" "${source_dir}"/*`
-
-|=======================
-|*Param*|*Name* |*Description*
-|`$1`   |target |The target directory where to move to.
-|`$2-$n`|source |The source directory to move. The first existing directory will be moved. If none was found and error is raised.
-|=======================
-
 === doUpdatePath
 Updates the PATH variable according to the latest tools installed in the `software` folder.
 *ATTENTION:* This function is defined in the file `environment-project`.

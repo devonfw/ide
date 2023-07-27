@@ -16,6 +16,22 @@ TOOL_VERSION_COMMAND="docker version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
+# $n: the app directory to install and run (may be expaneded glob pattern(s))
+function doInstallMacOsApp() {
+  local source="$1"
+  while [ -n "$1" ]
+  do
+    if [ -d "$1" ]
+    then
+      doRunCommand "mv '${1}' '/Applications/'"
+      open "/Applications/$(basename "$1")"
+      return
+    fi
+    shift
+  done
+  doFail "Faild to install MacOS app $source"
+}
+
 # $1: optional setup
 function doSetup() {
   if command -v docker >/dev/null 2>&1
@@ -62,7 +78,7 @@ function doSetup() {
   TOOL_VERSION_COMMAND="docker version"
   if doIsMacOs
   then
-    doMoveFirstDirectory "/Applications/" "${install_dir}"/*
+    doInstallMacOsApp "${install_dir}"/*
   else
     doRunFirstExecutable "${install_dir}/"*
   fi
