@@ -60,7 +60,7 @@ function doSetup() {
   else
     doRunFirstExecutable "${install_dir}/"*
   fi
-  read -r -p "Docker has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup for enabling kubernetes and further important details. Press enter to continue" answer
+  read -r -p "Docker has been installed. Please read https://github.com/devonfw/ide/blob/master/documentation/docker.asciidoc#setup especially when using Rancher-Desktop and VPN. Press enter to continue" answer
 }
 
 # Call Docker with specified arguments.   
