@@ -2,6 +2,12 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2023.08.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1197[#1197]: Integrate Java Mission Control
+
 == 2023.07.003
 
 Release with new features and bugfixes:
@@ -15,7 +21,6 @@ Release with new features and bugfixes:
 * https://github.com/devonfw/ide/issues/1276[#1276]: checksum verification for custom software repository
 * https://github.com/devonfw/ide/issues/1285[#1285]: Complete alignment of tool-names in scripts
 * https://github.com/devonfw/ide/issues/1164[#1164]: devon jenkins stop fails
-* https://github.com/devonfw/ide/issues/1197[#1197]: Integrate Java Mission Control
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/46?closed=1[milestone 2023.07.003].
 
