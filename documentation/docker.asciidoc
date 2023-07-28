@@ -21,7 +21,11 @@ We support two editions of docker:
 == Important notice
 On Windows https://docs.microsoft.com/en-us/windows/wsl/install-win10[WSL 2](Windows Subsystem for Linux) has to be installed properly.
 The installer should do that automatically for you but if something goes wrong or you still have `WSL 1` instead you might end up with https://stackoverflow.com/questions/70953842/error-wsl-exe-exited-with-code-4294967295-on-installing-rancher-desktop[strange errors].
-In such case you need to run `wsl --update` from an administrative shell.
+In such case you need to run the following commands from an administrative shell:
+```
+wsl --update
+wsl --set-default-version 2
+```
 
 To run the `docker` command after the installation, it is necessary that the docker daemon is up and running.
 In Docker-Desktop you can enable or disable autostart in the `Preferences` (gear icon in the title bar) at the `General` tab via the option `Start Docker Desktop when you login` (see also https://docs.docker.com/docker-for-windows/#general[here]).
@@ -62,39 +66,20 @@ It is free for private and commercial use and supports all major operating syste
 Like Docker-Desktop it comes with a nice GUI that however is rather basic.
 Please note that if you are using link:intellij.asciidoc[intellij] ultimate edition, this also ships with a very powerful Docker integration.
 
-The installation of Rancher Desktop will be handled with the help of a graphical user interface.
-After starting the installation process from your shell you may see a small progress window for a few seconds before the installer starts. 
-
-image::images/RDInstallerInfoWindow.png[]
-
-After that you may need to wait for around half a minute until the installer of Rancher Desktop pops up.
-Then, when you accepted the Licence Agreement 
-
-image::images/RDInstallPic1.png[]
-
-the installation process starts, which will look like this:
-
-image::images/RDInstallPic2.png[]
-
-After successfull installation please start Rancher Desktop and go to the menu point "Kubernetes Settings".
-Under "Container Runtime" choose dockerd(moby) to enable the docker-cli. 
-
+You can simply click through the Rancher-Desktop installer.
+When asked for `Container Runtime` ensure you have `dockerd` selected if you want to use the docker CLI.
+For everything else the defaults should be fine.
 image::images/EnablingDockerd.png[]
 
-If you use Windows, then make sure to go to the Settings named "WSL Integration".
-There you can choose the WSL Shells you want Rancher Desktop to work on. 
-
-image::images/WSLdistrosRD.png[]
-
-Besides that the tools like `docker` or `kubectl` should directly work in your shell on Windows.
-
 ==== VPN Fix
-If you are connected to a VPN you may run into problems while trying to start Rancher Desktop on Windows.
-E.g. Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI.
+If you are connected to a VPN (e.g. Cisco Any Connect) you will run into problems while trying to start Rancher Desktop.
+Rancher Desktop will load for a long time as indicated by the progress bar on the lower left side of the Rancher Desktop GUI and finally file with a timeout error.
 
 image::images/RDWaitingForServices.png[]
 
-If you are experiencing issues with VPN (e.g. Cisco Any Connect) you can fix this as described https://github.com/rancher-sandbox/rancher-desktop/issues/1899#issuecomment-1109128277[here].
+To avoid such problems all you need to do is go to the `Preferences` (gear icon) and checking the `Enable networking tunnel` option.
+
+image::images/Rancher-Desktiop-Networking-Tunnel.png[Rancher-Desktiop-Networking-Tunnel]
 
 === Requirements
 Running Docker and especially link:kubectl.asciidoc[Kubernetes] on your machine in the background will require quite some resources.
@@ -126,4 +111,3 @@ Docker Desktop isn't available for Linux, but Rancher Desktop can be used as com
 
 To make the usage of Rancher Desktop more comfortable and reliable let your operating system run it after starting up your system.
 On many Linux distributions you can just go to your menu (usually by clicking the icon at your screens left bottom), type "startup" and start your systems GUI-startup manager, if popping up. At the following website you can find some https://www.simplified.guide/linux/automatically-run-program-on-startup[examples or other options on how to set startup programs for some Linux distributions].
-

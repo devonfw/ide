@@ -1427,8 +1427,10 @@ function doInstall() {
   if [ ! -d "${target_path}/bin" ] && doIsMacOs
   then
     local contents="Contents"
-    if ! [ -d "${target_path}/${contents}" ]
+    if ! [ -d "${target_path}/${contents}" ] && ! [ -d "${target_path}/Docker.app" ] && ! [ -d "${target_path}/Rancher Desktop.app" ]
     then
+      doFail "sucks!"
+      doDebug "Searching for Conntents folder in ${target_path}"
       pushd "${target_path}" > /dev/null || exit 255
       # doGetFirstExistingPath does not have options
       # shellcheck disable=SC2035
