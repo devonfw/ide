@@ -20,22 +20,6 @@ fi
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
 TOOL_VERSION_COMMAND="java -version"
-# $1: URL
-# $2: resolved version
-# $3: resolved os
-function doResolveDownloadUrl() {
-  local url="${1}"
-  local version="${2}"
-  local os="${3}"
-  local code
-  if [ "${version:0:1}" = "8" ]
-  then
-    code="jdk${version/b/-b}"
-  else
-    code="jdk-${version/_/%2B}"
-  fi
-  echo "${url//\$\{code\}/${code}}"
-}
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 

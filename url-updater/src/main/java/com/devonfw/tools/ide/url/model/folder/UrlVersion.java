@@ -34,6 +34,14 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   }
 
   /**
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
+   */
+  public UrlDownloadFile getOrCreateUrls() {
+
+    return getOrCreateUrls(null, null);
+  }
+
+  /**
    * @param os the optional {@link OperatingSystem}.
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls". Will be created if it does not exist.
    */
@@ -46,22 +54,42 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
    * @param os the optional {@link OperatingSystem}.
    * @param arch the architecture (e.g. "x64" or "arm64").
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
-   *         exist.
+   *     exist.
    */
   public UrlDownloadFile getOrCreateUrls(OperatingSystem os, SystemArchitecture arch) {
 
-    if ((os == null) && (arch == null)) {
-      return getOrCreateUrls();
-    }
-    return (UrlDownloadFile) getOrCreateChild(os + "_" + SystemArchitecture.orDefault(arch) + ".urls");
+    return (UrlDownloadFile) getOrCreateChild(getUrlsFileName(os, arch));
   }
 
   /**
-   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls". Will be created if it does not exist.
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "urls".
    */
-  public UrlDownloadFile getOrCreateUrls() {
+  public UrlDownloadFile getUrls() {
 
-    return (UrlDownloadFile) getOrCreateChild("urls");
+    return getUrls(null, null);
+  }
+
+  /**
+   * @param os the optional {@link OperatingSystem}.
+   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls".
+   */
+  public UrlDownloadFile getUrls(OperatingSystem os, SystemArchitecture arch) {
+
+    return (UrlDownloadFile) getChild(getUrlsFileName(os, arch));
+  }
+
+  /**
+   * @param os the optional {@link OperatingSystem}.
+   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @return String of the format "«os»_«arch».urls".
+   */
+  public static String getUrlsFileName(OperatingSystem os, SystemArchitecture arch) {
+
+    if ((os == null) && (arch == null)) {
+      return "urls";
+    }
+    return os + "_" + SystemArchitecture.orDefault(arch) + ".urls";
   }
 
   /**
@@ -73,7 +101,6 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   }
 
   /**
-   *
    * @return the {@link VersionIdentifier}
    */
   public VersionIdentifier getVersionIdentifier() {
@@ -86,11 +113,28 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
 
   /**
    * @param urlsFilename the {@link #getName() filename} of the URLs file.
+   * @return String of {@link #getName() filename} of the URLs file with added extension.
+   */
+  public String getChecksumFilename(String urlsFilename){
+    return urlsFilename + UrlChecksum.EXTENSION;
+  }
+
+  /**
+   * @param urlsFilename the {@link #getName() filename} of the URLs file.
    * @return the existing or newly created and added {@link UrlChecksum} file.
    */
   public UrlChecksum getOrCreateChecksum(String urlsFilename) {
 
-    return (UrlChecksum) getOrCreateChild(urlsFilename + UrlChecksum.EXTENSION);
+    return (UrlChecksum) getOrCreateChild(getChecksumFilename(urlsFilename));
+  }
+
+  /**
+   * @param urlsFilename the {@link #getName() filename} of the URLs file.
+   * @return the existing {@link UrlChecksum} file.
+   */
+  public UrlChecksum getChecksum(String urlsFilename) {
+
+    return (UrlChecksum) getChild(getChecksumFilename(urlsFilename));
   }
 
   /**

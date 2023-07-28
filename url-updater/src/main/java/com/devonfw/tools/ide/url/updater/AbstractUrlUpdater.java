@@ -11,8 +11,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -33,7 +37,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.util.DateTimeUtil;
 import com.devonfw.tools.ide.util.HexUtil;
-import com.google.common.base.Objects;
 
 /**
  * Abstract base implementation of {@link UrlUpdater}. Contains methods for retrieving response bodies from URLs,
@@ -57,6 +60,13 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
 
   /** {@link SystemArchitecture#ARM64}. */
   protected static final SystemArchitecture ARM64 = SystemArchitecture.ARM64;
+
+  /** List of URL file names dependent on OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_PER_OS = Set.of("linux_x64.urls", "mac_arm64.urls", "mac_x64.urls",
+      "windows_x64.urls");
+
+  /** List of URL file name independent of OS which need to be checked for existence */
+  private static final Set<String> URL_FILENAMES_OS_INDEPENDENT = Set.of("urls");
 
   /** The {@link HttpClient} for HTTP requests. */
   protected final HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build();
@@ -225,7 +235,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
     UrlChecksum urlChecksum = urlVersion.getOrCreateChecksum(urlDownloadFile.getName());
     String oldChecksum = urlChecksum.getChecksum();
 
-    if ((oldChecksum != null) && !Objects.equal(oldChecksum, checksum)) {
+    if ((oldChecksum != null) && !Objects.equals(oldChecksum, checksum)) {
       logger.error("For tool {} and version {} the mirror URL {} points to a different checksum {} but expected {}.",
           tool, version, url, checksum, oldChecksum);
       return false;
@@ -279,6 +289,17 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
     String version = urlVersion.getName();
 
     boolean success = isValidDownload(url, tool, version, response);
+
+    // Checks if checksum for URL is already existing
+    UrlDownloadFile urlDownloadFile = urlVersion.getUrls(os, architecture);
+    if (urlDownloadFile != null) {
+      UrlChecksum urlChecksum = urlVersion.getChecksum(urlDownloadFile.getName());
+      if (urlChecksum != null) {
+        logger.warn("Checksum is already existing for: {}, skipping.", url);
+        doUpdateStatusJson(success, statusCode, urlVersion, url, true);
+        return true;
+      }
+    }
 
     if (success) {
       if (checksum == null || checksum.isEmpty()) {
@@ -411,7 +432,7 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         if (errorStatus == null) {
           modified = true;
         } else {
-          if (!Objects.equal(code, errorStatus.getCode())) {
+          if (!Objects.equals(code, errorStatus.getCode())) {
             logger.warn("For tool {} and version {} the error status-code changed from {} to {} for URL {}.", tool,
                 version, code, errorStatus.getCode(), code, url);
             modified = true;
@@ -438,6 +459,42 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   }
 
   /**
+   * @return Set of URL file names (dependency on OS file names can be overriden with isOsDependent())
+   */
+  protected Set<String> getUrlFilenames() {
+
+    if (isOsDependent()) {
+      return URL_FILENAMES_PER_OS;
+    } else {
+      return URL_FILENAMES_OS_INDEPENDENT;
+    }
+  }
+
+  /**
+   * Checks if we are dependent on OS URL file names, can be overriden to disable OS dependency
+   *
+   * @return true if we want to check for missing OS URL file names, false if not
+   */
+  protected boolean isOsDependent() {
+
+    return true;
+  }
+
+  /**
+   * Checks if an OS URL file name was missing in {@link UrlVersion}
+   *
+   * @param urlVersion the {@link UrlVersion} to check
+   * @return true if an OS type was missing, false if not
+   */
+  public boolean isMissingOs(UrlVersion urlVersion) {
+
+    Set<String> childNames = urlVersion.getChildNames();
+    Set<String> osTypes = getUrlFilenames();
+    // invert result of containsAll to avoid negative condition
+    return !childNames.containsAll(osTypes);
+  }
+
+  /**
    * Updates the tool's versions in the URL repository.
    *
    * @param urlRepository the {@link UrlRepository} to update
@@ -458,9 +515,10 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         break;
       }
 
-      if (edition.getChild(version) == null) {
+      UrlVersion urlVersion = edition.getChild(version);
+      if (urlVersion == null || isMissingOs(urlVersion)) {
         try {
-          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          urlVersion = edition.getOrCreateChild(version);
           addVersion(urlVersion);
           urlVersion.save();
         } catch (Exception e) {
@@ -554,8 +612,8 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
-        || vLower.contains("-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
+        "-insiders")) {
       return null;
     }
     return version;
