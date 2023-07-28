@@ -79,9 +79,11 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
     for (IntellijJsonReleases r : releases) {
       String version = r.getVersion();
       Map<String, IntellijJsonDownloadsItem> downloads = r.getDownloads();
-      if (edition.getChild(version) == null) {
+      UrlVersion urlVersion = edition.getChild(version);
+
+      if (urlVersion == null || isMissingOs(urlVersion)) {
         try {
-          UrlVersion urlVersion = edition.getOrCreateChild(version);
+          urlVersion = edition.getOrCreateChild(version);
           for (String os : downloads.keySet()) {
             switch (os) {
               case "windowsZip":

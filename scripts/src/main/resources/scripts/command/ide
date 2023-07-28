@@ -322,6 +322,8 @@ function doSetup() {
     doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
+  # shellcheck disable=SC2007
+  echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
 }
 
 function doUpdateProjects() {
@@ -336,13 +338,6 @@ function doUpdateSoftware() {
     for tool_path in "${DEVON_IDE_HOME}/software"/* "${DEVON_IDE_HOME}/software/extra/graalvm"
     do
       tool="${tool_path/*\//}"
-      if [ "${tool}" == "maven" ]
-      then
-        tool="mvn"
-      elif [ "${tool}" == "sonarqube" ]
-      then
-        tool="sonar"
-      fi
       if [ -d "${tool_path}" ] && [ -e "${DEVON_IDE_HOME}/scripts/command/${tool}" ]
       then
         doEchoStep "Setting up ${tool}"
@@ -390,13 +385,6 @@ function doUpdateSoftware() {
   for tool in "${DEVON_IDE_TOOLS[@]}"
   do
     tool_path="${DEVON_IDE_HOME}/software/${tool}"
-    if [ "${tool}" == "mvn" ]
-    then
-      tool_path="${DEVON_IDE_HOME}/software/maven"
-    elif [ "${tool}" == "sonar" ]
-    then
-      tool_path="${DEVON_IDE_HOME}/software/sonarqube"
-    fi
     if [ ! -d "${tool_path}" ] && [ ! -d "${DEVON_IDE_HOME}/software/extra/graalvm" ]
     then
       doEchoStep "Setting up ${tool}"
