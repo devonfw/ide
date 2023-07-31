@@ -11,7 +11,7 @@ However, chances to get your change merged quickly are higher if you address all
 ** [ ] PR title is of the form `#«issue-id»: «brief summary»` (e.g. `#921: fixed setup.bat`).
 ** [ ] PR top-level comment summarizes what has been done and contains link to addressed issue(s).
 ** [ ] PR is linked with the issue(s) that it implements and resolves (see sidebar, click on `Development` and enter issue ID)
-** [ ] PR and issue(s) have suitable labels (OS-specific like `windows`, `macOS`, or `linux` as well as other aspects like `commandlet`, `plugins`, `urls`, or tool specific labels such as `eclipse` or `java`)
+** [ ] PR and issue(s) have suitable labels (OS-specific like `windows`, `macOS`, or `linux` as well as other aspects like `commandlet`, `plugins`, `mirrors`, or tool specific labels such as `eclipse` or `java`)
 ** [ ] Issue is assigned to you (should actually be done before you start your implementation).
 ** [ ] Milestones are typically assigned by PO (Jörg) but have to be set before issues and PRs get closed. In case your issue is only addressed by a change in `ide-mirrors`/`ide-urls` or in `ide-settings` repository, please already assign the according milestone (switch to `closed` tab under `Milestone`).
 * [ ] All checks have passed. Otherwise if a check failed (red cross) you need to click the `Details` link, read the logs and fix the problem.
@@ -22,7 +22,7 @@ However, chances to get your change merged quickly are higher if you address all
 * [ ] You followed all coding conventions (indent with 2 spaces, no tabs, functions start with `do` prefix, variables are enclosed with curly braces, variables in functions are declared with `local`, etc.)
 * [ ] You have already added the issue implemented by your PR in https://github.com/devonfw/ide/blob/master/CHANGELOG.asciidoc[CHANGELOG.asciidoc] to the next open release (see milestones or https://github.com/devonfw/ide/blob/master/.mvn/maven.config[maven.config]). If there is no issue for your PR consider creating it or directly link the PR itself. Please note that the CHANGELOG shall only reflect public changes relevant for end-users. So e.g. if we implement a story and then add another PR as bugfix or improvement to the same story, we do not need to document this in the CHANGELOG to avoid spam and confusion.
 * [ ] In case your PR adds a new tool `«tool»` as commandlet there are the following additional checks:
-** [ ] The tool is already available as folder `«tool/tool»` in https://github.com/devonfw/ide-urls[ide-urls] including separate folders for each available version.
+** [ ] The tool is already available as folder `«tool»` in https://github.com/devonfw/ide-mirrors[ide-mirrors] including `available-versions`.
 ** [ ] A new commandlet named `«tool»` has been added to https://github.com/devonfw/ide/tree/master/scripts/src/main/resources/scripts/command[command] that allows to install and launch the given software.
 ** [ ] The tool can be installed automatically (during setup via settings) or via the commandlet call.
 ** [ ] During the installation process (`devon «tool» setup`) reasonable progress and status information are displayed.
