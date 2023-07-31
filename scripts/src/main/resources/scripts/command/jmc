@@ -27,13 +27,9 @@ function doRun() {
 
 # JDK Mission Control installation
 function doSetup() {
-  local install_dir="${DEVON_IDE_HOME}/updates/install/jmc"
-  doInstall "jmc" "${JMC_VERSION}" "${1}" "" "${install_dir}"
+  doInstall "jmc" "${JMC_VERSION}" "${1}" "" "${JMC_HOME}"
   doRunCommand "mkdir -p ${JMC_HOME}"
-  doRunCommand "mv -f '${install_dir}/JDK Mission Control/' ${JMC_HOME}"
-  doRunCommand "mv -f '${install_dir}/legal/' ${JMC_HOME}"
-  doRunCommand "mv -f '${install_dir}/.devon.software.version' ${JMC_HOME}"
-  rm -rf "${install_dir}"
+  doRunCommand "mv -f '${JMC_HOME}/JDK Mission Control/' ${JMC_HOME}"
   return 0
 }
 
