@@ -188,11 +188,11 @@ Otherwise, the function will fail with an error message guiding the user to inst
 
 === doDownload
 Downloads an artifact from the internet.
-If the URL is not provided as first argument, it will use the `mirrors` config to automatically determine the URL from the other arguments.
+If the URL is not provided as first argument, it will use the `urls` config to automatically determine the URL from the other arguments.
 
 |=======================
 |*Param*|*Name*  |*Description*
-|`$1`   |URL     |The explicit URL to download from or `-` to compute from mirrors.
+|`$1`   |URL     |The explicit URL to download from or `-` to compute from urls.
 |`$2`   |dir     |The optional target directory where to save the downloaded file.
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
