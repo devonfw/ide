@@ -28,8 +28,11 @@ function doRun() {
 # JDK Mission Control installation
 function doSetup() {
   doInstall "jmc" "${JMC_VERSION}" "${1}" "" "${JMC_HOME}"
-  doRunCommand "mkdir -p ${JMC_HOME}"
-  doRunCommand "mv -f '${JMC_HOME}/JDK Mission Control/' ${JMC_HOME}"
+  if [ "${?}" = 0 ]
+  then
+    mv -f "${JMC_HOME}/JDK Mission Control"/* "${JMC_HOME}"
+    rmdir "${JMC_HOME}/JDK Mission Control"
+  fi
   return 0
 }
 
