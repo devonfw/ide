@@ -37,6 +37,12 @@ Inside your settings git repository edit the top-level `devon.properties` file (
 * if present copy the line starting with `ECLIPSE_EDITION_TYPE=` and rename the copy to `ECLIPSE_EDITION=` and change the value to `eclipse` for the default edition (java edition).
 * typically you should not define `DOCKER_EDITION` in this `devon.properties` file but if you do, please note that we have added backward compatibility for the old values in our new releases so you can leave this property untouched.
 
+You can also irgnore the "old" properties and migrate all to the new style and additionally set this property:
+```
+DEVON_IDE_MIN_VERSION=2023.07.003
+```
+This will cause an error if a user will setup or update its devonfw-ide with a devonfw-ide version older than `2023.07.003`.
+
 == workspace configuration for Eclipse or Intellij
 
 As `MAVEN_HOME` changed from `${DEVON_IDE_HOME}/software/maven` to `${DEVON_IDE_HOME}/software/mvn` this could cause problems with your workspace configuration:
