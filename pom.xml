@@ -36,9 +36,11 @@
 
   <modules>
     <module>documentation</module>
+    <module>configurator</module>
     <module>ide</module>
     <module>scripts</module>
     <module>settings</module>
+    <module>url-updater</module>
   </modules>
 
   <build>
