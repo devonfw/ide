@@ -6,6 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1297[#1297]: doFail from debugging in productive code prevents MacOS installations
 * https://github.com/devonfw/ide/issues/1197[#1197]: Integrate Java Mission Control
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/47?closed=1[milestone 2023.08.001].
