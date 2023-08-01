@@ -46,6 +46,7 @@ This will cause an error if a user will setup or update its devonfw-ide with a d
 == workspace configuration for Eclipse or Intellij
 
 As `MAVEN_HOME` changed from `${DEVON_IDE_HOME}/software/maven` to `${DEVON_IDE_HOME}/software/mvn` this could cause problems with your workspace configuration:
+
 * For Eclipse the configration can be found https://github.com/devonfw/ide-settings/blob/41fe78002d4dc59ad3a180d8463dd8ab9129bda9/eclipse/workspace/update/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.m2e.core.prefs#L10[here].
 * For Intellij the configuration can be found in `settings/intellij/workspace/setup/salog/.idea/workspace.xml` or `settings/intellij/workspace/update/salog/.idea/workspace.xml` in the property `<option name="mavenHome" value="${DEVON_IDE_HOME}/software/mvn" />` (under `<MavenGeneralSettings>`) if present.
 
