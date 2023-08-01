@@ -5,7 +5,7 @@ toc::[]
 
 Starting with devonfw-ide version `2023.07.001` some changes have been made that have a slight impact on compatibility.
 Maintainers of settings repositories for devonfw-ide should take immediate action to mitigate potential incompatibility issues.
-Sorry for any inconvenience - we creates automatic migration scripts but unfortunately we missed some cases for the compatibility.
+Sorry for any inconvenience - we created an automatic migration scripts but unfortunately we missed some edge cases for the compatibility.
 For details about the root cause see https://github.com/devonfw/ide/issues/1085[#1085].
 
 == Incompatibilities
