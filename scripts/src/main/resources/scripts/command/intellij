@@ -136,7 +136,7 @@ function doStartIntellij() {
     doExtendPath "${JAVA_HOME}"
   fi
   echo "launching IntelliJ..."
-  local IDEA="${IDEA_HOME}/bin/idea64.exe"
+  local IDEA="${IDEA_HOME}/bin/idea.bat"
   if [ ! -f "${IDEA}" ];
   then
     IDEA="${IDEA_HOME}/bin/idea"

@@ -127,7 +127,7 @@ function doStartAndroidStudio() {
     doExtendPath "${JAVA_HOME}"
   fi
   echo "launching Android Studio..."
-  local STUDIO="${ANDROID_STUDIO_HOME}/bin/studio64.exe"
+  local STUDIO="${ANDROID_STUDIO_HOME}/bin/studio.bat"
   if [ ! -f "${STUDIO}" ];
   then
     STUDIO="${ANDROID_STUDIO_HOME}/bin/studio"
