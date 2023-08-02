@@ -79,23 +79,28 @@ For Mac and Linux, ShellCheck is automatically called during the build process (
 
 == Create a new commandlet
 
-=== URLS
+=== Urls
 Many programs have a download link that depends on the operating system.
-For a new tool create an url-updater in https://github.com/devonfw/ide/tree/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater[url-updater] folder in this repository named like the tool and the commandlet.
+
+For a new tool, create an url-updater in the https://github.com/devonfw/ide/tree/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater[updater] folder in the current repository. The Name needs to be equal to the one of both the tool and the commandlet.
 
 There are four available parent classes of url-updaters, that can be used. They mainly differentiate in the way, available versions are detected.
+
 * https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/GithubUrlUpdater.java[`GithubUrlUpdater`]
+
 * https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/JsonUrlUpdater.java[`JsonUrlUpdater`]
+
 * https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/MavenBasedUrlUpdater.java[`MavenBasedUrlUpdater`]
-* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/WebsiteUrlUpdater.java[`WebsiteUrlUpdater`]y
+
+* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/WebsiteUrlUpdater.java[`WebsiteUrlUpdater`]
 
 Note: The `WebsiteUrlUpdater` should not be used if other viable options are available.
 
 The updaters use the function `doAddVersion()`, where the downloadUrl, OS and architecture can be specified for each version. https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/oc/OcUrlUpdater.java#L22C1-L24[Example]
 
-VersionIdentifiers` can also be used if e.g. the downloadUrl changed after a specific version, or certain version are not indented to be available. https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/helm/HelmUrlUpdater.java#L12[Example]
+`VersionIdentifiers` can also be used if e.g. the downloadUrl changed after a specific version, or certain version are not indented to be available. https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/helm/HelmUrlUpdater.java#L12[Example]
 
-Once a day the `UpdateInitiator` will run the updaters through GitHub Actions and fill the https://github.com/devonfw/ide-urls[ide-URL] repository with new version/tools that are available.
+Once a day, the `UpdateInitiator` will run the updaters through GitHub Actions and fill the https://github.com/devonfw/ide-urls[ide-URL] repository with new version/tools that are identified by the Updaters.
 
 === Commandlet
 Use an existing commandlet like https://github.com/devonfw/ide/blob/master/scripts/src/main/resources/scripts/command/helm[HELM] as a reference.
