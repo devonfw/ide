@@ -136,7 +136,7 @@ function doStartIntellij() {
     doExtendPath "${JAVA_HOME}"
   fi
   echo "launching IntelliJ..."
-  local IDEA="${IDEA_HOME}/bin/idea.bat"
+  local IDEA="${IDEA_HOME}/bin/idea64.exe"
   if [ ! -f "${IDEA}" ];
   then
     IDEA="${IDEA_HOME}/bin/idea"
@@ -149,10 +149,10 @@ function doStartIntellij() {
   if doIsMacOs
   then
     echo "MacOs command ${IDEA}"
-    open "${IDEA}" --args "${@}"
+    open -na "${IDEA}" ${WORKSPACE_PATH} --args "${@}"
   else
     echo "command ${IDEA}"
-    "${IDEA}" "${@}" &
+    "${IDEA}" ${WORKSPACE_PATH} "${@}" &
   fi
 }
 
