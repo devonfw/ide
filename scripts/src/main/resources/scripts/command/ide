@@ -44,6 +44,15 @@ function doUpdateMetaFile() {
   fi
 }
 
+function doUpdateScripts() {
+  # shellcheck disable=SC2181,SC2007,SC2154
+  doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
+  if [ "${?}" = 0 ]
+  then
+    doUpdateCli
+  fi
+}
+
 function doUpdateSettings() {
   local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git"
   if [ ! -d "${SETTINGS_PATH}" ]
@@ -525,12 +534,7 @@ then
     fi
     if [ "${2}" = "scripts" ]
     then
-      doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
-      # shellcheck disable=SC2181
-      if [ "${?}" = 0 ]
-      then
-        doUpdateCli
-      fi
+      doUpdateScripts
     elif [ "${2}" = "settings" ]
     then
       doUpdateSettings
@@ -542,12 +546,7 @@ then
       doUpdateProjects
     elif [ "${2}" = "all" ]
     then
-      doUpgradeMavenArtifact "${DEVON_IDE_HOME}" "${DEVON_IDE_REPO_URL}" "devonfw-ide-scripts" "${target_version}" ".tar.gz" "$[devon_ide_version]"
-      # shellcheck disable=SC2181
-      if [ "${?}" = 0 ]
-      then
-        doUpdateCli
-      fi
+      doUpdateScripts
       doUpdateSettings
       doUpdateSoftware
       doUpdateProjects
