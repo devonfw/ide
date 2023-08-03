@@ -149,10 +149,10 @@ function doStartIntellij() {
   if doIsMacOs
   then
     echo "MacOs command ${IDEA}"
-    open -na "${IDEA}" ${WORKSPACE_PATH} --args "${@}"
+    open -na "${IDEA}" "${WORKSPACE_PATH}" --args "${@}"
   else
     echo "command ${IDEA}"
-    "${IDEA}" ${WORKSPACE_PATH} "${@}" &
+    "${IDEA}" "${WORKSPACE_PATH}" "${@}" &
   fi
 }
 
