@@ -79,29 +79,28 @@ For Mac and Linux, ShellCheck is automatically called during the build process (
 
 == Create a new commandlet
 
-=== IDE-Mirrors
-Many programs have a download link that depends on the operating system. 
+=== Urls
+Many programs have a download link that depends on the operating system.
 
-For a new tool create a folder in https://github.com/devonfw/ide-mirrors[ide-mirrors] repository named like the tool and the commandlet with the following files:
+For a new tool, create an url-updater in the https://github.com/devonfw/ide/tree/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater[updater] folder in the current repository. The Name needs to be equal to the one of both the tool and the commandlet.
 
-* `urls` contains the download URL(s) that typically contain placeholders like `${ext}` for extension, `${os}` for operating-system, `${arch}` for CPU architecture, or `${code}` for commandlet specific things. The file can hold multiple URLs - one per line. This is used if multiple https://en.wikipedia.org/wiki/Mirror_site[mirrors] are available so the load gets distributed. Therefore devonfw-ide will shuffle the URLs into random order and then try them sequentially so if one URL does not work (e.g. mirror unavailable) it will try the next one.
-* `ext-mapping` contains the mapping from operating system (OS) to the according file extension filled into the `${ext}` placeholder of the download for that OS.
-* `os-mapping` contains the remapping from OS to the value filled into the `${os}` placeholder of the URL. So you can e.g. remap `windows=win` or `mac=darwin` in case the download URLs do not follow common practices. You can even omit this file to fall back to the default https://github.com/devonfw/ide-mirrors/blob/master/os-mappings[os-mappings].
-* `arch-mapping` contains the remapping from architecture to the value filled into the `${arch}` placeholder of the URL. So you can e.g. remap `aarch64=arm64` or `x86_64=x64` in case the download URLs do not follow common practices. Simply omit this file if not needed.
-* `versions` in very special cases, you can create separate configurations in sub-folders for specific versions or version-ranges. Here you can specify a folder-name followed by a less-sign (`<`) and a version number to specify that if the version to install is less than this given version, the configuration will be read from that specified folder. The lines are processed top-down where the first match applies. An example can be found https://github.com/devonfw/ide-mirrors/blob/master/java/versions[here].
-* `versions-url` contains the url where all available versions can be found. If possible, check if the tool is available via the GitHub API (`https://api.github.com/repos/<organisation>/<repository>/git/refs/tags`). If that's not possible, provide a different url as well as the `versions-url-op` for this url.
-* `versions-url-op` contains the command used to extract the versions from the response of `curl $versions-url` in a suitable format. This file is always required if you didn't use the GitHub API for the `versions-url`. In case you used the GitHub API, you only have to create this file if the standardized approach doesn't work (e.g. versions have the wrong format, there are versions left that need to be removed, ...).
+There are four available parent classes of url-updaters, that can be used. They mainly differentiate in the way, available versions are detected.
 
-The file `available-versions` doesn't have to be created manually. Using the `versions-url` and `versions-url-op`, `available-versions` will be generated and updated automatically by a GitHub Actions workflow.
+* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/GithubUrlUpdater.java[`GithubUrlUpdater`]
 
-It is important that the line endings of all files are UNIX `\n`.
+* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/JsonUrlUpdater.java[`JsonUrlUpdater`]
 
-Note that all rules within a mapping are checked from top to bottom.
-If the first rule matches, the other rules are ignored. Therefore, the *-rule should always be last.
-With the `os-mapping` the *-rule should be used for the Linux distributions, since the OS type is not only linux, but varies strongly.
+* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/MavenBasedUrlUpdater.java[`MavenBasedUrlUpdater`]
 
-It is also possible to use variables in the mapping files (esp. in `os-mapping` that happens first before other variables get replaced). 
-For example, if the architecture in the download link only appears for Windows, `{arch}` can be used in the `os-mapping. For an example see https://github.com/devonfw/ide-mirrors/blob/master/rancher/os-mappings[here].
+* https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/WebsiteUrlUpdater.java[`WebsiteUrlUpdater`]
+
+Note: The `WebsiteUrlUpdater` should not be used if other viable options are available.
+
+The updaters use the function `doAddVersion()`, where the downloadUrl, OS and architecture can be specified for each version. https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/oc/OcUrlUpdater.java#L22C1-L24[Example]
+
+`VersionIdentifiers` can also be used if e.g. the downloadUrl changed after a specific version, or certain version are not indented to be available. https://github.com/devonfw/ide/blob/master/url-updater/src/main/java/com/devonfw/tools/ide/url/updater/helm/HelmUrlUpdater.java#L12[Example]
+
+Once a day, the `UpdateInitiator` will run the updaters through GitHub Actions and fill the https://github.com/devonfw/ide-urls[ide-URL] repository with new version/tools that are identified by the Updaters.
 
 === Commandlet
 Use an existing commandlet like https://github.com/devonfw/ide/blob/master/scripts/src/main/resources/scripts/command/helm[HELM] as a reference.
