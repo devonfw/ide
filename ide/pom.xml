@@ -29,6 +29,50 @@
             <artifactId>picocli</artifactId>
             <version>${picocli.version}</version>
         </dependency>
+        <!-- JSON and XML support -->
+        <dependency>
+          <groupId>javax.json</groupId>
+          <artifactId>javax.json-api</artifactId>
+          <version>1.1.4</version>
+        </dependency>
+        <dependency>
+          <groupId>org.glassfish</groupId>
+          <artifactId>javax.json</artifactId>
+          <version>1.1.4</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.14.1</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.datatype</groupId>
+          <artifactId>jackson-datatype-jsr310</artifactId>
+          <version>2.14.1</version>
+        </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.dataformat</groupId>
+          <artifactId>jackson-dataformat-xml</artifactId>
+          <version>2.14.1</version>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>2.0.3</version>
+        </dependency>
+        <dependency>
+          <groupId>ch.qos.logback</groupId>
+          <artifactId>logback-classic</artifactId>
+          <version>1.4.7</version>
+        </dependency>
+        <!-- Needed for WireMock test support -->
+        <dependency>
+          <groupId>com.github.tomakehurst</groupId>
+          <artifactId>wiremock-jre8</artifactId>
+          <version>2.35.0</version>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
