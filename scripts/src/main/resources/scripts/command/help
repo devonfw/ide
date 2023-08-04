@@ -41,6 +41,9 @@ else
   then
     echo "devon help <command>"
     echo "Print help for <command>"
+    echo
+    echo "Options:"
+    echo " -v | --version         print the version of your devon script installed globally in your users home directory. This is not the version of your devonfw-ide installation that can be found above below the logo in green!"
   else
     doDevonCommand "${1}" help
     if [ -f "${DEVON_IDE_HOME}/ide-mirrors/${1}/available-versions" ]
