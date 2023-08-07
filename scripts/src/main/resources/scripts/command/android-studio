@@ -140,10 +140,10 @@ function doStartAndroidStudio() {
   if doIsMacOs
   then
     echo "MacOs command ${STUDIO}"
-    open "${STUDIO}" --args "${@}"
+    open -na "${STUDIO}" "${WORKSPACE_PATH}" --args "${@}"
   else
     echo "command ${STUDIO}"
-    "${STUDIO}" "${@}" &
+    "${STUDIO}" "${WORKSPACE_PATH}" "${@}" &
   fi
 }
 
