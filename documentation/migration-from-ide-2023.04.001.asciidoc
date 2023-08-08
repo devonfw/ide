@@ -15,14 +15,14 @@ The changes and resulting incompatibilities are listed in the following table:
 .Incompatibilities
 [options="header"]
 |=======================
-|*until 2023.04.001*            |*2923.07.001 or later*
+|*until 2023.04.001*            |*2023.07.001 or later*
 |`INTELLIJ_EDITION_TYPE=C`      |`INTELLIJ_EDITION=intellij`
 |`INTELLIJ_EDITION_TYPE=U`      |`INTELLIJ_EDITION=ultimate`
 |`ECLIPSE_EDITION_TYPE=java`    |`ECLIPSE_EDITION=eclipse`
 |`MAVEN_VERSION=...`            |`MVN_VERSION=...`
 |`SONARQUBE_VERSION=...`        |`SONAR_VERSION=...`
 |`DOCKER_EDITION=DOCKERDESKTOP` |`DOCKER_EDITION=docker`
-|`DOCKER_EDITION=RANCHERDESKTOP`|`DOCKER_EDITION=rancer`
+|`DOCKER_EDITION=RANCHERDESKTOP`|`DOCKER_EDITION=rancher`
 |`MAVEN_HOME=${DEVON_IDE_HOME}/software/maven`|`MAVEN_HOME=${DEVON_IDE_HOME}/software/mvn`
 |`SONARQUBE_HOME=${DEVON_IDE_HOME}/software/sonarqube`|`SONAR_HOME=${DEVON_IDE_HOME}/software/sonar`
 |=======================
