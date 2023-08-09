@@ -15,17 +15,19 @@ public class VersionSegmentTest extends Assertions {
   public void testEmpty() {
 
     // given + when
-    VersionSegment empty = VersionSegment.ofEmpty();
+    VersionSegment segment = VersionSegment.ofEmpty();
     // then
-    assertThat(empty.isEmpty()).isTrue();
-    assertThat(empty.getSeparator()).isEmpty();
-    assertThat(empty.getLetters()).isEmpty();
-    assertThat(empty.getPhase()).isSameAs(VersionPhase.NONE);
-    assertThat(empty.getDigits()).isEmpty();
-    assertThat(empty.getNumber()).isEqualTo(-1);
-    assertThat(VersionSegment.ofEmpty()).isSameAs(empty);
-    assertThat(empty.getNextOrNull()).isNull();
-    assertThat(empty.getNextOrEmpty()).isSameAs(empty);
+    assertThat(segment.isEmpty()).isTrue();
+    assertThat(segment.getSeparator()).isEmpty();
+    assertThat(segment.getLettersString()).isEmpty();
+    assertThat(segment.getPhase()).isSameAs(VersionPhase.NONE);
+    assertThat(segment.getDigits()).isEmpty();
+    assertThat(segment.getNumber()).isEqualTo(-1);
+    assertThat(segment.getPattern()).isEmpty();
+    assertThat(segment.isPattern()).isFalse();
+    assertThat(VersionSegment.ofEmpty()).isSameAs(segment);
+    assertThat(segment.getNextOrNull()).isNull();
+    assertThat(segment.getNextOrEmpty()).isSameAs(segment);
   }
 
   /**
@@ -34,14 +36,16 @@ public class VersionSegmentTest extends Assertions {
   @Test
   public void testOne() {
 
-    VersionSegment one = new VersionSegment("", "", "01");
-    assertThat(one.getSeparator()).isEmpty();
-    assertThat(one.getLetters()).isEmpty();
-    assertThat(one.getPhase()).isSameAs(VersionPhase.NONE);
-    assertThat(one.getDigits()).isEqualTo("01");
-    assertThat(one.getNumber()).isEqualTo(1);
-    assertThat(one.getNextOrNull()).isNull();
-    assertThat(one.getNextOrEmpty()).isSameAs(VersionSegment.ofEmpty());
+    VersionSegment segment = new VersionSegment("", "", "01");
+    assertThat(segment.getSeparator()).isEmpty();
+    assertThat(segment.getLettersString()).isEmpty();
+    assertThat(segment.getPhase()).isSameAs(VersionPhase.NONE);
+    assertThat(segment.getDigits()).isEqualTo("01");
+    assertThat(segment.getNumber()).isEqualTo(1);
+    assertThat(segment.getPattern()).isEmpty();
+    assertThat(segment.isPattern()).isFalse();
+    assertThat(segment.getNextOrNull()).isNull();
+    assertThat(segment.getNextOrEmpty()).isSameAs(VersionSegment.ofEmpty());
   }
 
   /**
@@ -50,14 +54,34 @@ public class VersionSegmentTest extends Assertions {
   @Test
   public void testDotRc2() {
 
-    VersionSegment one = new VersionSegment(".", "rc", "1");
-    assertThat(one.getSeparator()).isEqualTo(".");
-    assertThat(one.getLetters()).isEqualTo("rc");
-    assertThat(one.getPhase()).isSameAs(VersionPhase.RELEASE_CANDIDATE);
-    assertThat(one.getDigits()).isEqualTo("1");
-    assertThat(one.getNumber()).isEqualTo(1);
-    assertThat(one.getNextOrNull()).isNull();
-    assertThat(one.getNextOrEmpty()).isSameAs(VersionSegment.ofEmpty());
+    VersionSegment segment = new VersionSegment(".", "rc", "1");
+    assertThat(segment.getSeparator()).isEqualTo(".");
+    assertThat(segment.getLettersString()).isEqualTo("rc");
+    assertThat(segment.getPhase()).isSameAs(VersionPhase.RELEASE_CANDIDATE);
+    assertThat(segment.getDigits()).isEqualTo("1");
+    assertThat(segment.getNumber()).isEqualTo(1);
+    assertThat(segment.getPattern()).isEmpty();
+    assertThat(segment.isPattern()).isFalse();
+    assertThat(segment.getNextOrNull()).isNull();
+    assertThat(segment.getNextOrEmpty()).isSameAs(VersionSegment.ofEmpty());
+  }
+
+  /**
+   * Test of constructor and getters with ".17*".
+   */
+  @Test
+  public void testPattern() {
+
+    VersionSegment segment = new VersionSegment(".", "", "17", "*");
+    assertThat(segment.getSeparator()).isEqualTo(".");
+    assertThat(segment.getLettersString()).isEqualTo("");
+    assertThat(segment.getPhase()).isSameAs(VersionPhase.NONE);
+    assertThat(segment.getDigits()).isEqualTo("17");
+    assertThat(segment.getNumber()).isEqualTo(17);
+    assertThat(segment.getPattern()).isEqualTo("*");
+    assertThat(segment.isPattern()).isTrue();
+    assertThat(segment.getNextOrNull()).isNull();
+    assertThat(segment.getNextOrEmpty()).isSameAs(VersionSegment.ofEmpty());
   }
 
 }
