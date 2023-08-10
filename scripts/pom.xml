@@ -40,6 +40,7 @@
         <filtering>true</filtering>
         <excludes>
           <exclude>**/*.bak</exclude>
+          <exclude>system/**/*</exclude>
         </excludes>
       </resource>
     </resources>

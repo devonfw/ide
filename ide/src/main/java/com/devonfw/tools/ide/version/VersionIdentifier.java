@@ -8,9 +8,12 @@ import java.util.Objects;
  */
 public final class VersionIdentifier implements VersionObject<VersionIdentifier> {
 
+  /** {@link VersionIdentifier} "*" that will resolve to the latest stable version. */
+  public static final VersionIdentifier VERSION_LATEST = VersionIdentifier.of("*");
+
   private final VersionSegment start;
 
-  private final VersionPhase developmentPhase;
+  private final VersionLetters developmentPhase;
 
   private final boolean valid;
 
@@ -19,9 +22,9 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
     super();
     Objects.requireNonNull(start);
     this.start = start;
-    boolean isValid = this.start.getSeparator().isEmpty() && this.start.getLetters().isEmpty();
+    boolean isValid = this.start.getSeparator().isEmpty() && this.start.getLettersString().isEmpty();
     boolean hasPositiveNumber = false;
-    VersionPhase phase = VersionPhase.NONE;
+    VersionLetters dev = VersionLetters.EMPTY;
     VersionSegment segment = this.start;
     while (segment != null) {
       if (!segment.isValid()) {
@@ -29,20 +32,18 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
       } else if (segment.getNumber() > 0) {
         hasPositiveNumber = true;
       }
-      VersionPhase segmentPhase = segment.getPhase();
-      if (segmentPhase != VersionPhase.NONE) {
-        if (segmentPhase.isDevelopmentPhase()) {
-          if (phase == VersionPhase.NONE) {
-            phase = segmentPhase;
-          } else {
-            phase = VersionPhase.UNDEFINED;
-            isValid = false;
-          }
+      VersionLetters segmentLetters = segment.getLetters();
+      if (segmentLetters.isDevelopmentPhase()) {
+        if (dev.isEmpty()) {
+          dev = segmentLetters;
+        } else {
+          dev = VersionLetters.UNDEFINED;
+          isValid = false;
         }
       }
       segment = segment.getNextOrNull();
     }
-    this.developmentPhase = phase;
+    this.developmentPhase = dev;
     this.valid = isValid && hasPositiveNumber;
   }
 
@@ -62,12 +63,13 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
    * <li>The {@link #getStart() start} {@link VersionSegment segment} shall have an {@link String#isEmpty() empty}
    * {@link VersionSegment#getSeparator() separator} (e.g. ".1.0" or "-1-2" are not considered valid).</li>
    * <li>The {@link #getStart() start} {@link VersionSegment segment} shall have an {@link String#isEmpty() empty}
-   * {@link VersionSegment#getLetters() letter-sequence} (e.g. "RC1" or "beta" are not considered valid).</li>
+   * {@link VersionSegment#getLettersString() letter-sequence} (e.g. "RC1" or "beta" are not considered valid).</li>
    * <li>Have at least one {@link VersionSegment segment} with a positive {@link VersionSegment#getNumber() number}
    * (e.g. "0.0.0" or "0.alpha" are not considered valid).</li>
    * <li>Have at max one {@link VersionSegment segment} with a {@link VersionSegment#getPhase() phase} that is a real
    * {@link VersionPhase#isDevelopmentPhase() development phase} (e.g. "1.alpha1.beta2" or "1.0.rc1-milestone2" are not
    * considered valid).</li>
+   * <li>It is NOT a {@link #isPattern() pattern}.</li>
    * </ul>
    */
   @Override
@@ -77,12 +79,31 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
   }
 
   /**
-   * @return the {@link VersionPhase#isDevelopmentPhase() development phase} of this {@link VersionIdentifier}. Will be
-   *         {@link VersionPhase#NONE} if no development phase is specified in any {@link VersionSegment} and will be
-   *         {@link VersionPhase#UNDEFINED} if more than one {@link VersionPhase#isDevelopmentPhase() development phase}
-   *         is specified (e.g. "1.0-alpha1.rc2").
+   * Determines if this {@link VersionIdentifier} is a pattern (e.g. "17*" or "17.*").
+   *
+   * @return {@code true} if this {@link VersionIdentifier} is a pattern and not a normal version or in other words if
+   *         it {@link #getStart() has} a {@link VersionSegment segment} that {@link VersionSegment#isPattern() is a
+   *         pattern}, {@code false} otherwise.
    */
-  public VersionPhase getDevelopmentPhase() {
+  public boolean isPattern() {
+
+    VersionSegment segment = this.start;
+    while (segment != null) {
+      if (segment.isPattern()) {
+        return true;
+      }
+      segment = segment.getNextOrNull();
+    }
+    return false;
+  }
+
+  /**
+   * @return the {@link VersionLetters#isDevelopmentPhase() development phase} of this {@link VersionIdentifier}. Will
+   *         be {@link VersionLetters#EMPTY} if no development phase is specified in any {@link VersionSegment} and will
+   *         be {@link VersionLetters#UNDEFINED} if more than one {@link VersionLetters#isDevelopmentPhase() development
+   *         phase} is specified (e.g. "1.0-alpha1.rc2").
+   */
+  public VersionLetters getDevelopmentPhase() {
 
     return this.developmentPhase;
   }
@@ -116,6 +137,34 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
       return result.withUnsafe();
     }
     return result;
+  }
+
+  /**
+   * @param other the {@link VersionIdentifier} to be matched.
+   * @return {@code true} if this {@link VersionIdentifier} is equal to the given {@link VersionIdentifier} or this
+   *         {@link VersionIdentifier} is a pattern version (e.g. "17*" or "17.*") and the given
+   *         {@link VersionIdentifier} matches to that pattern.
+   */
+  public boolean matches(VersionIdentifier other) {
+
+    if (other == null) {
+      return false;
+    }
+    VersionSegment thisSegment = this.start;
+    VersionSegment otherSegment = other.start;
+    boolean todo = true;
+    do {
+      VersionMatchResult matchResult = thisSegment.matches(otherSegment);
+      if (matchResult == VersionMatchResult.MATCH) {
+        return true;
+      } else if (matchResult == VersionMatchResult.MISMATCH) {
+        return false;
+      }
+      thisSegment = thisSegment.getNextOrEmpty();
+      otherSegment = otherSegment.getNextOrEmpty();
+    } while (todo);
+    return true;
+
   }
 
   @Override
