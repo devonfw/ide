@@ -12,7 +12,6 @@ The `devonfw-ide` aims to be highly configurable and flexible. The configuration
 5. `https://github.com/devonfw/ide-settings/blob/master/devon.properties[settings/devon.properties]` (`${SETTINGS_PATH}/devon.properties`) - project specific configurations from link:settings.asciidoc[settings].
 6. `workspaces/${WORKSPACE}/devon.properties` - optional workspace specific configurations (especially helpful in projects using docker).
 7. `https://github.com/devonfw/ide-settings/blob/master/devon/conf/devon.properties[conf/devon.properties]` - user specific configurations (e.g. `M2_REPO=~/.m2/repository`). During setup this file is created by copying a template from `${SETTINGS_PATH}/devon/conf/devon.properties`.
-8. `https://github.com/devonfw/ide-settings/tree/master/projects[settings/projects/*.properties]`- properties to configure link:projects.asciidoc[project checkout and import]
 
 == devon.properties
 
