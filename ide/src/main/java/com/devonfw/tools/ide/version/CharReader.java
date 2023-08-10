@@ -50,7 +50,7 @@ final class CharReader {
     int start = this.i;
     while (this.i < this.len) {
       char c = this.string.charAt(this.i);
-      if (!CharCategory.isDigit(c) && !CharCategory.isLetter(c)) {
+      if ((c != '*') && !CharCategory.isDigit(c) && !CharCategory.isLetter(c)) {
         this.i++;
       } else {
         break;
@@ -96,6 +96,21 @@ final class CharReader {
       this.i = this.i + step;
     }
     return this.string.substring(start, this.i);
+  }
+
+  public String readPattern() {
+
+    char c = peek();
+    if (c == '*') {
+      this.i++;
+      c = peek();
+      if (c == '!') {
+        this.i++;
+        return VersionSegment.PATTERN_MATCH_ANY_VERSION;
+      }
+      return VersionSegment.PATTERN_MATCH_ANY_STABLE_VERSION;
+    }
+    return "";
   }
 
 }

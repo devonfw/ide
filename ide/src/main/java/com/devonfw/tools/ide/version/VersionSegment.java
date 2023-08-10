@@ -1,21 +1,33 @@
 package com.devonfw.tools.ide.version;
 
-import java.util.Locale;
-
 /**
  * Represents a single segment of a {@link VersionIdentifier}.
  */
 public class VersionSegment implements VersionObject<VersionSegment> {
 
-  private static final VersionSegment EMPTY = new VersionSegment("", "", "");
+  /** Pattern to match a any version that matches the prefix. Value is: {@value} */
+  public static final String PATTERN_MATCH_ANY_VERSION = "*!";
+
+  /** Pattern to match a {@link VersionPhase#isStable() stable} version that matches the prefix. Value is: {@value} */
+  public static final String PATTERN_MATCH_ANY_STABLE_VERSION = "*";
+
+  private static final VersionSegment EMPTY = new VersionSegment("", "", "", "");
 
   private final String separator;
 
-  private final String letters;
+  private final VersionLetters letters;
 
-  private final String lettersLower;
+  /*
+   * private final String letters;
+   *
+   * private final String lettersLower;
+   *
+   * private final boolean prePhase;
+   *
+   * private final VersionPhase phase;
+   */
 
-  private final VersionPhase phase;
+  private final String pattern;
 
   private final String digits;
 
@@ -27,16 +39,39 @@ public class VersionSegment implements VersionObject<VersionSegment> {
    * The constructor.
    *
    * @param separator the {@link #getSeparator() separator}.
-   * @param letters the {@link #getLetters() letters}.
+   * @param letters the {@link #getLettersString() letters}.
    * @param digits the {@link #getDigits() digits}.
+   * @param pattern the {@link #getPattern() pattern}.
    */
   VersionSegment(String separator, String letters, String digits) {
 
+    this(separator, letters, digits, "");
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param separator the {@link #getSeparator() separator}.
+   * @param letters the {@link #getLettersString() letters}.
+   * @param digits the {@link #getDigits() digits}.
+   * @param pattern the {@link #getPattern() pattern}.
+   */
+  VersionSegment(String separator, String letters, String digits, String pattern) {
+
     super();
     this.separator = separator;
-    this.letters = letters;
-    this.lettersLower = this.letters.toLowerCase(Locale.ROOT);
-    this.phase = VersionPhase.of(this.lettersLower.replace('_', '-'));
+    this.letters = VersionLetters.of(letters);
+    if (!pattern.isEmpty() && !PATTERN_MATCH_ANY_STABLE_VERSION.equals(pattern)
+        && !PATTERN_MATCH_ANY_VERSION.equals(pattern)) {
+      throw new IllegalArgumentException("Invalid pattern: " + pattern);
+    }
+    this.pattern = pattern;
+    /*
+     * this.lettersLower = this.letters.toLowerCase(Locale.ROOT); String phaseLetters = this.lettersLower.replace('_',
+     * '-'); if (phaseLetters.startsWith("pre")) { this.prePhase = true; int preLength = 3; if
+     * (phaseLetters.startsWith("pre-")) { preLength = 4; } phaseLetters = phaseLetters.substring(preLength); } else {
+     * this.prePhase = false; } this.phase = VersionPhase.of(phaseLetters);
+     */
     this.digits = digits;
     if (this.digits.isEmpty()) {
       this.number = -1;
@@ -44,7 +79,8 @@ public class VersionSegment implements VersionObject<VersionSegment> {
       this.number = Integer.parseInt(this.digits);
     }
     if (EMPTY != null) {
-      assert (!this.letters.isEmpty() || !this.digits.isEmpty() || !this.separator.isEmpty());
+      assert (!this.letters.isEmpty() || !this.digits.isEmpty() || !this.separator.isEmpty()
+          || !this.pattern.isEmpty());
     }
   }
 
@@ -68,19 +104,27 @@ public class VersionSegment implements VersionObject<VersionSegment> {
    *         (lexicographical) is used to ensure a natural order.
    * @see #getPhase()
    */
-  public String getLetters() {
+  public String getLettersString() {
+
+    return this.letters.getLetters();
+  }
+
+  /**
+   * @return the {@link VersionLetters}.
+   */
+  public VersionLetters getLetters() {
 
     return this.letters;
   }
 
   /**
-   * @return the {@link VersionPhase} for the {@link #getLetters() letters}. Will be {@link VersionPhase#UNDEFINED} if
-   *         unknown and hence never {@code null}.
-   * @see #getLetters()
+   * @return the {@link VersionPhase} for the {@link #getLettersString() letters}. Will be
+   *         {@link VersionPhase#UNDEFINED} if unknown and hence never {@code null}.
+   * @see #getLettersString()
    */
   public VersionPhase getPhase() {
 
-    return this.phase;
+    return this.letters.getPhase();
   }
 
   /**
@@ -101,6 +145,23 @@ public class VersionSegment implements VersionObject<VersionSegment> {
   public int getNumber() {
 
     return this.number;
+  }
+
+  /**
+   * @return the potential pattern that is {@link #PATTERN_MATCH_ANY_STABLE_VERSION},
+   *         {@link #PATTERN_MATCH_ANY_VERSION}, or for no pattern the empty {@link String}.
+   */
+  public String getPattern() {
+
+    return this.pattern;
+  }
+
+  /**
+   * @return {@code true} if {@link #getPattern() pattern} is NOT {@link String#isEmpty() empty}.
+   */
+  public boolean isPattern() {
+
+    return !this.pattern.isEmpty();
   }
 
   /**
@@ -146,6 +207,9 @@ public class VersionSegment implements VersionObject<VersionSegment> {
   @Override
   public boolean isValid() {
 
+    if (!this.pattern.isEmpty()) {
+      return false;
+    }
     int separatorLen = this.separator.length();
     if (separatorLen > 1) {
       return false;
@@ -154,7 +218,7 @@ public class VersionSegment implements VersionObject<VersionSegment> {
         return false;
       }
     }
-    return this.phase.isValid(this.number);
+    return this.letters.getPhase().isValid(this.number);
   }
 
   @Override
@@ -163,21 +227,9 @@ public class VersionSegment implements VersionObject<VersionSegment> {
     if (other == null) {
       return VersionComparisonResult.GREATER_UNSAFE;
     }
-    if (!this.lettersLower.equals(other.lettersLower)) {
-      if ((this.phase == VersionPhase.UNDEFINED) || (other.phase == VersionPhase.UNDEFINED)) {
-        if (this.lettersLower.compareTo(other.lettersLower) < 0) {
-          return VersionComparisonResult.LESS_UNSAFE;
-        } else {
-          return VersionComparisonResult.GREATER_UNSAFE;
-        }
-      }
-      if (this.phase != other.phase) {
-        if (this.phase.ordinal() < other.phase.ordinal()) {
-          return VersionComparisonResult.LESS;
-        } else {
-          return VersionComparisonResult.GREATER;
-        }
-      }
+    VersionComparisonResult lettersResult = this.letters.compareVersion(other.letters);
+    if (!lettersResult.isEqual()) {
+      return lettersResult;
     }
     if (this.number < other.number) {
       return VersionComparisonResult.LESS;
@@ -190,10 +242,87 @@ public class VersionSegment implements VersionObject<VersionSegment> {
     }
   }
 
+  /**
+   * Matches a {@link VersionSegment} with a potential {@link #getPattern() pattern} against another
+   * {@link VersionSegment}. This operation may not always be symmetric.
+   *
+   * @param other the {@link VersionSegment} to match against.
+   * @return the {@link VersionMatchResult} of the match.
+   */
+  public VersionMatchResult matches(VersionSegment other) {
+
+    if (other == null) {
+      return VersionMatchResult.MISMATCH;
+    }
+    if (isEmpty() && other.isEmpty()) {
+      return VersionMatchResult.MATCH;
+    }
+    boolean isPattern = isPattern();
+    if (isPattern) {
+      if (!this.digits.isEmpty()) {
+        if (this.number != other.number) {
+          return VersionMatchResult.MISMATCH;
+        }
+      }
+      if (!this.separator.isEmpty()) {
+        if (!this.separator.equals(other.separator)) {
+          return VersionMatchResult.MISMATCH;
+        }
+      }
+    } else {
+      if (this.number != other.number) {
+        return VersionMatchResult.MISMATCH;
+      }
+      if (!this.separator.equals(other.separator)) {
+        return VersionMatchResult.MISMATCH;
+      }
+    }
+    VersionMatchResult result = this.letters.matches(other.letters, isPattern);
+    if (isPattern && (result == VersionMatchResult.EQUAL)) {
+      if (this.pattern.equals(PATTERN_MATCH_ANY_STABLE_VERSION)) {
+        VersionLetters developmentPhase = other.getDevelopmentPhase();
+        if (developmentPhase.isUnstable()) {
+          return VersionMatchResult.MISMATCH;
+        }
+        return VersionMatchResult.MATCH;
+      } else if (this.pattern.equals(PATTERN_MATCH_ANY_VERSION)) {
+        return VersionMatchResult.MATCH;
+      } else {
+        throw new IllegalStateException("Pattern=" + this.pattern);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @return the {@link VersionLetters} that represent a {@link VersionLetters#isDevelopmentPhase() development phase}
+   *         searching from this {@link VersionSegment} to all {@link #getNextOrNull() next segments}. Will be
+   *         {@link VersionPhase#NONE} if no {@link VersionPhase#isDevelopmentPhase() development phase} was found and
+   *         {@link VersionPhase#UNDEFINED} if multiple {@link VersionPhase#isDevelopmentPhase() development phase}s
+   *         have been found.
+   * @see VersionIdentifier#getDevelopmentPhase()
+   */
+  protected VersionLetters getDevelopmentPhase() {
+
+    VersionLetters result = VersionLetters.EMPTY;
+    VersionSegment segment = this;
+    while (segment != null) {
+      if (segment.letters.isDevelopmentPhase()) {
+        if (result == VersionLetters.EMPTY) {
+          result = segment.letters;
+        } else {
+          result = VersionLetters.UNDEFINED;
+        }
+      }
+      segment = segment.next;
+    }
+    return result;
+  }
+
   @Override
   public String toString() {
 
-    return this.separator + this.letters + this.digits;
+    return this.separator + this.letters + this.digits + this.pattern;
   }
 
   /**
@@ -214,6 +343,9 @@ public class VersionSegment implements VersionObject<VersionSegment> {
       if (current == null) {
         start = segment;
       } else {
+        if (!current.getPattern().isEmpty()) {
+          throw new IllegalArgumentException("Invalid version pattern: " + version);
+        }
         current.next = segment;
       }
       current = segment;
@@ -226,7 +358,8 @@ public class VersionSegment implements VersionObject<VersionSegment> {
     String separator = reader.readSeparator();
     String letters = reader.readLetters();
     String digits = reader.readDigits();
-    return new VersionSegment(separator, letters, digits);
+    String pattern = reader.readPattern();
+    return new VersionSegment(separator, letters, digits, pattern);
   }
 
 }
