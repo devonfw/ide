@@ -686,7 +686,12 @@ function doDownloadInternal() {
   then
     curl_opt="--silent"
   fi
-  curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
+  if [ "${url:0:4}" = "http" ]
+  then
+    curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
+  else
+    cp "${url}" "${tmp_file}"
+  fi
   local result=${?}
   if [ "${result}" != 0 ]
   then
