@@ -1,8 +1,10 @@
 package com.devonfw.tools.ide.env.var;
 
 import java.nio.file.Path;
+import java.util.Locale;
 
 import com.devonfw.tools.ide.log.IdeLogger;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * Interface for the environment with the variables.
@@ -31,6 +33,36 @@ public interface EnvironmentVariables {
    *         Will be {@code null} if no such variable is defined.
    */
   String getFlat(String name);
+
+  /**
+   * @param tool the name of the tool (e.g. "java").
+   * @return the edition of the tool to use.
+   */
+  default String getToolEdition(String tool) {
+
+    String variable = tool.toUpperCase(Locale.ROOT) + "_EDITION";
+    String value = get(variable);
+    if (value == null) {
+      value = tool;
+    }
+    return value;
+  }
+
+  /**
+   * @param tool the name of the tool (e.g. "java").
+   * @return the {@link VersionIdentifier} with the version of the tool to use. Will be
+   *         {@link VersionIdentifier#VERSION_LATEST} if undefined.
+   */
+  default VersionIdentifier getToolVersion(String tool) {
+
+    String variable = tool.toUpperCase(Locale.ROOT) + "_VERSION";
+    String value = get(variable);
+    if (value == null) {
+      return VersionIdentifier.VERSION_LATEST;
+    }
+    return VersionIdentifier.of(value);
+
+  }
 
   /**
    * @return the unique source identifier of this {@link EnvironmentVariables}. E.g. the file-system path to the

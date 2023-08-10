@@ -8,6 +8,9 @@ import java.util.Objects;
  */
 public final class VersionIdentifier implements VersionObject<VersionIdentifier> {
 
+  /** {@link VersionIdentifier} "*" that will resolve to the latest stable version. */
+  public static final VersionIdentifier VERSION_LATEST = VersionIdentifier.of("*");
+
   private final VersionSegment start;
 
   private final VersionLetters developmentPhase;
@@ -86,7 +89,7 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
 
     VersionSegment segment = this.start;
     while (segment != null) {
-      if (!segment.isPattern()) {
+      if (segment.isPattern()) {
         return true;
       }
       segment = segment.getNextOrNull();

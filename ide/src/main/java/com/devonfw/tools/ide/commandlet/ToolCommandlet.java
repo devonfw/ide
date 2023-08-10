@@ -1,8 +1,7 @@
 package com.devonfw.tools.ide.commandlet;
 
-import java.util.Locale;
-
 import com.devonfw.tools.ide.cli.functions.Functions;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 import picocli.CommandLine;
 
@@ -60,25 +59,17 @@ public abstract class ToolCommandlet extends Commandlet {
 
   protected String getEdition() {
 
-    String tool = getTool();
-    String editionVariable = tool.toUpperCase(Locale.ROOT) + "_EDITION";
-    String editionValue = context().env().getVariables().get(editionVariable);
-    if (editionValue == null) {
-      editionValue = tool;
-    }
-    return editionValue;
+    return context().env().getVariables().getToolEdition(getTool());
   }
 
-  protected String getVersion() {
+  protected VersionIdentifier getVersion() {
 
-    String versionVariable = getTool().toUpperCase(Locale.ROOT) + "_VERSION";
-    String versionValue = context().env().getVariables().get(versionVariable);
-    return versionValue;
+    return context().env().getVariables().getToolVersion(getTool());
   }
 
   protected void setup() {
 
-    Functions.setup("", this.DEVON_DOWNLOADS_DIR, getTool(), getVersion(), "", "", "", "", "", "");
+    Functions.setup("", this.DEVON_DOWNLOADS_DIR, getTool(), getVersion().toString(), "", "", "", "", "", "");
   }
 
   protected void listVersions() {
