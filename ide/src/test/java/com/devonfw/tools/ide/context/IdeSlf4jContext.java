@@ -4,12 +4,12 @@ import java.nio.file.Path;
 
 import com.devonfw.tools.ide.env.Environment;
 import com.devonfw.tools.ide.log.IdeLogger;
-import com.devonfw.tools.ide.log.IdeTestLogger;
+import com.devonfw.tools.ide.log.IdeSlf4jLogger;
 
 /**
  * Implementation of {@link IdeContext} for testing.
  */
-public class IdeTestContext extends AbstractIdeTestContext {
+public class IdeSlf4jContext extends AbstractIdeTestContext {
 
   /**
    * The constructor.
@@ -24,9 +24,9 @@ public class IdeTestContext extends AbstractIdeTestContext {
    *        HOME} for testing. Typically {@code null} to use the default.
    * @param answers the automatic answers simulating a user in test.
    */
-  public IdeTestContext(Path userDir, String workspace, Path ideRoot, String userHome, String... answers) {
+  public IdeSlf4jContext(Path userDir, String workspace, Path ideRoot, String userHome, String... answers) {
 
-    super(level -> new IdeTestLogger(level), userDir, workspace, ideRoot, userHome, answers);
+    super(level -> new IdeSlf4jLogger(level), userDir, workspace, ideRoot, userHome, answers);
   }
 
 }

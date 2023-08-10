@@ -33,7 +33,6 @@ public interface IdeSubLogger {
           pos = message.indexOf("{}", start);
         } else {
           pos = -1;
-          start = length;
         }
       }
       if (start < length) {

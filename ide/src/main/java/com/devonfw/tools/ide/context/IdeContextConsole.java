@@ -17,7 +17,7 @@ public class IdeContextConsole extends AbstractIdeContext {
    */
   public IdeContextConsole(IdeLogLevel minLogLevel, Appendable out, boolean colored) {
 
-    super(minLogLevel, level -> new IdeSubLoggerOut(level, out, colored), null, null);
+    super(minLogLevel, level -> new IdeSubLoggerOut(level, out, colored), null, null, null, null);
   }
 
   @Override
