@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.env.var;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 import com.devonfw.tools.ide.log.IdeLogger;
@@ -25,6 +26,20 @@ public interface EnvironmentVariables {
       }
     }
     return value;
+  }
+
+  /**
+   * @param name the name of the environment variable to get.
+   * @return the value of the variable with the given {@code name} as {@link Path}. Will be {@code null} if no such
+   *         variable is defined.
+   */
+  default Path getPath(String name) {
+
+    String value = get(name);
+    if (value == null) {
+      return null;
+    }
+    return Paths.get(value);
   }
 
   /**
