@@ -3,7 +3,7 @@ toc::[]
 
 = jasypt
 
-The `jasypt` commandlet allows to install http://www.jasypt.org/[jasypt] and encrypt or decrypt secrets using strong encryption given a secure masterpassword. See also link:https://github.com/devonfw/devon4j/blob/master/documentation/guide-configuration.asciidoc#password-encryption[devon4j password encryption guide] for further details.
+The `jasypt` commandlet allows to install http://www.jasypt.org/[jasypt] and encrypt or decrypt secrets using strong encryption given a secure masterpassword. See also https://github.com/devonfw/devon4j/blob/master/documentation/guide-configuration.asciidoc#password-encryption[devon4j password encryption guide] for further details.
 
 The arguments (`devon jasypt «args»`) are explained by the following table:
 
