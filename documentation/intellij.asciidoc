@@ -35,6 +35,7 @@ These are explained by the following table:
 |*`INTELLIJ_VERSION`*|The version of the tool IntelliJ to install and use.
 |*`INTELLIJ_EDITION`*|The edition of the tool IntelliJ to install and use. By default the Community edition will be installed. If you want to use the Ultimate Edition, the value has to be set to `ultimate`. The Ultimate edition requires a license. The user has to buy the license separately and it is not part of devonfw-ide. The devonfw-ide only supports download and installation.
 |*`EXTRA_JAVA_VERSION`*|You can set this to a different (newer) version of Java used to launch your IDE (other than `JAVA_VERSION` that is used to build your project)
+|=======================
 
 == plugins
 
