@@ -68,7 +68,7 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
 
     String value = getValue(name);
     if (value != null) {
-      value = resolve(value, 0, name, value);
+      value = resolve(value, name, 0, name, value);
     }
     return value;
   }
@@ -92,10 +92,13 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
         value = var.getDefaultValueAsString(context);
       }
     }
+    if ((value != null) && (value.startsWith("~/"))) {
+      value = context.env().getUserHome() + value.substring(1);
+    }
     return value;
   }
 
-  String resolve(String value, int recursion, String rootName, String rootValue) {
+  String resolve(String value, String name, int recursion, String rootName, String rootValue) {
 
     if (value == null) {
       return null;
@@ -114,11 +117,11 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
       String variableName = matcher.group(2);
       String variableValue = getValue(variableName);
       if (variableValue == null) {
-        this.logger.warning("Undefined variable {} for root variable {} with value '{}'", variableName, rootName,
+        this.logger.warning("Undefined variable {} in '{}={}' for root '{}={}'", variableName, name, value, rootName,
             rootValue);
       } else {
-        String replacement = resolve(variableValue, recursion, rootName, rootValue);
-        matcher.appendReplacement(sb, replacement);
+        String replacement = resolve(variableValue, variableName, recursion, rootName, rootValue);
+        matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
       }
     } while (matcher.find());
     matcher.appendTail(sb);

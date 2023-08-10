@@ -86,15 +86,20 @@ class EnvironmentVariablesImpl extends AbstractEnvironmentVariables {
     return createChild(propertiesFile.toString(), childVariables);
   }
 
-  private static Map<String, String> loadProperties(Path propertiesFile, boolean legacy) {
+  private Map<String, String> loadProperties(Path propertiesFile, boolean legacy) {
 
+    if (!Files.exists(propertiesFile)) {
+      this.logger.trace("Properties not found at {}", propertiesFile);
+      return null;
+    }
+    this.logger.trace("Loading properties from {}", propertiesFile);
     Properties properties = new Properties();
     try (BufferedReader reader = Files.newBufferedReader(propertiesFile)) {
       properties.load(reader);
     } catch (IOException e) {
       throw new IllegalStateException("Failed to load properties from " + propertiesFile, e);
     }
-    Map<String, String> variables = new HashMap<>();
+    Map<String, String> map = new HashMap<>();
     for (Entry<Object, Object> entry : properties.entrySet()) {
       String key = (String) entry.getKey();
       String value = (String) entry.getValue();
@@ -107,12 +112,13 @@ class EnvironmentVariablesImpl extends AbstractEnvironmentVariables {
         // remove quotes
         value = value.substring(0, valueLength - 2);
       }
-      String duplicate = variables.put(key, value);
+      String duplicate = map.put(key, value);
       if (duplicate != null) {
-
+        this.logger.warning("Duplicate property '{}' mapped to '{}' and '{}' in {}", key, value, duplicate,
+            propertiesFile);
       }
     }
-    return variables;
+    return map;
   }
 
 }

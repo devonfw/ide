@@ -26,13 +26,17 @@ public abstract class AbstractIdeContext implements IdeContext {
    *
    * @param minLogLevel the minimum {@link IdeLogLevel} to enable. Should be {@link IdeLogLevel#INFO} by default.
    * @param factory the {@link Function} to create {@link IdeSubLogger} per {@link IdeLogLevel}.
-   * @param ideHome the optional {@link Environment#getIdeHome() IDE_HOME}. See
-   *        {@link Environment#of(IdeLogger, Path, String)} for further details.
+   * @param userDir the optional {@link Path} to current working directory See
+   *        {@link Environment#of(IdeLogger, Path, String, Path, String)} for further details.
    * @param workspace the optional {@link Environment#getWorkspaceName() WORKSPACE}. See
-   *        {@link Environment#of(IdeLogger, Path, String)} for further details.
+   *        {@link Environment#of(IdeLogger, Path, String, Path, String)} for further details.
+   * @param ideRoot the optional {@link Environment#getIdeRoot() IDE_ROOT}. See
+   *        {@link Environment#of(IdeLogger, Path, String, Path, String)} for further details.
+   * @param userHome the path relative to {@link Environment#getIdeHome() IDE_HOME} for {@link Environment#getUserHome()
+   *        HOME} for testing. Typically {@code null} to use the default.
    */
-  public AbstractIdeContext(IdeLogLevel minLogLevel, Function<IdeLogLevel, IdeSubLogger> factory, Path ideHome,
-      String workspace) {
+  public AbstractIdeContext(IdeLogLevel minLogLevel, Function<IdeLogLevel, IdeSubLogger> factory, Path userDir,
+      String workspace, Path ideRoot, String userHome) {
 
     super();
     this.loggers = new HashMap<>();
@@ -45,7 +49,7 @@ public abstract class AbstractIdeContext implements IdeContext {
       }
       this.loggers.put(level, logger);
     }
-    this.environment = Environment.of(this, ideHome, workspace);
+    this.environment = Environment.of(this, userDir, workspace, ideRoot, userHome);
   }
 
   @Override
