@@ -68,6 +68,8 @@ public class IdeContextTest extends Assertions {
     assertThat(context.env().getIdeHome().resolve("readme")).hasContent("this is the IDE_HOME directory");
     assertThat(context.env().getIdeRoot().resolve("readme")).hasContent("this is the IDE_ROOT directory");
     assertThat(context.env().getUserHome().resolve("readme")).hasContent("this is the users HOME directory");
+    assertThat(context.env().getVariables().getPath("M2_REPO"))
+        .isEqualTo(context.env().getUserHome().resolve(".m2/repository"));
     assertThat(context.env().getDownloadCache().resolve("readme")).hasContent("this is the download cache");
     assertThat(context.env().getDownloadMetadata().resolve("readme")).hasContent("this is the download metadata");
     assertThat(context.env().getToolRepository().resolve("readme")).hasContent("this is the tool repository");
