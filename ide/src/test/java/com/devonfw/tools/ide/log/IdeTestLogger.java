@@ -3,12 +3,9 @@ package com.devonfw.tools.ide.log;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.devonfw.tools.ide.log.IdeLogLevel;
-import com.devonfw.tools.ide.log.IdeSubLogger;
-
 /**
- * Implementation of {@link IdeSubLogger} for testing that collects all messages and allows to check if an expected message
- * was logged.
+ * Implementation of {@link IdeSubLogger} for testing that collects all messages and allows to check if an expected
+ * message was logged.
  */
 public class IdeTestLogger extends AbstractIdeSubLogger {
 
