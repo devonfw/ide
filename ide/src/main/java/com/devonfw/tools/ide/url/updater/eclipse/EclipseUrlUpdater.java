@@ -42,7 +42,7 @@ public abstract class EclipseUrlUpdater extends WebsiteUrlUpdater {
     while (segment != null) {
       if ((segment.getPhase() == VersionPhase.MILESTONE) || (segment.getPhase() == VersionPhase.RELEASE_CANDIDATE)) {
         // found a non release type (e.g. M1, M2, RC1, ...)
-        releaseType = segment.getLetters() + segment.getDigits();
+        releaseType = segment.getLettersString() + segment.getDigits();
         version = version.replace(segment.toString(), "");
         break;
       }
