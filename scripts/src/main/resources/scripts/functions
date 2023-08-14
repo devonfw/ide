@@ -683,7 +683,7 @@ function doDownloadInternal() {
   then
     curl_opt="--silent"
   fi
-  if [ "${url:0:4}" = "http" ]
+  if [ "${url:0:4}" = "http" ] || [ "${url:0:3}" = "ftp" ]
   then
     curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
   else
