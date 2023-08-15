@@ -14,9 +14,9 @@ fi
 source "$(dirname "${0}")"/../functions
 GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
 TOOL_VERSION_COMMAND="-"
-
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
+
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
