@@ -1,10 +1,10 @@
 package com.devonfw.tools.ide.version;
 
 /**
- * Enum with the available development phases of a {@link VersionSegment#getLetters() letter-sequence} from a
+ * Enum with the available development phases of a {@link VersionSegment#getLettersString() letter-sequence} from a
  * {@link VersionSegment}.
  */
-public enum VersionPhase {
+public enum VersionPhase implements AbstractVersionPhase {
 
   /** An undefined {@link VersionPhase} such as "apple" or "banana". */
   UNDEFINED,
@@ -73,10 +73,7 @@ public enum VersionPhase {
     this.ids = ids;
   }
 
-  /**
-   * @return {@code true} if this {@link VersionPhase} is a real development phase that says something about the quality
-   *         of the release, {@code false} otherwise.
-   */
+  @Override
   public boolean isDevelopmentPhase() {
 
     return (this != UNDEFINED) && (this != NONE) && (this != REVISION) && (this != BUILD);
@@ -114,8 +111,29 @@ public enum VersionPhase {
     return true;
   }
 
+  @Override
+  public boolean isUnstable() {
+
+    if (isDevelopmentPhase()) {
+      if (ordinal() < NONE.ordinal()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean isStable() {
+
+    if (ordinal() >= NONE.ordinal()) {
+      return true;
+    }
+    return false;
+
+  }
+
   /**
-   * @param letters the {@link VersionSegment#getLetters() letter-sequence} of a {@link VersionSegment} in
+   * @param letters the {@link VersionSegment#getLettersString() letter-sequence} of a {@link VersionSegment} in
    *        {@link String#toLowerCase(java.util.Locale) lower-case}.
    * @return the corresponding {@link VersionPhase}. Will be {@code #UNDEFINED} if undefined (e.g. "apple" or "banana").
    */

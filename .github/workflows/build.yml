@@ -15,7 +15,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: '11'
+          java-version: '17'
       - name: Build project with Maven
         run: mvn -B -ntp -Dstyle.color=always install
       - name: Deploy to OSSRH nexus

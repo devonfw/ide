@@ -6,7 +6,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
-* TODO
+* https://github.com/devonfw/ide/issues/1320[#1320]: Fix Bug in intellij documenation
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/48?closed=1[milestone 2023.08.002].
 
