@@ -19,7 +19,7 @@
    -->
 
   <properties>
-    <mainClass>com.devonfw.tools.ide.dev.Devon</mainClass>
+    <mainClass>com.devonfw.tools.ide.cli.Devon</mainClass>
     <imageName>devon</imageName>
     <java.version>17</java.version>
     <picocli.version>4.7.3</picocli.version>
