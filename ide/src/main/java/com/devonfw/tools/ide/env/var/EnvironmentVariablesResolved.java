@@ -1,8 +1,5 @@
 package com.devonfw.tools.ide.env.var;
 
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,22 +10,12 @@ import com.devonfw.tools.ide.env.var.def.VariableDefinition;
 /**
  * Implementation of {@link EnvironmentVariables} that resolves variables recursively.
  */
-class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
+public class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
 
   // Variable surrounded with "${" and "}" such as "${JAVA_HOME}" 1......2........
   private static final Pattern VARIABLE_SYNTAX = Pattern.compile("(\\$\\{([^}]+)})");
 
-  private static final Map<String, VariableDefinition<?>> VARIABLE_MAP;
-
   private static final int MAX_RECURSION = 9;
-
-  static {
-    VARIABLE_MAP = new HashMap<>();
-    for (VariableDefinition<?> var : IdeVariables.VARIABLES) {
-      register(var, VARIABLE_MAP, false);
-      register(var, VARIABLE_MAP, true);
-    }
-  }
 
   /**
    * The constructor.
@@ -37,24 +24,13 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
    */
   EnvironmentVariablesResolved(AbstractEnvironmentVariables parent) {
 
-    super(parent, "Resolved", parent.logger);
+    super(parent, parent.logger);
   }
 
-  private static void register(VariableDefinition<?> var, Map<String, VariableDefinition<?>> map, boolean legacy) {
+  @Override
+  public EnvironmentVariablesType getType() {
 
-    String key;
-    if (legacy) {
-      key = var.getLegacyName();
-      if (key == null) {
-        return;
-      }
-    } else {
-      key = var.getName();
-    }
-    VariableDefinition<?> duplicate = map.put(key, var);
-    if (duplicate != null) {
-      throw new IllegalStateException("Duplicate variables for key '" + key + "': " + var + " and " + duplicate);
-    }
+    return EnvironmentVariablesType.RESOLVED;
   }
 
   @Override
@@ -77,7 +53,7 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
 
     // this is an intended hack but only allowed here...
     IdeContext context = (IdeContext) this.logger;
-    VariableDefinition<?> var = VARIABLE_MAP.get(name);
+    VariableDefinition<?> var = IdeVariables.get(name);
     String value;
     if ((var != null) && var.isForceDefaultValue()) {
       value = var.getDefaultValueAsString(context);
@@ -133,12 +109,6 @@ class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
   public EnvironmentVariables resolved() {
 
     return this;
-  }
-
-  @Override
-  public EnvironmentVariablesResolved extend(Path propertiesPath) {
-
-    throw new UnsupportedOperationException();
   }
 
 }

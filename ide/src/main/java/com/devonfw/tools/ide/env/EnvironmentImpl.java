@@ -5,7 +5,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.devonfw.tools.ide.env.var.AbstractEnvironmentVariables;
 import com.devonfw.tools.ide.env.var.EnvironmentVariables;
+import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
 import com.devonfw.tools.ide.log.IdeLogger;
 
 /**
@@ -19,9 +21,17 @@ final class EnvironmentImpl implements Environment {
    */
   private static final String IDE_ROOT_BASE_FOLDER = "_ide";
 
+  private final IdeLogger logger;
+
   private final Path ideHome;
 
   private final Path ideRoot;
+
+  private final Path confPath;
+
+  private final Path settingsPath;
+
+  private final Path softwarePath;
 
   private final Path workspacePath;
 
@@ -35,12 +45,15 @@ final class EnvironmentImpl implements Environment {
 
   private final Path userHome;
 
+  private final Path userHomeIde;
+
   private final EnvironmentVariables variables;
 
   private EnvironmentImpl(IdeLogger logger, Path userDir, String workspace, Path ideRoot, String userHome) {
 
     super();
-    // auto-detect IDE home?
+    this.logger = logger;
+    // determine if we need to auto-detect IDE home
     boolean autoDetectIdeHome = (userDir == null) || (workspace == null);
     if (workspace == null) {
       workspace = WORKSPACE_MAIN;
@@ -74,6 +87,9 @@ final class EnvironmentImpl implements Environment {
       logger.info("You are not inside a devonfw-ide installation: " + userDir);
       this.workspacePath = null;
       this.ideRoot = ideRoot;
+      this.confPath = null;
+      this.settingsPath = null;
+      this.softwarePath = null;
     } else {
       this.workspacePath = this.ideHome.resolve(FOLDER_WORKSPACES).resolve(this.workspaceName);
       if (ideRoot == null) {
@@ -81,6 +97,9 @@ final class EnvironmentImpl implements Environment {
       } else {
         this.ideRoot = ideRoot;
       }
+      this.confPath = this.ideHome.resolve(FOLDER_CONF);
+      this.settingsPath = this.ideHome.resolve(FOLDER_SETTINGS);
+      this.softwarePath = this.ideHome.resolve(FOLDER_SOFTWARE);
     }
     if (this.ideRoot == null) {
       this.toolRepository = null;
@@ -96,8 +115,9 @@ final class EnvironmentImpl implements Environment {
       // only for testing...
       this.userHome = this.ideHome.resolve(userHome);
     }
+    this.userHomeIde = this.userHome.resolve(".ide");
     this.downloadCache = this.userHome.resolve("Downloads/ide");
-    this.variables = createVariables(logger);
+    this.variables = createVariables();
   }
 
   private boolean isIdeHome(Path path) {
@@ -128,21 +148,38 @@ final class EnvironmentImpl implements Environment {
 
   }
 
-  private EnvironmentVariables createVariables(IdeLogger logger) {
+  private EnvironmentVariables createVariables() {
 
-    EnvironmentVariables system = EnvironmentVariables.ofSystem(logger);
-    EnvironmentVariables user = system.extend(this.userHome);
-    EnvironmentVariables raw;
-    if (this.ideHome == null) {
-      raw = user;
+    AbstractEnvironmentVariables system = EnvironmentVariables.ofSystem(this.logger);
+    AbstractEnvironmentVariables user = extendVariables(system, this.userHomeIde, EnvironmentVariablesType.USER);
+    AbstractEnvironmentVariables settings = extendVariables(user, this.settingsPath, EnvironmentVariablesType.SETTINGS);
+    // TODO should we keep this workspace properties? Was this feature ever used?
+    AbstractEnvironmentVariables workspace = extendVariables(settings, this.workspacePath,
+        EnvironmentVariablesType.WORKSPACE);
+    AbstractEnvironmentVariables conf = extendVariables(workspace, this.confPath, EnvironmentVariablesType.CONF);
+    return conf.resolved();
+  }
+
+  private AbstractEnvironmentVariables extendVariables(AbstractEnvironmentVariables envVariables, Path propertiesPath,
+      EnvironmentVariablesType type) {
+
+    Path propertiesFile = null;
+    if (propertiesPath == null) {
+      this.logger.trace("Configuration directory for type {} does not exist.", type);
+    } else if (Files.isDirectory(propertiesPath)) {
+      propertiesFile = propertiesPath.resolve(EnvironmentVariables.DEFAULT_PROPERTIES);
+      boolean legacySupport = (type != EnvironmentVariablesType.USER);
+      if (legacySupport && !Files.exists(propertiesFile)) {
+        Path legacyFile = propertiesPath.resolve(EnvironmentVariables.LEGACY_PROPERTIES);
+        if (Files.exists(legacyFile)) {
+          propertiesFile = legacyFile;
+        }
+      }
     } else {
-      EnvironmentVariables settings = user.extend(this.ideHome.resolve("settings"));
-      // TODO should we keep this workspace properties? Was this feature ever used?
-      EnvironmentVariables workspace = settings.extend(this.workspacePath);
-      EnvironmentVariables conf = workspace.extend(this.ideHome.resolve("conf"));
-      raw = conf;
+      this.logger.debug("Configuration directory {} does not exist.", propertiesPath);
     }
-    return raw.resolved();
+    return envVariables.extend(propertiesFile, type);
+
   }
 
   @Override
@@ -161,6 +198,30 @@ final class EnvironmentImpl implements Environment {
   public Path getUserHome() {
 
     return this.userHome;
+  }
+
+  @Override
+  public Path getUserHomeIde() {
+
+    return this.userHomeIde;
+  }
+
+  @Override
+  public Path getSettingsPath() {
+
+    return this.settingsPath;
+  }
+
+  @Override
+  public Path getConfPath() {
+
+    return this.confPath;
+  }
+
+  @Override
+  public Path getSoftwarePath() {
+
+    return this.softwarePath;
   }
 
   @Override

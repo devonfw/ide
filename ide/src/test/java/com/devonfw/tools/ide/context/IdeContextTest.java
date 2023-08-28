@@ -9,6 +9,8 @@ import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
 
 import com.devonfw.tools.ide.env.Environment;
+import com.devonfw.tools.ide.env.var.EnvironmentVariables;
+import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
 import com.devonfw.tools.ide.env.var.def.IdeVariables;
 import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.log.IdeTestLogger;
@@ -62,19 +64,37 @@ public class IdeContextTest extends Assertions {
     // assert
     assertThat(context.env().getWorkspaceName()).isEqualTo("foo-test");
     assertThat(IdeVariables.DOCKER_EDITION.get(context)).isEqualTo("docker");
-    assertThat(context.env().getVariables().get("FOO")).isEqualTo("foo-bar-some-${UNDEFINED}");
+    EnvironmentVariables variables = context.env().getVariables();
+    assertThat(variables.get("FOO")).isEqualTo("foo-bar-some-${UNDEFINED}");
     assertLogMessage(context, IdeLogLevel.WARNING,
         "Undefined variable UNDEFINED in 'SOME=some-${UNDEFINED}' for root 'FOO=foo-${BAR}'");
     assertThat(context.env().getIdeHome().resolve("readme")).hasContent("this is the IDE_HOME directory");
     assertThat(context.env().getIdeRoot().resolve("readme")).hasContent("this is the IDE_ROOT directory");
     assertThat(context.env().getUserHome().resolve("readme")).hasContent("this is the users HOME directory");
-    assertThat(context.env().getVariables().getPath("M2_REPO"))
-        .isEqualTo(context.env().getUserHome().resolve(".m2/repository"));
+    assertThat(variables.getPath("M2_REPO")).isEqualTo(context.env().getUserHome().resolve(".m2/repository"));
     assertThat(context.env().getDownloadCache().resolve("readme")).hasContent("this is the download cache");
     assertThat(context.env().getDownloadMetadata().resolve("readme")).hasContent("this is the download metadata");
     assertThat(context.env().getToolRepository().resolve("readme")).hasContent("this is the tool repository");
     assertThat(context.env().getWorkspacePath().resolve("readme"))
         .hasContent("this is the foo-test workspace of basic");
+    assertThat(variables.getType()).isSameAs(EnvironmentVariablesType.RESOLVED);
+    assertThat(variables.getByType(EnvironmentVariablesType.RESOLVED)).isSameAs(variables);
+    EnvironmentVariables v1 = variables.getParent();
+    assertThat(v1.getType()).isSameAs(EnvironmentVariablesType.CONF);
+    assertThat(variables.getByType(EnvironmentVariablesType.CONF)).isSameAs(v1);
+    EnvironmentVariables v2 = v1.getParent();
+    assertThat(v2.getType()).isSameAs(EnvironmentVariablesType.WORKSPACE);
+    assertThat(variables.getByType(EnvironmentVariablesType.WORKSPACE)).isSameAs(v2);
+    EnvironmentVariables v3 = v2.getParent();
+    assertThat(v3.getType()).isSameAs(EnvironmentVariablesType.SETTINGS);
+    assertThat(variables.getByType(EnvironmentVariablesType.SETTINGS)).isSameAs(v3);
+    EnvironmentVariables v4 = v3.getParent();
+    assertThat(v4.getType()).isSameAs(EnvironmentVariablesType.USER);
+    assertThat(variables.getByType(EnvironmentVariablesType.USER)).isSameAs(v4);
+    EnvironmentVariables v5 = v4.getParent();
+    assertThat(v5.getType()).isSameAs(EnvironmentVariablesType.SYSTEM);
+    assertThat(variables.getByType(EnvironmentVariablesType.SYSTEM)).isSameAs(v5);
+    assertThat(v5.getParent()).isNull();
   }
 
 }
