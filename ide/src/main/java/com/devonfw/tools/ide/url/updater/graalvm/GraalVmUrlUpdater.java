@@ -22,8 +22,7 @@ public class GraalVmUrlUpdater extends GithubUrlUpdater {
 
   @Override
   protected void addVersion(UrlVersion urlVersion) {
-    // if (urlVersion.getName().startWith("jdk")
-    if (urlVersion.getVersionIdentifier().matches(VersionIdentifier.of("jdk"))) {
+    if (urlVersion.getName().startWith("jdk") {
       String baseUrl = "https://github.com/graalvm/graalvm-ce-builds/releases/download/${version}/graalvm-community-${version}_";
       doAddVersion(urlVersion, baseUrl + "windows-x64_bin.zip", WINDOWS, X64);
       doAddVersion(urlVersion, baseUrl + "linux-x64_bin.tar.gz", LINUX, X64);
