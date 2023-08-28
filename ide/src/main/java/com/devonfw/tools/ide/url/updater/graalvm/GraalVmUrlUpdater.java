@@ -2,7 +2,6 @@ package com.devonfw.tools.ide.url.updater.graalvm;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.GithubUrlUpdater;
-import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link GithubUrlUpdater} for GraalVM.
@@ -22,7 +21,7 @@ public class GraalVmUrlUpdater extends GithubUrlUpdater {
 
   @Override
   protected void addVersion(UrlVersion urlVersion) {
-    if (urlVersion.getName().startsWith("jdk") {
+    if (urlVersion.getName().startsWith("jdk")) {
       String baseUrl = "https://github.com/graalvm/graalvm-ce-builds/releases/download/${version}/graalvm-community-${version}_";
       doAddVersion(urlVersion, baseUrl + "windows-x64_bin.zip", WINDOWS, X64);
       doAddVersion(urlVersion, baseUrl + "linux-x64_bin.tar.gz", LINUX, X64);
