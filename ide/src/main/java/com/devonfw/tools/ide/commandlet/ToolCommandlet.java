@@ -1,6 +1,8 @@
 package com.devonfw.tools.ide.commandlet;
 
 import com.devonfw.tools.ide.cli.functions.Functions;
+import com.devonfw.tools.ide.env.var.EnvironmentVariables;
+import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
 import com.devonfw.tools.ide.version.VersionIdentifier;
 
 import picocli.CommandLine;
@@ -57,11 +59,17 @@ public abstract class ToolCommandlet extends Commandlet {
     }
   }
 
+  /**
+   * @return the {@link EnvironmentVariables#getToolEdition(String) tool edition}.
+   */
   protected String getEdition() {
 
     return context().env().getVariables().getToolEdition(getTool());
   }
 
+  /**
+   * @return the {@link EnvironmentVariables#getToolVersion(String) tool version}.
+   */
   protected VersionIdentifier getVersion() {
 
     return context().env().getVariables().getToolVersion(getTool());
@@ -77,9 +85,41 @@ public abstract class ToolCommandlet extends Commandlet {
     Functions.listVersions(getTool(), getEdition());
   }
 
+  /**
+   * Sets the tool version in the environment variable configuration file.
+   */
   protected void setVersion() {
 
-    Functions.setSoftwareVersion(getTool(), this.setVersion.version);
+    EnvironmentVariables variables = context().env().getVariables();
+    EnvironmentVariables settingsVariables = variables.getByType(EnvironmentVariablesType.SETTINGS);
+    String tool = getTool();
+    String name = EnvironmentVariables.getToolVersionVariable(tool);
+    String value = this.setVersion.version;
+    if ((value == null) || value.isBlank()) {
+      // TODO throw exception instead and implement proper exception handling
+      context().error("You have to specify the version you want to set.");
+      return;
+    }
+    if (value.equals("latest")) {
+      context().env().getDownloadMetadata();
+      String edition = getEdition();
+      if ((edition == null) || edition.isEmpty()) {
+        edition = tool;
+      }
+      value = Functions.getLatestVersion(tool, edition);
+    }
+    settingsVariables.set(name, value, false);
+    settingsVariables.save();
+    context().info("{}={} has been set in {}", name, value, settingsVariables.getSource());
+    EnvironmentVariables declaringVariables = variables.findVaraible(name);
+    if ((declaringVariables != null) && (declaringVariables != settingsVariables)) {
+      context().warning(
+          "The variable {} is overridden in {}. Please remove the overridden declaration in order to make the change affect.",
+          name, declaringVariables.getSource());
+    }
+    // TODO we can now easily ask the user if he wants to do this automatically
+    context().info("To install that version call the following command:");
+    context().info("ide {} setup", tool);
   }
 
 }

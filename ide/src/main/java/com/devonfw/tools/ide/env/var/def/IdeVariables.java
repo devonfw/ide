@@ -49,4 +49,15 @@ public interface IdeVariables {
   Collection<VariableDefinition<?>> VARIABLES = List.of(IDE_HOME, IDE_ROOT, HOME, WORKSPACE, WORKSPACE_PATH, IDE_TOOLS,
       CREATE_START_SCRIPTS, IDE_MIN_VERSION, MVN_VERSION, DOCKER_EDITION);
 
+  /**
+   * @param name the name of the requested {@link VariableDefinition}.
+   * @return the {@link VariableDefinition} for the given {@code name} or {@code null} if not defined.
+   * @see VariableDefinition#getName()
+   * @see VariableDefinition#getLegacyName()
+   */
+  static VariableDefinition<?> get(String name) {
+
+    return IdeVariablesList.get(name);
+  }
+
 }

@@ -3,6 +3,7 @@ package com.devonfw.tools.ide.env.var;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Map;
 
 import com.devonfw.tools.ide.log.IdeLogger;
 import com.devonfw.tools.ide.version.VersionIdentifier;
@@ -11,6 +12,12 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  * Interface for the environment with the variables.
  */
 public interface EnvironmentVariables {
+
+  /** Filename of the default variable configuration file. {@value} */
+  String DEFAULT_PROPERTIES = "ide.properties";
+
+  /** Filename of the legacy variable configuration file. {@value} */
+  String LEGACY_PROPERTIES = "devon.properties";
 
   /**
    * @param name the name of the environment variable to get.
@@ -70,24 +77,51 @@ public interface EnvironmentVariables {
    */
   default VersionIdentifier getToolVersion(String tool) {
 
-    String variable = tool.toUpperCase(Locale.ROOT) + "_VERSION";
+    String variable = getToolVersionVariable(tool);
     String value = get(variable);
     if (value == null) {
       return VersionIdentifier.VERSION_LATEST;
     }
     return VersionIdentifier.of(value);
-
   }
 
   /**
-   * @return the unique source identifier of this {@link EnvironmentVariables}. E.g. the file-system path to the
-   *         {@link java.util.Properties properties} file defining the variables.
+   * @return the {@link EnvironmentVariablesType type} of this {@link EnvironmentVariables}.
+   */
+  EnvironmentVariablesType getType();
+
+  /**
+   * @param type the {@link #getType() type} of the requested {@link EnvironmentVariables}.
+   * @return the {@link EnvironmentVariables} with the given {@link #getType() type} from this
+   *         {@link EnvironmentVariables} along the {@link #getParent() parent} hierarchy or {@code null} if not found.
+   */
+  default EnvironmentVariables getByType(EnvironmentVariablesType type) {
+
+    if (type == getType()) {
+      return this;
+    }
+    EnvironmentVariables parent = getParent();
+    if (parent == null) {
+      return null;
+    } else {
+      return parent.getByType(type);
+    }
+  }
+
+  /**
+   * @return the {@link Path} to the underlying properties file or {@code null} if not based on such file (e.g. for EVS
+   *         or {@link EnvironmentVariablesResolved}).
+   */
+  Path getPropertiesFilePath();
+
+  /**
+   * @return the source identifier describing this {@link EnvironmentVariables} for debugging.
    */
   String getSource();
 
   /**
-   * @return the parent {@link EnvironmentVariables} to inherit from or {@code null} if this is the root
-   *         {@link EnvironmentVariables} instance.
+   * @return the parent {@link EnvironmentVariables} to inherit from or {@code null} if this is the
+   *         {@link EnvironmentVariablesType#SYSTEM root} {@link EnvironmentVariables} instance.
    */
   default EnvironmentVariables getParent() {
 
@@ -95,25 +129,71 @@ public interface EnvironmentVariables {
   }
 
   /**
-   * @param propertiesPath the directory where the properties file with the {@link #getFlat(String)} variables} of the
-   *        new child is expected.
-   * @return the new child {@link EnvironmentVariables} or this instance itself if no properties file was found in the
-   *         given {@code propertiesPath}.
+   * @param name the {@link com.devonfw.tools.ide.env.var.def.VariableDefinition#getName() name} of the variable to set.
+   * @param value the new {@link #get(String) value} of the variable to set. May be {@code null} to unset the variable.
+   * @param export - {@code true} if the variable needs to be exported, {@code false} otherwise.
+   * @return the old variable value.
    */
-  EnvironmentVariables extend(Path propertiesPath);
+  default String set(String name, String value, boolean export) {
+
+    throw new UnsupportedOperationException();
+  }
 
   /**
-   * @return a new child {@link EnvironmentVariables} that will resolve variables recursively or this instance itself if
-   *         already satisfied.
+   * Saves any potential {@link #set(String, String, boolean) changes} of this {@link EnvironmentVariables}.
    */
-  EnvironmentVariables resolved();
+  default void save() {
+
+  }
+
+  /**
+   * @param name the {@link com.devonfw.tools.ide.env.var.def.VariableDefinition#getName() name} of the variable to
+   *        search for.
+   * @return the closest {@link EnvironmentVariables} instance that defines the variable with the given {@code name} or
+   *         {@code null} if the variable is not defined.
+   */
+  default EnvironmentVariables findVaraible(String name) {
+
+    String value = getFlat(name);
+    if (value != null) {
+      return this;
+    }
+    EnvironmentVariables parent = getParent();
+    if (parent == null) {
+      return null;
+    } else {
+      return parent.findVaraible(name);
+    }
+  }
+
+  /**
+   * @param map the {@link Map} where to collect the variables. ATTENTION: The {@link Map} will map from variable name
+   *        to the variable declaration line (e.g. "export MAVEN_OPTS=-Xmx2048m") and NOT to the variable value.
+   */
+  default void collectVariables(Map<String, String> map) {
+
+    EnvironmentVariables parent = getParent();
+    if (parent != null) {
+      parent.collectVariables(map);
+    }
+  }
 
   /**
    * @param logger the {@link IdeLogger}.
    * @return the system {@link EnvironmentVariables} building the root of the {@link EnvironmentVariables} hierarchy.
    */
-  static EnvironmentVariables ofSystem(IdeLogger logger) {
+  static AbstractEnvironmentVariables ofSystem(IdeLogger logger) {
 
-    return new EnvironmentVariablesImpl(null, "System", logger, System.getenv());
+    return EnvironmentVariablesSystem.of(logger);
   }
+
+  /**
+   * @param tool the name of the tool.
+   * @return the name of the version variable.
+   */
+  static String getToolVersionVariable(String tool) {
+
+    return tool.toUpperCase(Locale.ROOT) + "_VERSION";
+  }
+
 }
