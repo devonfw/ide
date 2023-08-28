@@ -152,7 +152,7 @@ public interface EnvironmentVariables {
    * @return the closest {@link EnvironmentVariables} instance that defines the variable with the given {@code name} or
    *         {@code null} if the variable is not defined.
    */
-  default EnvironmentVariables findVaraible(String name) {
+  default EnvironmentVariables findVariable(String name) {
 
     String value = getFlat(name);
     if (value != null) {
@@ -162,7 +162,7 @@ public interface EnvironmentVariables {
     if (parent == null) {
       return null;
     } else {
-      return parent.findVaraible(name);
+      return parent.findVariable(name);
     }
   }
 

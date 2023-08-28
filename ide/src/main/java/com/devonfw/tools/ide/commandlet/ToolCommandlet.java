@@ -111,7 +111,7 @@ public abstract class ToolCommandlet extends Commandlet {
     settingsVariables.set(name, value, false);
     settingsVariables.save();
     context().info("{}={} has been set in {}", name, value, settingsVariables.getSource());
-    EnvironmentVariables declaringVariables = variables.findVaraible(name);
+    EnvironmentVariables declaringVariables = variables.findVariable(name);
     if ((declaringVariables != null) && (declaringVariables != settingsVariables)) {
       context().warning(
           "The variable {} is overridden in {}. Please remove the overridden declaration in order to make the change affect.",
