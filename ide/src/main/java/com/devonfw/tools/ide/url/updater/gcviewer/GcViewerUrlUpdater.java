@@ -16,7 +16,7 @@ public class GcViewerUrlUpdater extends GithubUrlUpdater {
   @Override
   protected void addVersion(UrlVersion urlVersion) {
 
-    doAddVersion(urlVersion, "https://sourceforge.net/projects/gcviewer/files/gcviewer-${version}.jar/download");
+    doAddVersion(urlVersion, "https://sourceforge.net/projects/gcviewer/files/gcviewer-${version}.jar");
   }
 
   @Override

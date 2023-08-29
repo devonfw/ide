@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.devonfw.tools.ide.commandlet.EnvironmentCommand;
+import com.devonfw.tools.ide.context.IdeContext;
 
 /**
  * @deprecated has to be redesigned from bash to object-oriented programming.
@@ -33,13 +33,20 @@ import com.devonfw.tools.ide.commandlet.EnvironmentCommand;
 @Deprecated
 public class Functions {
 
-  private static final String DEVON_IDE_HOME = EnvironmentCommand.get().get("DEVON_IDE_HOME");
+  private static IdeContext context;
 
-  private static final String DEVON_SOFTWARE_DIR = DEVON_IDE_HOME + "\\software\\";
+  public static void init(IdeContext ideContext) {
+
+    if (Functions.context == null) {
+      Functions.context = ideContext;
+    } else if (Functions.context != ideContext) {
+      throw new IllegalStateException("Already initialized with a different context!");
+    }
+  }
 
   public static void doLicenseAgreement() {
 
-    File licenseAgreement = new File(DEVON_IDE_HOME + "/license-agreement.txt");
+    File licenseAgreement = context.env().getUserHomeIde().resolve("license-agreement.txt").toFile();
     if (!licenseAgreement.exists()) {
       System.out.println();
       logo();
@@ -54,7 +61,7 @@ public class Functions {
       System.out.println("You are solely responsible for all risk implied by using this software.");
       System.out.println("You will be able to find it in one of the following locations:");
       System.out.println("https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc");
-      System.out.println("Also it is included in " + DEVON_IDE_HOME + "/devon-ide-doc.pdf");
+      System.out.println("Also it is included in " + context.env().getIdeHome() + "/devon-ide-doc.pdf");
       System.out.println();
       /*
        * if (!isBatch()) { doOpen("https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc"); }
@@ -166,6 +173,9 @@ public class Functions {
         File tmpFileObj = new File(tmpFile);
         tmpFileObj.renameTo(targetFile);
         System.out.println("Download of " + downloadFilename + " from " + url + " succeeded.");
+
+        String DEVON_SOFTWARE_DIR = context.env().getIdeHome().resolve("software").toString();
+
         extract(targetFolder + downloadFilename, DEVON_SOFTWARE_DIR + software);
         createOrUpdateVersionFile(software, version, DEVON_SOFTWARE_DIR + software);
       }
@@ -207,14 +217,11 @@ public class Functions {
     }
     if (edition.isEmpty() || edition == null) {
       edition = software;
-    } else {
-      saveEditionVariable(software, edition);
     }
     if (version.isEmpty() || version == null) {
       version = getLatestVersion(software, edition);
     }
-    String urlDir = DEVON_IDE_HOME + "/urls/" + software + "/" + edition + "/" + version;
-    Path urlDirPath = Paths.get(urlDir);
+    Path urlDirPath = context.env().getIdeRoot().resolve("urls/" + software + "/" + edition + "/" + version);
     String downloadUrlFile = null;
     try {
       try (Stream<Path> paths = Files.list(urlDirPath)) {
@@ -349,22 +356,24 @@ public class Functions {
 
   public static void updateUrls() {
 
-    String urlsDir = DEVON_IDE_HOME + "\\urls";
-    String devonUrls = EnvironmentCommand.get().get("DEVON_URLS");
-    String gitUrl = !devonUrls.equals("") ? devonUrls : "https://github.com/devonfw/ide-urls.git";
+    String urlsDir = context.env().getDownloadMetadata().toString();
+    String devonUrls = context.env().getVariables().get("DEVON_URLS");
+    String gitUrl = ((devonUrls != null) && !devonUrls.isEmpty()) ? devonUrls
+        : "https://github.com/devonfw/ide-urls.git";
     gitPullOrClone(urlsDir, gitUrl);
   }
 
   public static String getLatestVersion(String software, String edition) {
 
-    Path directoryPath = Paths.get(DEVON_IDE_HOME, "urls", software, edition);
-    Path urlsPath = Paths.get(DEVON_IDE_HOME, "urls");
-    if (!Files.exists(directoryPath)) {
-      gitPullOrClone(String.valueOf(urlsPath), "https://github.com/devonfw/ide-urls.git");
+    Path urlsPath = context.env().getDownloadMetadata();
+    Path toolPath = urlsPath.resolve(software);
+    Path editionPath = toolPath.resolve(edition);
+    if (!Files.exists(editionPath)) {
+      gitPullOrClone(urlsPath.toString(), "https://github.com/devonfw/ide-urls.git");
     }
     String latestVersion = null;
     try {
-      try (Stream<Path> paths = Files.list(directoryPath)) {
+      try (Stream<Path> paths = Files.list(editionPath)) {
         latestVersion = paths.map(Path::toFile).filter(File::isDirectory).map(File::getName).min((v1, v2) -> {
           String[] parts1;
           String[] parts2;
@@ -399,21 +408,6 @@ public class Functions {
       e.printStackTrace();
     }
     return latestVersion;
-  }
-
-  public static void saveEditionVariable(String software, String edition) {
-
-    String editionVariable = (software + "_EDITION").toUpperCase();
-    File devonPropertiesFile = Paths.get(DEVON_IDE_HOME, "settings", "devon.properties").toFile();
-    try {
-      List<String> lines = Files.readAllLines(devonPropertiesFile.toPath());
-      lines = lines.stream().filter(line -> !line.startsWith(editionVariable)).collect(Collectors.toList());
-      lines.add(editionVariable + "=" + edition);
-
-      Files.write(devonPropertiesFile.toPath(), lines);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   public static void extract(String filePath, String targetSubDir) {
@@ -498,9 +492,9 @@ public class Functions {
 
   public static void verifyUrlsExistence() {
 
-    Path urlsPath = Paths.get(DEVON_IDE_HOME, "urls");
+    Path urlsPath = context.env().getDownloadMetadata();
     if (!Files.exists(urlsPath)) {
-      gitPullOrClone(String.valueOf(urlsPath), "https://github.com/devonfw/ide-urls.git");
+      gitPullOrClone(urlsPath.toString(), "https://github.com/devonfw/ide-urls.git");
     }
   }
 
@@ -510,12 +504,14 @@ public class Functions {
     if (edition == null || edition.isEmpty()) {
       edition = software;
     }
-    if (Files.isDirectory(Paths.get(DEVON_IDE_HOME, "urls"))) {
+    Path urlsPath = context.env().getDownloadMetadata();
+    if (Files.isDirectory(urlsPath)) {
       updateUrls();
-      Path versionsPath = Paths.get(DEVON_IDE_HOME, "urls", software, edition);
+      Path toolPath = urlsPath.resolve(software);
+      Path editionPath = toolPath.resolve(edition);
       List<String> lines = new ArrayList<>();
       try {
-        try (Stream<Path> paths = Files.list(versionsPath)) {
+        try (Stream<Path> paths = Files.list(editionPath)) {
           lines = paths.map(Path::toFile).filter(File::isDirectory).map(File::getName).sorted((v1, v2) -> {
             String parts1[];
             String parts2[];
@@ -591,40 +587,6 @@ public class Functions {
       return true;
     } catch (NumberFormatException e) {
       return false;
-    }
-  }
-
-  public static void setSoftwareVersion(String software, String version) {
-
-    verifyUrlsExistence();
-    if (version != null) {
-      if (version.equals("latest")) {
-        updateUrls();
-        String softwareEdition = software.toUpperCase() + "_EDITION";
-        String edition = EnvironmentCommand.get().get(softwareEdition);
-        if (edition.isEmpty() || edition == null) {
-          edition = software;
-        }
-        version = getLatestVersion(software, edition);
-      }
-      String softwareVersionVariable = software.equals("nodejs") ? "node" : software;
-      softwareVersionVariable = (softwareVersionVariable + "_VERSION").toUpperCase();
-      File devonPropertiesFile = Paths.get(DEVON_IDE_HOME, "settings", "devon.properties").toFile();
-      try {
-        List<String> lines = Files.readAllLines(devonPropertiesFile.toPath());
-        String finalSoftwareVersionVariable = softwareVersionVariable;
-        lines = lines.stream().filter(line -> !line.startsWith(finalSoftwareVersionVariable))
-            .collect(Collectors.toList());
-        lines.add(softwareVersionVariable + "=" + version);
-
-        Files.write(devonPropertiesFile.toPath(), lines);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      System.out.println(softwareVersionVariable + "=" + version + " has been set in " + devonPropertiesFile.getPath()
-          + "\nTo install that version call the following command:\ndevon " + software + " setup");
-    } else {
-      System.err.println("You have to specify the version you want to set.");
     }
   }
 

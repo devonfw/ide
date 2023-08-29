@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.devonfw.tools.ide.context.IdeContext;
+import com.devonfw.tools.ide.env.var.VariableLine;
 
 /**
  * Implementation of {@link VariableDefinition} for a variable with the {@link #getValueType() value type}
@@ -76,8 +77,8 @@ public class VariableDefinitionStringList extends AbstractVariableDefinition<Lis
     }
     String csv = value;
     String separator = ",";
-    if (value.startsWith("(") && value.endsWith(")")) {
-      csv = value.substring(1, value.length() - 2);
+    if (isBashArray(value)) {
+      csv = value.substring(1, value.length() - 1);
       separator = " ";
     }
     String[] items = csv.split(separator);
@@ -87,5 +88,22 @@ public class VariableDefinitionStringList extends AbstractVariableDefinition<Lis
     }
     list = Collections.unmodifiableList(list);
     return list;
+  }
+
+  private boolean isBashArray(String value) {
+
+    return value.startsWith("(") && value.endsWith(")");
+  }
+
+  @Override
+  public VariableLine migrateLine(VariableLine line) {
+
+    line = super.migrateLine(line);
+    String value = line.getValue();
+    if ((value != null) && isBashArray(value)) {
+      List<String> list = fromString(value);
+      line = line.withValue(String.join(", ", list));
+    }
+    return line;
   }
 }
