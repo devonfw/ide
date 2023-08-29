@@ -3,6 +3,7 @@ package com.devonfw.tools.ide.env;
 import java.nio.file.Path;
 
 import com.devonfw.tools.ide.env.var.EnvironmentVariables;
+import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
 import com.devonfw.tools.ide.log.IdeLogger;
 
 /**
@@ -12,6 +13,15 @@ public interface Environment {
 
   /** The name of the workspaces folder. */
   String FOLDER_WORKSPACES = "workspaces";
+
+  /** The name of the settings folder. */
+  String FOLDER_SETTINGS = "settings";
+
+  /** The name of the software folder. */
+  String FOLDER_SOFTWARE = "software";
+
+  /** The name of the conf folder for project specific user configurations. */
+  String FOLDER_CONF = "conf";
 
   /** The default for {@link #getWorkspaceName()}. */
   String WORKSPACE_MAIN = "main";
@@ -52,6 +62,12 @@ public interface Environment {
   Path getDownloadCache();
 
   /**
+   * @return the {@link Path} to the software folder. All tools will be "installed" here as a sub-folder named after the
+   *         according tool.
+   */
+  Path getSoftwarePath();
+
+  /**
    * @return the {@link Path} to the central tool repository. All tools will be installed in this location using the
    *         directory naming schema of {@code «repository»/«tool»/«edition»/«version»/}. Actual {@link #getIdeHome()
    *         IDE instances} will only contain symbolic links to the physical tool installations in this repository. This
@@ -68,6 +84,23 @@ public interface Environment {
    * @see com.devonfw.tools.ide.env.var.def.IdeVariables#HOME
    */
   Path getUserHome();
+
+  /**
+   * @return the {@link Path} to the ".ide" subfolder in the {@link #getUserHome() users home directory}.
+   */
+  Path getUserHomeIde();
+
+  /**
+   * @return the {@link Path} to the {@code settings} folder with the cloned git repository containing the project
+   *         configuration.
+   */
+  Path getSettingsPath();
+
+  /**
+   * @return the {@link Path} to the {@code conf} folder with instance specific tool configurations and the
+   *         {@link EnvironmentVariablesType#CONF user specific project configuration}.
+   */
+  Path getConfPath();
 
   /**
    * @return the {@link Path} to the workspace.
