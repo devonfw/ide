@@ -50,7 +50,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.1");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.1");
 
     // then
     assertThat(intellijVersionsPath.resolve("status.json")).exists();
@@ -82,7 +82,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.3");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.3");
 
     // then
     assertThat(intellijVersionsPath).doesNotExist();
@@ -111,7 +111,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.2");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.2");
 
     // then
     assertThat(intellijVersionsPath.resolve("linux_x64.urls.sha256")).exists().hasContent(EXPECTED_ABODY_CHECKSUM);
