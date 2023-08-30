@@ -1,19 +1,24 @@
 package com.devonfw.tools.ide.integrationtest.intellij;
 
-import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
-import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
+import com.devonfw.tools.ide.url.updater.intellij.IntellijUrlUpdater;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 /**
  * Test class for integrations of the {@link IntellijUrlUpdater}
@@ -50,7 +55,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.1");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.1");
 
     // then
     assertThat(intellijVersionsPath.resolve("status.json")).exists();
@@ -111,7 +116,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.2");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.2");
 
     // then
     assertThat(intellijVersionsPath.resolve("linux_x64.urls.sha256")).exists().hasContent(EXPECTED_ABODY_CHECKSUM);

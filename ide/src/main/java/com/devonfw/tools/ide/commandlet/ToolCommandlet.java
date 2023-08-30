@@ -1,8 +1,10 @@
 package com.devonfw.tools.ide.commandlet;
 
+import java.util.List;
+
 import com.devonfw.tools.ide.cli.functions.Functions;
-import com.devonfw.tools.ide.env.var.EnvironmentVariables;
-import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
+import com.devonfw.tools.ide.environment.EnvironmentVariables;
+import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.version.VersionIdentifier;
 
 import picocli.CommandLine;
@@ -64,7 +66,7 @@ public abstract class ToolCommandlet extends Commandlet {
    */
   protected String getEdition() {
 
-    return context().env().getVariables().getToolEdition(getTool());
+    return context().getVariables().getToolEdition(getTool());
   }
 
   /**
@@ -72,7 +74,7 @@ public abstract class ToolCommandlet extends Commandlet {
    */
   protected VersionIdentifier getVersion() {
 
-    return context().env().getVariables().getToolVersion(getTool());
+    return context().getVariables().getToolVersion(getTool());
   }
 
   protected void setup() {
@@ -82,7 +84,10 @@ public abstract class ToolCommandlet extends Commandlet {
 
   protected void listVersions() {
 
-    Functions.listVersions(getTool(), getEdition());
+    List<VersionIdentifier> versions = context().getUrls().getSortedVersions(getTool(), getEdition());
+    for (VersionIdentifier vi : versions) {
+      context().info(vi.toString());
+    }
   }
 
   /**
@@ -90,9 +95,10 @@ public abstract class ToolCommandlet extends Commandlet {
    */
   protected void setVersion() {
 
-    EnvironmentVariables variables = context().env().getVariables();
+    EnvironmentVariables variables = context().getVariables();
     EnvironmentVariables settingsVariables = variables.getByType(EnvironmentVariablesType.SETTINGS);
     String tool = getTool();
+    String edition = getEdition();
     String name = EnvironmentVariables.getToolVersionVariable(tool);
     String value = this.setVersion.version;
     if ((value == null) || value.isBlank()) {
@@ -100,15 +106,17 @@ public abstract class ToolCommandlet extends Commandlet {
       context().error("You have to specify the version you want to set.");
       return;
     }
+    VersionIdentifier configuredVersion;
     if (value.equals("latest")) {
-      context().env().getDownloadMetadata();
-      String edition = getEdition();
-      if ((edition == null) || edition.isEmpty()) {
-        edition = tool;
-      }
-      value = Functions.getLatestVersion(tool, edition);
+      configuredVersion = VersionIdentifier.LATEST;
+    } else {
+      configuredVersion = VersionIdentifier.of(value);
     }
-    settingsVariables.set(name, value, false);
+    VersionIdentifier resolvedVersion = context().getUrls().getVersion(tool, edition, configuredVersion);
+    if (configuredVersion.isPattern()) {
+      context().debug("Resolved version {} to {} for tool {}/{}", configuredVersion, resolvedVersion, tool, edition);
+    }
+    settingsVariables.set(name, resolvedVersion.toString(), false);
     settingsVariables.save();
     context().info("{}={} has been set in {}", name, value, settingsVariables.getSource());
     EnvironmentVariables declaringVariables = variables.findVariable(name);

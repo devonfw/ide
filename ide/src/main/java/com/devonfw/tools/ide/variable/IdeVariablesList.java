@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
 import java.util.HashMap;
 import java.util.Map;

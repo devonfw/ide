@@ -1,22 +1,22 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 import com.devonfw.tools.ide.context.IdeContext;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
- * Implementation of {@link VariableDefinition} for a variable with the {@link #getValueType() value type} {@link Path}.
+ * Implementation of {@link VariableDefinition} for a variable with the {@link #getValueType() value type}
+ * {@link VersionIdentifier}.
  */
-public class VariableDefinitionPath extends AbstractVariableDefinition<Path> {
+public class VariableDefinitionVersion extends AbstractVariableDefinition<VersionIdentifier> {
 
   /**
    * The constructor.
    *
    * @param name the {@link #getName() variable name}.
    */
-  public VariableDefinitionPath(String name) {
+  public VariableDefinitionVersion(String name) {
 
     super(name);
   }
@@ -27,7 +27,7 @@ public class VariableDefinitionPath extends AbstractVariableDefinition<Path> {
    * @param name the {@link #getName() variable name}.
    * @param legacyName the {@link #getLegacyName() legacy name}.
    */
-  public VariableDefinitionPath(String name, String legacyName) {
+  public VariableDefinitionVersion(String name, String legacyName) {
 
     super(name, legacyName);
   }
@@ -39,7 +39,8 @@ public class VariableDefinitionPath extends AbstractVariableDefinition<Path> {
    * @param legacyName the {@link #getLegacyName() legacy name}.
    * @param defaultValueFactory the factory {@link Function} for the {@link #getDefaultValue(IdeContext) default value}.
    */
-  public VariableDefinitionPath(String name, String legacyName, Function<IdeContext, Path> defaultValueFactory) {
+  public VariableDefinitionVersion(String name, String legacyName,
+      Function<IdeContext, VersionIdentifier> defaultValueFactory) {
 
     super(name, legacyName, defaultValueFactory);
   }
@@ -52,21 +53,21 @@ public class VariableDefinitionPath extends AbstractVariableDefinition<Path> {
    * @param defaultValueFactory the factory {@link Function} for the {@link #getDefaultValue(IdeContext) default value}.
    * @param forceDefaultValue the {@link #isForceDefaultValue() forceDefaultValue} flag.
    */
-  public VariableDefinitionPath(String name, String legacyName, Function<IdeContext, Path> defaultValueFactory,
-      boolean forceDefaultValue) {
+  public VariableDefinitionVersion(String name, String legacyName,
+      Function<IdeContext, VersionIdentifier> defaultValueFactory, boolean forceDefaultValue) {
 
     super(name, legacyName, defaultValueFactory, forceDefaultValue);
   }
 
   @Override
-  public Class<Path> getValueType() {
+  public Class<VersionIdentifier> getValueType() {
 
-    return Path.class;
+    return VersionIdentifier.class;
   }
 
   @Override
-  public Path fromString(String value) {
+  public VersionIdentifier fromString(String value) {
 
-    return Paths.get(value);
+    return VersionIdentifier.of(value);
   }
 }

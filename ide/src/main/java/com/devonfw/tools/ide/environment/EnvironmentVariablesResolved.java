@@ -1,11 +1,11 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.env.var.def.IdeVariables;
-import com.devonfw.tools.ide.env.var.def.VariableDefinition;
+import com.devonfw.tools.ide.variable.IdeVariables;
+import com.devonfw.tools.ide.variable.VariableDefinition;
 
 /**
  * Implementation of {@link EnvironmentVariables} that resolves variables recursively.
@@ -57,8 +57,9 @@ public class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
     String value;
     if ((var != null) && var.isForceDefaultValue()) {
       value = var.getDefaultValueAsString(context);
+    } else {
+      value = this.parent.get(name);
     }
-    value = this.parent.get(name);
     if ((value == null) && (var != null)) {
       String key = var.getName();
       if (!name.equals(key)) {
@@ -69,7 +70,7 @@ public class EnvironmentVariablesResolved extends AbstractEnvironmentVariables {
       }
     }
     if ((value != null) && (value.startsWith("~/"))) {
-      value = context.env().getUserHome() + value.substring(1);
+      value = context.getUserHome() + value.substring(1);
     }
     return value;
   }
