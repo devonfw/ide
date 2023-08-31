@@ -7,6 +7,7 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 Release with new features and bugfixes:
 
 * https://github.com/devonfw/ide/issues/1325[#1325]: Add GraalVM JDK 17 and 20 versions
+* https://github.com/devonfw/ide/issues/1198[#1198]: Ability to download custom software from mounted filesystem
 * https://github.com/devonfw/ide/issues/1197[#1197]: Integrate Java Mission Control
 * https://github.com/devonfw/ide/issues/1320[#1320]: Fix Bug in intellij documenation
 

@@ -19,7 +19,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
  * Test class for integrations of the {@link AndroidStudioUrlUpdater
  */
 @WireMockTest(httpPort = 8080)
-public class AndroidStudioJsonUrlUpdaterIT extends Assertions {
+public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
 
   /**
    * Test resource location
