@@ -1,7 +1,8 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.env.var.EnvironmentVariables;
+import com.devonfw.tools.ide.environment.EnvironmentVariables;
+import com.devonfw.tools.ide.environment.VariableLine;
 
 /**
  * Interface for a definition of a variable.
@@ -78,5 +79,21 @@ public interface VariableDefinition<V> {
    * @return the value of the variable of this {@link VariableDefinition}.
    */
   V get(IdeContext context);
+
+  /**
+   * @param line the {@link VariableLine} that potentially needs to be migrated.
+   * @return the original {@link VariableLine} or a migrated copy of it.
+   */
+  default VariableLine migrateLine(VariableLine line) {
+
+    String name = line.getName();
+    if (name != null) {
+      String newName = getName();
+      if (!name.equals(newName)) {
+        return line.withName(newName);
+      }
+    }
+    return line;
+  }
 
 }

@@ -1,10 +1,9 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
 import java.util.Objects;
 import java.util.function.Function;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.env.Environment;
 
 /**
  * Abstract base implementation of {@link VariableDefinition}.
@@ -103,14 +102,12 @@ public abstract class AbstractVariableDefinition<V> implements VariableDefinitio
   public V get(IdeContext context) {
 
     Objects.requireNonNull(context);
-    Environment environment = context.env();
-    Objects.requireNonNull(environment);
     String valueAsString = null;
     if (!this.forceDefaultValue) {
-      valueAsString = environment.getVariables().get(this.name);
+      valueAsString = context.getVariables().get(this.name);
       if (valueAsString == null) {
         if (this.legacyName != null) {
-          valueAsString = environment.getVariables().get(this.legacyName);
+          valueAsString = context.getVariables().get(this.legacyName);
         }
       }
     }
