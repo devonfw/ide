@@ -1,8 +1,8 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.env.var.EnvironmentVariables;
-import com.devonfw.tools.ide.env.var.VariableLine;
+import com.devonfw.tools.ide.environment.EnvironmentVariables;
+import com.devonfw.tools.ide.environment.VariableLine;
 
 /**
  * Interface for a definition of a variable.

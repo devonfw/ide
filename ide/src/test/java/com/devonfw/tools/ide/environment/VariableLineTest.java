@@ -1,12 +1,12 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.devonfw.tools.ide.env.var.VariableLine.Comment;
-import com.devonfw.tools.ide.env.var.VariableLine.Empty;
-import com.devonfw.tools.ide.env.var.VariableLine.Garbage;
-import com.devonfw.tools.ide.env.var.VariableLine.Variable;
+import com.devonfw.tools.ide.environment.VariableLine.Comment;
+import com.devonfw.tools.ide.environment.VariableLine.Empty;
+import com.devonfw.tools.ide.environment.VariableLine.Garbage;
+import com.devonfw.tools.ide.environment.VariableLine.Variable;
 import com.devonfw.tools.ide.log.IdeSlf4jRootLogger;
 
 /**
@@ -74,7 +74,7 @@ public class VariableLineTest extends Assertions {
     checkVariable("TOOL_VERSION=\"47.11\"", false, "TOOL_VERSION", "47.11");
     checkVariable("TOOL_VERSION = \"47.11\" ", false, "TOOL_VERSION", "47.11");
     checkVariable("export MAVEN_OPTS=-Xmx2g -Pdev", true, "MAVEN_OPTS", "-Xmx2g -Pdev");
-    checkVariable("vaR_namE=", false, "vaR_namE", "");
+    checkVariable("vaR_namE=", false, "vaR_namE", null);
     // edge-cases
     checkVariable("  export  MAVEN_OPTS = -Xmx2g -Pdev", true, "MAVEN_OPTS", "-Xmx2g -Pdev");
     checkVariable("export=value", false, "export", "value");
