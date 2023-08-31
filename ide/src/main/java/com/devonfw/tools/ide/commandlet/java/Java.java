@@ -31,11 +31,12 @@ public class Java extends ToolCommandlet {
   @Override
   protected void startTool() {
 
-    String DEVON_SOFTWARE_DIR = context().env().getSoftwarePath().toString();
+    String DEVON_SOFTWARE_DIR = context().getSoftwarePath().toString();
     Path pathToBinFolder = Functions.searchFolder(DEVON_SOFTWARE_DIR + getTool(), "bin");
     if (pathToBinFolder != null) {
       ProcessBuilder processBuilder = new ProcessBuilder();
       processBuilder.command(getTool(), this.option);
+
       try {
         Process process = processBuilder.start();
         InputStream inputStream = process.getInputStream();

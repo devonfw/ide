@@ -1,6 +1,13 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.devonfw.tools.ide.log.IdeLogger;
 
@@ -10,7 +17,7 @@ import com.devonfw.tools.ide.log.IdeLogger;
 public abstract class AbstractEnvironmentVariables implements EnvironmentVariables {
 
   /** @see #getParent() */
-  protected final EnvironmentVariables parent;
+  protected final AbstractEnvironmentVariables parent;
 
   /** The {@link IdeLogger} instance. */
   protected final IdeLogger logger;
@@ -23,7 +30,7 @@ public abstract class AbstractEnvironmentVariables implements EnvironmentVariabl
    * @param parent the parent {@link EnvironmentVariables} to inherit from.
    * @param logger the {@link IdeLogger}.
    */
-  public AbstractEnvironmentVariables(EnvironmentVariables parent, IdeLogger logger) {
+  public AbstractEnvironmentVariables(AbstractEnvironmentVariables parent, IdeLogger logger) {
 
     super();
     this.parent = parent;
@@ -31,7 +38,7 @@ public abstract class AbstractEnvironmentVariables implements EnvironmentVariabl
       if (parent == null) {
         throw new IllegalArgumentException("parent and logger must not both be null!");
       }
-      this.logger = ((AbstractEnvironmentVariables) parent).logger;
+      this.logger = parent.logger;
     } else {
       this.logger = logger;
     }
@@ -60,6 +67,45 @@ public abstract class AbstractEnvironmentVariables implements EnvironmentVariabl
       }
     }
     return this.source;
+  }
+
+  /**
+   * @param name the name of the variable to check.
+   * @return {@code true} if the variable shall be exported, {@code false} otherwise.
+   */
+  protected boolean isExported(String name) {
+
+    if (this.parent != null) {
+      if (this.parent.isExported(name)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public final Collection<VariableLine> collectVariables() {
+
+    Set<String> variableNames = new HashSet<>();
+    collectVariables(variableNames);
+    List<VariableLine> variables = new ArrayList<>(variableNames.size());
+    for (String name : variableNames) {
+      boolean export = isExported(name);
+      String value = get(name);
+      variables.add(VariableLine.of(export, name, value));
+    }
+    Map<String, VariableLine> map = new HashMap<>();
+    return map.values();
+  }
+
+  /**
+   * @param variables the {@link Set} where to add the names of the variables defined here.
+   */
+  protected void collectVariables(Set<String> variables) {
+
+    if (this.parent != null) {
+      this.parent.collectVariables(variables);
+    }
   }
 
   /**

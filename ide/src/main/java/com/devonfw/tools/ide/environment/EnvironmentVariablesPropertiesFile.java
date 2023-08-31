@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -11,13 +11,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import com.devonfw.tools.ide.env.var.def.IdeVariables;
-import com.devonfw.tools.ide.env.var.def.VariableDefinition;
 import com.devonfw.tools.ide.log.IdeLogger;
+import com.devonfw.tools.ide.variable.IdeVariables;
+import com.devonfw.tools.ide.variable.VariableDefinition;
 
 /**
  * Implementation of {@link EnvironmentVariables}.
@@ -45,7 +44,7 @@ final class EnvironmentVariablesPropertiesFile extends EnvironmentVariablesMap {
    * @param logger the {@link IdeLogger}.
    * @param variables the underlying variables.
    */
-  EnvironmentVariablesPropertiesFile(EnvironmentVariables parent, EnvironmentVariablesType type,
+  EnvironmentVariablesPropertiesFile(AbstractEnvironmentVariables parent, EnvironmentVariablesType type,
       Path propertiesFilePath, IdeLogger logger) {
 
     super(parent, logger);
@@ -190,21 +189,19 @@ final class EnvironmentVariablesPropertiesFile extends EnvironmentVariablesMap {
   }
 
   @Override
-  public void collectVariables(Map<String, String> map) {
+  protected void collectVariables(Set<String> variableNames) {
 
-    for (Entry<String, String> entry : this.variables.entrySet()) {
-      String key = entry.getKey();
-      if (!map.containsKey(key)) {
-        boolean export = this.exportedVariables.contains(key);
-        String value = entry.getValue();
-        if (value != null) {
-          // TODO convert to unix path if called from bash on windows...
-          VariableLine line = VariableLine.of(export, key, value);
-          map.put(key, line.toString());
-        }
-      }
+    variableNames.addAll(this.variables.keySet());
+    super.collectVariables(variableNames);
+  }
+
+  @Override
+  protected boolean isExported(String name) {
+
+    if (this.exportedVariables.contains(name)) {
+      return true;
     }
-    super.collectVariables(map);
+    return super.isExported(name);
   }
 
   @Override

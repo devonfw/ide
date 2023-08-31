@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import com.devonfw.tools.ide.log.IdeLogger;
 
@@ -258,7 +258,9 @@ public abstract class VariableLine {
           name = line.substring(start, end).trim();
         }
         String value = line.substring(end + 1).trim();
-        if (value.startsWith("\"") && value.endsWith("\"")) {
+        if (value.isEmpty()) {
+          value = null;
+        } else if (value.startsWith("\"") && value.endsWith("\"")) {
           value = value.substring(1, value.length() - 1);
         }
         return new Variable(export, name, value, line);

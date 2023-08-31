@@ -1,7 +1,8 @@
 package com.devonfw.tools.ide.commandlet;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+
+import com.devonfw.tools.ide.environment.VariableLine;
 
 import picocli.CommandLine;
 
@@ -16,10 +17,9 @@ public final class EnvironmentCommand extends Commandlet {
   @Override
   public void run() {
 
-    Map<String, String> map = new HashMap<>();
-    context().env().getVariables().collectVariables(map);
-    for (String line : map.values()) {
-      context().info(line);
+    Collection<VariableLine> variables = context().getVariables().collectVariables();
+    for (VariableLine line : variables) {
+      context().info(line.toString());
     }
   }
 }

@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.util.Map;
 
@@ -15,7 +15,7 @@ abstract class EnvironmentVariablesMap extends AbstractEnvironmentVariables {
    * @param parent the parent {@link EnvironmentVariables} to inherit from.
    * @param logger the {@link IdeLogger}.
    */
-  EnvironmentVariablesMap(EnvironmentVariables parent, IdeLogger logger) {
+  EnvironmentVariablesMap(AbstractEnvironmentVariables parent, IdeLogger logger) {
 
     super(parent, logger);
   }
