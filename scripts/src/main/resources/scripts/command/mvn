@@ -123,7 +123,7 @@ function doGetProjectVersion() {
   fi
   if [[ ! "${maven_project_version}" =~ ^[-_.0-9a-zA-Z]+$ ]]
   then
-    doFail "Cound not determine project version at ${PWD} - got version output:\n${maven_project_version}"
+    doFail "Could not determine project version at ${PWD} - got version output:\n${maven_project_version}"
   fi
   echo "${maven_project_version}"
 }
