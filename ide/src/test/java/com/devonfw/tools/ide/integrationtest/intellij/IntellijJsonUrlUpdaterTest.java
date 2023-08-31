@@ -19,7 +19,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
  * Test class for integrations of the {@link IntellijUrlUpdater}
  */
 @WireMockTest(httpPort = 8080)
-public class IntellijJsonUrlUpdaterIT extends Assertions {
+public class IntellijJsonUrlUpdaterTest extends Assertions {
 
   /**
    * Test resource location

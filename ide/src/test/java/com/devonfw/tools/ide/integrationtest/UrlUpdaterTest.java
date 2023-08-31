@@ -9,13 +9,12 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 
 @WireMockTest(httpPort = 8080)
-public class UrlUpdaterIT extends Assertions {
+public class UrlUpdaterTest extends Assertions {
 
   /**
    * Test resource location
