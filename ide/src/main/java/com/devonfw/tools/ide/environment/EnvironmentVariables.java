@@ -1,9 +1,9 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Locale;
-import java.util.Map;
 
 import com.devonfw.tools.ide.log.IdeLogger;
 import com.devonfw.tools.ide.version.VersionIdentifier;
@@ -73,14 +73,14 @@ public interface EnvironmentVariables {
   /**
    * @param tool the name of the tool (e.g. "java").
    * @return the {@link VersionIdentifier} with the version of the tool to use. Will be
-   *         {@link VersionIdentifier#VERSION_LATEST} if undefined.
+   *         {@link VersionIdentifier#LATEST} if undefined.
    */
   default VersionIdentifier getToolVersion(String tool) {
 
     String variable = getToolVersionVariable(tool);
     String value = get(variable);
     if (value == null) {
-      return VersionIdentifier.VERSION_LATEST;
+      return VersionIdentifier.LATEST;
     }
     return VersionIdentifier.of(value);
   }
@@ -129,7 +129,7 @@ public interface EnvironmentVariables {
   }
 
   /**
-   * @param name the {@link com.devonfw.tools.ide.env.var.def.VariableDefinition#getName() name} of the variable to set.
+   * @param name the {@link com.devonfw.tools.ide.variable.VariableDefinition#getName() name} of the variable to set.
    * @param value the new {@link #get(String) value} of the variable to set. May be {@code null} to unset the variable.
    * @param export - {@code true} if the variable needs to be exported, {@code false} otherwise.
    * @return the old variable value.
@@ -147,7 +147,7 @@ public interface EnvironmentVariables {
   }
 
   /**
-   * @param name the {@link com.devonfw.tools.ide.env.var.def.VariableDefinition#getName() name} of the variable to
+   * @param name the {@link com.devonfw.tools.ide.variable.VariableDefinition#getName() name} of the variable to
    *        search for.
    * @return the closest {@link EnvironmentVariables} instance that defines the variable with the given {@code name} or
    *         {@code null} if the variable is not defined.
@@ -167,16 +167,10 @@ public interface EnvironmentVariables {
   }
 
   /**
-   * @param map the {@link Map} where to collect the variables. ATTENTION: The {@link Map} will map from variable name
-   *        to the variable declaration line (e.g. "export MAVEN_OPTS=-Xmx2048m") and NOT to the variable value.
+   * @return the {@link Collection} of the {@link VariableLine}s defined by this {@link EnvironmentVariables} including
+   *         inheritance.
    */
-  default void collectVariables(Map<String, String> map) {
-
-    EnvironmentVariables parent = getParent();
-    if (parent != null) {
-      parent.collectVariables(map);
-    }
-  }
+  Collection<VariableLine> collectVariables();
 
   /**
    * @param logger the {@link IdeLogger}.

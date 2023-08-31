@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var.def;
+package com.devonfw.tools.ide.variable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.env.var.VariableLine;
+import com.devonfw.tools.ide.environment.VariableLine;
 
 /**
  * Implementation of {@link VariableDefinition} for a variable with the {@link #getValueType() value type}

@@ -1,5 +1,6 @@
 package com.devonfw.tools.ide.context;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -8,15 +9,14 @@ import org.assertj.core.api.Condition;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
 
-import com.devonfw.tools.ide.env.Environment;
-import com.devonfw.tools.ide.env.var.EnvironmentVariables;
-import com.devonfw.tools.ide.env.var.EnvironmentVariablesType;
-import com.devonfw.tools.ide.env.var.def.IdeVariables;
+import com.devonfw.tools.ide.environment.EnvironmentVariables;
+import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.log.IdeTestLogger;
+import com.devonfw.tools.ide.variable.IdeVariables;
 
 /**
- * Integration test of {@link IdeContext} including {@link Environment}.
+ * Integration test of {@link IdeContext}.
  */
 @SuppressWarnings("javadoc")
 public class IdeContextTest extends Assertions {
@@ -26,7 +26,7 @@ public class IdeContextTest extends Assertions {
   private IdeContext newContext(String path) {
 
     Path userDir = PATH_PROJECTS.resolve(path);
-    return new IdeTestContext(userDir, null, null, "home");
+    return new IdeTestContext(userDir);
   }
 
   protected void assertLogMessage(IdeContext context, IdeLogLevel level, String message) {
@@ -62,21 +62,26 @@ public class IdeContextTest extends Assertions {
     // act
     IdeContext context = newContext(path);
     // assert
-    assertThat(context.env().getWorkspaceName()).isEqualTo("foo-test");
+    assertThat(context.getWorkspaceName()).isEqualTo("foo-test");
     assertThat(IdeVariables.DOCKER_EDITION.get(context)).isEqualTo("docker");
-    EnvironmentVariables variables = context.env().getVariables();
+    EnvironmentVariables variables = context.getVariables();
     assertThat(variables.get("FOO")).isEqualTo("foo-bar-some-${UNDEFINED}");
     assertLogMessage(context, IdeLogLevel.WARNING,
         "Undefined variable UNDEFINED in 'SOME=some-${UNDEFINED}' for root 'FOO=foo-${BAR}'");
-    assertThat(context.env().getIdeHome().resolve("readme")).hasContent("this is the IDE_HOME directory");
-    assertThat(context.env().getIdeRoot().resolve("readme")).hasContent("this is the IDE_ROOT directory");
-    assertThat(context.env().getUserHome().resolve("readme")).hasContent("this is the users HOME directory");
-    assertThat(variables.getPath("M2_REPO")).isEqualTo(context.env().getUserHome().resolve(".m2/repository"));
-    assertThat(context.env().getDownloadCache().resolve("readme")).hasContent("this is the download cache");
-    assertThat(context.env().getDownloadMetadata().resolve("readme")).hasContent("this is the download metadata");
-    assertThat(context.env().getToolRepository().resolve("readme")).hasContent("this is the tool repository");
-    assertThat(context.env().getWorkspacePath().resolve("readme"))
-        .hasContent("this is the foo-test workspace of basic");
+    assertThat(context.getIdeHome().resolve("readme")).hasContent("this is the IDE_HOME directory");
+    assertThat(context.getIdeRoot().resolve("readme")).hasContent("this is the IDE_ROOT directory");
+    assertThat(context.getUserHome().resolve("readme")).hasContent("this is the users HOME directory");
+    assertThat(variables.getPath("M2_REPO")).isEqualTo(context.getUserHome().resolve(".m2/repository"));
+    assertThat(context.getDownloadPath().resolve("readme")).hasContent("this is the download cache");
+    assertThat(context.getUrlsPath().resolve("readme")).hasContent("this is the download metadata");
+    assertThat(context.getToolRepository().resolve("readme")).hasContent("this is the tool repository");
+    assertThat(context.getWorkspacePath().resolve("readme")).hasContent("this is the foo-test workspace of basic");
+    String systemPath = IdeVariables.PATH.get(context);
+    assertThat(systemPath).isEqualTo(context.getPath()).isNotEqualTo(System.getenv(IdeVariables.PATH.getName()));
+    String[] pathFolders = systemPath.split(File.pathSeparator);
+    Path softwarePath = context.getSoftwarePath();
+    assertThat(pathFolders).contains(softwarePath.resolve("java/bin").toString(),
+        softwarePath.resolve("mvn/bin").toString());
     assertThat(variables.getType()).isSameAs(EnvironmentVariablesType.RESOLVED);
     assertThat(variables.getByType(EnvironmentVariablesType.RESOLVED)).isSameAs(variables);
     EnvironmentVariables v1 = variables.getParent();

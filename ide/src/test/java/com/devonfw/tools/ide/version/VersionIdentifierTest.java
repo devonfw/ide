@@ -131,7 +131,7 @@ public class VersionIdentifierTest extends Assertions {
   @Test
   public void testMatchStable() {
 
-    VersionIdentifier pattern = VersionIdentifier.VERSION_LATEST;
+    VersionIdentifier pattern = VersionIdentifier.LATEST;
     assertThat(pattern.isValid()).isFalse();
     assertThat(pattern.isPattern()).isTrue();
     assertThat(pattern.matches(VersionIdentifier.of("17"))).isTrue();
