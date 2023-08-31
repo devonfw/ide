@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.nio.file.Path;
 
@@ -22,12 +22,14 @@ class EnvironmentVariablesPropertiesFileTest extends Assertions {
   public void testLoad() {
 
     // arrange
-    EnvironmentVariables parent = null;
+    AbstractEnvironmentVariables parent = null;
+    Path propertiesFilePath = Path.of("src/test/resources/com/devonfw/tools/ide/env/var/devon.properties");
+    EnvironmentVariablesType type = EnvironmentVariablesType.SETTINGS;
     // act
-    EnvironmentVariablesPropertiesFile variables = new EnvironmentVariablesPropertiesFile(parent,
-        EnvironmentVariablesType.SETTINGS, Path.of("src/test/resources/com/devonfw/tools/ide/env/var/devon.properties"),
-        LOGGER);
+    EnvironmentVariablesPropertiesFile variables = new EnvironmentVariablesPropertiesFile(parent, type,
+        propertiesFilePath, LOGGER);
     // assert
+    assertThat(variables.getType()).isSameAs(type);
     assertThat(variables.get("MVN_VERSION")).isEqualTo("3.9.0");
     assertThat(variables.get("IDE_TOOLS")).isEqualTo("mvn, npm");
     assertThat(variables.get("CREATE_START_SCRIPTS")).isEqualTo("eclipse");

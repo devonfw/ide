@@ -1,4 +1,4 @@
-package com.devonfw.tools.ide.env.var;
+package com.devonfw.tools.ide.environment;
 
 import java.util.Map;
 

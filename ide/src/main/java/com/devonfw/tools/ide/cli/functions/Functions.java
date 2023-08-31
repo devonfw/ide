@@ -46,7 +46,7 @@ public class Functions {
 
   public static void doLicenseAgreement() {
 
-    File licenseAgreement = context.env().getUserHomeIde().resolve("license-agreement.txt").toFile();
+    File licenseAgreement = context.getUserHomeIde().resolve("license-agreement.txt").toFile();
     if (!licenseAgreement.exists()) {
       System.out.println();
       logo();
@@ -61,7 +61,7 @@ public class Functions {
       System.out.println("You are solely responsible for all risk implied by using this software.");
       System.out.println("You will be able to find it in one of the following locations:");
       System.out.println("https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc");
-      System.out.println("Also it is included in " + context.env().getIdeHome() + "/devon-ide-doc.pdf");
+      System.out.println("Also it is included in " + context.getIdeHome() + "/devon-ide-doc.pdf");
       System.out.println();
       /*
        * if (!isBatch()) { doOpen("https://github.com/devonfw/ide/blob/master/documentation/LICENSE.asciidoc"); }
@@ -174,7 +174,7 @@ public class Functions {
         tmpFileObj.renameTo(targetFile);
         System.out.println("Download of " + downloadFilename + " from " + url + " succeeded.");
 
-        String DEVON_SOFTWARE_DIR = context.env().getIdeHome().resolve("software").toString();
+        String DEVON_SOFTWARE_DIR = context.getIdeHome().resolve("software").toString();
 
         extract(targetFolder + downloadFilename, DEVON_SOFTWARE_DIR + software);
         createOrUpdateVersionFile(software, version, DEVON_SOFTWARE_DIR + software);
@@ -221,7 +221,7 @@ public class Functions {
     if (version.isEmpty() || version == null) {
       version = getLatestVersion(software, edition);
     }
-    Path urlDirPath = context.env().getIdeRoot().resolve("urls/" + software + "/" + edition + "/" + version);
+    Path urlDirPath = context.getIdeRoot().resolve("urls/" + software + "/" + edition + "/" + version);
     String downloadUrlFile = null;
     try {
       try (Stream<Path> paths = Files.list(urlDirPath)) {
@@ -356,8 +356,8 @@ public class Functions {
 
   public static void updateUrls() {
 
-    String urlsDir = context.env().getDownloadMetadata().toString();
-    String devonUrls = context.env().getVariables().get("DEVON_URLS");
+    String urlsDir = context.getUrlsPath().toString();
+    String devonUrls = context.getVariables().get("DEVON_URLS");
     String gitUrl = ((devonUrls != null) && !devonUrls.isEmpty()) ? devonUrls
         : "https://github.com/devonfw/ide-urls.git";
     gitPullOrClone(urlsDir, gitUrl);
@@ -365,7 +365,7 @@ public class Functions {
 
   public static String getLatestVersion(String software, String edition) {
 
-    Path urlsPath = context.env().getDownloadMetadata();
+    Path urlsPath = context.getUrlsPath();
     Path toolPath = urlsPath.resolve(software);
     Path editionPath = toolPath.resolve(edition);
     if (!Files.exists(editionPath)) {
@@ -492,7 +492,7 @@ public class Functions {
 
   public static void verifyUrlsExistence() {
 
-    Path urlsPath = context.env().getDownloadMetadata();
+    Path urlsPath = context.getUrlsPath();
     if (!Files.exists(urlsPath)) {
       gitPullOrClone(urlsPath.toString(), "https://github.com/devonfw/ide-urls.git");
     }
@@ -504,7 +504,7 @@ public class Functions {
     if (edition == null || edition.isEmpty()) {
       edition = software;
     }
-    Path urlsPath = context.env().getDownloadMetadata();
+    Path urlsPath = context.getUrlsPath();
     if (Files.isDirectory(urlsPath)) {
       updateUrls();
       Path toolPath = urlsPath.resolve(software);
