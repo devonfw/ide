@@ -10,7 +10,7 @@ public class GraalVmOracleUrlUpdater extends GraalVmUrlUpdater {
   @Override
   protected String getEdition() {
 
-    return "oracle";
+    return "graalvm";
   }
   @Override
   protected String getVersionPrefixToRemove() {
@@ -27,5 +27,4 @@ public class GraalVmOracleUrlUpdater extends GraalVmUrlUpdater {
     doAddVersion(urlVersion, baseUrl + "darwin-amd64-${version}.tar.gz", MAC, X64);
     doAddVersion(urlVersion, baseUrl + "darwin-aarch64-${version}.tar.gz", MAC, ARM64);
   }
-
 }
