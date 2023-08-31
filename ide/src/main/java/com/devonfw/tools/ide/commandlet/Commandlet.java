@@ -2,6 +2,7 @@ package com.devonfw.tools.ide.commandlet;
 
 import java.util.concurrent.Callable;
 
+import com.devonfw.tools.ide.cli.functions.Functions;
 import com.devonfw.tools.ide.context.IdeContext;
 import com.devonfw.tools.ide.context.IdeContextConsole;
 import com.devonfw.tools.ide.log.IdeLogLevel;
@@ -30,6 +31,7 @@ public abstract class Commandlet implements Callable<Integer> {
 
     if (this.context == null) {
       this.context = ideContext;
+      Functions.init(ideContext);
     } else {
       throw new IllegalStateException("Context is already initialized!");
     }
@@ -43,6 +45,7 @@ public abstract class Commandlet implements Callable<Integer> {
     if (this.context == null) {
       this.context = new IdeContextConsole(IdeLogLevel.INFO, null, false);
       this.context.warning("context was not set");
+      Functions.init(this.context);
     }
     return this.context;
   }
