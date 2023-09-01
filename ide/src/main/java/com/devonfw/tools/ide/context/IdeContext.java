@@ -4,6 +4,7 @@ import java.nio.file.Path;
 
 import com.devonfw.tools.ide.cli.CliAbortException;
 import com.devonfw.tools.ide.cli.CliException;
+import com.devonfw.tools.ide.common.SystemInfo;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.log.IdeLogger;
@@ -121,6 +122,11 @@ public interface IdeContext extends IdeLogger {
       throw new CliException("You are offline but Internet access is required for " + purpose, 23);
     }
   }
+
+  /**
+   * @return the {@link SystemInfo}.
+   */
+  SystemInfo getSystemInfo();
 
   /**
    * @return the {@link EnvironmentVariables} with full inheritance.

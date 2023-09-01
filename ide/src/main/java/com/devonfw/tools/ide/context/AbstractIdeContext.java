@@ -15,6 +15,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.devonfw.tools.ide.common.SystemInfo;
+import com.devonfw.tools.ide.common.SystemInfoImpl;
 import com.devonfw.tools.ide.environment.AbstractEnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
@@ -61,6 +63,8 @@ public abstract class AbstractIdeContext implements IdeContext {
 
   private final String path;
 
+  private final SystemInfo systemInfo;
+
   private final EnvironmentVariables variables;
 
   private boolean offlineMode;
@@ -93,6 +97,7 @@ public abstract class AbstractIdeContext implements IdeContext {
       }
       this.loggers.put(level, logger);
     }
+    this.systemInfo = new SystemInfoImpl();
     String workspace = WORKSPACE_MAIN;
     if (userDir == null) {
       userDir = Paths.get(System.getProperty("user.dir"));
@@ -263,7 +268,12 @@ public abstract class AbstractIdeContext implements IdeContext {
       debug("Configuration directory {} does not exist.", propertiesPath);
     }
     return envVariables.extend(propertiesFile, type);
+  }
 
+  @Override
+  public SystemInfo getSystemInfo() {
+
+    return this.systemInfo;
   }
 
   @Override
