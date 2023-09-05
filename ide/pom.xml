@@ -32,6 +32,12 @@
       <artifactId>picocli</artifactId>
       <version>${picocli.version}</version>
     </dependency>
+    <!-- unpack tar, gzip, bzip2 -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.23.0</version>
+    </dependency>
     <!-- JSON and XML support -->
     <dependency>
       <groupId>javax.json</groupId>

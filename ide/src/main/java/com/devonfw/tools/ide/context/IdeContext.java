@@ -4,9 +4,11 @@ import java.nio.file.Path;
 
 import com.devonfw.tools.ide.cli.CliAbortException;
 import com.devonfw.tools.ide.cli.CliException;
+import com.devonfw.tools.ide.commandlet.CommandletManager;
 import com.devonfw.tools.ide.common.SystemInfo;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
+import com.devonfw.tools.ide.io.FileAccess;
 import com.devonfw.tools.ide.log.IdeLogger;
 import com.devonfw.tools.ide.process.ProcessContext;
 import com.devonfw.tools.ide.url.model.UrlMetadata;
@@ -15,7 +17,7 @@ import com.devonfw.tools.ide.variable.IdeVariables;
 /**
  * Interface for interaction with the user allowing to input and output information.
  */
-public interface IdeContext extends IdeLogger {
+public interface IdeContext extends IdeLogger, CommandletManager {
 
   /** The name of the workspaces folder. */
   String FOLDER_WORKSPACES = "workspaces";
@@ -34,6 +36,21 @@ public interface IdeContext extends IdeLogger {
    * prevent effects like OS hiding, maven filtering, .gitignore, etc.).
    */
   String FOLDER_IDE = "_ide";
+
+  /** The name of the updates folder for temporary data and backup. */
+  String FOLDER_UPDATES = "updates";
+
+  /** The name of the volume folder for mounting archives like *.dmg. */
+  String FOLDER_VOLUME = "volume";
+
+  /** The name of the backups folder for backup. */
+  String FOLDER_BACKUPS = "backups";
+
+  /** The file where the installed software version is written to as plain text. */
+  String FILE_SOFTWARE_VERSION = ".ide.software.version";
+
+  /** The file where the installed software version is written to as plain text. */
+  String FILE_LEGACY_SOFTWARE_VERSION = ".devon.software.version";
 
   /** The default for {@link #getWorkspaceName()}. */
   String WORKSPACE_MAIN = "main";
@@ -134,6 +151,11 @@ public interface IdeContext extends IdeLogger {
   EnvironmentVariables getVariables();
 
   /**
+   * @return the {@link FileAccess}.
+   */
+  FileAccess getFileAccess();
+
+  /**
    * @return the {@link Path} to the IDE instance directory. You can have as many IDE instances on the same computer as
    *         independent tenants for different isolated projects.
    * @see com.devonfw.tools.ide.variable.IdeVariables#IDE_HOME
@@ -148,6 +170,12 @@ public interface IdeContext extends IdeLogger {
    * @see com.devonfw.tools.ide.variable.IdeVariables#IDE_ROOT
    */
   Path getIdeRoot();
+
+  /**
+   * @return the {@link Path} for the temporary directory to use. May be different from the OS specific temporary
+   *         directory (java.io.tmpDir).
+   */
+  Path getTempPath();
 
   /**
    * @return the {@link Path} to the download metadata (ide-urls). Here a git repository is cloned and updated (pulled)
@@ -241,13 +269,5 @@ public interface IdeContext extends IdeLogger {
    * @return a new {@link ProcessContext} to {@link ProcessContext#run(String...) run} external commands.
    */
   ProcessContext newProcess();
-
-  /**
-   * Creates the entire {@link Path} as directories if not already existing.
-   *
-   * @param directory the {@link Path} to
-   *        {@link java.nio.file.Files#createDirectories(Path, java.nio.file.attribute.FileAttribute...) create}.
-   */
-  void mkdirs(Path directory);
 
 }

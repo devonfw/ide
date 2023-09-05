@@ -1,6 +1,9 @@
 package com.devonfw.tools.ide.integrationtest;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +19,12 @@ import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.devonfw.tools.ide.url.updater.UrlUpdater;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
+/**
+ * Test of {@link UrlUpdater} using wiremock to simulate network downloads.
+ */
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends Assertions {
 

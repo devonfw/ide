@@ -6,13 +6,11 @@ import com.devonfw.tools.ide.environment.VariableLine;
 
 import picocli.CommandLine;
 
+/**
+ * {@link Commandlet} to print the environment variables.
+ */
 @CommandLine.Command(name = "env", description = "This command prints out the devonfw-ide environment variables")
 public final class EnvironmentCommand extends Commandlet {
-
-  private EnvironmentCommand() {
-
-    super();
-  }
 
   @Override
   public void run() {
