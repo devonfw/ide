@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.devonfw.tools.ide.cli.CliException;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
@@ -45,9 +46,6 @@ public class UrlMetadata {
 
     UrlTool urlTool = this.repository.getOrCreateChild(tool);
     UrlEdition urlEdition = urlTool.getOrCreateChild(edition);
-    if (urlEdition.getChildCount() == 0) {
-      AbstractUrlArtifact.load(urlEdition);
-    }
     return urlEdition;
   }
 
@@ -67,6 +65,7 @@ public class UrlMetadata {
 
     List<VersionIdentifier> list = new ArrayList<>();
     UrlEdition urlEdition = getEdition(tool, edition);
+    urlEdition.load(false);
     for (UrlVersion urlVersion : urlEdition.getChildren()) {
       VersionIdentifier versionIdentifier = urlVersion.getVersionIdentifier();
       list.add(versionIdentifier);
@@ -96,8 +95,24 @@ public class UrlMetadata {
         return vi;
       }
     }
-    throw new CliException("Could not find any version matching '" + version + "' for tool '" + tool + "' and edition '"
-        + edition + "' - potentially there are " + versions.size() + " version(s) available but none matched!");
+    throw new CliException("Could not find any version matching '" + version + "' for tool '" + tool
+        + "' - potentially there are " + versions.size() + " version(s) available in "
+        + getEdition(tool, edition).getPath() + " but none matched!");
+  }
+
+  /**
+   * @param tool the name of the {@link UrlTool}.
+   * @param edition the name of the {@link UrlEdition}.
+   * @param version the {@link VersionIdentifier} to match. May be a {@link VersionIdentifier#isPattern() pattern}, a
+   *        specific version or {@code null} for the latest version.
+   * @return the latest matching {@link UrlVersion} for the given {@code tool} and {@code edition}.
+   */
+  public UrlVersion getVersionFolder(String tool, String edition, VersionIdentifier version) {
+
+    VersionIdentifier resolvedVersion = getVersion(tool, edition, version);
+    UrlVersion urlVersion = getEdition(tool, edition).getChild(resolvedVersion.toString());
+    Objects.requireNonNull(urlVersion);
+    return urlVersion;
   }
 
 }

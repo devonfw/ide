@@ -45,12 +45,14 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   @Override
   public int getChildCount() {
 
+    load(false);
     return this.childMap.size();
   }
 
   @Override
   public C getChild(String name) {
 
+    load(false);
     return this.childMap.get(name);
   }
 
@@ -63,6 +65,7 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   @Override
   public Collection<C> getChildren() {
 
+    load(false);
     return this.children;
   }
 
@@ -86,17 +89,22 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
   }
 
   @Override
-  protected void load() {
+  public void load(boolean recursive) {
 
-    Path path = getPath();
-    try (Stream<Path> childStream = Files.list(path)) {
-      childStream.forEach(this::loadChild);
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to list children of directory " + path, e);
+    if (!this.loaded) {
+      Path path = getPath();
+      if (Files.isDirectory(path)) {
+        try (Stream<Path> childStream = Files.list(path)) {
+          childStream.forEach(c -> loadChild(c, recursive));
+        } catch (IOException e) {
+          throw new IllegalStateException("Failed to list children of directory " + path, e);
+        }
+      }
+      this.loaded = true;
     }
   }
 
-  private void loadChild(Path childPath) {
+  private void loadChild(Path childPath, boolean recursive) {
 
     String name = childPath.getFileName().toString();
     if (name.startsWith(".")) {
@@ -105,7 +113,9 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
     boolean folder = Files.isDirectory(childPath);
     if (isAllowedChild(name, folder)) {
       C child = getOrCreateChild(name);
-      load(child);
+      if (recursive) {
+        child.load(recursive);
+      }
     }
   }
 

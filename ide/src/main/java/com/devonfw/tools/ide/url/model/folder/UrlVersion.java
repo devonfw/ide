@@ -52,9 +52,9 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
 
   /**
    * @param os the optional {@link OperatingSystem}.
-   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @param arch the optional {@link SystemArchitecture}.
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls". Will be created if it does not
-   *     exist.
+   *         exist.
    */
   public UrlDownloadFile getOrCreateUrls(OperatingSystem os, SystemArchitecture arch) {
 
@@ -71,7 +71,16 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
 
   /**
    * @param os the optional {@link OperatingSystem}.
-   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @return the {@link UrlDownloadFile} {@link #getName() named} "«os».urls".
+   */
+  public UrlDownloadFile getUrls(OperatingSystem os) {
+
+    return getUrls(os, null);
+  }
+
+  /**
+   * @param os the optional {@link OperatingSystem}.
+   * @param arch the optional {@link SystemArchitecture}.
    * @return the {@link UrlDownloadFile} {@link #getName() named} "«os»_«arch».urls".
    */
   public UrlDownloadFile getUrls(OperatingSystem os, SystemArchitecture arch) {
@@ -80,8 +89,39 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   }
 
   /**
+   * Finds the existing {@link UrlDownloadFile} child matching the given {@link OperatingSystem} and
+   * {@link SystemArchitecture} of the current machine.
+   *
+   * @param os the current {@link OperatingSystem}.
+   * @param arch the current {@link SystemArchitecture}.
+   * @return the matching {@link UrlDownloadFile}.
+   */
+  public UrlDownloadFile getMatchingUrls(OperatingSystem os, SystemArchitecture arch) {
+
+    Objects.requireNonNull(os);
+    Objects.requireNonNull(arch);
+    UrlDownloadFile urls = getUrls(os, arch);
+    if (urls == null) {
+      urls = getUrls(os);
+      if (urls == null) {
+        urls = getUrls();
+        if (urls == null) {
+          if ((os == OperatingSystem.MAC) && (arch == SystemArchitecture.ARM64)) {
+            // fallback for MacOS to use x64 using rosetta emulation
+            urls = getUrls(os, SystemArchitecture.X64);
+          }
+          if (urls == null) {
+            throw new IllegalStateException("No download was found for OS " + os + "@" + arch + " in " + getPath());
+          }
+        }
+      }
+    }
+    return urls;
+  }
+
+  /**
    * @param os the optional {@link OperatingSystem}.
-   * @param arch the architecture (e.g. "x64" or "arm64").
+   * @param arch the optional {@link SystemArchitecture}.
    * @return String of the format "«os»_«arch».urls".
    */
   public static String getUrlsFileName(OperatingSystem os, SystemArchitecture arch) {
@@ -115,7 +155,8 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
    * @param urlsFilename the {@link #getName() filename} of the URLs file.
    * @return String of {@link #getName() filename} of the URLs file with added extension.
    */
-  public String getChecksumFilename(String urlsFilename){
+  public String getChecksumFilename(String urlsFilename) {
+
     return urlsFilename + UrlChecksum.EXTENSION;
   }
 

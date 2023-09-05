@@ -1,5 +1,7 @@
 package com.devonfw.tools.ide.url.model.file;
 
+import java.nio.file.Files;
+
 import com.devonfw.tools.ide.url.model.AbstractUrlArtifactWithParent;
 import com.devonfw.tools.ide.url.model.folder.AbstractUrlFolder;
 import com.devonfw.tools.ide.url.model.folder.UrlFolder;
@@ -30,16 +32,21 @@ public abstract class AbstractUrlFile<P extends AbstractUrlFolder<?>> extends Ab
   }
 
   @Override
-  protected void load() {
+  public void load(boolean recursive) {
 
-    doLoad();
-    this.modified = false;
+    if (!this.loaded) {
+      if (Files.exists(getPath())) {
+        doLoad();
+      }
+      this.loaded = true;
+      this.modified = false;
+    }
   }
 
   /**
    * Performs the actual loading.
    *
-   * @see #load()
+   * @see #load(boolean)
    */
   protected abstract void doLoad();
 
