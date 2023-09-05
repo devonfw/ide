@@ -28,6 +28,7 @@ public class DockerDesktopUrlUpdater extends WebsiteUrlUpdater {
     String version = urlVersion.getName().replaceAll("\\.", "");
     // get Code for version
     String body = doGetResponseBodyAsString("https://docs.docker.com/desktop/release-notes/");
+                  // 1......2.........3...................4.....5.....................................6..............7...
     String regex = "href=#"+version+".{8,12}(\r\n|\r|\n).{0,350}href=https://desktop\\.docker\\.com.*?(\\d{5,6}).*\\.exe";
     Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
     Matcher matcher = pattern.matcher(body);
