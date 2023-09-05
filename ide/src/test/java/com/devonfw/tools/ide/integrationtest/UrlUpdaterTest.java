@@ -22,13 +22,11 @@ import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
+/**
+ * Test of {@link com.devonfw.tools.ide.url.model.UrlArtifact} using wiremock to simulate network downloads.
+ */
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends Assertions {
-
-  /**
-   * Test resource location
-   */
-  private final static String testdataRoot = "src/test/resources/integrationtest/UrlUpdater";
 
   /**
    * Tests if the {@link com.devonfw.tools.ide.url.updater.UrlUpdater} can automatically add a missing OS (in this case

@@ -4,18 +4,15 @@ import com.devonfw.tools.ide.commandlet.ToolCommandlet;
 
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "gh",
-        description = "This is gh commandlet"
-)
+/**
+ * {@link ToolCommandlet} for github CLI (gh).
+ */
+@CommandLine.Command(name = "gh", description = "This is gh commandlet")
 public class Gh extends ToolCommandlet {
-    @Override
-    protected String getTool() {
-        return "gh";
-    }
+  @Override
+  protected String getTool() {
 
-    @Override
-    protected void startTool() {
-
-    }
+    return "gh";
+  }
 
 }

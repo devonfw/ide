@@ -28,4 +28,17 @@ public interface UrlArtifact {
    * @return name the file-name of this {@link AbstractUrlArtifact}.
    */
   String getName();
+
+  /**
+   * Loads this artifact from the disc.
+   *
+   * @param recursive - {@code true} to recursively load the children, {@code false} otherwise (just load the file ).
+   */
+  void load(boolean recursive);
+
+  /**
+   * Saves this artifact to the disc. Will recursively save its children. Unchanged files remain untouched.
+   */
+  void save();
+
 }
