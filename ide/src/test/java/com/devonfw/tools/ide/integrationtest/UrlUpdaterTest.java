@@ -1,13 +1,6 @@
 package com.devonfw.tools.ide.integrationtest;
 
-import com.devonfw.tools.ide.json.mapping.JsonMapping;
-import com.devonfw.tools.ide.url.model.file.json.StatusJson;
-import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,8 +8,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import com.devonfw.tools.ide.json.mapping.JsonMapping;
+import com.devonfw.tools.ide.url.model.file.json.StatusJson;
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends Assertions {
@@ -68,10 +68,11 @@ public class UrlUpdaterTest extends Assertions {
     assertThat(versionsPath.resolve("linux_x64.urls.sha256")).exists();
 
   }
+
   @Test
   public void testUrlUpdaterIsNotUpdatingWhenStatusManualIsTrue(@TempDir Path tempDir) throws IOException {
 
-   //arrange
+    // arrange
     stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
@@ -81,11 +82,12 @@ public class UrlUpdaterTest extends Assertions {
     updater.update(urlRepository);
     Path versionsPath = Paths.get(testdataRoot).resolve("mocked").resolve("mocked").resolve("1.0");
 
-    //assert
+    // assert
     assertThat(versionsPath.resolve("windows_x64.urls")).doesNotExist();
     assertThat(versionsPath.resolve("windows_x64.urls.sha256")).doesNotExist();
 
   }
+
   private static StatusJson getStatusJson(Path versionsPath) {
 
     ObjectMapper MAPPER = JsonMapping.create();
