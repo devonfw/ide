@@ -9,10 +9,10 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
-          ref: 'feature/native-release'
+          ref: 'feature/natives-release'
       - uses: graalvm/setup-graalvm@v1
         with:
           java-version: '17.0.7'
