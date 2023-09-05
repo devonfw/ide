@@ -39,9 +39,21 @@ public interface ProcessContext {
   int run(String... command);
 
   /**
+   * @param commands the list of commands to run.
+   * @return the exit code. Will be {@link #SUCCESS} on successful completion of the {@link Process}.
+   */
+  int run(List<String> commands);
+
+  /**
    * @param command the command to run.
    * @return a {@link List} with the standard output of the command, line by line.
    */
   List<String> runAndGetStdOut(String... command);
+
+  /**
+   * @param commands the list of commands to run.
+   * @return a {@link List} with the standard output of the command, line by line.
+   */
+  List<String> runAndGetStdOut(List<String> commands);
 
 }
