@@ -30,16 +30,19 @@ public abstract class AbstractUrlFile<P extends AbstractUrlFolder<?>> extends Ab
   }
 
   @Override
-  protected void load() {
+  public void load(boolean recursive) {
 
-    doLoad();
-    this.modified = false;
+    if (!this.loaded) {
+      doLoad();
+      this.loaded = true;
+      this.modified = false;
+    }
   }
 
   /**
    * Performs the actual loading.
    *
-   * @see #load()
+   * @see #load(boolean)
    */
   protected abstract void doLoad();
 

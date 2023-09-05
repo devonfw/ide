@@ -11,6 +11,9 @@ public abstract class AbstractUrlArtifact implements UrlArtifact {
 
   private final String name;
 
+  /** {@code true} if already {@link #load(boolean) loaded}, {@code false} otherwise. */
+  protected boolean loaded;
+
   /**
    * The constructor.
    *
@@ -35,36 +38,6 @@ public abstract class AbstractUrlArtifact implements UrlArtifact {
 
     return this.name;
   }
-
-  /**
-   * Loads this artifact from the disc. Will recursively initialized its children.
-   */
-  protected abstract void load();
-
-  /**
-   * Grants visibility access to {@link AbstractUrlArtifact#load() load} for sub-classes in sub-packages.
-   *
-   * @param artefact the {@link UrlArtifact} to {@link AbstractUrlArtifact#load() load}.
-   */
-  protected static void load(UrlArtifact artefact) {
-
-    load((AbstractUrlArtifact) artefact);
-  }
-
-  /**
-   * Grants visibility access to {@link AbstractUrlArtifact#load() load} for sub-classes in sub-packages.
-   *
-   * @param artefact the {@link AbstractUrlArtifact} to {@link AbstractUrlArtifact#load() load}.
-   */
-  protected static void load(AbstractUrlArtifact artefact) {
-
-    artefact.load();
-  }
-
-  /**
-   * Saves this artifact to the disc. Will recursively save its children. Unchanged files remain untouched.
-   */
-  public abstract void save();
 
   @Override
   public String toString() {

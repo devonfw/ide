@@ -25,7 +25,7 @@ public class UrlRepository extends AbstractUrlFolder<UrlTool> {
   public static UrlRepository load(Path path) {
 
     UrlRepository repository = new UrlRepository(path);
-    repository.load();
+    repository.load(true);
     return repository;
   }
 

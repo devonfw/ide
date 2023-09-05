@@ -37,6 +37,7 @@ public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
    */
   public String getChecksum() {
 
+    load(false);
     return this.checksum;
   }
 
@@ -53,7 +54,7 @@ public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
 
     Path path = getPath();
     try {
-      String cs = Files.readString(path);
+      String cs = Files.readString(path).trim();
       setChecksum(cs);
     } catch (IOException e) {
       throw new IllegalStateException("Failed to load file " + path, e);
