@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
-import com.devonfw.tools.ide.url.updater.docker.DockerDesktopUrlUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +13,7 @@ import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
 import com.devonfw.tools.ide.url.updater.aws.AwsUrlUpdater;
 import com.devonfw.tools.ide.url.updater.az.AzureUrlUpdater;
 import com.devonfw.tools.ide.url.updater.cobigen.CobigenUrlUpdater;
+import com.devonfw.tools.ide.url.updater.docker.DockerDesktopUrlUpdater;
 import com.devonfw.tools.ide.url.updater.docker.DockerRancherDesktopUrlUpdater;
 import com.devonfw.tools.ide.url.updater.dotnet.DotNetUrlUpdater;
 import com.devonfw.tools.ide.url.updater.eclipse.EclipseCppUrlUpdater;
