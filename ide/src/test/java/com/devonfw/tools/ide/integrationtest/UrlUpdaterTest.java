@@ -18,8 +18,8 @@ import org.junit.jupiter.api.io.TempDir;
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.devonfw.tools.ide.url.updater.UrlUpdater;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 /**
