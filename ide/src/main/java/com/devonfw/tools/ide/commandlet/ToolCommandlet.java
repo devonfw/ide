@@ -107,11 +107,8 @@ public abstract class ToolCommandlet extends Commandlet {
     if (binary == null) {
       throw new IllegalStateException("Could not find executable binary for " + getTool() + " in " + binPath);
     }
-    ProcessContext pc = context().newProcess();
-    String[] cmd = new String[args.length + 1];
-    cmd[0] = binary.toString();
-    System.arraycopy(args, 0, cmd, 1, args.length);
-    pc.run(cmd);
+    ProcessContext pc = context().newProcess().executable(binary).addArgs(args);
+    pc.run();
   }
 
   private boolean isBinary(Path path) {
