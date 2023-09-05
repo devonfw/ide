@@ -1,5 +1,5 @@
 name: GraalVM Native Image builds
-on: workflow_dispatch
+on: push
 jobs:
   build:
     name: Build native images
@@ -20,11 +20,7 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
-        run: mvn -B -ntp -Pnative package 
-          
-      - name: Deploy to OSSRH nexus
-        env:
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-        run: mvn --settings .mvn/settings.xml -DskipTests=true -Darchetype.test.skip=true -Dmaven.install.skip=true -Dstyle.color=always -Dclassifier=${{ runner.os }} -B -ntp deploy
-      
+        run: |
+          mvn -B -ntp -Pnative package
+          ls -l
+          cd target
