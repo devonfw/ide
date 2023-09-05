@@ -185,6 +185,9 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
    */
   public static VersionIdentifier of(String version) {
 
+    if (version.equals("latest")) {
+      return VersionIdentifier.LATEST;
+    }
     return new VersionIdentifier(VersionSegment.of(version));
   }
 

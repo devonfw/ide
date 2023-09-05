@@ -24,7 +24,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
  * Test class for integrations of the {@link IntellijUrlUpdater}
  */
 @WireMockTest(httpPort = 8080)
-public class IntellijJsonUrlUpdaterIT extends Assertions {
+public class IntellijJsonUrlUpdaterTest extends Assertions {
 
   /**
    * Test resource location
@@ -87,7 +87,7 @@ public class IntellijJsonUrlUpdaterIT extends Assertions {
     // when
     updater.update(urlRepository);
 
-    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("community").resolve("2023.1.3");
+    Path intellijVersionsPath = tempDir.resolve("intellij").resolve("intellij").resolve("2023.1.3");
 
     // then
     assertThat(intellijVersionsPath).doesNotExist();

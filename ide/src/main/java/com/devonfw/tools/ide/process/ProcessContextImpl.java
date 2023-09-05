@@ -57,6 +57,12 @@ public final class ProcessContextImpl implements ProcessContext {
   }
 
   @Override
+  public int run(List<String> commands) {
+
+    return runCommand(null, commands);
+  }
+
+  @Override
   public List<String> runAndGetStdOut(String... command) {
 
     List<String> out = new ArrayList<>();
@@ -64,16 +70,40 @@ public final class ProcessContextImpl implements ProcessContext {
     return out;
   }
 
+  @Override
+  public List<String> runAndGetStdOut(List<String> command) {
+
+    List<String> out = new ArrayList<>();
+    runCommand(out, command);
+    return out;
+  }
+  
+  private int runCommand(List<String> out, List<String> commands){
+    if ((commands == null) || (commands.isEmpty())) {
+      throw new IllegalArgumentException("Commands must not be empty!");
+    }
+
+    this.processBuilder.command(commands);
+    return processCommand(out, commands.toString());
+  }
+
   private int runCommand(List<String> out, String... command) {
 
     if ((command == null) || (command.length < 1) || command[0].isBlank()) {
       throw new IllegalArgumentException("Command must not be empty!");
     }
+
+    this.processBuilder.command(command);
+    return processCommand(out, command);
+  }
+
+  private int processCommand(List<String> out, String... command) {
+
     if (this.logger.debug().isEnabled()) {
       String message = createCommandMessage(" ...", command);
       this.logger.debug(message);
     }
-    this.processBuilder.command(command);
+
     try {
       if (out == null) {
         this.processBuilder.redirectOutput(Redirect.INHERIT);

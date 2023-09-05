@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Objects;
 
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 
@@ -37,6 +38,7 @@ public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
    */
   public String getChecksum() {
 
+    load(false);
     return this.checksum;
   }
 
@@ -45,7 +47,11 @@ public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
    */
   public void setChecksum(String checksum) {
 
+    if (Objects.equals(this.checksum, checksum)) {
+      return;
+    }
     this.checksum = checksum;
+    this.modified = true;
   }
 
   @Override
@@ -53,7 +59,7 @@ public class UrlChecksum extends AbstractUrlFile<UrlVersion> {
 
     Path path = getPath();
     try {
-      String cs = Files.readString(path);
+      String cs = Files.readString(path).trim();
       setChecksum(cs);
     } catch (IOException e) {
       throw new IllegalStateException("Failed to load file " + path, e);

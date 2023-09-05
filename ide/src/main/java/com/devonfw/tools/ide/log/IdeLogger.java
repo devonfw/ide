@@ -141,6 +141,31 @@ public interface IdeLogger {
   }
 
   /**
+   * @return the {@link #level(IdeLogLevel) logger} for {@link IdeLogLevel#SUCCESS}.
+   */
+  default IdeSubLogger success() {
+
+    return level(IdeLogLevel.SUCCESS);
+  }
+
+  /**
+   * @param message the {@link IdeSubLogger#log(String) message to log} with {@link IdeLogLevel#SUCCESS}.
+   */
+  default void success(String message) {
+
+    success().log(message);
+  }
+
+  /**
+   * @param message the {@link IdeSubLogger#log(String, Object...) message to log} with {@link IdeLogLevel#SUCCESS}.
+   * @param args the dynamic arguments to fill in.
+   */
+  default void success(String message, Object... args) {
+
+    success().log(message, args);
+  }
+
+  /**
    * @return the {@link #level(IdeLogLevel) logger} for {@link IdeLogLevel#WARNING}.
    */
   default IdeSubLogger warning() {

@@ -15,10 +15,17 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.devonfw.tools.ide.commandlet.Commandlet;
+import com.devonfw.tools.ide.commandlet.CommandletManager;
+import com.devonfw.tools.ide.commandlet.CommandletManagerImpl;
+import com.devonfw.tools.ide.common.SystemInfo;
+import com.devonfw.tools.ide.common.SystemInfoImpl;
 import com.devonfw.tools.ide.environment.AbstractEnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.environment.VariableLine;
+import com.devonfw.tools.ide.io.FileAccess;
+import com.devonfw.tools.ide.io.FileAccessImpl;
 import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.log.IdeSubLogger;
 import com.devonfw.tools.ide.log.IdeSubLoggerNone;
@@ -51,6 +58,8 @@ public abstract class AbstractIdeContext implements IdeContext {
 
   private final Path urlsPath;
 
+  private final Path tempPath;
+
   private final Path downloadPath;
 
   private final Path toolRepository;
@@ -61,7 +70,13 @@ public abstract class AbstractIdeContext implements IdeContext {
 
   private final String path;
 
+  private final SystemInfo systemInfo;
+
   private final EnvironmentVariables variables;
+
+  private final FileAccess fileAccess;
+
+  private final CommandletManager commandletManager;
 
   private boolean offlineMode;
 
@@ -93,6 +108,9 @@ public abstract class AbstractIdeContext implements IdeContext {
       }
       this.loggers.put(level, logger);
     }
+    this.systemInfo = new SystemInfoImpl();
+    this.commandletManager = CommandletManagerImpl.of(this);
+    this.fileAccess = new FileAccessImpl(this);
     String workspace = WORKSPACE_MAIN;
     if (userDir == null) {
       userDir = Paths.get(System.getProperty("user.dir"));
@@ -153,10 +171,17 @@ public abstract class AbstractIdeContext implements IdeContext {
     if (this.ideRoot == null) {
       this.toolRepository = null;
       this.urlsPath = null;
+      this.tempPath = null;
     } else {
       Path ideBase = this.ideRoot.resolve(FOLDER_IDE);
       this.toolRepository = ideBase.resolve("software");
       this.urlsPath = ideBase.resolve("urls");
+      this.tempPath = ideBase.resolve("tmp");
+      if (Files.isDirectory(this.tempPath)) {
+        // TODO delete all files older than 1 day here...
+      } else {
+        this.fileAccess.mkdirs(this.tempPath);
+      }
     }
     if (isTest()) {
       // only for testing...
@@ -263,7 +288,24 @@ public abstract class AbstractIdeContext implements IdeContext {
       debug("Configuration directory {} does not exist.", propertiesPath);
     }
     return envVariables.extend(propertiesFile, type);
+  }
 
+  @Override
+  public SystemInfo getSystemInfo() {
+
+    return this.systemInfo;
+  }
+
+  @Override
+  public FileAccess getFileAccess() {
+
+    return this.fileAccess;
+  }
+
+  @Override
+  public <C extends Commandlet> C getCommandlet(Class<C> commandletType) {
+
+    return this.commandletManager.getCommandlet(commandletType);
   }
 
   @Override
@@ -276,6 +318,12 @@ public abstract class AbstractIdeContext implements IdeContext {
   public Path getIdeRoot() {
 
     return this.ideRoot;
+  }
+
+  @Override
+  public Path getTempPath() {
+
+    return this.tempPath;
   }
 
   @Override
@@ -360,16 +408,6 @@ public abstract class AbstractIdeContext implements IdeContext {
       this.urlMetadata = new UrlMetadata(this.urlsPath);
     }
     return this.urlMetadata;
-  }
-
-  @Override
-  public void mkdirs(Path directory) {
-
-    try {
-      Files.createDirectories(directory);
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to create directory " + directory, e);
-    }
   }
 
   @Override
@@ -499,7 +537,7 @@ public abstract class AbstractIdeContext implements IdeContext {
         branch = gitRepoUrl.substring(hashIndex + 1);
         gitRepoUrl = gitRepoUrl.substring(0, hashIndex);
       }
-      mkdirs(target);
+      this.fileAccess.mkdirs(target);
       requireOnline("git clone of " + gitRepoUrl);
       if (isQuietMode()) {
         pc.run("git", "clone", "-q", "--recursive", gitRepoUrl, "--config", "core.autocrlf=false", ".");

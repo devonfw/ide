@@ -15,7 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 
 @WireMockTest(httpPort = 8080)
-public class PythonUrlUpdaterIT extends Assertions {
+public class PythonUrlUpdaterTest extends Assertions {
 
   private final static String testdataRoot = "src/test/resources/integrationtest/PythonJsonUrlUpdater";
 

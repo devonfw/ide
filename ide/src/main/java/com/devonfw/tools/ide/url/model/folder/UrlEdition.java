@@ -43,7 +43,7 @@ public class UrlEdition extends AbstractUrlFolderWithParent<UrlTool, UrlVersion>
 
     if (this.securityFile == null) {
       this.securityFile = new UrlSecurityFile(this);
-      load(this.securityFile);
+      this.securityFile.load(false);
     }
     return this.securityFile;
   }
