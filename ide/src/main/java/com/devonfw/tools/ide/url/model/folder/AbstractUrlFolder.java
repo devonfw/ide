@@ -93,11 +93,14 @@ public abstract class AbstractUrlFolder<C extends UrlArtifactWithParent<?>> exte
 
     if (!this.loaded) {
       Path path = getPath();
-      try (Stream<Path> childStream = Files.list(path)) {
-        childStream.forEach(c -> loadChild(c, recursive));
-      } catch (IOException e) {
-        throw new IllegalStateException("Failed to list children of directory " + path, e);
+      if (Files.isDirectory(path)) {
+        try (Stream<Path> childStream = Files.list(path)) {
+          childStream.forEach(c -> loadChild(c, recursive));
+        } catch (IOException e) {
+          throw new IllegalStateException("Failed to list children of directory " + path, e);
+        }
       }
+      this.loaded = true;
     }
   }
 

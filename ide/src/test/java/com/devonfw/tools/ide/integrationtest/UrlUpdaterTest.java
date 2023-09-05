@@ -1,25 +1,27 @@
 package com.devonfw.tools.ide.integrationtest;
 
-import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.devonfw.tools.ide.url.updater.UrlUpdater;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+
+/**
+ * Test of {@link UrlUpdater} using wiremock to simulate network downloads.
+ */
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends Assertions {
-
-  /**
-   * Test resource location
-   */
-  private final static String testdataRoot = "src/test/resources/integrationtest/UrlUpdater";
 
   /**
    * Tests if the {@link com.devonfw.tools.ide.url.updater.UrlUpdater} can automatically add a missing OS (in this case
