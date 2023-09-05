@@ -6,6 +6,7 @@ import java.util.concurrent.Callable;
 import com.devonfw.tools.ide.commandlet.EnvironmentCommand;
 import com.devonfw.tools.ide.commandlet.gh.Gh;
 import com.devonfw.tools.ide.commandlet.java.Java;
+import com.devonfw.tools.ide.commandlet.mvn.Mvn;
 
 
 @CommandLine.Command(name = "devon",
@@ -16,6 +17,7 @@ import com.devonfw.tools.ide.commandlet.java.Java;
         commandListHeading = "%nSubCommands are: %n",
         subcommands = {
                 Java.class,
+                Mvn.class,
                 Gh.class,
                 EnvironmentCommand.class
         }

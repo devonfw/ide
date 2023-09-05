@@ -9,7 +9,7 @@ import java.util.Objects;
 public final class VersionIdentifier implements VersionObject<VersionIdentifier> {
 
   /** {@link VersionIdentifier} "*" that will resolve to the latest stable version. */
-  public static final VersionIdentifier VERSION_LATEST = VersionIdentifier.of("*");
+  public static final VersionIdentifier LATEST = VersionIdentifier.of("*");
 
   private final VersionSegment start;
 
@@ -185,6 +185,9 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
    */
   public static VersionIdentifier of(String version) {
 
+    if (version.equals("latest")) {
+      return VersionIdentifier.LATEST;
+    }
     return new VersionIdentifier(VersionSegment.of(version));
   }
 
