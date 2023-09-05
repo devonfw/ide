@@ -45,8 +45,7 @@ public class UrlUpdaterTest extends Assertions {
     updater.update(urlRepository);
 
     Path versionsPath = tempDir.resolve("mocked").resolve("mocked").resolve("1.0");
-    StatusJson statusJson = getStatusJson(versionsPath);
-    statusJson.setManual(true);
+
     // then
     assertThat(versionsPath.resolve("status.json")).exists();
     assertThat(versionsPath.resolve("linux_x64.urls")).exists();
