@@ -27,6 +27,8 @@ jobs:
           ls
           cd src
           ls
+          cd main
+          ls
           mvn -B -X -Pnative -DskipTests=true package
           ls
       - uses: actions/upload-artifact@v3
