@@ -26,5 +26,3 @@ jobs:
           cd ide
           ls src/assembly
           ls
-          ls -l
-          cd target
