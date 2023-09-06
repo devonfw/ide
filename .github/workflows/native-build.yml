@@ -28,7 +28,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
-          path: test-${{ runner.os }}.txt
+          path: ide/test-${{ runner.os }}.txt
 
   test:
     name: Re-use Cache
