@@ -23,6 +23,8 @@ jobs:
       - name: Build native images with maven plugin
         run: |
           cd ide
+          ls
+          ls src/assembly
           mvn -B -X -Pnative -DskipTests=true package
           ls
       - uses: actions/upload-artifact@v3
