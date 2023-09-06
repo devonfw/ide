@@ -29,7 +29,7 @@ jobs:
         id: cache-executables
         with:
           path: ./*
-          key: ${{ secrets.GITHUB_TOKEN }}
+          key: ${{ github.sha }}
 
   cache-use-build:
     name: Re-use Cache
@@ -41,5 +41,5 @@ jobs:
         id: cache-executables
         with:
           path: ./*
-          key: ${{ secrets.GITHUB_TOKEN }}
+          key: ${{ github.sha }}
       - run: ls
