@@ -27,10 +27,22 @@ jobs:
           mvn -B -X -Pnative -DskipTests=true package
           ls
 
+      - name: Tar files for Windows
+        if: ${{ runner.os }} == 'Windows'
+        run: |
+          cd ide/target
+          Compress-Archive-Path devon.exe -DestinationPath ide-{{ runner.os }}.tar.gz
+
+      - name: Tar files for Ubuntu and MacOS
+        if: ${{ runner.os }} != 'Windows'
+        run: |
+          cd ide/target
+          tar -czf devon-${{ runner.os }}.tar.gz devon
+
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
-          path: ide/target/devon*
+          path: ide/target/*tar.gz
 
   test:
     name: Re-use Cache
