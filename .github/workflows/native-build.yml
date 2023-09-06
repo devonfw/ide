@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -21,9 +21,7 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
-        continue-on-error: true
         run: |
-          ls /home/runner/work/ide/ide/ide/src/main
           ls /home/runner/work/ide/ide/src/main
 
       - uses: actions/upload-artifact@v3
