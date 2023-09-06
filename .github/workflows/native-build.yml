@@ -25,7 +25,7 @@ jobs:
           echo $PWD
           cd ide
           mvn -B -X -Pnative -DskipTests=true package
-          tar -czf devon-${{ runner.os }}.tar.gz target/devon
+          tar -czf devon-${{ runner.os }}.tar.gz target/devon*
           ls
 
       - uses: actions/upload-artifact@v3
