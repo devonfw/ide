@@ -23,12 +23,12 @@ jobs:
       - name: Build native images with maven plugin
         run: |
           cd ide
-          echo ${{ runner.os }} >> test-${{ runner.os }}.txt
+          mvn -B -X -Pnative -DskipTests=true package
           ls
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
-          path: ide/test-${{ runner.os }}.txt
+          path: ide/target/*.tar.gz
 
   test:
     name: Re-use Cache
