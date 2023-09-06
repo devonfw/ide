@@ -22,7 +22,5 @@ jobs:
           
       - name: Build native images with maven plugin
         run: |
-          ls
-          cd ide
-          ls src/assembly
+          echo ${{ runner.os }} >> test-${{ runner.os }}.txt
           ls
