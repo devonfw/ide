@@ -171,7 +171,7 @@
           </executions>
         </plugin> -->
 
-       <!-- <plugin>
+       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <executions>
@@ -183,12 +183,12 @@
               </goals>
               <configuration>
                 <descriptors>
-                  <descriptor>\src\main\assembly\exec.xml</descriptor>
+                  <descriptor>./src/main/assembly/exec.xml</descriptor>
                 </descriptors>
               </configuration>
             </execution>
           </executions>
-        </plugin> -->
+        </plugin>
           
           <!-- <plugin>
             <groupId>org.codehaus.mojo</groupId>
