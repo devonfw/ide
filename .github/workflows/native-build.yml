@@ -22,15 +22,8 @@ jobs:
           
       - name: Build native images with maven plugin
         run: |
-          echo ${{ github.ref }}
-          cd ide
-          ls
-          cd src
-          ls
-          cd main
-          ls
           mvn -B -X -Pnative -DskipTests=true package
-          ls
+          ls /home/runner/work/ide/ide/ide/src/main
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
