@@ -22,7 +22,6 @@ jobs:
           
       - name: Build native images with maven plugin
         run: |
-          mvn -B -X -Pnative -DskipTests=true package
           ls /home/runner/work/ide/ide/ide/src/main
       - uses: actions/upload-artifact@v3
         with:
