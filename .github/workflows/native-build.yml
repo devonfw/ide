@@ -21,7 +21,7 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
-      - run: |
+        run: |
           cd ide
           echo ${{ runner.os }} >> test-${{ runner.os }}.txt
           ls
