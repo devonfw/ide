@@ -25,21 +25,18 @@ jobs:
           cd ide
           echo ${{ runner.os }} >> test-${{ runner.os }}.txt
           ls
-      - uses: actions/cache@v2
-        id: cache-executables
+      - uses: actions/upload-artifact@v3
         with:
+          name: Upload native images
           path: test-${{ runner.os }}.txt
-          key: ${{ runner.os }}-prime
 
-  cache-use-build:
+  test:
     name: Re-use Cache
     runs-on: ubuntu-latest
     needs: [build]
-
+    
     steps:
-      - uses: actions/cache@v2
-        id: cache-executables
-        with:
-          path: test-${{ runner.os }}.txt
-          key: ${{ runner.os }}-prime
-      - run: ls
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+    - name: Display structure of downloaded files
+      run: ls -R
