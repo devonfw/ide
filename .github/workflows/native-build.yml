@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
           
       - name: Build native images with maven plugin
         run: |
-          ls /home/runner/work/ide/ide/src/main
+          echo $PWD
 
       - uses: actions/upload-artifact@v3
         with:
