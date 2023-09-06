@@ -8,7 +8,7 @@ source "${DEVON_IDE_HOME}/scripts/functions-core"
 
 if [ ! -f "${DEVON_IDE_HOME}/.devon.software.version" ] && [ -d "${DEVON_IDE_HOME}/workspaces" ] && [ -d "${DEVON_IDE_HOME}/software" ]
 then
-  doRunCommand "'$DEVON_IDE_HOME/scripts/migration'"
+  doRunCommand "'$DEVON_IDE_HOME/scripts/migration'" "start migration"
 fi
 
 doEnvironmentProject "${@}"
