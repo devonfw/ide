@@ -24,6 +24,7 @@ jobs:
         run: |
           ls
           cd ide
-          mvn -B -X -Pnative -DskipTests=true package
+          ls src/assembly
+          ls
           ls -l
           cd target
