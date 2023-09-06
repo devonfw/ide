@@ -31,7 +31,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
-          path: ide/target/*.tar.gz
+          path: ide/target/devon*.tar.gz
 
   test:
     name: Re-use Cache
