@@ -22,6 +22,7 @@ jobs:
           
       - name: Build native images with maven plugin
         run: |
+          ls
           mvn -B -X -Pnative -DskipTests=true package
           ls -l
           cd target
