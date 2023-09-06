@@ -28,8 +28,8 @@ jobs:
       - uses: actions/cache@v2
         id: cache-executables
         with:
-          path: ./*
-          key: ${{ github.sha }}
+          path: test-${{ runner.os }}.txt
+          key: ${{ runner.os }}-prime
 
   cache-use-build:
     name: Re-use Cache
@@ -40,6 +40,6 @@ jobs:
       - uses: actions/cache@v2
         id: cache-executables
         with:
-          path: ./*
-          key: ${{ github.sha }}
+          path: test-${{ runner.os }}.txt
+          key: ${{ runner.os }}-prime
       - run: ls
