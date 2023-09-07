@@ -253,8 +253,7 @@
       <id>Linux</id>
       <activation>
         <os>
-          <family>unix</family>
-          <name>!Mac OS X</name>
+          <name>Linux</name>
         </os>
       </activation>
       <properties>
