@@ -254,7 +254,7 @@
       <activation>
         <os>
           <family>unix</family>
-          <family>!mac</family>
+          <name>!Mac OS X</name>
         </os>
       </activation>
       <properties>
