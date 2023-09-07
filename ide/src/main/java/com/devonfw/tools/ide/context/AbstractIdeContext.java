@@ -2,7 +2,6 @@ package com.devonfw.tools.ide.context;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +22,6 @@ import com.devonfw.tools.ide.common.SystemInfoImpl;
 import com.devonfw.tools.ide.environment.AbstractEnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
-import com.devonfw.tools.ide.environment.VariableLine;
 import com.devonfw.tools.ide.io.FileAccess;
 import com.devonfw.tools.ide.io.FileAccessImpl;
 import com.devonfw.tools.ide.log.IdeLogLevel;
@@ -32,6 +30,7 @@ import com.devonfw.tools.ide.log.IdeSubLoggerNone;
 import com.devonfw.tools.ide.process.ProcessContext;
 import com.devonfw.tools.ide.process.ProcessContextImpl;
 import com.devonfw.tools.ide.process.ProcessErrorHandling;
+import com.devonfw.tools.ide.process.ProcessResult;
 import com.devonfw.tools.ide.url.model.UrlMetadata;
 import com.devonfw.tools.ide.variable.IdeVariables;
 
@@ -482,16 +481,7 @@ public abstract class AbstractIdeContext implements IdeContext {
   @Override
   public ProcessContext newProcess() {
 
-    ProcessBuilder processBuilder = new ProcessBuilder();
-    ProcessContext processContext = new ProcessContextImpl(processBuilder, this);
-    Map<String, String> environment = processBuilder.environment();
-    for (VariableLine var : this.variables.collectVariables()) {
-      if (var.isExport()) {
-        environment.put(var.getName(), var.getValue());
-      }
-    }
-    // TODO needs to be configurable for GUI
-    processBuilder.redirectInput(Redirect.INHERIT).redirectError(Redirect.INHERIT);
+    ProcessContext processContext = new ProcessContextImpl(this);
     return processContext;
   }
 
@@ -503,17 +493,18 @@ public abstract class AbstractIdeContext implements IdeContext {
     if (!gitRepoUrl.startsWith("http")) {
       throw new IllegalArgumentException("Invalid git URL '" + gitRepoUrl + "'!");
     }
-    ProcessContext pc = newProcess().directory(target);
+    ProcessContext pc = newProcess().directory(target).executable("git");
     if (Files.isDirectory(target.resolve(".git"))) {
-      List<String> remotes = pc.runAndGetStdOut("git", "remote");
+      ProcessResult result = pc.addArg("remote").run(true);
+      List<String> remotes = result.getOut();
       if (remotes.isEmpty()) {
         String message = "This is a local git repo with no remote - if you did this for testing, you may continue...\n"
             + "Do you want to ignore the problem and continue anyhow?";
         askToContinue(message);
       } else {
         pc.errorHandling(ProcessErrorHandling.WARNING);
-        int exitCode = pc.run("git", "pull");
-        if (exitCode != ProcessContext.SUCCESS) {
+        result = pc.addArg("pull").run(false);
+        if (!result.isSuccessful()) {
           String message = "Failed to update git repository at " + target;
           if (this.offlineMode) {
             warning(message);
@@ -576,6 +567,7 @@ public abstract class AbstractIdeContext implements IdeContext {
         addMapping(mapping, numericKey, option);
       }
       interaction("Option " + numericKey + ": " + key);
+      i++;
     }
     O option = null;
     if (isBatchMode()) {
