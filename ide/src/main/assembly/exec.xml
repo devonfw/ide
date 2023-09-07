@@ -20,6 +20,7 @@
       <outputDirectory>./</outputDirectory>
       <includes>
         <include>**/*.exe</include>
+        <include>devon</include>
       </includes>
     </fileSet>
   </fileSets>
