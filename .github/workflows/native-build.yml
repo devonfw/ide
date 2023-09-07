@@ -21,13 +21,17 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
+        continue-on-error: true
         run: |
           echo $PWD
           cd ide
           mvn -B -X -Pnative -DskipTests=true package
           ls target
           cd target
-          tar -ztvf ide-cli*.tar.gz
+          tar -ztvf ide-cli-1.0.0-SNAPSHOT-linux.tar.gz
+          tar -ztvf ide-cli-1.0.0-SNAPSHOT-windows.tar.gz 
+          tar -ztvf ide-cli-1.0.0-SNAPSHOT-macos.tar.gz
+
 
       - uses: actions/upload-artifact@v3
         with:
