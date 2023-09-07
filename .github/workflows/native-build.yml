@@ -26,11 +26,13 @@ jobs:
           cd ide
           mvn -B -X -Pnative -DskipTests=true package
           ls target
+          cd target
+          tar -ztvf ide-cli*.tar.gz
 
       - uses: actions/upload-artifact@v3
         with:
           name: Upload native images
-          path: ide/target/devon*.tar.gz
+          path: ide/target/ide-cli*.tar.gz
 
   test:
     name: Re-use Cache
