@@ -1,7 +1,7 @@
 name: GraalVM Native Image builds
 on: push
 jobs:
-  build:
+  build-natives:
     name: Build native images
     runs-on: ${{ matrix.os }}
     strategy:
@@ -21,30 +21,22 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
-        continue-on-error: true
-        run: |
-          echo $PWD
-          cd ide
-          mvn -B -X -Pnative -DskipTests=true package
-          ls target
-          cd target
-          tar -ztvf ide-cli-1.0.0-SNAPSHOT-linux.tar.gz
-          tar -ztvf ide-cli-1.0.0-SNAPSHOT-windows.tar.gz 
-          tar -ztvf ide-cli-1.0.0-SNAPSHOT-macos.tar.gz
-
+        run: mvn -B -X -Pnative -DskipTests=true package
 
       - uses: actions/upload-artifact@v3
         with:
-          name: Upload native images
+          name: executables
           path: ide/target/ide-cli*.tar.gz
 
-  test:
-    name: Re-use Cache
+  attach-artifacts:
+    name: Attach native images to build for deploy
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build-natives]
     
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/download-artifact@v3
-    - name: Display structure of downloaded files
-      run: ls -R
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+      - name: Display structure of downloaded files
+        run: |
+          mvn install
+          ls -R
