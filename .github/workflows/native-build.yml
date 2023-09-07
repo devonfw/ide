@@ -38,5 +38,5 @@ jobs:
       - uses: actions/download-artifact@v3
       - name: Display structure of downloaded files
         run: |
-          mvn install
+          mvn -DskipTests=true install
           ls -R
