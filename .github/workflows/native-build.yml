@@ -35,8 +35,14 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '17'
       - uses: actions/download-artifact@v3
       - name: Display structure of downloaded files
         run: |
-          mvn -DskipTests=true install
+          mvn -B -ntp -DskipTests=true -Dstyle.color=always install
           ls -R
