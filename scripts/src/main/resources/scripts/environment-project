@@ -5,8 +5,10 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 
 # shellcheck source=scripts/functions-core
 source "${DEVON_IDE_HOME}/scripts/functions-core"
+source "${DEVON_IDE_HOME}/scripts/functions"
 
-if [ ! -f "${DEVON_IDE_HOME}/.devon.software.version" ] && [ -d "${DEVON_IDE_HOME}/workspaces" ] && [ -d "${DEVON_IDE_HOME}/software" ]
+# runs migration script if .devon.software.version does not exist and not in initial setup process
+if [ ! -f "${DEVON_IDE_HOME}/.devon.software.version" ] && [ -d "${DEVON_IDE_HOME}/workspaces/" ] && [ -d "${DEVON_IDE_HOME}/software/" ]
 then
   doRunCommand "'$DEVON_IDE_HOME/scripts/migration'" "start migration"
 fi
