@@ -6,7 +6,7 @@ rem runs migration script if .devon.software.version does not exist and not in i
 if not exist "%DEVON_IDE_HOME%\.devon.software.version" (
     if exist "%DEVON_IDE_HOME%\software" (
         if exist "%DEVON_IDE_HOME%\workspaces" (
-            echo "start migration"
+            echo "Starting migration..."
 			cd "%DEVON_IDE_HOME%\scripts"
 			bash "./migration"
         )
