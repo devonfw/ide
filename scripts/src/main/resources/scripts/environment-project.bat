@@ -2,17 +2,6 @@ rem This batch is not supposed to be called manually
 @echo off
 if NOT "%DEVON_IDE_TRACE%"=="" echo on
 
-rem runs migration script if .devon.software.version does not exist and not in initial setup process
-if not exist "%DEVON_IDE_HOME%\.devon.software.version" (
-    if exist "%DEVON_IDE_HOME%\software" (
-        if exist "%DEVON_IDE_HOME%\workspaces" (
-            echo "Starting migration..."
-			cd "%DEVON_IDE_HOME%\scripts"
-			bash "./migration"
-        )
-    )
-)
-
 Set _fBYellow=[93m
 Set _RESET=[0m
 
