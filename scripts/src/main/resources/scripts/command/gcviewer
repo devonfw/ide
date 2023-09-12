@@ -16,21 +16,27 @@ GCVIEWER_HOME="${DEVON_IDE_HOME}/software/gcviewer"
 TOOL_VERSION_COMMAND="-"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
-
 # gcviewer installation
 function doSetup() {
   doDevonCommand java setup silent
-  local current_version
-  current_version=$(doDevonCommand gcviewer version get | sed -n '2 p')
-  if [[ "${GCVIEWER_VERSION}" != "${current_version}" ]]
-  then 
-	rm -rf "${GCVIEWER_HOME}"
-  fi
   doInstall "gcviewer" "${GCVIEWER_VERSION}" "${1}" "" "${GCVIEWER_HOME}" "" "noUnpack"
   if [ "${?}" = 0 ]
   then
     doCreateGCViewerScript
   fi
+  for file in "${GCVIEWER_HOME}"/*.jar
+  do
+	if [ ! -z ${temp} ] && [ -f ${file} ]
+	then
+		if [ ${temp} -nt ${file} ] 
+		then
+			rm ${file}
+		else 
+			rm ${temp}
+		fi
+	fi
+	temp=${file}
+  done
 }
 
 function doStart() {
