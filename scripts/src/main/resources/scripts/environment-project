@@ -5,5 +5,4 @@ if [ -n "${DEVON_IDE_TRACE}" ]; then set -vx; fi
 
 # shellcheck source=scripts/functions-core
 source "${DEVON_IDE_HOME}/scripts/functions-core"
-
 doEnvironmentProject "${@}"
