@@ -60,6 +60,7 @@ public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> {
    */
   public Set<String> getUrls() {
 
+    load(false);
     return this.urls;
   }
 
