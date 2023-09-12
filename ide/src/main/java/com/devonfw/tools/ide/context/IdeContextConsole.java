@@ -1,5 +1,7 @@
 package com.devonfw.tools.ide.context;
 
+import java.util.Scanner;
+
 import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.log.IdeSubLoggerOut;
 
@@ -7,6 +9,8 @@ import com.devonfw.tools.ide.log.IdeSubLoggerOut;
  * Default implementation of {@link IdeContext} using the console.
  */
 public class IdeContextConsole extends AbstractIdeContext {
+
+  private final Scanner scanner;
 
   /**
    * The constructor.
@@ -18,12 +22,22 @@ public class IdeContextConsole extends AbstractIdeContext {
   public IdeContextConsole(IdeLogLevel minLogLevel, Appendable out, boolean colored) {
 
     super(minLogLevel, level -> new IdeSubLoggerOut(level, out, colored), null);
+    if (System.console() == null) {
+      debug("System console not available - using System.in as fallback");
+      this.scanner = new Scanner(System.in);
+    } else {
+      this.scanner = null;
+    }
   }
 
   @Override
-  protected java.lang.String readLine() {
+  protected String readLine() {
 
-    return System.console().readLine();
+    if (this.scanner == null) {
+      return System.console().readLine();
+    } else {
+      return this.scanner.nextLine();
+    }
   }
 
 }
