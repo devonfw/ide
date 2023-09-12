@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.version;
 
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Value type for the letters of a {@link VersionSegment}.
@@ -178,6 +179,24 @@ public final class VersionLetters implements AbstractVersionPhase, VersionObject
       }
       return VersionMatchResult.EQUAL;
     }
+  }
+
+  @Override
+  public int hashCode() {
+
+    return this.letters.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) {
+      return true;
+    } else if (!(obj instanceof VersionLetters)) {
+      return false;
+    }
+    VersionLetters other = (VersionLetters) obj;
+    return Objects.equals(this.letters, other.letters);
   }
 
   @Override

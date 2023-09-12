@@ -11,14 +11,6 @@ import java.util.Objects;
 public interface ProcessContext {
 
   /**
-   * Exit code for success.
-   *
-   * @deprecated use {@link ProcessResult#SUCCESS}
-   */
-  @Deprecated
-  int SUCCESS = 0;
-
-  /**
    * @param handling the desired {@link ProcessErrorHandling}.
    * @return this {@link ProcessContext} for fluent API calls.
    */
@@ -124,7 +116,7 @@ public interface ProcessContext {
    * arguments}. Will reset the {@link #addArgs(String...) arguments} but not the {@link #executable(Path) command} for
    * sub-sequent calls.
    *
-   * @return the exit code. Will be {@link #SUCCESS} on successful completion of the {@link Process}.
+   * @return the exit code. Will be {@link ProcessResult#SUCCESS} on successful completion of the {@link Process}.
    */
   default int run() {
 
@@ -142,81 +134,5 @@ public interface ProcessContext {
    * @return the {@link ProcessResult}.
    */
   ProcessResult run(boolean capture);
-
-  /**
-   * Runs the previously configured {@link #executable(Path) command} with the configured {@link #addArgs(String...)
-   * arguments}. Will reset the {@link #addArgs(String...) arguments} but not the {@link #executable(Path) command} for
-   * sub-sequent calls.
-   *
-   * @return a {@link List} with the standard output of the command, line by line.
-   * @deprecated use {@link #run(boolean)} instead.
-   */
-  @Deprecated
-  default List<String> runAndGetStdOut() {
-
-    return run(true).getOut();
-  }
-
-  /**
-   * @param command the command to run.
-   * @return the exit code. Will be {@link #SUCCESS} on successful completion of the {@link Process}.
-   * @deprecated use {@link #executable(Path)}, {@link #addArgs(String...)} and {@link #run()} instead.
-   */
-  @Deprecated
-  default int run(String... command) {
-
-    executable(Paths.get(command[0]));
-    for (int i = 1; i < command.length; i++) {
-      addArg(command[i]);
-    }
-    return run();
-  }
-
-  /**
-   * @param commands the list of commands to run.
-   * @return the exit code. Will be {@link #SUCCESS} on successful completion of the {@link Process}.
-   * @deprecated use {@link #executable(Path)}, {@link #addArgs(String...)} and {@link #run()} instead.
-   */
-  @Deprecated
-  default int run(List<String> commands) {
-
-    executable(Paths.get(commands.get(0)));
-    int size = commands.size();
-    for (int i = 1; i < size; i++) {
-      addArg(commands.get(i));
-    }
-    return run();
-  }
-
-  /**
-   * @param command the command to run.
-   * @return a {@link List} with the standard output of the command, line by line.
-   * @deprecated use {@link #executable(Path)}, {@link #addArgs(String...)} and {@link #runAndGetStdOut()} instead.
-   */
-  @Deprecated
-  default List<String> runAndGetStdOut(String... command) {
-
-    executable(Paths.get(command[0]));
-    for (int i = 1; i < command.length; i++) {
-      addArg(command[i]);
-    }
-    return runAndGetStdOut();
-  }
-
-  /**
-   * @param commands the list of commands to run.
-   * @return a {@link List} with the standard output of the command, line by line.
-   * @deprecated use {@link #executable(Path)}, {@link #addArgs(String...)} and {@link #runAndGetStdOut()} instead.
-   */
-  @Deprecated
-  default List<String> runAndGetStdOut(List<String> commands) {
-
-    executable(Paths.get(commands.get(0)));
-    int size = commands.size();
-    for (int i = 1; i < size; i++) {
-      addArg(commands.get(i));
-    }
-    return runAndGetStdOut();
-  }
 
 }

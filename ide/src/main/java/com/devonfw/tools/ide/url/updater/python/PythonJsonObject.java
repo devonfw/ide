@@ -1,18 +1,21 @@
 package com.devonfw.tools.ide.url.updater.python;
 
-import com.devonfw.tools.ide.common.JsonObject;
-
 import java.util.List;
 
+import com.devonfw.tools.ide.common.JsonObject;
+
 /**
- * The object of the Python Json File
+ * Java object to represent the JSON of Python release information. This is the root {@link JsonObject}.
  */
 public class PythonJsonObject implements JsonObject {
 
-  private List<PythonJsonItem> Pythonreleases;
+  private List<PythonRelease> releases;
 
-  public List<PythonJsonItem> getPythonreleases() {
+  /**
+   * @return the {@link List} of {@link PythonRelease}s.
+   */
+  public List<PythonRelease> getReleases() {
 
-    return Pythonreleases;
+    return this.releases;
   }
 }

@@ -13,13 +13,15 @@ public class IntellijJsonDownloadItemProp {
   @JsonProperty("checksumLink")
   private String checksumLink;
 
+  /** @return the URL to download the file. */
   public String getLink() {
 
-    return link;
+    return this.link;
   }
 
+  /** @return the URL to download the SHA-256 checksum of the file. */
   public String getChecksumLink() {
 
-    return checksumLink;
+    return this.checksumLink;
   }
 }

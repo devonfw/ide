@@ -1,22 +1,27 @@
 package com.devonfw.tools.ide.integrationtest.androidstudio;
 
-import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
-import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
+import com.devonfw.tools.ide.url.updater.androidstudio.AndroidStudioUrlUpdater;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 /**
- * Test class for integrations of the {@link AndroidStudioUrlUpdater
+ * Test class for integrations of the {@link AndroidStudioUrlUpdater}.
  */
 @WireMockTest(httpPort = 8080)
 public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
@@ -30,7 +35,7 @@ public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
   private static final String EXPECTED_ABODY_CHECKSUM = "de08da1685e537e887fbbe1eb3278fed38aff9da5d112d96115150e8771a0f30";
 
   /**
-   * Test of {@link JsonUrlUpdater} for the creation of {@link AndroidStudioUrlUpdater download URLs and checksums.
+   * Test of {@link JsonUrlUpdater} for the creation of {@link AndroidStudioUrlUpdater} to download URLs and checksums.
    *
    * @param tempDir Path to a temporary directory
    * @throws IOException test fails
@@ -42,8 +47,8 @@ public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
     stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
         .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version.json")))));
 
-    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
-        aResponse().withStatus(200).withBody("aBody")));
+    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*"))
+        .willReturn(aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
     AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();
@@ -67,9 +72,8 @@ public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
   }
 
   /**
-   * Test if the {@link JsonUrlUpdater} for
-   * {@link AndroidStudioUrlUpdater can handle downloads with missing checksums (generate checksum from download file if
-   * no checksum was provided)
+   * Test if {@link AndroidStudioUrlUpdater} can handle downloads with missing checksums (generate checksum from
+   * download file if no checksum was provided)
    *
    * @param tempDir Path to a temporary directory
    * @throws IOException test fails
@@ -111,8 +115,8 @@ public class AndroidStudioJsonUrlUpdaterTest extends Assertions {
     stubFor(get(urlMatching("/android-studio-releases-list.*")).willReturn(aResponse().withStatus(200)
         .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("android-version-without-checksum.json")))));
 
-    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*")).willReturn(
-        aResponse().withStatus(200).withBody("aBody")));
+    stubFor(any(urlMatching("/edgedl/android/studio/ide-zips.*"))
+        .willReturn(aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempDir);
     AndroidStudioUrlUpdaterMock updater = new AndroidStudioUrlUpdaterMock();

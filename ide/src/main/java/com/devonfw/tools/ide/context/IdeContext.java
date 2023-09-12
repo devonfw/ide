@@ -6,18 +6,21 @@ import com.devonfw.tools.ide.cli.CliAbortException;
 import com.devonfw.tools.ide.cli.CliException;
 import com.devonfw.tools.ide.commandlet.CommandletManager;
 import com.devonfw.tools.ide.common.SystemInfo;
+import com.devonfw.tools.ide.common.SystemPath;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.io.FileAccess;
 import com.devonfw.tools.ide.log.IdeLogger;
 import com.devonfw.tools.ide.process.ProcessContext;
+import com.devonfw.tools.ide.repo.CustomToolRepository;
+import com.devonfw.tools.ide.repo.ToolRepository;
 import com.devonfw.tools.ide.url.model.UrlMetadata;
 import com.devonfw.tools.ide.variable.IdeVariables;
 
 /**
  * Interface for interaction with the user allowing to input and output information.
  */
-public interface IdeContext extends IdeLogger, CommandletManager {
+public interface IdeContext extends IdeLogger {
 
   /** The name of the workspaces folder. */
   String FOLDER_WORKSPACES = "workspaces";
@@ -45,6 +48,21 @@ public interface IdeContext extends IdeLogger, CommandletManager {
 
   /** The name of the backups folder for backup. */
   String FOLDER_BACKUPS = "backups";
+
+  /** The name of the downloads folder. */
+  String FOLDER_DOWNLOADS = "Downloads";
+
+  /** The name of the bin folder where executable files are found by default. */
+  String FOLDER_BIN = "bin";
+
+  /** The name of the Contents folder inside a MacOS app. */
+  String FOLDER_CONTENTS = "Contents";
+
+  /** The name of the Resources folder inside a MacOS app. */
+  String FOLDER_RESOURCES = "Resources";
+
+  /** The name of the app folder inside a MacOS app. */
+  String FOLDER_APP = "app";
 
   /** The file where the installed software version is written to as plain text. */
   String FILE_SOFTWARE_VERSION = ".ide.software.version";
@@ -156,6 +174,21 @@ public interface IdeContext extends IdeLogger, CommandletManager {
   FileAccess getFileAccess();
 
   /**
+   * @return the {@link CommandletManager}.
+   */
+  CommandletManager getCommandletManager();
+
+  /**
+   * @return the default {@link ToolRepository}.
+   */
+  ToolRepository getDefaultToolRepository();
+
+  /**
+   * @return the {@link CustomToolRepository}.
+   */
+  CustomToolRepository getCustomToolRepository();
+
+  /**
    * @return the {@link Path} to the IDE instance directory. You can have as many IDE instances on the same computer as
    *         independent tenants for different isolated projects.
    * @see com.devonfw.tools.ide.variable.IdeVariables#IDE_HOME
@@ -172,10 +205,21 @@ public interface IdeContext extends IdeLogger, CommandletManager {
   Path getIdeRoot();
 
   /**
-   * @return the {@link Path} for the temporary directory to use. May be different from the OS specific temporary
+   * @return the current working directory ("user.dir"). This is the directory where the user's shell was located when
+   *         the IDE CLI was invoked.
+   */
+  Path getCwd();
+
+  /**
+   * @return the {@link Path} for the temporary directory to use. Will be different from the OS specific temporary
    *         directory (java.io.tmpDir).
    */
   Path getTempPath();
+
+  /**
+   * @return the {@link Path} for the temporary download directory to use.
+   */
+  Path getTempDownloadPath();
 
   /**
    * @return the {@link Path} to the download metadata (ide-urls). Here a git repository is cloned and updated (pulled)
@@ -198,10 +242,21 @@ public interface IdeContext extends IdeLogger, CommandletManager {
   Path getDownloadPath();
 
   /**
-   * @return the {@link Path} to the software folder. All tools will be "installed" here as a sub-folder named after the
-   *         according tool.
+   * @return the {@link Path} to the software folder inside {@link #getIdeHome() IDE_HOME}. All tools for that IDE
+   *         instance will be linked here from the {@link #getSoftwareRepositoryPath() software repository} as
+   *         sub-folder named after the according tool.
    */
   Path getSoftwarePath();
+
+  /**
+   * @return the {@link Path} to the global software repository. This is the central directory where the tools are
+   *         extracted physically on the local disc. Those are shared among all IDE instances (see {@link #getIdeHome()
+   *         IDE_HOME}) via symbolic links (see {@link #getSoftwarePath()}). Therefore this repository follows the
+   *         sub-folder structure {@code «repository»/«tool»/«edition»/«version»/}. So multiple versions of the same
+   *         tool exist here as different folders. Further, such software may not be modified so e.g. installation of
+   *         plugins and other kind of changes to such tool need to happen strictly out of the scope of this folders.
+   */
+  Path getSoftwareRepositoryPath();
 
   /**
    * @return the {@link Path} to the central tool repository. All tools will be installed in this location using the
@@ -254,7 +309,7 @@ public interface IdeContext extends IdeLogger, CommandletManager {
    *         the tools available in {@link #getSoftwarePath() software path} unless {@link #getIdeHome() IDE_HOME} was
    *         not found.
    */
-  String getPath();
+  SystemPath getPath();
 
   /**
    * @param target the {@link Path} to the target folder where the git repository should be cloned or pulled. It is not
@@ -266,7 +321,7 @@ public interface IdeContext extends IdeLogger, CommandletManager {
   void gitPullOrClone(Path target, String gitRepoUrl);
 
   /**
-   * @return a new {@link ProcessContext} to {@link ProcessContext#run(String...) run} external commands.
+   * @return a new {@link ProcessContext} to {@link ProcessContext#run() run} external commands.
    */
   ProcessContext newProcess();
 

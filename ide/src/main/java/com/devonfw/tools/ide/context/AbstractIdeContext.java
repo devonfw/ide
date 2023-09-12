@@ -1,24 +1,21 @@
 package com.devonfw.tools.ide.context;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
-import com.devonfw.tools.ide.commandlet.Commandlet;
 import com.devonfw.tools.ide.commandlet.CommandletManager;
 import com.devonfw.tools.ide.commandlet.CommandletManagerImpl;
 import com.devonfw.tools.ide.common.SystemInfo;
 import com.devonfw.tools.ide.common.SystemInfoImpl;
+import com.devonfw.tools.ide.common.SystemPath;
 import com.devonfw.tools.ide.environment.AbstractEnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
@@ -31,6 +28,10 @@ import com.devonfw.tools.ide.process.ProcessContext;
 import com.devonfw.tools.ide.process.ProcessContextImpl;
 import com.devonfw.tools.ide.process.ProcessErrorHandling;
 import com.devonfw.tools.ide.process.ProcessResult;
+import com.devonfw.tools.ide.repo.CustomToolRepository;
+import com.devonfw.tools.ide.repo.CustomToolRepositoryImpl;
+import com.devonfw.tools.ide.repo.DefaultToolRepository;
+import com.devonfw.tools.ide.repo.ToolRepository;
 import com.devonfw.tools.ide.url.model.UrlMetadata;
 import com.devonfw.tools.ide.variable.IdeVariables;
 
@@ -51,6 +52,8 @@ public abstract class AbstractIdeContext implements IdeContext {
 
   private final Path softwarePath;
 
+  private final Path softwareRepositoryPath;
+
   private final Path workspacePath;
 
   private final String workspaceName;
@@ -58,6 +61,10 @@ public abstract class AbstractIdeContext implements IdeContext {
   private final Path urlsPath;
 
   private final Path tempPath;
+
+  private final Path tempDownloadPath;
+
+  private final Path cwd;
 
   private final Path downloadPath;
 
@@ -67,7 +74,7 @@ public abstract class AbstractIdeContext implements IdeContext {
 
   private final Path userHomeIde;
 
-  private final String path;
+  private final SystemPath path;
 
   private final SystemInfo systemInfo;
 
@@ -76,6 +83,10 @@ public abstract class AbstractIdeContext implements IdeContext {
   private final FileAccess fileAccess;
 
   private final CommandletManager commandletManager;
+
+  private final ToolRepository defaultToolRepository;
+
+  private final CustomToolRepository customToolRepository;
 
   private boolean offlineMode;
 
@@ -112,37 +123,39 @@ public abstract class AbstractIdeContext implements IdeContext {
     this.fileAccess = new FileAccessImpl(this);
     String workspace = WORKSPACE_MAIN;
     if (userDir == null) {
-      userDir = Paths.get(System.getProperty("user.dir"));
+      this.cwd = Paths.get(System.getProperty("user.dir"));
+    } else {
+      this.cwd = userDir;
     }
     // detect IDE_HOME and WORKSPACE
-    Path cwd = userDir;
+    Path currentDir = this.cwd;
     String name1 = "";
     String name2 = "";
-    while (cwd != null) {
-      trace("Looking for IDE_HOME in {}", cwd);
-      if (isIdeHome(cwd)) {
+    while (currentDir != null) {
+      trace("Looking for IDE_HOME in {}", currentDir);
+      if (isIdeHome(currentDir)) {
         if (FOLDER_WORKSPACES.equals(name1)) {
           workspace = name2;
         }
         break;
       }
       name2 = name1;
-      int nameCount = cwd.getNameCount();
-      name1 = cwd.getName(nameCount - 1).toString();
-      cwd = getParentPath(cwd);
+      int nameCount = currentDir.getNameCount();
+      name1 = currentDir.getName(nameCount - 1).toString();
+      currentDir = getParentPath(currentDir);
     }
     // detection completed, initializing variables
-    this.ideHome = cwd;
+    this.ideHome = currentDir;
     this.workspaceName = workspace;
     if (this.ideHome == null) {
-      info("You are not inside a devonfw-ide installation: " + userDir);
+      info(getMessageIdeHomeNotFound());
       this.workspacePath = null;
       this.ideRoot = null;
       this.confPath = null;
       this.settingsPath = null;
       this.softwarePath = null;
     } else {
-      info("IDE environment variables have been set for {} in workspace {}", this.ideHome, this.workspaceName);
+      debug(getMessageIdeHomeFound());
       this.workspacePath = this.ideHome.resolve(FOLDER_WORKSPACES).resolve(this.workspaceName);
       Path ideRootPath = this.ideHome.getParent();
       String root = null;
@@ -171,15 +184,19 @@ public abstract class AbstractIdeContext implements IdeContext {
       this.toolRepository = null;
       this.urlsPath = null;
       this.tempPath = null;
+      this.tempDownloadPath = null;
+      this.softwareRepositoryPath = null;
     } else {
       Path ideBase = this.ideRoot.resolve(FOLDER_IDE);
       this.toolRepository = ideBase.resolve("software");
       this.urlsPath = ideBase.resolve("urls");
       this.tempPath = ideBase.resolve("tmp");
+      this.tempDownloadPath = this.tempPath.resolve(FOLDER_DOWNLOADS);
+      this.softwareRepositoryPath = ideBase.resolve(FOLDER_SOFTWARE);
       if (Files.isDirectory(this.tempPath)) {
         // TODO delete all files older than 1 day here...
       } else {
-        this.fileAccess.mkdirs(this.tempPath);
+        this.fileAccess.mkdirs(this.tempDownloadPath);
       }
     }
     if (isTest()) {
@@ -192,6 +209,30 @@ public abstract class AbstractIdeContext implements IdeContext {
     this.downloadPath = this.userHome.resolve("Downloads/ide");
     this.variables = createVariables();
     this.path = computeSystemPath();
+    this.defaultToolRepository = new DefaultToolRepository(this);
+    this.customToolRepository = CustomToolRepositoryImpl.of(this);
+  }
+
+  private String getMessageIdeHomeFound() {
+
+    return "IDE environment variables have been set for " + this.ideHome + " in workspace " + this.workspaceName;
+  }
+
+  private String getMessageIdeHomeNotFound() {
+
+    return "You are not inside an IDE installation: " + this.cwd;
+  }
+
+  /**
+   * @return the status message about the {@link #getIdeHome() IDE_HOME} detection and environment variable
+   *         initialization.
+   */
+  public String getMessageIdeHome() {
+
+    if (this.ideHome == null) {
+      return getMessageIdeHomeNotFound();
+    }
+    return getMessageIdeHomeFound();
   }
 
   /**
@@ -202,53 +243,33 @@ public abstract class AbstractIdeContext implements IdeContext {
     return false;
   }
 
-  private String computeSystemPath() {
+  private SystemPath computeSystemPath() {
 
     String systemPath = System.getenv(IdeVariables.PATH.getName());
-    StringBuilder sb = new StringBuilder(systemPath.length() + 128);
-
-    try (Stream<Path> children = Files.list(this.softwarePath)) {
-      Iterator<Path> iterator = children.iterator();
-      while (iterator.hasNext()) {
-        Path child = iterator.next();
-        if (Files.isDirectory(child)) {
-          Path toolHome = child;
-          Path bin = child.resolve("bin");
-          if (Files.isDirectory(bin)) {
-            toolHome = bin;
-          }
-          sb.append(toolHome);
-          sb.append(File.pathSeparatorChar);
-        }
-      }
-    } catch (IOException e) {
-      throw new IllegalStateException("Failed to list children of " + this.softwarePath, e);
-    }
-    sb.append(systemPath);
-    return sb.toString();
+    return new SystemPath(systemPath, this.softwarePath);
   }
 
-  private boolean isIdeHome(Path cwd) {
+  private boolean isIdeHome(Path dir) {
 
-    if (!Files.isRegularFile(cwd.resolve("setup"))) {
+    if (!Files.isRegularFile(dir.resolve("setup"))) {
       return false;
-    } else if (!Files.isDirectory(cwd.resolve("scripts"))) {
+    } else if (!Files.isDirectory(dir.resolve("scripts"))) {
       return false;
-    } else if (cwd.toString().endsWith("/scripts/src/main/resources")) {
+    } else if (dir.toString().endsWith("/scripts/src/main/resources")) {
       // TODO does this still make sense for our new Java based product?
       return false;
     }
     return true;
   }
 
-  private Path getParentPath(Path cwd) {
+  private Path getParentPath(Path dir) {
 
     try {
-      Path linkDir = cwd.toRealPath();
-      if (!cwd.equals(linkDir)) {
+      Path linkDir = dir.toRealPath();
+      if (!dir.equals(linkDir)) {
         return linkDir;
       } else {
-        return cwd.getParent();
+        return dir.getParent();
       }
     } catch (IOException e) {
       throw new IllegalStateException(e);
@@ -302,9 +323,21 @@ public abstract class AbstractIdeContext implements IdeContext {
   }
 
   @Override
-  public <C extends Commandlet> C getCommandlet(Class<C> commandletType) {
+  public CommandletManager getCommandletManager() {
 
-    return this.commandletManager.getCommandlet(commandletType);
+    return this.commandletManager;
+  }
+
+  @Override
+  public ToolRepository getDefaultToolRepository() {
+
+    return this.defaultToolRepository;
+  }
+
+  @Override
+  public CustomToolRepository getCustomToolRepository() {
+
+    return this.customToolRepository;
   }
 
   @Override
@@ -320,9 +353,21 @@ public abstract class AbstractIdeContext implements IdeContext {
   }
 
   @Override
+  public Path getCwd() {
+
+    return this.cwd;
+  }
+
+  @Override
   public Path getTempPath() {
 
     return this.tempPath;
+  }
+
+  @Override
+  public Path getTempDownloadPath() {
+
+    return this.tempDownloadPath;
   }
 
   @Override
@@ -356,6 +401,12 @@ public abstract class AbstractIdeContext implements IdeContext {
   }
 
   @Override
+  public Path getSoftwareRepositoryPath() {
+
+    return this.softwareRepositoryPath;
+  }
+
+  @Override
   public String getWorkspaceName() {
 
     return this.workspaceName;
@@ -386,7 +437,7 @@ public abstract class AbstractIdeContext implements IdeContext {
   }
 
   @Override
-  public String getPath() {
+  public SystemPath getPath() {
 
     return this.path;
   }
@@ -404,7 +455,7 @@ public abstract class AbstractIdeContext implements IdeContext {
       if (!isTest()) {
         gitPullOrClone(this.urlsPath, "https://github.com/devonfw/ide-urls.git");
       }
-      this.urlMetadata = new UrlMetadata(this.urlsPath);
+      this.urlMetadata = new UrlMetadata(this);
     }
     return this.urlMetadata;
   }
@@ -530,13 +581,16 @@ public abstract class AbstractIdeContext implements IdeContext {
       }
       this.fileAccess.mkdirs(target);
       requireOnline("git clone of " + gitRepoUrl);
+      pc.addArg("clone");
       if (isQuietMode()) {
-        pc.run("git", "clone", "-q", "--recursive", gitRepoUrl, "--config", "core.autocrlf=false", ".");
+        pc.addArg("-q");
       } else {
-        pc.run("git", "clone", "--recursive", gitRepoUrl, "--config", "core.autocrlf=false", ".");
       }
+      pc.addArgs("--recursive", gitRepoUrl, "--config", "core.autocrlf=false", ".");
+      pc.run();
       if (branch != null) {
-        pc.run("git", "checkout", branch);
+        pc.addArgs("checkout", branch);
+        pc.run();
       }
     }
   }
@@ -567,7 +621,6 @@ public abstract class AbstractIdeContext implements IdeContext {
         addMapping(mapping, numericKey, option);
       }
       interaction("Option " + numericKey + ": " + key);
-      i++;
     }
     O option = null;
     if (isBatchMode()) {
