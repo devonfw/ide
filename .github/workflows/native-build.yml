@@ -45,7 +45,7 @@ jobs:
       - name: Display structure of downloaded files
         run: |
           mvn -B -ntp -DskipTests=true -Dstyle.color=always install
-          gh release create v1.0.0 ./executables/*.tgz
+          gh release create v1.0.0 ./executables/*.tar.gz
           ls -R
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
