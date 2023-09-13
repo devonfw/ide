@@ -2,7 +2,7 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2023.08.002
+== 2023.09.001
 
 Release with new features and bugfixes:
 

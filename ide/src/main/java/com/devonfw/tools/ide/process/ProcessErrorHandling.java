@@ -2,7 +2,7 @@ package com.devonfw.tools.ide.process;
 
 /**
  * {@link Enum} with the available handling if a {@link Process#exitValue() status code} was not
- * {@link ProcessContext#SUCCESS successful}.
+ * {@link ProcessResult#SUCCESS successful}.
  */
 public enum ProcessErrorHandling {
 
@@ -19,9 +19,9 @@ public enum ProcessErrorHandling {
   ERROR,
 
   /**
-   * Throw an exception if the status code was not successful. In this case the {@link ProcessContext#run(String...)
-   * run} method will never return an exit code other than {@link ProcessContext#SUCCESS} as otherwise an exception is
-   * thrown preventing the method to return.
+   * Throw an exception if the status code was not successful. In this case the {@link ProcessContext#run() run} method
+   * will never return an exit code other than {@link ProcessResult#SUCCESS} as otherwise an exception is thrown
+   * preventing the method to return.
    */
   THROW
 
