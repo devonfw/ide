@@ -251,6 +251,8 @@ function doSetup() {
     doEcho "Your settings are missing the 'devon.properties' file. Please ask your technical lead to properly merge and update your settings."
     doDownload "https://raw.githubusercontent.com/devonfw/ide-settings/master/devon.properties" "${SETTINGS_PATH}"
   fi
+  # shellcheck disable=SC2007
+  echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
   if [ ! -d "${SETTINGS_PATH}/devon" ]
   then
     doEcho "Your settings are missing the 'devon' folder. Please ask your technical lead to properly merge and update your settings."
@@ -322,8 +324,6 @@ function doSetup() {
     doEchoStep "Creating start-scripts for IDE ${ide}"
     doDevonCommand "${ide}" --all create-script
   done
-  # shellcheck disable=SC2007
-  echo "$[devon_ide_version]" > "${DEVON_IDE_HOME}"/.devon.software.version
 }
 
 function doUpdateProjects() {
