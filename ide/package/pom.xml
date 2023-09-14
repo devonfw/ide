@@ -39,9 +39,6 @@
           </execution>
         </executions>
         <configuration>
-          <classpath>
-            <param>cli/target/devon.jar</param>
-          </classpath>
           <agent>
             <enabled>true</enabled>
           </agent>
