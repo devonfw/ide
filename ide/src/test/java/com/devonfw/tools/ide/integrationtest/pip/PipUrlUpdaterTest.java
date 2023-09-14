@@ -13,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import com.devonfw.tools.ide.integrationtest.AbstractUrlUpdaterTest;
 import com.devonfw.tools.ide.integrationtest.UrlUpdaterMockSingle;
+import com.devonfw.tools.ide.integrationtest.python.PipUrlUpdaterMock;
 import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.file.json.UrlStatus;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
