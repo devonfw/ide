@@ -24,6 +24,7 @@ function doSetup() {
   then
     doCreateGCViewerScript
   fi
+  local temp=""
   for file in "${GCVIEWER_HOME}"/*.jar
   do
     if [ -n "${temp}" ]
