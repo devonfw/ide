@@ -26,19 +26,19 @@ function doSetup() {
   fi
   for file in "${GCVIEWER_HOME}"/*.jar
   do
-	if [ -n "${temp}" ]
-	then
-		if [ "${temp}" -nt "${file}" ] 
-		then
-			rm "${file}"
-		else 
- 			rm "${temp}"
-		fi
-	fi
-	if [ -f "${file}" ]
-	then
-		temp=${file}
-	fi
+    if [ -n "${temp}" ]
+    then
+      if [ "${temp}" -nt "${file}" ] 
+      then
+        rm "${file}"
+      else 
+        rm "${temp}"
+      fi
+    fi
+    if [ -f "${file}" ]
+    then
+      temp=${file}
+    fi
   done
 }
 
