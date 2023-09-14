@@ -68,6 +68,18 @@ public abstract class Property<T> {
   }
 
   /**
+   * @return the {@link #getName() name} or the {@link #getAlias() alias} if {@link #getName() name} is
+   *         {@link String#isEmpty() empty}.
+   */
+  public String getNameOrAlias() {
+
+    if (this.name.isEmpty()) {
+      return this.alias;
+    }
+    return this.name;
+  }
+
+  /**
    * @return {@code true} if this property is required (if argument is not present the {@link Commandlet} cannot be
    *         invoked), {@code false} otherwise (if optional).
    */
@@ -116,10 +128,10 @@ public abstract class Property<T> {
   }
 
   /**
-   * Determines if this a value {@link Property}. raw indexed value argument In such case the command-line argument at
-   * this index will be the immediate value of the {@link Property}, the {@link #getName() name} is
-   * {@link String#isEmpty() empty} and the {@link #getAlias() alias} is a logical name of the value to display to
-   * users.
+   * Determines if this a value {@link Property}. Such value is either a {@link KeywordProperty} with the keyword as
+   * {@link #getName() name} or a raw indexed value argument. In the latter case the command-line argument at this index
+   * will be the immediate value of the {@link Property}, the {@link #getName() name} is {@link String#isEmpty() empty}
+   * and the {@link #getAlias() alias} is a logical name of the value to display to users.
    *
    * @return {@code true} if value, {@code false} otherwise.
    */

@@ -13,9 +13,11 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class InstallCommandlet extends Commandlet {
 
-  private final ToolProperty tool;
+  /** The tool to install. */
+  public final ToolProperty tool;
 
-  private final VersionProperty version;
+  /** The optional version to set and install. */
+  public final VersionProperty version;
 
   /**
    * The constructor.

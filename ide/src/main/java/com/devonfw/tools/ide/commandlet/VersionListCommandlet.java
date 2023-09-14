@@ -12,7 +12,8 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class VersionListCommandlet extends Commandlet {
 
-  private final ToolProperty tool;
+  /** The tool to list the versions of. */
+  public final ToolProperty tool;
 
   /**
    * The constructor.

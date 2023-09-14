@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.devonfw.tools.ide.context.IdeContext;
-import com.devonfw.tools.ide.context.IdeContextConsole;
-import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.property.KeywordProperty;
 import com.devonfw.tools.ide.property.Property;
 
@@ -32,6 +30,8 @@ public abstract class Commandlet {
   private final Map<String, Property<?>> optionMap;
 
   private Property<?> multiValued;
+
+  private String firstKeyword;
 
   /**
    * The constructor.
@@ -80,6 +80,9 @@ public abstract class Commandlet {
    */
   protected void addKeyword(String keyword) {
 
+    if (this.properties.isEmpty()) {
+      this.firstKeyword = keyword;
+    }
     add(new KeywordProperty(keyword, true, null));
   }
 
@@ -130,6 +133,15 @@ public abstract class Commandlet {
   public abstract String getName();
 
   /**
+   * @return the first keyword of this {@link Commandlet}. Typically the same as {@link #getName() name} but may also
+   *         differ (e.g. "set" vs. "set-version").
+   */
+  public String getKeyword() {
+
+    return this.firstKeyword;
+  }
+
+  /**
    * @param <C> type of the {@link Commandlet}.
    * @param commandletType the {@link Class} reflecting the requested {@link Commandlet}.
    * @return the requested {@link Commandlet}.
@@ -138,33 +150,6 @@ public abstract class Commandlet {
   protected <C extends Commandlet> C getCommandlet(Class<C> commandletType) {
 
     return this.context.getCommandletManager().getCommandlet(commandletType);
-  }
-
-  /**
-   * @param ideContext the {@link IdeContext} to initialize in this {@link Commandlet}.
-   * @deprecated removed
-   */
-  @Deprecated
-  protected void initContext(IdeContext ideContext) {
-
-    if (this.context == null) {
-      // this.context = ideContext;
-    } else {
-      throw new IllegalStateException("Context is already initialized!");
-    }
-  }
-
-  /**
-   * @return the {@link IdeContext} used to interact with the user (output messages, ask questions and read answers).
-   * @deprecated use {@link #context} directly
-   */
-  @Deprecated
-  protected IdeContext context() {
-
-    if (this.context == null) {
-      initContext(new IdeContextConsole(IdeLogLevel.INFO, null, false));
-    }
-    return this.context;
   }
 
   /**

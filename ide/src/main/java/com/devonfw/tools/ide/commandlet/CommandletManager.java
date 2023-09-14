@@ -2,6 +2,8 @@ package com.devonfw.tools.ide.commandlet;
 
 import java.util.Collection;
 
+import com.devonfw.tools.ide.property.KeywordProperty;
+import com.devonfw.tools.ide.property.Property;
 import com.devonfw.tools.ide.tool.ToolCommandlet;
 
 /**
@@ -21,6 +23,14 @@ public interface CommandletManager {
    * @return the requested {@link Commandlet} or {@code null} if not found.
    */
   Commandlet getCommandlet(String name);
+
+  /**
+   * @param keyword the first keyword argument.
+   * @return a {@link Commandlet} having the first {@link Property} {@link Property#isRequired() required} and a
+   *         {@link KeywordProperty} with the given {@link Property#getName() name} or {@code null} if no such
+   *         {@link Commandlet} is registered.
+   */
+  Commandlet getCommandletByFirstKeyword(String keyword);
 
   /**
    * @return the {@link Collection} of all registered {@link Commandlet}s.

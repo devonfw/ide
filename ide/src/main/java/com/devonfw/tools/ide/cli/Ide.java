@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import com.devonfw.tools.ide.commandlet.Commandlet;
 import com.devonfw.tools.ide.commandlet.ContextCommandlet;
+import com.devonfw.tools.ide.commandlet.HelpCommandlet;
 import com.devonfw.tools.ide.context.AbstractIdeContext;
 import com.devonfw.tools.ide.context.IdeContext;
 import com.devonfw.tools.ide.context.IdeContextConsole;
@@ -20,6 +21,10 @@ import com.devonfw.tools.ide.property.Property;
  * The main program of the CLI (command-line-interface).
  */
 public final class Ide {
+
+  private static final String INVALID_ARGUMENT = "Invalid CLI argument '{}' for property '{}' of commandlet '{}'";
+
+  private static final String INVALID_ARGUMENT_WITH_CAUSE = INVALID_ARGUMENT + ":{}";
 
   private AbstractIdeContext context;
 
@@ -91,20 +96,28 @@ public final class Ide {
 
     CliArgument first = CliArgument.of(args);
     CliArgument current = initContext(first);
-    for (Commandlet commandlet : this.context.getCommandletManager().getCommandlets()) {
-      boolean matches = apply(current, commandlet);
+    String keyword = current.get();
+    Commandlet firstCandidate = this.context.getCommandletManager().getCommandletByFirstKeyword(keyword);
+    boolean matches;
+    if (firstCandidate != null) {
+      matches = applyAndRun(current, firstCandidate);
       if (matches) {
-        this.context.debug("Running commandlet {}", commandlet);
-        if (commandlet.isIdeHomeRequired() && (this.context.getIdeHome() == null)) {
-          throw new CliException(this.context.getMessageIdeHome());
-        }
-        commandlet.run();
         return ProcessResult.SUCCESS;
-      } else {
-        this.context.trace("Commandlet did not match");
+      }
+    }
+    for (Commandlet commandlet : this.context.getCommandletManager().getCommandlets()) {
+      if (commandlet != firstCandidate) {
+        matches = applyAndRun(current, commandlet);
+        if (matches) {
+          return ProcessResult.SUCCESS;
+        }
       }
     }
     // TODO print help properly
+    if (!current.isEnd()) {
+      context().error("Invalid arguments: {}", current.toString());
+    }
+    context().getCommandletManager().getCommandlet(HelpCommandlet.class).run();
     context().info("Usage: ide «args»");
     return 1;
   }
@@ -127,6 +140,35 @@ public final class Ide {
     return current;
   }
 
+  /**
+   * @param argument the current {@link CliArgument} (position) to match.
+   * @param commandlet the potential {@link Commandlet} to {@link #apply(CliArgument, Commandlet) apply} and
+   *        {@link Commandlet#run() run}.
+   * @return {@code true} if the given {@link Commandlet} matched and did {@link Commandlet#run() run} successfully,
+   *         {@code false} otherwise (the {@link Commandlet} did not match and we have to try a different candidate).
+   */
+  private boolean applyAndRun(CliArgument current, Commandlet commandlet) {
+
+    boolean matches = apply(current, commandlet);
+    if (matches) {
+      this.context.debug("Running commandlet {}", commandlet);
+      if (commandlet.isIdeHomeRequired() && (this.context.getIdeHome() == null)) {
+        throw new CliException(this.context.getMessageIdeHome());
+      }
+      commandlet.run();
+    } else {
+      this.context.trace("Commandlet did not match");
+    }
+    return matches;
+  }
+
+  /**
+   * @param argument the current {@link CliArgument} (position) to match.
+   * @param commandlet the potential {@link Commandlet} to match.
+   * @return {@code true} if the given {@link Commandlet} matches to the given {@link CliArgument}(s) and those have
+   *         been applied (set in the {@link Commandlet} and {@link Commandlet#validate() validated}), {@code false}
+   *         otherwise (the {@link Commandlet} did not match and we have to try a different candidate).
+   */
   private boolean apply(CliArgument argument, Commandlet commandlet) {
 
     this.context.trace("Trying to match arguments to commandlet {}", commandlet.getName());
@@ -167,7 +209,21 @@ public final class Ide {
                 return false;
               }
             } else {
-              currentProperty.setValueAsString(arg);
+              boolean success = false;
+              try {
+                currentProperty.setValueAsString(arg);
+                success = true;
+              } catch (RuntimeException e) {
+                String message = INVALID_ARGUMENT_WITH_CAUSE;
+                if (e instanceof IllegalArgumentException) {
+                  message = INVALID_ARGUMENT;
+                }
+                this.context.warning(message, arg, currentProperty.getNameOrAlias(), commandlet.getName(),
+                    e.getMessage());
+              }
+              if (!success && currentProperty.isRequired()) {
+                return false;
+              }
             }
             currentProperty = null;
           } else {

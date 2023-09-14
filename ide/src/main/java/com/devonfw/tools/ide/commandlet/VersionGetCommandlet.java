@@ -13,7 +13,8 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class VersionGetCommandlet extends Commandlet {
 
-  private final ToolProperty tool;
+  /** The tool to get the version of. */
+  public final ToolProperty tool;
 
   /**
    * The constructor.

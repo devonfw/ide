@@ -13,9 +13,11 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class VersionSetCommandlet extends Commandlet {
 
-  private final ToolProperty tool;
+  /** The tool to set the version of. */
+  public final ToolProperty tool;
 
-  private final VersionProperty version;
+  /** The version to set. */
+  public final VersionProperty version;
 
   /**
    * The constructor.

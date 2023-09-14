@@ -3,9 +3,11 @@ package com.devonfw.tools.ide.commandlet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.devonfw.tools.ide.context.IdeContext;
+import com.devonfw.tools.ide.property.KeywordProperty;
 import com.devonfw.tools.ide.property.Property;
 import com.devonfw.tools.ide.tool.gh.Gh;
 import com.devonfw.tools.ide.tool.java.Java;
@@ -22,6 +24,8 @@ public final class CommandletManagerImpl implements CommandletManager {
 
   private final Map<String, Commandlet> commandletNameMap;
 
+  private final Map<String, Commandlet> firstKeywordMap;
+
   private final Collection<Commandlet> commandlets;
 
   /**
@@ -34,7 +38,9 @@ public final class CommandletManagerImpl implements CommandletManager {
     super();
     this.commandletTypeMap = new HashMap<>();
     this.commandletNameMap = new HashMap<>();
+    this.firstKeywordMap = new HashMap<>();
     this.commandlets = Collections.unmodifiableCollection(this.commandletTypeMap.values());
+    add(new HelpCommandlet(context));
     add(new EnvironmentCommandlet(context));
     add(new InstallCommandlet(context));
     add(new VersionSetCommandlet(context));
@@ -48,9 +54,16 @@ public final class CommandletManagerImpl implements CommandletManager {
   private void add(Commandlet commandlet) {
 
     boolean hasRequiredProperty = false;
-    for (Property<?> property : commandlet.getProperties()) {
+    List<Property<?>> properties = commandlet.getProperties();
+    int propertyCount = properties.size();
+    for (int i = 0; i < propertyCount; i++) {
+      Property<?> property = properties.get(i);
       if (property.isRequired()) {
         hasRequiredProperty = true;
+        if ((i == 0) && (property instanceof KeywordProperty)) {
+          String keyword = property.getName();
+          this.firstKeywordMap.putIfAbsent(keyword, commandlet);
+        }
         break;
       }
     }
@@ -84,10 +97,13 @@ public final class CommandletManagerImpl implements CommandletManager {
   public Commandlet getCommandlet(String name) {
 
     Commandlet commandlet = this.commandletNameMap.get(name);
-    if (commandlet == null) {
-      throw new IllegalStateException("Commandlet for name " + name + " is not registered!");
-    }
     return commandlet;
+  }
+
+  @Override
+  public Commandlet getCommandletByFirstKeyword(String keyword) {
+
+    return this.firstKeywordMap.get(keyword);
   }
 
   /**
