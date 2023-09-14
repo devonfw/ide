@@ -22,6 +22,12 @@ public class PipUrlUpdater extends WebsiteUrlUpdater {
   }
 
   @Override
+  protected boolean isValidContentType(String contentType) {
+
+    return true;
+  }
+
+  @Override
   protected String getVersionUrl() {
 
     return "https://bootstrap.pypa.io/pip/";

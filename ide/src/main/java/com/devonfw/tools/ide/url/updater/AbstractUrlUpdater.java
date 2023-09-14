@@ -11,10 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -257,18 +254,27 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
    */
   private boolean isValidDownload(String url, String tool, String version, HttpResponse<?> response) {
 
+    String contentType = response.headers().firstValue("content-type").orElse("undefined");;
     if (isSuccess(response)) {
-      String contentType = response.headers().firstValue("content-type").orElse("undefined");
-      if (contentType.startsWith("text")) {
-        logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-            contentType, url);
-        return false;
-      }
+      return isValidContentType(contentType);
     } else {
+      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+          contentType, url);
       return false;
     }
+  }
 
-    return true;
+  /**
+   * Checks if the content type was not of type text (this method is required because {@link com.devonfw.tools.ide.url.updater.pip.PipUrlUpdater} returns text and needs to be overridden)
+   * <p>
+   * See: <a href="https://github.com/devonfw/ide/issues/1343">#1343</a> for reference.
+   *
+   * @param contentType String of the content type
+   * @return {@code true} if the content type is not of type text, {@code false} otherwise.
+   */
+  protected boolean isValidContentType(String contentType) {
+
+    return !contentType.startsWith("text");
   }
 
   /**

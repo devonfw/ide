@@ -5,28 +5,24 @@ import static com.github.tomakehurst.wiremock.client.WireMock.any;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.file.json.UrlStatus;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 /**
  * Test of {@link com.devonfw.tools.ide.url.model.UrlArtifact} using wiremock to simulate network downloads.
  */
 @WireMockTest(httpPort = 8080)
-public class UrlUpdaterTest extends Assertions {
+public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
 
   /**
    * Tests if the {@link com.devonfw.tools.ide.url.updater.UrlUpdater} can automatically add a missing OS (in this case
@@ -75,12 +71,14 @@ public class UrlUpdaterTest extends Assertions {
    * Tests if the timestamps of the status.json get updated properly. Creates an initial status.json with a success
    * timestamp. Updates the status.json with an error timestamp and compares it with the success timestamp. Updates the
    * status.json with a final success timestamp and compares it with the error timestamp.
-   * 
+   * <p>
+   * See: <a href="https://github.com/devonfw/ide/issues/1343">#1343</a> for reference.
+   *
    * @param tempDir Temporary directory
    * @throws IOException test fails
    */
   @Test
-  public void testUrlUpdaterStatusJsonRefresh(@TempDir Path tempDir) throws IOException {
+  public void testUrlUpdaterStatusJsonRefreshBugStillExisting(@TempDir Path tempDir) throws IOException {
 
     stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
 
@@ -121,7 +119,8 @@ public class UrlUpdaterTest extends Assertions {
     assertThat(errorCode).isEqualTo(404);
     assertThat(errorTimestamp).isGreaterThan(successTimestamp);
 
-    stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
+    stubFor(
+        any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain")));
 
     // re-initialize UrlRepository for error timestamp
     UrlRepository urlRepositoryWithSuccess = UrlRepository.load(tempDir);
@@ -137,25 +136,9 @@ public class UrlUpdaterTest extends Assertions {
     errorTimestamp = urlStatus.getError().getTimestamp();
     errorCode = urlStatus.getError().getCode();
 
-    assertThat(errorCode).isEqualTo(404);
-    assertThat(successTimestamp).isGreaterThan(errorTimestamp);
+    assertThat(errorCode).isEqualTo(200);
+    assertThat(errorTimestamp).isGreaterThan(successTimestamp);
 
-  }
-
-  private static StatusJson getStatusJson(Path versionsPath) {
-
-    ObjectMapper MAPPER = JsonMapping.create();
-    StatusJson statusJson = new StatusJson();
-    Path statusJsonPath = versionsPath.resolve("status.json");
-
-    if (Files.exists(statusJsonPath)) {
-      try (BufferedReader reader = Files.newBufferedReader(statusJsonPath)) {
-        statusJson = MAPPER.readValue(reader, StatusJson.class);
-      } catch (Exception e) {
-        throw new IllegalStateException("Failed to load " + statusJsonPath, e);
-      }
-    }
-    return statusJson;
   }
 
 }
