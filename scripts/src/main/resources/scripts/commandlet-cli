@@ -31,6 +31,6 @@ if [ "$(basename "${0}")" != "help" ]
 then
   if [ ! -f "${DEVON_IDE_HOME}/.devon.software.version" ] && [ -d "${DEVON_IDE_HOME}/workspaces/" ] && [ -d "${DEVON_IDE_HOME}/software/" ]
   then
-	doRunCommand "${DEVON_IDE_HOME}/scripts/migration" "run migration"
+    doRunCommand "${DEVON_IDE_HOME}/scripts/migration" "run migration"
   fi
 fi
