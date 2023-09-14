@@ -3,6 +3,7 @@ package com.devonfw.tools.ide.repo;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import com.devonfw.tools.ide.common.SystemInformationMock;
 import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
@@ -21,8 +22,8 @@ public class CustomToolTest extends Assertions {
     VersionIdentifier version = VersionIdentifier.of("7.4.5.GA");
     String repositoryUrl = "https://host.domain.tld:8443/folder/repo";
     String checksum = "4711";
-    boolean osAgnostic = false;
-    boolean archAgnostic = false;
+    boolean osAgnostic = true;
+    boolean archAgnostic = true;
     // act
     CustomTool tool = new CustomTool(name, version, osAgnostic, archAgnostic, repositoryUrl, checksum, null);
     // assert
@@ -44,13 +45,14 @@ public class CustomToolTest extends Assertions {
 
     // arrange
     String name = "firefox";
-    VersionIdentifier version = VersionIdentifier.of("7.4.5.GA");
+    VersionIdentifier version = VersionIdentifier.of("70.0.1");
     String repositoryUrl = "https://host.domain.tld:8443/folder/repo";
     String checksum = "4711";
-    boolean osAgnostic = true;
+    boolean osAgnostic = false;
     boolean archAgnostic = true;
     // act
-    CustomTool tool = new CustomTool(name, version, osAgnostic, archAgnostic, repositoryUrl, checksum, null);
+    CustomTool tool = new CustomTool(name, version, osAgnostic, archAgnostic, repositoryUrl, checksum,
+        SystemInformationMock.WINDOWS_X64);
     // assert
     assertThat(tool.getTool()).isEqualTo(name);
     assertThat(tool.getVersion()).isSameAs(version);
@@ -58,24 +60,8 @@ public class CustomToolTest extends Assertions {
     assertThat(tool.isArchAgnostic()).isEqualTo(archAgnostic);
     assertThat(tool.getRepositoryUrl()).isEqualTo(repositoryUrl);
     assertThat(tool.getUrl())
-        .isEqualTo("https://host.domain.tld:8443/folder/repo/jboss-eap/7.4.5.GA/jboss-eap-7.4.5.GA.tgz");
+        .isEqualTo("https://host.domain.tld:8443/folder/repo/firefox/70.0.1/firefox-70.0.1-windows.tgz");
     assertThat(tool.getChecksum()).isEqualTo(checksum);
   }
-
-  // public void testRepositoryId() {
-  //
-  // // arrange
-  //
-  // String name = "jboss-eap";
-  // VersionIdentifier version = VersionIdentifier.of("7.4.5.GA");
-  // String repositoryUrl = "https://host.domain.tld:port/folder/räpö$itöry+name/ochn%C3%B6n%F6";
-  // // act
-  // CustomTool tool = new CustomTool(name, version, false, false, repositoryUrl, null, null);
-  // // assert
-  // assertThat(tool.getTool()).isEqualTo(name);
-  // assertThat(tool.getVersion()).isSameAs(version);
-  // assertThat(tool.getRepositoryUrl()).isEqualTo(repositoryUrl);
-  // assertThat(tool.getUrl()).isEqualTo("host.domain.tld_port/folder_r_p__it_ry_name_ochn_n_");
-  // }
 
 }
