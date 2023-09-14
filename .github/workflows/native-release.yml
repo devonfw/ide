@@ -21,10 +21,11 @@ jobs:
           native-image-job-reports: 'true'
           
       - name: Build native images with maven plugin
+        shell: bash
         run: |
           cd ide
           mvn -B -X -DskipTests=true package
-          ls -l
+          ls -lR
 
       - uses: actions/upload-artifact@v3
         with:
