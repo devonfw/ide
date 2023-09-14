@@ -29,7 +29,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: executables
-          path: ide/package/target/ide-package*.tar.gz
+          path: ide/package/target/devon*
 
   attach-artifacts:
     name: Attach native images to build for deploy
