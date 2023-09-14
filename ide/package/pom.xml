@@ -15,6 +15,14 @@
     <native.maven.plugin.version>0.9.23</native.maven.plugin.version>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.devonfw.tools.ide.dev</groupId>
+      <artifactId>ide-cli</artifactId>
+      <version>${version}</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
