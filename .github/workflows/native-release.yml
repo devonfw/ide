@@ -23,8 +23,8 @@ jobs:
       - name: Build native images with maven plugin
         run: |
           cd ide
-          mvn -B -X -Dstyle.color=always -DskipTests=true package
-          ls -lR
+          mvn -B -X -DskipTests=true package
+          ls -l
 
       - uses: actions/upload-artifact@v3
         with:
