@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           cd ide
-          mvn -B -X -DskipTests=true package
+          mvn -B -X -Pnative -DskipTests=true package
           ls -lR
 
       - uses: actions/upload-artifact@v3
