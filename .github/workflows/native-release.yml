@@ -50,9 +50,15 @@ jobs:
       - uses: actions/download-artifact@v3
       - name: Create tar.gz archives for release
         run: |
-          mv ./natives/ide-windows.tar ./ide/package/natives/ide-windows.tar
-          tar -rvf ./ide/package/natives/ide-windows.tar ./natives/devon.exe ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          mv ./natives/ide-Windows.tar ./ide/package/natives/ide-windows.tar
+          tar -rvf ./ide/package/natives/ide-windows.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-windows.tar
+          mv ./natives/ide-MacOS.tar ./ide/package/natives/ide-macos.tar
+          tar -rvf ./ide/package/natives/ide-macos.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-macos.tar
+          mv ./natives/ide-Linux.tar ./ide/package/natives/ide-linux.tar
+          tar -rvf ./ide/package/natives/ide-linux.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-linux.tar
           mvn -B -ntp -DskipTests=true -Dstyle.color=always install
           ls -R
           gh release create v1.0.1 ./ide/package/natives/*.tar.gz
