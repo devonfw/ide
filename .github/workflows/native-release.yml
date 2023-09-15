@@ -50,6 +50,7 @@ jobs:
       - uses: actions/download-artifact@v3
       - name: Create tar.gz archives for release
         run: |
+          ls -R
           mv ./natives/ide-Windows.tar ./ide/package/natives/ide-windows.tar
           tar -rvf ./ide/package/natives/ide-windows.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-windows.tar
