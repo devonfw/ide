@@ -79,6 +79,39 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <os.detected.classifier>windows</os.detected.classifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>MacOS</id>
+      <activation>
+        <os>
+          <family>Mac</family>
+        </os>
+      </activation>
+      <properties>
+        <os.detected.classifier>macos</os.detected.classifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>Linux</id>
+      <activation>
+        <os>
+          <name>Linux</name>
+        </os>
+      </activation>
+      <properties>
+        <os.detected.classifier>linux</os.detected.classifier>
+      </properties>
+    </profile>       
   </profiles>
 
 </project>
