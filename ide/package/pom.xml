@@ -23,6 +23,44 @@
     </dependency>
   </dependencies>
 
+   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.4.0</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>natives/ide-Linux.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>linux</classifier>
+                </artifact>
+                <artifact>
+                  <file>natives/ide-Windows.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>windows</classifier>
+                </artifact>
+                <artifact>
+                  <file>natives/ide-macOS.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>macos</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <profiles>
     <profile>
       <id>native</id>
