@@ -27,7 +27,7 @@ jobs:
           mvn -B -X -Pnative -DskipTests=true package
           cd package/target
           file=devon*
-          mv -- "$file" "${file//devon/devon-${{ runner.os}}"
+          mv -- "$file" "${file//devon/devon-${{ runner.os}}}"
           ls -lR
 
       - uses: actions/upload-artifact@v3
