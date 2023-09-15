@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -50,10 +50,20 @@ jobs:
       - uses: actions/download-artifact@v3
       - name: Create tar.gz archives for release
         run: |
-          ls -R
+          cd scripts
+          mvn -B -ntp -DskipTests=true -Dstyle.color=always install
+          cd ..
           mv ./natives/ide-Windows.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-Windows.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-windows.tar
+          mv ./natives/ide-MacOS.tar ./ide/package/natives/
+          tar -rvf ./ide/package/natives/ide-macos.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-macos.tar
+          mv ./natives/ide-Linux.tar ./ide/package/natives/
+          tar -rvf ./ide/package/natives/ide-linux.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-linux.tar
+          ls -R
+          gh release create v1.0.1 ./ide/package/natives/*.tar.gz
          
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
