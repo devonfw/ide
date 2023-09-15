@@ -3,7 +3,9 @@ package com.devonfw.tools.ide.nls;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.devonfw.tools.ide.commandlet.Commandlet;
 import com.devonfw.tools.ide.context.IdeContext;
+import com.devonfw.tools.ide.property.Property;
 
 /**
  * Wrapper for {@link ResourceBundle} to avoid {@link java.util.MissingResourceException}.
@@ -56,25 +58,50 @@ public class NlsBundle {
   }
 
   /**
-   * @param commandlet the {@link com.devonfw.tools.ide.commandlet.Commandlet#getName() name} of the
-   *        {@link com.devonfw.tools.ide.commandlet.Commandlet}.
-   * @return the localized message (translated to the users language).
+   * @param key the NLS key.
+   * @return the localized message (translated to the users language) or {@code null} if undefined.
    */
-  public String getCommand(String commandlet) {
+  public String getOrNull(String key) {
 
-    return get("cmd-" + commandlet);
+    if (!this.bundle.containsKey(key)) {
+      return null;
+    }
+    return this.bundle.getString(key);
   }
 
   /**
    * @param commandlet the {@link com.devonfw.tools.ide.commandlet.Commandlet#getName() name} of the
    *        {@link com.devonfw.tools.ide.commandlet.Commandlet}.
-   * @param option the {@link com.devonfw.tools.ide.property.Property#getName() name} of the
-   *        {@link com.devonfw.tools.ide.property.Property#isOption() option}.
    * @return the localized message (translated to the users language).
    */
-  public String getOption(String commandlet, String option) {
+  public String get(Commandlet commandlet) {
 
-    return get("opt" + option);
+    return get("cmd-" + commandlet.getName());
+  }
+
+  /**
+   * @param commandlet the {@link Commandlet} {@link Commandlet#getProperties() owning} the given {@link Property}.
+   * @param property the {@link Property} to the the description of.
+   * @return the localized message describing the property.
+   */
+  public String get(Commandlet commandlet, Property<?> property) {
+
+    String prefix = "opt";
+    String suffix = property.getNameOrAlias();
+    if (property.isValue()) {
+      prefix = "val";
+      suffix = "-" + suffix;
+    }
+
+    String key = prefix + "-" + commandlet.getName() + suffix;
+    String value = getOrNull(key);
+    if (value == null) {
+      value = getOrNull(prefix + suffix); // fallback to share messages across commandlets
+      if (value == null) {
+        value = get(key); // will fail to resolve but we want to reuse the code
+      }
+    }
+    return value;
   }
 
   /**
@@ -95,7 +122,7 @@ public class NlsBundle {
    */
   public static NlsBundle of(IdeContext context) {
 
-    return new NlsBundle(context, "Cli");
+    return new NlsBundle(context, "Ide");
   }
 
 }
