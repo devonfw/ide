@@ -56,9 +56,9 @@ jobs:
           mv ./natives/ide-Windows.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-Windows.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-Windows.tar
-          mv ./natives/ide-MacOS.tar ./ide/package/natives/
-          tar -rvf ./ide/package/natives/ide-MacOS.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
-          gzip ./ide/package/natives/ide-MacOS.tar
+          mv ./natives/ide-macOS.tar ./ide/package/natives/
+          tar -rvf ./ide/package/natives/ide-macOS.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-macOS.tar
           mv ./natives/ide-Linux.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-Linux.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-Linux.tar
