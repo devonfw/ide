@@ -26,14 +26,13 @@ jobs:
           cd ide
           mvn -B -X -Pnative -DskipTests=true package
           cd package/target
-          file=devon*
-          mv -- "$file" "${file//devon/devon-${{ runner.os}}}"
+          tar -cvf ide-${{ runner.os }}.tar devon*
           ls -lR
 
       - uses: actions/upload-artifact@v3
         with:
           name: natives
-          path: ide/package/target/devon*
+          path: ide/package/target/ide*.tar
 
   attach-artifacts:
     name: Attach native images and create release
@@ -49,9 +48,11 @@ jobs:
         with:
           java-version: '17'
       - uses: actions/download-artifact@v3
-      - name: Display structure of downloaded files
+      - name: Create tar.gz archives for release
         run: |
-          tar -czvf ./ide/package/natives/ide-windows.tar.gz ./natives/devon.exe ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          mv ./natives/ide-windows.tar ./ide/package/natives/ide-windows.tar
+          tar -rvf ./ide/package/natives/ide-windows.tar ./natives/devon.exe ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
+          gzip ./ide/package/natives/ide-windows.tar
           mvn -B -ntp -DskipTests=true -Dstyle.color=always install
           ls -R
           gh release create v1.0.1 ./ide/package/natives/*.tar.gz
