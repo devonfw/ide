@@ -51,13 +51,13 @@ jobs:
       - name: Create tar.gz archives for release
         run: |
           ls -R
-          mv ./natives/ide-Windows.tar ./ide/package/natives/ide-windows.tar
+          mv ./natives/ide-Windows.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-windows.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-windows.tar
-          mv ./natives/ide-MacOS.tar ./ide/package/natives/ide-macos.tar
+          mv ./natives/ide-MacOS.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-macos.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-macos.tar
-          mv ./natives/ide-Linux.tar ./ide/package/natives/ide-linux.tar
+          mv ./natives/ide-Linux.tar ./ide/package/natives/
           tar -rvf ./ide/package/natives/ide-linux.tar ./scripts/target/package/system ./scripts/target/package/devonfw-ide-doc.pdf
           gzip ./ide/package/natives/ide-linux.tar
           mvn -B -ntp -DskipTests=true -Dstyle.color=always install
