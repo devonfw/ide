@@ -25,12 +25,14 @@ jobs:
         run: |
           cd ide
           mvn -B -X -Pnative -DskipTests=true package
+          cd package/target
+          rename 's/devon/devon-${{ runner.os }}/' devon*
           ls -lR
 
       - uses: actions/upload-artifact@v3
         with:
           name: natives
-          path: ide/package/target/devon*.tar.gz
+          path: ide/package/target/devon*
 
   attach-artifacts:
     name: Attach native images to build for deploy
