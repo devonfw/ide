@@ -26,13 +26,6 @@
     <java.version>17</java.version>
   </properties>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>localhost</id>
-      <url>http://localhost:8020/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <modules>
     <module>cli</module>
     <module>package</module>
