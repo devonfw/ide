@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -95,6 +96,8 @@ public abstract class AbstractIdeContext implements IdeContext {
   private boolean batchMode;
 
   private boolean quietMode;
+
+  private Locale locale;
 
   private UrlMetadata urlMetadata;
 
@@ -527,6 +530,23 @@ public abstract class AbstractIdeContext implements IdeContext {
 
     }
     return online;
+  }
+
+  @Override
+  public Locale getLocale() {
+
+    if (this.locale == null) {
+      return Locale.getDefault();
+    }
+    return this.locale;
+  }
+
+  /**
+   * @param locale new value of {@link #getLocale()}.
+   */
+  public void setLocale(Locale locale) {
+
+    this.locale = locale;
   }
 
   @Override

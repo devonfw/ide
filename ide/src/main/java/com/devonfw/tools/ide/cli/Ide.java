@@ -113,12 +113,10 @@ public final class Ide {
         }
       }
     }
-    // TODO print help properly
     if (!current.isEnd()) {
-      context().error("Invalid arguments: {}", current.toString());
+      context().error("Invalid arguments: {}", current.getArgs());
     }
     context().getCommandletManager().getCommandlet(HelpCommandlet.class).run();
-    context().info("Usage: ide «args»");
     return 1;
   }
 
@@ -127,12 +125,21 @@ public final class Ide {
     ContextCommandlet init = new ContextCommandlet();
     CliArgument current = first;
     while (!current.isEnd()) {
-      String arg = current.get();
-      FlagProperty property = (FlagProperty) init.getOption(arg);
+      String key = current.getKey();
+      Property<?> property = init.getOption(key);
       if (property == null) {
         break;
       }
-      property.setValue(Boolean.TRUE);
+      String value = current.getValue();
+      if (value == null) {
+        if (property instanceof FlagProperty) {
+          ((FlagProperty) property).setValue(Boolean.TRUE);
+        } else {
+          this.context.error("Missing value for option " + key);
+        }
+      } else {
+        property.setValueAsString(value);
+      }
       current = current.getNext(true);
     }
     init.run();
@@ -190,7 +197,7 @@ public final class Ide {
         } else {
           Property<?> property = null;
           if (!endOpts) {
-            property = commandlet.getOption(arg);
+            property = commandlet.getOption(currentArgument.getKey());
           }
           if (property == null) {
             if (!valueIterator.hasNext()) {
@@ -228,7 +235,10 @@ public final class Ide {
             currentProperty = null;
           } else {
             this.context.trace("Found option by name");
-            if (property instanceof BooleanProperty) {
+            String value = currentArgument.getValue();
+            if (value != null) {
+              property.setValueAsString(value);
+            } else if (property instanceof BooleanProperty) {
               ((BooleanProperty) property).setValue(Boolean.TRUE);
             } else {
               currentProperty = property;

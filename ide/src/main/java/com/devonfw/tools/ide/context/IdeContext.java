@@ -1,6 +1,7 @@
 package com.devonfw.tools.ide.context;
 
 import java.nio.file.Path;
+import java.util.Locale;
 
 import com.devonfw.tools.ide.cli.CliAbortException;
 import com.devonfw.tools.ide.cli.CliException;
@@ -310,6 +311,12 @@ public interface IdeContext extends IdeLogger {
    *         not found.
    */
   SystemPath getPath();
+
+  /**
+   * @return the current {@link Locale}. Either configured via command-line option or {@link Locale#getDefault()
+   *         default}.
+   */
+  Locale getLocale();
 
   /**
    * @param target the {@link Path} to the target folder where the git repository should be cloned or pulled. It is not

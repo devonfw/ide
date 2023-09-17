@@ -122,7 +122,7 @@ public class NlsBundle {
    */
   public static NlsBundle of(IdeContext context) {
 
-    return new NlsBundle(context, "Ide");
+    return new NlsBundle(context, "Ide", context.getLocale());
   }
 
 }

@@ -99,11 +99,9 @@ public final class HelpCommandlet extends Commandlet {
         String name = property.getName();
         if (name.isEmpty()) {
           assert (property instanceof KeywordProperty);
-          usage.append('<');
-          String alias = property.getAlias();
-          usage.append(alias);
-          values.add(alias, bundle.get(cmd, property));
-          usage.append('>');
+          String key = "<" + property.getAlias() + ">";
+          usage.append(key);
+          values.add(key, bundle.get(cmd, property));
         } else {
           assert !(property instanceof KeywordProperty);
           usage.append(name);

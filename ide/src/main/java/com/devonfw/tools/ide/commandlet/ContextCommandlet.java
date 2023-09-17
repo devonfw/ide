@@ -5,6 +5,7 @@ import com.devonfw.tools.ide.context.IdeContext;
 import com.devonfw.tools.ide.context.IdeContextConsole;
 import com.devonfw.tools.ide.log.IdeLogLevel;
 import com.devonfw.tools.ide.property.FlagProperty;
+import com.devonfw.tools.ide.property.LocaleProperty;
 
 /**
  * An internal pseudo-commandlet to create the {@link IdeContext}. It shall not be registered in
@@ -24,6 +25,8 @@ public class ContextCommandlet extends Commandlet {
 
   private final FlagProperty offline;
 
+  private final LocaleProperty locale;
+
   private AbstractIdeContext ideContext;
 
   /**
@@ -38,6 +41,7 @@ public class ContextCommandlet extends Commandlet {
     this.debug = add(new FlagProperty("--debug", false, "-d"));
     this.quiet = add(new FlagProperty("--quiet", false, "-q"));
     this.offline = add(new FlagProperty("--offline", false, "-o"));
+    this.locale = add(new LocaleProperty("--locale", false, null));
   }
 
   @Override
@@ -68,6 +72,7 @@ public class ContextCommandlet extends Commandlet {
     this.ideContext.setForceMode(this.force.isTrue());
     this.ideContext.setQuietMode(this.quiet.isTrue());
     this.ideContext.setOfflineMode(this.offline.isTrue());
+    this.ideContext.setLocale(this.locale.getValue());
   }
 
   /**

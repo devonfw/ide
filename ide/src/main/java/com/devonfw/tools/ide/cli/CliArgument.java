@@ -19,6 +19,10 @@ public class CliArgument {
 
   private final String arg;
 
+  private String key;
+
+  private String value;
+
   private CliArgument next;
 
   /**
@@ -80,14 +84,15 @@ public class CliArgument {
    */
   public CliArgument getNext(boolean splitShortOpts) {
 
-    if (splitShortOpts) {
-      int len = this.arg.length();
-      if ((len > 2) && (this.arg.charAt(0) == '-') && (this.arg.charAt(1) != '-')) {
+    if (splitShortOpts && (this.next != null)) {
+      String option = this.next.arg;
+      int len = option.length();
+      if ((len > 2) && (option.charAt(0) == '-') && (option.charAt(1) != '-')) {
         CliArgument first = null;
         CliArgument current = null;
         for (int i = 1; i < len; i++) {
-          CliArgument shortOpt = new CliArgument("-" + this.arg.charAt(i));
-          shortOpt.next = this.next;
+          CliArgument shortOpt = new CliArgument("-" + option.charAt(i));
+          shortOpt.next = this.next.next;
           if (current == null) {
             first = shortOpt;
           } else {
@@ -99,6 +104,62 @@ public class CliArgument {
       }
     }
     return this.next;
+  }
+
+  /**
+   * @return the {@code «key»} part if the {@link #get() argument} has the has the form {@code «key»=«value»}. Otherwise
+   *         the {@link #get() argument} itself.
+   */
+  public String getKey() {
+
+    initKeyValue();
+    return this.key;
+  }
+
+  /**
+   * @return the {@code «value»} part if the {@link #get() argument} has the has the form {@code «key»=«value»}.
+   *         Otherwise {@code null}.
+   */
+  public String getValue() {
+
+    initKeyValue();
+    return this.value;
+  }
+
+  private void initKeyValue() {
+
+    if (this.key != null) {
+      return;
+    }
+    int equalsIndex = this.arg.indexOf('=');
+    if (equalsIndex < 0) {
+      this.key = this.arg;
+    } else {
+      this.key = this.arg.substring(0, equalsIndex);
+      this.value = this.arg.substring(equalsIndex + 1);
+    }
+  }
+
+  /**
+   * @return a {@link String} representing all arguments from this {@link CliArgument} recursively along is
+   *         {@link #getNext(boolean) next} arguments to the {@link #isEnd() end}.
+   */
+  public String getArgs() {
+
+    if (isEnd()) {
+      return "";
+    }
+    StringBuilder sb = new StringBuilder();
+    CliArgument current = this;
+    String prefix = "\"";
+    while (!current.isEnd()) {
+      sb.append(prefix);
+      sb.append(this.arg);
+      sb.append("\"");
+      current = current.next;
+      prefix = " \"";
+    }
+    return sb.toString();
   }
 
   @Override
@@ -113,6 +174,16 @@ public class CliArgument {
    */
   public static CliArgument of(String... args) {
 
+    return of(true, args);
+  }
+
+  /**
+   * @param splitShortOpt - to {@link #getNext(boolean) split combined short options} for the first argument.
+   * @param args the command-line arguments from {@code main} method.
+   * @return the first {@link CliArgument} of the parsed arguments or {@code null} if for empty arguments.
+   */
+  public static CliArgument of(boolean splitShortOpt, String... args) {
+
     CliArgument first = CliArgument.END;
     CliArgument current = null;
     for (int argsIndex = 0; argsIndex < args.length; argsIndex++) {
@@ -120,10 +191,24 @@ public class CliArgument {
       CliArgument argument = new CliArgument(arg);
       if (current == null) {
         first = argument;
+        current = argument;
+        if (splitShortOpt) {
+          CliArgument start = new CliArgument("");
+          start.next = argument;
+          first = start.getNext(true);
+          current = first;
+          while (!current.next.isEnd()) {
+            current = current.next;
+          }
+        }
       } else {
+        if (current.isEnd()) {
+          // should never happen, but if a bug leads us here it is severe
+          throw new IllegalStateException("Internal error!");
+        }
         current.next = argument;
+        current = argument;
       }
-      current = argument;
     }
     return first;
   }
