@@ -21,7 +21,7 @@ public interface IdeVariables {
   VariableDefinitionString WORKSPACE = new VariableDefinitionString("WORKSPACE", null, c -> c.getWorkspaceName(), true);
 
   /** {@link VariableDefinition} for {@link com.devonfw.tools.ide.context.IdeContext#getPath() PATH}. */
-  VariableDefinitionString PATH = new VariableDefinitionString("PATH", null, c -> c.getPath(), true);
+  VariableDefinitionSystemPath PATH = new VariableDefinitionSystemPath("PATH", null, c -> c.getPath(), true);
 
   /**
    * {@link VariableDefinition} for {@link com.devonfw.tools.ide.context.IdeContext#getWorkspacePath() WORKSPACE_PATH}.
@@ -46,9 +46,12 @@ public interface IdeVariables {
   /** {@link VariableDefinition} for {@link com.devonfw.tools.ide.context.IdeContext#getWorkspaceName() WORKSPACE}. */
   VariableDefinitionString DOCKER_EDITION = new VariableDefinitionString("DOCKER_EDITION", null, c -> "rancher");
 
+  /** {@link VariableDefinition} for {@link com.devonfw.tools.ide.context.IdeContext#getWorkspaceName() WORKSPACE}. */
+  VariableDefinitionString GRAALVM_EDITION = new VariableDefinitionString("GRAALVM_EDITION", null, c -> "community");
+
   /** A {@link Collection} with all pre-defined {@link VariableDefinition}s. */
   Collection<VariableDefinition<?>> VARIABLES = List.of(PATH, HOME, IDE_ROOT, IDE_HOME, WORKSPACE, WORKSPACE_PATH,
-      IDE_TOOLS, CREATE_START_SCRIPTS, IDE_MIN_VERSION, MVN_VERSION, DOCKER_EDITION);
+      IDE_TOOLS, CREATE_START_SCRIPTS, IDE_MIN_VERSION, MVN_VERSION, DOCKER_EDITION, GRAALVM_EDITION);
 
   /**
    * @param name the name of the requested {@link VariableDefinition}.

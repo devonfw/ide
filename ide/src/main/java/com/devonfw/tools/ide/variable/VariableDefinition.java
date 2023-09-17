@@ -58,9 +58,10 @@ public interface VariableDefinition<V> {
 
   /**
    * @param value the value as {@link String}. May NOT be {@code null}.
+   * @param context TODO
    * @return the value converted to the {@link #getValueType() value type}.
    */
-  V fromString(String value);
+  V fromString(String value, IdeContext context);
 
   /**
    * @param value the typed value.

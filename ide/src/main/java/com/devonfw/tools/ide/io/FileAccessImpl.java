@@ -87,6 +87,10 @@ public class FileAccessImpl implements FileAccess {
   @Override
   public void mkdirs(Path directory) {
 
+    if (Files.isDirectory(directory)) {
+      return;
+    }
+    this.context.trace("Creating directory {}", directory);
     try {
       Files.createDirectories(directory);
     } catch (IOException e) {
@@ -133,6 +137,9 @@ public class FileAccessImpl implements FileAccess {
   @Override
   public void backup(Path fileOrFolder) {
 
+    if (Files.isSymbolicLink(fileOrFolder)) {
+      delete(fileOrFolder);
+    }
     Path backupPath = this.context.getIdeHome().resolve(IdeContext.FOLDER_UPDATES).resolve(IdeContext.FOLDER_BACKUPS);
     LocalDateTime now = LocalDateTime.now();
     String date = DateTimeUtil.formatDate(now);
@@ -145,44 +152,65 @@ public class FileAccessImpl implements FileAccess {
   }
 
   @Override
-  public void move(Path fileOrFolder, Path targetDir) {
+  public void move(Path source, Path targetDir) {
 
-    this.context.trace("Moving {} to {}");
+    this.context.trace("Moving {} to {}", source, targetDir);
     try {
-      Files.move(fileOrFolder, targetDir);
+      Files.move(source, targetDir);
     } catch (IOException e) {
-      throw new IllegalStateException("Failed to move " + fileOrFolder + " to " + targetDir);
+      throw new IllegalStateException("Failed to move " + source + " to " + targetDir);
     }
   }
 
   @Override
-  public void copy(Path fileOrFolder, Path targetDir, boolean fileOnly) {
+  public void copy(Path source, Path targetDir, boolean fileOnly) {
 
-    if (fileOnly && Files.isDirectory(fileOrFolder)) {
-      throw new IllegalStateException("Expected file but found a directory to copy at " + fileOrFolder);
+    if (fileOnly) {
+      this.context.debug("Copying file {} to {}", source, targetDir);
+    } else {
+      this.context.debug("Copying {} recursively to {}", source, targetDir);
     }
-    mkdirs(targetDir);
+    if (fileOnly && Files.isDirectory(source)) {
+      throw new IllegalStateException("Expected file but found a directory to copy at " + source);
+    }
     try {
-      copyRecursive(fileOrFolder, targetDir);
+      copyRecursive(source, targetDir);
     } catch (IOException e) {
-      throw new IllegalStateException("Failed to copy " + fileOrFolder + " to " + targetDir);
+      throw new IllegalStateException("Failed to copy " + source + " to " + targetDir);
     }
   }
 
-  private void copyRecursive(Path fileOrFolder, Path targetDir) throws IOException {
+  private void copyRecursive(Path source, Path targetDir) throws IOException {
 
-    if (Files.isDirectory(fileOrFolder)) {
-      try (Stream<Path> childStream = Files.list(fileOrFolder)) {
+    if (Files.isDirectory(source)) {
+      mkdirs(targetDir);
+      try (Stream<Path> childStream = Files.list(source)) {
         Iterator<Path> iterator = childStream.iterator();
         while (iterator.hasNext()) {
           Path child = iterator.next();
           copyRecursive(child, targetDir.resolve(child.getFileName()));
         }
       }
-    } else if (Files.exists(fileOrFolder)) {
-      Files.copy(fileOrFolder, targetDir);
+    } else if (Files.exists(source)) {
+      this.context.trace("Copying {} to {}", source, targetDir);
+      Files.copy(source, targetDir);
     } else {
-      throw new IOException("Path " + fileOrFolder + " does not exist.");
+      throw new IOException("Path " + source + " does not exist.");
+    }
+  }
+
+  @Override
+  public void symlink(Path source, Path targetLink) {
+
+    this.context.trace("Creating symbolic link {} pointing to {}", targetLink, source);
+    try {
+      if (Files.exists(targetLink) && Files.isSymbolicLink(targetLink)) {
+        this.context.debug("Deleting symbolic link to be re-created at {}", targetLink);
+        Files.delete(targetLink);
+      }
+      Files.createSymbolicLink(targetLink, source);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to create a symbolic link " + targetLink + " pointing to " + source);
     }
   }
 
@@ -236,6 +264,7 @@ public class FileAccessImpl implements FileAccess {
   private void unpack(Path file, Path targetDir, Function<InputStream, ArchiveInputStream> unpacker) {
 
     Path tmpDir = createTempDir("extract-" + file.getFileName());
+    this.context.trace("Unpacking archive {} to {}", file, tmpDir);
     Path toplevelFolder = null;
     boolean singleToplevelFolder = true;
     try (InputStream is = Files.newInputStream(file); ArchiveInputStream ais = unpacker.apply(is)) {
@@ -261,7 +290,7 @@ public class FileAccessImpl implements FileAccess {
         }
         entry = ais.getNextEntry();
       }
-      if (singleToplevelFolder && (toplevelFolder != null)) {
+      if (singleToplevelFolder && (toplevelFolder != null) && !toplevelFolder.toString().equals("bin")) {
         move(tmpDir.resolve(toplevelFolder), targetDir);
         delete(tmpDir);
       } else {
@@ -276,11 +305,14 @@ public class FileAccessImpl implements FileAccess {
   public void delete(Path path) {
 
     if (!Files.exists(path)) {
-      this.context.trace("Nothing to delete due to non-existent path {}", path);
+      this.context.trace("Deleting {} skiped as the path does not exist.", path);
       return;
     }
     this.context.debug("Deleting {} ...", path);
     try {
+      if (Files.isSymbolicLink(path)) {
+        Files.delete(path);
+      }
       deleteRecursive(path);
     } catch (IOException e) {
       throw new IllegalStateException("Failed to delete " + path, e);
@@ -298,6 +330,7 @@ public class FileAccessImpl implements FileAccess {
         }
       }
     }
+    this.context.trace("Deleting {} ...", path);
     Files.delete(path);
   }
 

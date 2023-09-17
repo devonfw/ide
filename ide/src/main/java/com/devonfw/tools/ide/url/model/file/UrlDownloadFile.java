@@ -9,7 +9,12 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.devonfw.tools.ide.common.OperatingSystem;
+import com.devonfw.tools.ide.common.SystemArchitecture;
+import com.devonfw.tools.ide.url.model.folder.UrlEdition;
+import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
+import com.devonfw.tools.ide.version.VersionIdentifier;
 
 /**
  * {@link UrlFile} with the download URLs. Its {@link #getName() name} has to follow one of the following conventions:
@@ -19,7 +24,13 @@ import com.devonfw.tools.ide.url.model.folder.UrlVersion;
  * <li>urls</li>
  * </ul>
  */
-public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> {
+public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> implements UrlDownloadFileMetadata {
+
+  /** The name {@value} for OS- and architecture-agnostic URLs. */
+  public static final String NAME_URLS = "urls";
+
+  /** The extension {@value}. */
+  public static final String EXTENSION_URLS = ".urls";
 
   private final Set<String> urls;
 
@@ -55,9 +66,9 @@ public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> {
   }
 
   /**
-   * @return the {@link Set} with the URLs. Avoid direct mutation of this {@link Set} and use {@link #addUrl(String)} or
-   *         {@link #removeUrl(String)} instead.
+   * Avoid direct mutation of this {@link Set} and use {@link #addUrl(String)} or {@link #removeUrl(String)} instead.
    */
+  @Override
   public Set<String> getUrls() {
 
     load(false);
@@ -105,5 +116,73 @@ public class UrlDownloadFile extends AbstractUrlFile<UrlVersion> {
     } catch (IOException e) {
       throw new IllegalStateException("Failed to save file " + path, e);
     }
+  }
+
+  @Override
+  public OperatingSystem getOs() {
+
+    String name = getName();
+    if (name.equals(NAME_URLS)) {
+      return null;
+    }
+    for (OperatingSystem os : OperatingSystem.values()) {
+      if (name.startsWith(os.toString())) {
+        return os;
+      }
+    }
+    throw new IllegalStateException("Cannot derive operating-system from " + name);
+  }
+
+  @Override
+  public SystemArchitecture getArch() {
+
+    String name = getName();
+    if (name.equals(NAME_URLS)) {
+      return null;
+    }
+    int underscore = name.indexOf('_');
+    if (underscore < 0) {
+      return null;
+    }
+    assert (name.endsWith(EXTENSION_URLS));
+    // EXTENSION_URLS.length() = ".urls".length() = 5
+    String archString = name.substring(underscore + 1, name.length() - 5);
+    for (SystemArchitecture arch : SystemArchitecture.values()) {
+      if (archString.equals(arch.toString())) {
+        return arch;
+      }
+    }
+    throw new IllegalStateException("Cannot derive system-architecture from " + name);
+  }
+
+  @Override
+  public VersionIdentifier getVersion() {
+
+    UrlVersion version = getParent();
+    return version.getVersionIdentifier();
+  }
+
+  @Override
+  public String getEdition() {
+
+    UrlEdition edition = getParent().getParent();
+    return edition.getName();
+  }
+
+  @Override
+  public String getTool() {
+
+    UrlTool tool = getParent().getParent().getParent();
+    return tool.getName();
+  }
+
+  @Override
+  public String getChecksum() {
+
+    UrlChecksum checksum = getParent().getChecksum(getName());
+    if (checksum == null) {
+      return null;
+    }
+    return checksum.getChecksum();
   }
 }

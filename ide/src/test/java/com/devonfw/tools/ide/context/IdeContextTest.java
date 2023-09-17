@@ -1,6 +1,5 @@
 package com.devonfw.tools.ide.context;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -9,6 +8,7 @@ import org.assertj.core.api.Condition;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
 
+import com.devonfw.tools.ide.common.SystemPath;
 import com.devonfw.tools.ide.environment.EnvironmentVariables;
 import com.devonfw.tools.ide.environment.EnvironmentVariablesType;
 import com.devonfw.tools.ide.log.IdeLogLevel;
@@ -21,7 +21,7 @@ import com.devonfw.tools.ide.variable.IdeVariables;
 @SuppressWarnings("javadoc")
 public class IdeContextTest extends Assertions {
 
-  private static final Path PATH_PROJECTS = Paths.get("src/test/resources/ide-projects");
+  public static final Path PATH_PROJECTS = Paths.get("src/test/resources/ide-projects");
 
   private IdeContext newContext(String path) {
 
@@ -76,12 +76,16 @@ public class IdeContextTest extends Assertions {
     assertThat(context.getUrlsPath().resolve("readme")).hasContent("this is the download metadata");
     assertThat(context.getToolRepository().resolve("readme")).hasContent("this is the tool repository");
     assertThat(context.getWorkspacePath().resolve("readme")).hasContent("this is the foo-test workspace of basic");
-    String systemPath = IdeVariables.PATH.get(context);
-    assertThat(systemPath).isEqualTo(context.getPath()).isNotEqualTo(System.getenv(IdeVariables.PATH.getName()));
-    String[] pathFolders = systemPath.split(File.pathSeparator);
+    SystemPath systemPath = IdeVariables.PATH.get(context);
+    assertThat(systemPath).isSameAs(context.getPath());
+    String envPath = System.getenv(IdeVariables.PATH.getName());
+    assertThat(systemPath.toString()).isNotEqualTo(envPath).endsWith(envPath);
     Path softwarePath = context.getSoftwarePath();
-    assertThat(pathFolders).contains(softwarePath.resolve("java/bin").toString(),
-        softwarePath.resolve("mvn/bin").toString());
+    Path javaBin = softwarePath.resolve("java/bin");
+    assertThat(systemPath.getPath("java")).isEqualTo(javaBin);
+    Path mvnBin = softwarePath.resolve("mvn/bin");
+    assertThat(systemPath.getPath("mvn")).isEqualTo(mvnBin);
+    assertThat(systemPath.toString()).contains(javaBin.toString(), mvnBin.toString());
     assertThat(variables.getType()).isSameAs(EnvironmentVariablesType.RESOLVED);
     assertThat(variables.getByType(EnvironmentVariablesType.RESOLVED)).isSameAs(variables);
     EnvironmentVariables v1 = variables.getParent();

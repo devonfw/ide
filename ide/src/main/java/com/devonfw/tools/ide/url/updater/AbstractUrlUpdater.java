@@ -11,10 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -615,8 +612,8 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
-        "-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;

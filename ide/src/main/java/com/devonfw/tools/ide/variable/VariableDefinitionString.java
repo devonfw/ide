@@ -64,7 +64,7 @@ public class VariableDefinitionString extends AbstractVariableDefinition<String>
   }
 
   @Override
-  public String fromString(String value) {
+  public String fromString(String value, IdeContext context) {
 
     return value;
   }

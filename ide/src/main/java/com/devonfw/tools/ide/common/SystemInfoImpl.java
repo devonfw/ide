@@ -33,10 +33,23 @@ public class SystemInfoImpl implements SystemInfo {
    */
   public SystemInfoImpl() {
 
+    this(System.getProperty(PROPERTY_OS_NAME).trim(), System.getProperty(PROPERTY_OS_VERSION).trim(),
+        System.getProperty(PROPERTY_OS_ARCHITECTURE).trim());
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param osName the {@link #getOsName() OS name}
+   * @param osVersion the {@link #getOsVersion() OS version}.
+   * @param architectureName the {@link #getArchitectureName() architecture name}.
+   */
+  public SystemInfoImpl(String osName, String osVersion, String architectureName) {
+
     super();
-    this.osName = System.getProperty(PROPERTY_OS_NAME).trim();
-    this.osVersion = VersionIdentifier.of(System.getProperty(PROPERTY_OS_VERSION).trim());
-    this.architectureName = System.getProperty(PROPERTY_OS_ARCHITECTURE).trim();
+    this.osName = osName;
+    this.osVersion = VersionIdentifier.of(osVersion);
+    this.architectureName = architectureName;
     this.os = detectOs(this.osName);
     this.architecture = detectArchitecture(this.architectureName);
   }

@@ -1,19 +1,22 @@
 package com.devonfw.tools.ide.url.updater.intellij;
 
-import com.devonfw.tools.ide.common.JsonObject;
-
 import java.util.List;
+
+import com.devonfw.tools.ide.common.JsonObject;
 
 /**
  * {@link JsonObject} for Intellij content.
  */
 public class IntellijJsonObject implements JsonObject {
 
-  private List<IntellijJsonReleases> releases;
+  private List<IntellijJsonRelease> releases;
 
-  public List<IntellijJsonReleases> getReleases() {
+  /**
+   * @return the {@link List} of the {@link IntellijJsonRelease}s.
+   */
+  public List<IntellijJsonRelease> getReleases() {
 
-    return releases;
+    return this.releases;
   }
 
 }

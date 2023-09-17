@@ -1,5 +1,10 @@
 package com.devonfw.tools.ide.url.updater.python;
 
+import java.util.Collection;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
@@ -7,10 +12,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
 
 /**
  * The {@Link JsonUrlUpdater} for Python
@@ -71,16 +72,15 @@ public class PythonUrlUpdater extends JsonUrlUpdater<PythonJsonObject> {
   public void update(UrlRepository urlRepository) {
 
     UrlTool tool = urlRepository.getOrCreateChild(getTool());
-
     String url = doGetVersionUrl();
     try {
       UrlEdition edition = tool.getOrCreateChild(getEdition());
       updateExistingVersions(edition);
       String toolWithEdition = getToolWithEdition();
       String response = doGetResponseBodyAsString(url);
-      PythonJsonItem[] res = MAPPER.readValue(response, PythonJsonItem[].class);
+      PythonRelease[] res = MAPPER.readValue(response, PythonRelease[].class);
 
-      for (PythonJsonItem result : res) {
+      for (PythonRelease result : res) {
         String version = result.getVersion();
         if (edition.getChild(version) == null) {
           try {
@@ -96,21 +96,16 @@ public class PythonUrlUpdater extends JsonUrlUpdater<PythonJsonObject> {
                 logger.info("Unknown architecture for tool {} version {} and download {}.", toolWithEdition, version,
                     download.getDownloadUrl());
               }
-
             }
             urlVersion.save();
           } catch (Exception exp) {
             logger.error("For tool {} we failed to add version {}.", toolWithEdition, version, exp);
-
           }
         }
-
       }
-
     } catch (Exception e) {
       throw new IllegalStateException("Error while getting versions from JSON API " + url, e);
     }
-
   }
 
 }

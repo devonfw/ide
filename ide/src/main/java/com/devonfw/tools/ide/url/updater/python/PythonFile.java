@@ -3,7 +3,7 @@ package com.devonfw.tools.ide.url.updater.python;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Files array in the python json file. Mapping just the needed properties
+ * Java object to represent the JSON of a single download file of a Python release. Mapping just the needed properties
  */
 public class PythonFile {
 
@@ -19,23 +19,35 @@ public class PythonFile {
   @JsonProperty("download_url")
   private String download_url;
 
+  /**
+   * @return the filename of the download.
+   */
   public String getFilename() {
 
-    return filename;
+    return this.filename;
   }
 
+  /**
+   * @return the operating system of the download.
+   */
   public String getPlatform() {
 
-    return platform;
+    return this.platform;
   }
 
+  /**
+   * @return the system architecture of the download.
+   */
   public String getArch() {
 
-    return arch;
+    return this.arch;
   }
 
+  /**
+   * @return the URL of the download.
+   */
   public String getDownloadUrl() {
 
-    return download_url;
+    return this.download_url;
   }
 }

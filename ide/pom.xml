@@ -19,7 +19,7 @@
    -->
 
   <properties>
-    <mainClass>com.devonfw.tools.ide.dev.Devon</mainClass>
+    <mainClass>com.devonfw.tools.ide.cli.Ide</mainClass>
     <imageName>devon</imageName>
     <java.version>17</java.version>
     <picocli.version>4.7.3</picocli.version>
@@ -27,16 +27,11 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>info.picocli</groupId>
-      <artifactId>picocli</artifactId>
-      <version>${picocli.version}</version>
-    </dependency>
     <!-- unpack tar, gzip, bzip2 -->
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.23.0</version>
+      <version>1.24.0</version>
     </dependency>
     <!-- JSON and XML support -->
     <dependency>
@@ -91,7 +86,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <finalName>devon</finalName>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>

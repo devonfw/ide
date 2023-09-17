@@ -1,19 +1,26 @@
 package com.devonfw.tools.ide.integrationtest.python;
 
-import com.devonfw.tools.ide.url.model.folder.UrlRepository;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.any;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import com.devonfw.tools.ide.url.model.folder.UrlRepository;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+
+/**
+ * {@link WireMockTest} using {@link PythonUrlUpdaterMock}.
+ */
 @WireMockTest(httpPort = 8080)
 public class PythonUrlUpdaterTest extends Assertions {
 
@@ -27,12 +34,13 @@ public class PythonUrlUpdaterTest extends Assertions {
    */
   @Test
   public void testPythonURl(@TempDir Path tempPath) throws IOException {
+
     // given
     stubFor(get(urlMatching("/actions/python-versions/main/.*")).willReturn(aResponse().withStatus(200)
         .withBody(Files.readAllBytes(Paths.get(testdataRoot).resolve("python-version.json")))));
 
-    stubFor(any(urlMatching("/actions/python-versions/releases/download.*")).willReturn(
-        aResponse().withStatus(200).withBody("aBody")));
+    stubFor(any(urlMatching("/actions/python-versions/releases/download.*"))
+        .willReturn(aResponse().withStatus(200).withBody("aBody")));
 
     UrlRepository urlRepository = UrlRepository.load(tempPath);
     PythonUrlUpdaterMock pythonUpdaterMock = new PythonUrlUpdaterMock();

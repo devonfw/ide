@@ -65,7 +65,7 @@ public class VariableDefinitionPath extends AbstractVariableDefinition<Path> {
   }
 
   @Override
-  public Path fromString(String value) {
+  public Path fromString(String value, IdeContext context) {
 
     return Paths.get(value);
   }

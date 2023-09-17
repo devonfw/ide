@@ -16,7 +16,7 @@ public enum IdeLogLevel {
   DEBUG("\033[90m"),
 
   /** {@link IdeLogLevel} for general information (regular logging). */
-  INFO("\033[34m"),
+  INFO("\033[39m"),
 
   /**
    * {@link IdeLogLevel} for a step (logs the step name and groups the following log statements until the next step).
@@ -61,7 +61,7 @@ public enum IdeLogLevel {
    */
   public String getEndColor() {
 
-    return "\033[39m"; // reset color
+    return "\033[0m"; // reset color
   }
 
 }
