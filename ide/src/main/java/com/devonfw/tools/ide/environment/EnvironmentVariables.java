@@ -72,8 +72,9 @@ public interface EnvironmentVariables {
 
   /**
    * @param tool the name of the tool (e.g. "java").
-   * @return the {@link VersionIdentifier} with the version of the tool to use. Will be
-   *         {@link VersionIdentifier#LATEST} if undefined.
+   * @return the {@link VersionIdentifier} with the version of the tool to use. May also be a
+   *         {@link VersionIdentifier#isPattern() version pattern}. Will be {@link VersionIdentifier#LATEST} if
+   *         undefined.
    */
   default VersionIdentifier getToolVersion(String tool) {
 
@@ -147,8 +148,8 @@ public interface EnvironmentVariables {
   }
 
   /**
-   * @param name the {@link com.devonfw.tools.ide.variable.VariableDefinition#getName() name} of the variable to
-   *        search for.
+   * @param name the {@link com.devonfw.tools.ide.variable.VariableDefinition#getName() name} of the variable to search
+   *        for.
    * @return the closest {@link EnvironmentVariables} instance that defines the variable with the given {@code name} or
    *         {@code null} if the variable is not defined.
    */

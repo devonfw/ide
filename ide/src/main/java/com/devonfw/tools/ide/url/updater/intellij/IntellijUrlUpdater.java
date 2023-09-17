@@ -1,5 +1,12 @@
 package com.devonfw.tools.ide.url.updater.intellij;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.devonfw.tools.ide.common.OperatingSystem;
 import com.devonfw.tools.ide.common.SystemArchitecture;
 import com.devonfw.tools.ide.json.mapping.JsonMapping;
@@ -9,12 +16,6 @@ import com.devonfw.tools.ide.url.model.folder.UrlTool;
 import com.devonfw.tools.ide.url.model.folder.UrlVersion;
 import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@link IntellijUrlUpdater} base class for IntelliJ.
@@ -26,6 +27,7 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   private static final String JSON_URL = "products?code=IIU%2CIIC&release.type=release";
 
   private static final String ULTIMATE_EDITION = "ultimate";
+
   private static final String COMMUNITY_EDITION = "intellij";
 
   private static final ObjectMapper MAPPER = JsonMapping.create();
@@ -75,8 +77,8 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
     updateExistingVersions(edition);
     String toolWithEdition = getToolWithEdition();
 
-    List<IntellijJsonReleases> releases = release.getReleases();
-    for (IntellijJsonReleases r : releases) {
+    List<IntellijJsonRelease> releases = release.getReleases();
+    for (IntellijJsonRelease r : releases) {
       String version = r.getVersion();
       Map<String, IntellijJsonDownloadsItem> downloads = r.getDownloads();
       UrlVersion urlVersion = edition.getChild(version);
@@ -86,17 +88,17 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
           urlVersion = edition.getOrCreateChild(version);
           for (String os : downloads.keySet()) {
             switch (os) {
-              case "windowsZip":
-                addVersionEachOs(urlVersion, downloads, "windowsZip", OperatingSystem.WINDOWS, SystemArchitecture.X64);
+              case IntellijJsonRelease.KEY_WINDOWS:
+                addVersionEachOs(urlVersion, downloads, os, OperatingSystem.WINDOWS, SystemArchitecture.X64);
                 break;
-              case "linux":
-                addVersionEachOs(urlVersion, downloads, "linux", OperatingSystem.LINUX, SystemArchitecture.X64);
+              case IntellijJsonRelease.KEY_LINUX:
+                addVersionEachOs(urlVersion, downloads, os, OperatingSystem.LINUX, SystemArchitecture.X64);
                 break;
-              case "mac":
-                addVersionEachOs(urlVersion, downloads, "mac", OperatingSystem.MAC, SystemArchitecture.X64);
+              case IntellijJsonRelease.KEY_MAC:
+                addVersionEachOs(urlVersion, downloads, os, OperatingSystem.MAC, SystemArchitecture.X64);
                 break;
-              case "macM1":
-                addVersionEachOs(urlVersion, downloads, "macM1", OperatingSystem.MAC, SystemArchitecture.ARM64);
+              case IntellijJsonRelease.KEY_MAC_ARM:
+                addVersionEachOs(urlVersion, downloads, os, OperatingSystem.MAC, SystemArchitecture.ARM64);
                 break;
             }
           }
@@ -120,9 +122,9 @@ public class IntellijUrlUpdater extends JsonUrlUpdater<IntellijJsonObject> {
   private void addVersionEachOs(UrlVersion url, Map<String, IntellijJsonDownloadsItem> downloads, String jsonOS,
       OperatingSystem os, SystemArchitecture systemArchitecture) {
 
-    Map<String, Object> osValues = downloads.get(jsonOS).getOs_values();
-    String link = osValues.get("link").toString();
-    String checkSumLink = osValues.get("checksumLink").toString();
+    IntellijJsonDownloadsItem downloadItem = downloads.get(jsonOS);
+    String link = downloadItem.getLink();
+    String checkSumLink = downloadItem.getChecksumLink();
     if (checkSumLink.isEmpty()) {
       doAddVersion(url, link, os, systemArchitecture);
     } else {

@@ -3,10 +3,8 @@ package com.devonfw.tools.ide.environment;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.devonfw.tools.ide.log.IdeLogger;
@@ -94,8 +92,7 @@ public abstract class AbstractEnvironmentVariables implements EnvironmentVariabl
       String value = get(name);
       variables.add(VariableLine.of(export, name, value));
     }
-    Map<String, VariableLine> map = new HashMap<>();
-    return map.values();
+    return variables;
   }
 
   /**

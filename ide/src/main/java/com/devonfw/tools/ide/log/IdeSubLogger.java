@@ -16,31 +16,35 @@ public interface IdeSubLogger {
    */
   default void log(String message, Object... args) {
 
-    if (isEnabled()) {
-      int pos = message.indexOf("{}");
-      if ((pos < 0) || (args.length == 0)) {
-        log(message);
-      }
-      int argIndex = 0;
-      int start = 0;
-      int length = message.length();
-      StringBuilder sb = new StringBuilder(length + 48);
-      while (pos >= 0) {
-        sb.append(message, start, pos);
-        sb.append(args[argIndex++]);
-        start = pos + 2;
-        if (argIndex < args.length) {
-          pos = message.indexOf("{}", start);
-        } else {
-          pos = -1;
-        }
-      }
-      if (start < length) {
-        String rest = message.substring(start);
-        sb.append(rest);
-      }
-      log(sb.toString());
+    assert ((args.length == 0)
+        || !(args[0] instanceof Throwable)) : "Throwable has to be first argument before message!";
+    if (!isEnabled()) {
+      return;
     }
+    int pos = message.indexOf("{}");
+    if ((pos < 0) || (args.length == 0)) {
+      log(message);
+      return;
+    }
+    int argIndex = 0;
+    int start = 0;
+    int length = message.length();
+    StringBuilder sb = new StringBuilder(length + 48);
+    while (pos >= 0) {
+      sb.append(message, start, pos);
+      sb.append(args[argIndex++]);
+      start = pos + 2;
+      if (argIndex < args.length) {
+        pos = message.indexOf("{}", start);
+      } else {
+        pos = -1;
+      }
+    }
+    if (start < length) {
+      String rest = message.substring(start);
+      sb.append(rest);
+    }
+    log(sb.toString());
   }
 
   /**

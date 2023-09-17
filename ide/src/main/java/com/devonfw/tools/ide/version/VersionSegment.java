@@ -1,5 +1,7 @@
 package com.devonfw.tools.ide.version;
 
+import java.util.Objects;
+
 /**
  * Represents a single segment of a {@link VersionIdentifier}.
  */
@@ -16,16 +18,6 @@ public class VersionSegment implements VersionObject<VersionSegment> {
   private final String separator;
 
   private final VersionLetters letters;
-
-  /*
-   * private final String letters;
-   *
-   * private final String lettersLower;
-   *
-   * private final boolean prePhase;
-   *
-   * private final VersionPhase phase;
-   */
 
   private final String pattern;
 
@@ -317,6 +309,29 @@ public class VersionSegment implements VersionObject<VersionSegment> {
       segment = segment.next;
     }
     return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) {
+      return true;
+    } else if (!(obj instanceof VersionSegment)) {
+      return false;
+    }
+    VersionSegment other = (VersionSegment) obj;
+    if (!Objects.equals(this.digits, other.digits)) {
+      return false;
+    } else if (!Objects.equals(this.separator, other.separator)) {
+      return false;
+    } else if (!Objects.equals(this.letters, other.letters)) {
+      return false;
+    } else if (!Objects.equals(this.pattern, other.pattern)) {
+      return false;
+    } else if (!Objects.equals(this.next, other.next)) {
+      return false;
+    }
+    return true;
   }
 
   @Override

@@ -1,6 +1,5 @@
 package com.devonfw.tools.ide.url.model;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -10,6 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.devonfw.tools.ide.cli.CliException;
+import com.devonfw.tools.ide.context.IdeContext;
 import com.devonfw.tools.ide.url.model.folder.UrlEdition;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.devonfw.tools.ide.url.model.folder.UrlTool;
@@ -21,6 +21,8 @@ import com.devonfw.tools.ide.version.VersionIdentifier;
  */
 public class UrlMetadata {
 
+  private final IdeContext context;
+
   private final UrlRepository repository;
 
   private final Map<String, List<VersionIdentifier>> toolEdition2VersionMap;
@@ -28,12 +30,13 @@ public class UrlMetadata {
   /**
    * The constructor.
    *
-   * @param repositoryPath the {@link Path} to the {@link UrlRepository}.
+   * @param context the owning {@link IdeContext}.
    */
-  public UrlMetadata(Path repositoryPath) {
+  public UrlMetadata(IdeContext context) {
 
     super();
-    this.repository = new UrlRepository(repositoryPath);
+    this.context = context;
+    this.repository = new UrlRepository(this.context.getUrlsPath());
     this.toolEdition2VersionMap = new HashMap<>();
   }
 
@@ -92,6 +95,7 @@ public class UrlMetadata {
     List<VersionIdentifier> versions = getSortedVersions(tool, edition);
     for (VersionIdentifier vi : versions) {
       if (vi.matches(version)) {
+        this.context.debug("Resolved version pattern {} to version {}", version, vi);
         return vi;
       }
     }

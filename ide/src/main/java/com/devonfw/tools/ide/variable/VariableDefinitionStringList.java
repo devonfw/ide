@@ -70,7 +70,7 @@ public class VariableDefinitionStringList extends AbstractVariableDefinition<Lis
   }
 
   @Override
-  public List<String> fromString(String value) {
+  public List<String> fromString(String value, IdeContext context) {
 
     if (value.isEmpty()) {
       return Collections.emptyList();
@@ -101,7 +101,7 @@ public class VariableDefinitionStringList extends AbstractVariableDefinition<Lis
     line = super.migrateLine(line);
     String value = line.getValue();
     if ((value != null) && isBashArray(value)) {
-      List<String> list = fromString(value);
+      List<String> list = fromString(value, null);
       line = line.withValue(String.join(", ", list));
     }
     return line;

@@ -46,29 +46,33 @@ public interface FileAccess {
   void backup(Path fileOrFolder);
 
   /**
-   * @param fileOrFolder the {@link Path} to move.
-   * @param targetDir the {@link Path} with the directory to move {@code fileOrFolder} into.
+   * @param source the source {@link Path file or folder} to move.
+   * @param targetDir the {@link Path} with the directory to move {@code source} into.
    */
-  void move(Path fileOrFolder, Path targetDir);
+  void move(Path source, Path targetDir);
 
   /**
-   * @param fileOrFolder the {@link Path} to copy.
-   * @param targetDir the {@link Path} with the directory to copy {@code fileOrFolder} to.
-   * @param fileOnly - {@code true} if {@code fileOrFolder} is expected to be a file and an exception shall be thrown if
-   *        it is a directory, {@code false} otherwise (copy recursively).
+   * @param source the source {@link Path} to link to.
+   * @param targetLink the {@link Path} where the symbolic link shall be created pointing to {@code source}.
    */
-  default void copy(Path fileOrFolder, Path targetDir) {
+  void symlink(Path source, Path targetLink);
 
-    copy(fileOrFolder, targetDir, false);
+  /**
+   * @param source the source {@link Path file or folder} to copy.
+   * @param targetDir the {@link Path} with the directory to copy {@code fileOrFolder} to.
+   */
+  default void copy(Path source, Path targetDir) {
+
+    copy(source, targetDir, false);
   }
 
   /**
-   * @param fileOrFolder the {@link Path} to copy.
+   * @param source the source {@link Path file or folder} to copy.
    * @param targetDir the {@link Path} with the directory to copy {@code fileOrFolder} to.
    * @param fileOnly - {@code true} if {@code fileOrFolder} is expected to be a file and an exception shall be thrown if
    *        it is a directory, {@code false} otherwise (copy recursively).
    */
-  void copy(Path fileOrFolder, Path targetDir, boolean fileOnly);
+  void copy(Path source, Path targetDir, boolean fileOnly);
 
   /**
    * @param file the ZIP file to extract.
@@ -110,7 +114,7 @@ public interface FileAccess {
    * @param dir the folder to search.
    * @param filter the {@link Predicate} used to find the {@link Predicate#test(Object) match}.
    * @param recursive - {@code true} to search recursive in all sub-folders, {@code false} otherwise.
-   * @return the first child {@link Path} matching the given {@link Predicate}.
+   * @return the first child {@link Path} matching the given {@link Predicate} or {@code null} if no match was found.
    */
   Path findFirst(Path dir, Predicate<Path> filter, boolean recursive);
 

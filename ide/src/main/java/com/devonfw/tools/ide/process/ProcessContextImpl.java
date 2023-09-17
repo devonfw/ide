@@ -71,6 +71,9 @@ public final class ProcessContextImpl implements ProcessContext {
   @Override
   public ProcessContext executable(Path command) {
 
+    if (!this.arguments.isEmpty()) {
+      throw new IllegalStateException("Arguments already present - did you forget to call run for previous call?");
+    }
     Path exe = command;
     if (exe.isAbsolute()) {
       Path parent = command.getParent();

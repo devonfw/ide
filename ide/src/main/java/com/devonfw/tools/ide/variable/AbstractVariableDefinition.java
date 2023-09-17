@@ -115,7 +115,7 @@ public abstract class AbstractVariableDefinition<V> implements VariableDefinitio
     if (valueAsString == null) {
       value = getDefaultValue(context);
     } else {
-      value = fromString(valueAsString);
+      value = fromString(valueAsString, context);
     }
     return value;
   }
