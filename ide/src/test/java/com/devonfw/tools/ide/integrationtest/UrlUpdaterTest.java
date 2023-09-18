@@ -20,7 +20,7 @@ import com.devonfw.tools.ide.url.model.folder.UrlRepository;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 /**
- * Test of {@link com.devonfw.tools.ide.url.model.UrlArtifact} using wiremock to simulate network downloads.
+ * Test of {@link com.devonfw.tools.ide.url.updater.UrlUpdater} using wiremock to simulate network downloads.
  */
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends AbstractUrlUpdaterTest {

@@ -12,7 +12,7 @@ import com.devonfw.tools.ide.url.updater.JsonUrlUpdater;
 import com.devonfw.tools.ide.url.updater.UrlUpdater;
 
 /**
- * {@link JsonUrlUpdater} test mock for {@link UrlUpdater} using a single urlVersion.
+ * Test mock for {@link UrlUpdater} using a single tool version and distribution.
  */
 public class UrlUpdaterMockSingle extends UrlUpdaterMock {
 
