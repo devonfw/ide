@@ -238,13 +238,13 @@ public interface IdeLogger {
       }
       return;
     }
-    boolean traceEnabled = trace().isEnabled();
+    boolean traceEnabled = true; // trace().isEnabled();
     boolean debugEnabled = debug().isEnabled();
-    if (hasMessage && !debugEnabled) {
-      // assuming that if debug is disabled then also trace is disabled so we ignore error
-      error(message);
-      return;
-    }
+    // if (hasMessage && !debugEnabled) {
+    // // assuming that if debug is disabled then also trace is disabled so we ignore error
+    // error(message);
+    // return;
+    // }
     String errorMessage = error.getMessage();
     if (errorMessage == null) {
       errorMessage = "";

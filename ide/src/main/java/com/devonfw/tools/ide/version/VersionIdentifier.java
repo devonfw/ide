@@ -164,7 +164,30 @@ public final class VersionIdentifier implements VersionObject<VersionIdentifier>
       otherSegment = otherSegment.getNextOrEmpty();
     } while (todo);
     return true;
+  }
 
+  @Override
+  public int hashCode() {
+
+    VersionSegment segment = this.start;
+    int hash = 1;
+    while (segment != null) {
+      hash = hash * 31 + segment.hashCode();
+      segment = segment.getNextOrNull();
+    }
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) {
+      return true;
+    } else if (!(obj instanceof VersionIdentifier)) {
+      return false;
+    }
+    VersionIdentifier other = (VersionIdentifier) obj;
+    return Objects.equals(this.start, other.start);
   }
 
   @Override

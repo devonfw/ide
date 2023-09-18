@@ -8,6 +8,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,11 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
  */
 @WireMockTest(httpPort = 8080)
 public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
+
+  /**
+   * Test resource location
+   */
+  private final static String testdataRoot = "src/test/resources/integrationtest/UrlUpdaterTest";
 
   /**
    * Tests if the {@link com.devonfw.tools.ide.url.updater.UrlUpdater} can automatically add a missing OS (in this case
@@ -64,6 +70,25 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
 
     assertThat(versionsPath.resolve("linux_x64.urls")).exists();
     assertThat(versionsPath.resolve("linux_x64.urls.sha256")).exists();
+
+  }
+
+  @Test
+  public void testUrlUpdaterIsNotUpdatingWhenStatusManualIsTrue(@TempDir Path tempDir) throws IOException {
+
+    // arrange
+    stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
+
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
+    UrlUpdaterMockSingle updater = new UrlUpdaterMockSingle();
+
+    // act
+    updater.update(urlRepository);
+    Path versionsPath = Paths.get(testdataRoot).resolve("mocked").resolve("mocked").resolve("1.0");
+
+    // assert
+    assertThat(versionsPath.resolve("windows_x64.urls")).doesNotExist();
+    assertThat(versionsPath.resolve("windows_x64.urls.sha256")).doesNotExist();
 
   }
 

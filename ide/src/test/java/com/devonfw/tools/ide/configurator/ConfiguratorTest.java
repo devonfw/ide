@@ -43,6 +43,11 @@ public class ConfiguratorTest extends Assertions {
 
   private static final Prop EDITOR = new Prop("editor", "vi");
 
+  /**
+   * Test of {@link Configurator}.
+   *
+   * @throws Exception on error.
+   */
   @Test
   public void testConfigurator() throws Exception {
 

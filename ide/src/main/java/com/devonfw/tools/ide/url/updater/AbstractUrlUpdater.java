@@ -185,6 +185,9 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
   protected boolean doAddVersion(UrlVersion urlVersion, String url, OperatingSystem os, SystemArchitecture architecture,
       String checksum) {
 
+    if(urlVersion.getStatus()!= null && urlVersion.getStatus().getStatusJson().isManual()){
+      return true;
+    }
     String version = urlVersion.getName();
     url = url.replace("${version}", version);
     String major = urlVersion.getVersionIdentifier().getStart().getDigits();
@@ -618,8 +621,8 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
         || vLower.contains("preview") || vLower.contains("test") || vLower.contains("tech-preview") //
         || vLower.contains("-pre") || vLower.startsWith("ce-")
         // vscode nonsense
-        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/") || vLower.contains(
-        "-insiders")) {
+        || vLower.startsWith("bad") || vLower.contains("vsda-") || vLower.contains("translation/")
+        || vLower.contains("-insiders")) {
       return null;
     }
     return version;

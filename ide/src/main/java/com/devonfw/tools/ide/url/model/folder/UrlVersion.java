@@ -127,9 +127,17 @@ public class UrlVersion extends AbstractUrlFolderWithParent<UrlEdition, UrlFile<
   public static String getUrlsFileName(OperatingSystem os, SystemArchitecture arch) {
 
     if ((os == null) && (arch == null)) {
-      return "urls";
+      return UrlDownloadFile.NAME_URLS;
     }
-    return os + "_" + SystemArchitecture.orDefault(arch) + ".urls";
+    return os + "_" + SystemArchitecture.orDefault(arch) + UrlDownloadFile.EXTENSION_URLS;
+  }
+
+  /**
+   * @return the {@link UrlStatusFile}.
+   */
+  public UrlStatusFile getStatus() {
+
+    return (UrlStatusFile) getChild(UrlStatusFile.STATUS_JSON);
   }
 
   /**
