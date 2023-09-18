@@ -257,12 +257,16 @@ public abstract class AbstractUrlUpdater extends AbstractProcessorWithTimeout im
    */
   private boolean isValidDownload(String url, String tool, String version, HttpResponse<?> response) {
 
-    String contentType = response.headers().firstValue("content-type").orElse("undefined");;
     if (isSuccess(response)) {
-      return isValidContentType(contentType);
+      String contentType = response.headers().firstValue("content-type").orElse("undefined");
+      boolean isValidContentType = isValidContentType(contentType);
+      if (!isValidContentType){
+        logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
+        contentType, url);
+        return false;
+      }
+      return true;
     } else {
-      logger.error("For tool {} and version {} the download has an invalid content type {} for URL {}", tool, version,
-          contentType, url);
       return false;
     }
   }
