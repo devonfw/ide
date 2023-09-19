@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.devonfw.tools.ide.integrationtest.AbstractUrlUpdaterTest;
-import com.devonfw.tools.ide.integrationtest.UrlUpdaterMockSingle;
-import com.devonfw.tools.ide.integrationtest.python.PipUrlUpdaterMock;
 import com.devonfw.tools.ide.url.model.file.json.StatusJson;
 import com.devonfw.tools.ide.url.model.file.json.UrlStatus;
 import com.devonfw.tools.ide.url.model.folder.UrlRepository;
@@ -41,48 +39,23 @@ public class PipUrlUpdaterTest extends AbstractUrlUpdaterTest {
     PipUrlUpdaterMock updater = new PipUrlUpdaterMock();
 
     String statusUrl = "http://localhost:8080/pip/1.0/get-pip.py";
+    String toolName = "pip";
+    String editionName = "pip";
+    String versionName = "1.0";
 
     // when
     updater.update(urlRepository);
 
-    Path versionsPath = tempDir.resolve("pip").resolve("pip").resolve("1.0");
+    Path versionsPath = tempDir.resolve(toolName).resolve(editionName).resolve(versionName);
 
     // then
     assertThat(versionsPath.resolve("status.json")).exists();
 
-    StatusJson statusJson = getStatusJson(versionsPath);
+    StatusJson statusJson = retrieveStatusJson(urlRepository, toolName, editionName, versionName);
     UrlStatus urlStatus = statusJson.getOrCreateUrlStatus(statusUrl);
     Instant successTimestamp = urlStatus.getSuccess().getTimestamp();
 
     assertThat(successTimestamp).isNotNull();
-
-  }
-
-  /**
-   * Tests if the {@link com.devonfw.tools.ide.url.updater.pip.PipUrlUpdater} will fail resolving a server with a
-   * Content-Type:text header response.
-   * <p>
-   * See: <a href="https://github.com/devonfw/ide/issues/1343">#1343</a> for reference.
-   *
-   * @param tempDir Temporary directory
-   */
-  @Test
-  public void testUrlUpdaterWithTextContentTypeWillNotCreateStatusJson(@TempDir Path tempDir) {
-
-    // given
-    stubFor(any(urlMatching("/os/.*"))
-        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody("aBody")));
-
-    UrlRepository urlRepository = UrlRepository.load(tempDir);
-    UrlUpdaterMockSingle updater = new UrlUpdaterMockSingle();
-
-    // when
-    updater.update(urlRepository);
-
-    Path versionsPath = tempDir.resolve("mocked").resolve("mocked").resolve("1.0");
-
-    // then
-    assertThat(versionsPath.resolve("status.json")).doesNotExist();
 
   }
 }

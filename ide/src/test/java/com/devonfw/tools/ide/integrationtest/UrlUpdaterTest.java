@@ -74,7 +74,7 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
   }
 
   @Test
-  public void testUrlUpdaterIsNotUpdatingWhenStatusManualIsTrue(@TempDir Path tempDir) throws IOException {
+  public void testUrlUpdaterIsNotUpdatingWhenStatusManualIsTrue(@TempDir Path tempDir) {
 
     // arrange
     stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
@@ -103,7 +103,7 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
    * @throws IOException test fails
    */
   @Test
-  public void testUrlUpdaterStatusJsonRefreshBugStillExisting(@TempDir Path tempDir) throws IOException {
+  public void testUrlUpdaterStatusJsonRefreshBugStillExisting(@TempDir Path tempDir) {
 
     stubFor(any(urlMatching("/os/.*")).willReturn(aResponse().withStatus(200).withBody("aBody")));
 
@@ -111,16 +111,19 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
     UrlUpdaterMockSingle updater = new UrlUpdaterMockSingle();
 
     String statusUrl = "http://localhost:8080/os/windows_x64_url.tgz";
+    String toolName = "mocked";
+    String editionName = "mocked";
+    String versionName = "1.0";
 
     // when
     updater.update(urlRepository);
 
-    Path versionsPath = tempDir.resolve("mocked").resolve("mocked").resolve("1.0");
+    Path versionsPath = tempDir.resolve(toolName).resolve(editionName).resolve(versionName);
 
     // then
     assertThat(versionsPath.resolve("status.json")).exists();
 
-    StatusJson statusJson = getStatusJson(versionsPath);
+    StatusJson statusJson = retrieveStatusJson(urlRepository, toolName, editionName, versionName);
 
     UrlStatus urlStatus = statusJson.getOrCreateUrlStatus(statusUrl);
 
@@ -134,7 +137,7 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
     UrlRepository urlRepositoryWithError = UrlRepository.load(tempDir);
     updater.update(urlRepositoryWithError);
 
-    statusJson = getStatusJson(versionsPath);
+    statusJson = retrieveStatusJson(urlRepositoryWithError, toolName, editionName, versionName);
 
     urlStatus = statusJson.getOrCreateUrlStatus(statusUrl);
     successTimestamp = urlStatus.getSuccess().getTimestamp();
@@ -153,7 +156,7 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
 
     assertThat(versionsPath.resolve("status.json")).exists();
 
-    statusJson = getStatusJson(versionsPath);
+    statusJson = retrieveStatusJson(urlRepositoryWithSuccess, toolName, editionName, versionName);
 
     urlStatus = statusJson.getOrCreateUrlStatus(statusUrl);
 
@@ -163,6 +166,34 @@ public class UrlUpdaterTest extends AbstractUrlUpdaterTest {
 
     assertThat(errorCode).isEqualTo(200);
     assertThat(errorTimestamp).isGreaterThan(successTimestamp);
+
+  }
+
+  /**
+   * Tests if the {@link com.devonfw.tools.ide.url.updater.UrlUpdater} will fail resolving a server with a
+   * Content-Type:text header response.
+   * <p>
+   * See: <a href="https://github.com/devonfw/ide/issues/1343">#1343</a> for reference.
+   *
+   * @param tempDir Temporary directory
+   */
+  @Test
+  public void testUrlUpdaterWithTextContentTypeWillNotCreateStatusJson(@TempDir Path tempDir) {
+
+    // given
+    stubFor(any(urlMatching("/os/.*"))
+        .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "text/plain").withBody("aBody")));
+
+    UrlRepository urlRepository = UrlRepository.load(tempDir);
+    UrlUpdaterMockSingle updater = new UrlUpdaterMockSingle();
+
+    // when
+    updater.update(urlRepository);
+
+    Path versionsPath = tempDir.resolve("mocked").resolve("mocked").resolve("1.0");
+
+    // then
+    assertThat(versionsPath.resolve("status.json")).doesNotExist();
 
   }
 
