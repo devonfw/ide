@@ -39,3 +39,19 @@ Please note that we are trying to minimize any potential side-effect from `devon
 |`«TOOL»_RELEASE_OPTS`|e.g.`clean deploy -Dchangelist= -Pdeploy`|The arguments provided to the build-tool `«TOOL»` in order to perform a release build.
 |`DEVON_IDE_TRACE`||If value is not an empty string, the `devonfw-ide` scripts will trace each script line executed. For bash two lines output: before and again after expansion. *ATTENTION:* This is not a regular variable working via `devon.properties`. Instead manually do `export DEVON_IDE_TRACE=true` in bash or `set DEVON_IDE_TRACE=true` in windows CMD before running a devon command to get a trace log that you can provide to experts in order to trace down a bug and see what went wrong.
 |=======================
+
+== Version Variables
+
+For each tool you can configure the version as `«TOOL»_VERSION`. Example:
+```
+JAVA_VERSION=17.0.8.1_1
+MVN_VERSION=3.9.4
+```
+
+However, instead of specifying an exact version number, you may also configure a version pattern:
+```
+JAVA_VERSION=17*
+MVN_VERSION=3.9.*
+```
+This will always install the latest stable version matching the according version.
+As IDE-admin please take responsibility and choose wisely between stability and getting the latest fixes and security updates.
