@@ -683,7 +683,12 @@ function doDownloadInternal() {
   then
     curl_opt="--silent"
   fi
-  curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
+  if [ "${url:0:4}" = "http" ] || [ "${url:0:3}" = "ftp" ]
+  then
+    curl ${curl_opt} -fL "${url}" -o "${tmp_file}"
+  else
+    cp "${url}" "${tmp_file}"
+  fi
   local result=${?}
   if [ "${result}" != 0 ]
   then
@@ -1252,15 +1257,16 @@ function doGitPullOrClone() {
   fi
 }
 
-# $1: name of software
-# $2: version of software
-# $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
-# $4: optional edition (e.g. "enterprise" or "community")
-# $5: optional absolute target path where to install
-# $6: optional OS indicator ('-' if OS independent)
-# $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
-# $8: optional software repository
-# $9: optional download URL
+#  $1: name of software
+#  $2: version of software
+#  $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
+#  $4: optional edition (e.g. "enterprise" or "community")
+#  $5: optional absolute target path where to install
+#  $6: optional OS indicator ('-' if OS independent)
+#  $7: optional to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+#  $8: optional software repository
+#  $9: optional download URL
+# $10: optional target filename
 function doInstall() {
   doDebug "doInstall ${*}"
   local software="${1}"
@@ -1272,6 +1278,7 @@ function doInstall() {
   local noUnpack="${7}"
   local repository="${8}"
   local url="${9}"
+  local target_filename="${10}"
   if [ -z "${target_path}" ]
   then
     target_path="${DEVON_IDE_HOME}/software/${software}"
@@ -1376,8 +1383,8 @@ function doInstall() {
   fi
   if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
   then
-    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}"
-    doDebug "Received download file ${DOWNLOAD_FILENAME}"
+    doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}" "${target_filename}"
+    doDebug "Received download file ${DOWNLOAD_FILENAME} with file name ${target_filename}"
     if [ -n "${noUnpack}" ]
     then
       doDebug "Download shall not be extracted, hence copying ${DOWNLOAD_FILENAME} to ${install_path}"
@@ -1425,8 +1432,9 @@ function doInstall() {
   if [ ! -d "${target_path}/bin" ] && doIsMacOs
   then
     local contents="Contents"
-    if ! [ -d "${target_path}/${contents}" ]
+    if ! [ -d "${target_path}/${contents}" ] && ! [ -d "${target_path}/Docker.app" ] && ! [ -d "${target_path}/Rancher Desktop.app" ]
     then
+      doDebug "Searching for Contents folder in ${target_path}"
       pushd "${target_path}" > /dev/null || exit 255
       # doGetFirstExistingPath does not have options
       # shellcheck disable=SC2035

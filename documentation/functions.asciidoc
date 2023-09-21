@@ -188,11 +188,11 @@ Otherwise, the function will fail with an error message guiding the user to inst
 
 === doDownload
 Downloads an artifact from the internet.
-If the URL is not provided as first argument, it will use the `mirrors` config to automatically determine the URL from the other arguments.
+If the URL is not provided as first argument, it will use the `urls` config to automatically determine the URL from the other arguments.
 
 |=======================
 |*Param*|*Name*  |*Description*
-|`$1`   |URL     |The explicit URL to download from or `-` to compute from mirrors.
+|`$1`   |URL     |The explicit URL to download from or `-` to compute from urls.
 |`$2`   |dir     |The optional target directory where to save the downloaded file.
 |`$3`   |name    |The name of the software to download.
 |`$4`   |version |The version of the software to download. May be omitted to download the latest version.
@@ -235,15 +235,16 @@ In case the software is already installed in the resolved version, return `1`.
 
 |=======================
 |*Param*|*Name*  |*Description*
-|`$1`   |software|The name of the software to install.
-|`$2`   |version |The version of the software to install. May be omitted to install the latest version.
-|`$3`   |silent  |The optional silent flag ('silent' to suppress output if already up-to-date or empty for version output).
-|`$4`   |edition |The optional edition of the software to install (e.g. "enterprise" or "community").
-|`$5`   |path    |The absolute target path where to install the software.
-|`$6`   |os      |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
-|`$7`   |noUnpack|The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
-|`$8`   |repo    |The optional software repository.
-|`$9`   |url     |The optional download URL.
+|`$1`   |software           |The name of the software to install.
+|`$2`   |version            |The version of the software to install. May be omitted to install the latest version.
+|`$3`   |silent             |The optional silent flag ('silent' to suppress output if already up-to-date or empty for version output).
+|`$4`   |edition            |The optional edition of the software to install (e.g. "enterprise" or "community").
+|`$5`   |path               |The absolute target path where to install the software.
+|`$6`   |os                 |The optional OS indicator ('-' if OS independent). If omitted the OS will be determined automatically.
+|`$7`   |noUnpack           |The optional argument to ignore extracting downloaded files (use 'noUnpack' or leave empty to extract)
+|`$8`   |repo               |The optional software repository.
+|`$9`   |url                |The optional download URL.
+|`$10`  |target filename    |The optional target filename.
 |=======================
 
 === doInstallWithPackageManager

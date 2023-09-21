@@ -12,48 +12,67 @@ fi
 
 # shellcheck source=scripts/functions
 source "$(dirname "${0}")"/../functions
-JENKINS_HOME="${DEVON_IDE_HOME}/software/jenkins"
-TOOL_VERSION_COMMAND="java -jar '${JENKINS_HOME}/jenkins.war' --version"
+JENKINS_CLI_HOME="${DEVON_IDE_HOME}/software/jenkins"
+JENKINS_COMMAND="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins.war'"
+TOOL_VERSION_COMMAND="${JENKINS_COMMAND} --version"
 # shellcheck source=scripts/commandlet-cli
 source "$(dirname "${0}")"/../commandlet-cli
 
 # $1: optional setup
 function doSetup() {
   doDevonCommand java setup silent
-  if [ -d "${JENKINS_HOME}" ]
+  if [ -d "${JENKINS_CLI_HOME}" ]
   then
     if [ "${1}" != "silent" ]
     then
-      echo "Jenkins is already installed at ${JENKINS_HOME}"
+      echo "Jenkins is already installed at ${JENKINS_CLI_HOME}"
     fi
   else
-    local version=${JENKINS_VERSION:-latest}
-    doDownload "-" "" "jenkins" "${version}" "-" "" "" "" "jenkins.war"
-    mkdir -p "${JENKINS_HOME}"
-    doRunCommand "mv '${DEVON_DOWNLOAD_DIR}/jenkins.war' '${JENKINS_HOME}/jenkins.war'"
-    # http://localhost:9999/jnlpJars/jenkins-cli.jar
+    if [ ! -d "${JENKINS_HOME}" ]
+    then
+      doRunCommand "mkdir '${JENKINS_HOME}'"
+    fi
+    # shellcheck disable=SC2034
+    TOOL_VERSION_COMMAND="-"
+    doInstall "jenkins" "${JENKINS_VERSION}" "" "" "" "" "noUnpack" "" "" "jenkins.war"
     local cwd="${PWD}"
-    cd "${JENKINS_HOME}" || exit 255
-    doRunCommand "jar xf jenkins.war WEB-INF/jenkins-cli.jar"
+    cd "${JENKINS_CLI_HOME}" || exit 255
+    local version=${JENKINS_VERSION}
+    if [ -z "${JENKINS_VERSION}" ]
+    then
+      version="$(doGetLatestSoftwareVersion "jenkins")"
+    fi
+    doRunCommand "jar xf jenkins.war WEB-INF/lib/cli-${version}.jar"
+    doRunCommand "mv 'WEB-INF/lib/cli-${version}.jar' 'jenkins-cli.jar'"
+    doRunCommand "rm -rf WEB-INF/"
     cd "${cwd}" || exit 255
   fi
   if [ "${1}" != "silent" ] && ! doIsQuiet
   then
-    doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --version" "verify installation of Jenkins"
+    doRunCommand "${JENKINS_COMMAND} --version" "verify installation of Jenkins"
   fi
 }
 
 function doStart() {
   doSetup silent
-  doRunCommand "java -jar '${JENKINS_HOME}/jenkins.war' --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
-  sleep 15  
+  doRunCommand "${JENKINS_COMMAND} --httpPort=${JENKINS_PORT:-9999} ${JENKINS_OPTS} || echo -e 'Jenkins could not be started.\nIf you see \"Address already in use\" error above this only means it was already running.' &"
+  sleep 15
   echo
   echo "Jenkins is running on http://localhost:${JENKINS_PORT:-9999}"
 }
 
 function doJenkinsCli() {
-  echo java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
-  java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" "${@}"
+  local admin_password="admin"
+  if [ -f "${JENKINS_HOME}/secrets/initialAdminPassword" ]
+  then
+    admin_password="$(cat "${JENKINS_HOME}"/secrets/initialAdminPassword)"
+  fi
+  local auth_file="${JENKINS_HOME}/auth_file"
+  echo "admin:${admin_password}" > "${JENKINS_HOME}/auth_file"
+  local jenkins_cli_command="java -Duser.home=${JENKINS_HOME} -jar '${JENKINS_CLI_HOME}/jenkins-cli.jar'"
+  echo "${jenkins_cli_command}" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "@${auth_file}" "${@}"
+  # shellcheck disable=SC2145
+  doRunCommand "${jenkins_cli_command} -s 'http://localhost:${JENKINS_PORT:-9999}' -auth '@${auth_file}' ${@}"
 }
 
 function doStop() {
@@ -71,7 +90,7 @@ function doAdd() {
   then
     doFail "Could not find Jenkinsfile (${JENKINSFILE})."
   fi
-  sed "s~@GIT@~file://${PWD}~" "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename "${PWD}")"
+  sed "s~@GIT@~file://${PWD}~" "${DEVON_IDE_HOME}/scripts/templates/jenkins/project.xml" | sed "s~@UUID@~$(head -c 20 /dev/random | base64)~" | java -jar "${JENKINS_CLI_HOME}/jenkins-cli.jar" -s "http://localhost:${JENKINS_PORT:-9999}" -auth "${JENKINS_ADMIN_LOGIN:-admin}:${JENKINS_ADMIN_PASSWORD:-admin}" create-job "$(basename "${PWD}")"
 }
 
 function doRemove() {

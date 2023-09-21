@@ -8,6 +8,7 @@ A tool designed to help developers setting up an development environment with th
 image:https://img.shields.io/github/license/devonfw/ide.svg?label=License["Apache License, Version 2.0",link=https://github.com/devonfw/ide/blob/master/LICENSE]
 image:https://img.shields.io/maven-central/v/com.devonfw.tools.ide/devonfw-ide-scripts.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:com.devonfw.tools.ide]
 image:https://github.com/devonfw/ide/actions/workflows/build.yml/badge.svg["Build Status",link="https://github.com/devonfw/ide/actions/workflows/build.yml"]
+image:https://github.com/devonfw/ide/actions/workflows/update-urls.yml/badge.svg["Update URLS Status",link="https://github.com/devonfw/ide/actions/workflows/update-urls.yml"]
 
 image:https://github.com/devonfw/ide/actions/workflows/test-windows.yml/badge.svg["Windows",link="https://github.com/devonfw/ide/actions/workflows/test-windows.yml"]
 image:https://github.com/devonfw/ide/actions/workflows/test-ubuntu.yml/badge.svg["Ubuntu",link="https://github.com/devonfw/ide/actions/workflows/test-ubuntu.yml"]
