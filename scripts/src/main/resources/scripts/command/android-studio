@@ -140,10 +140,20 @@ function doStartAndroidStudio() {
   if doIsMacOs
   then
     echo "MacOs command ${STUDIO}"
-    open -na "${STUDIO}" "${WORKSPACE_PATH}" --args "${@}"
+    if [ "${ANDROID_STUDIO_DISABLE_OPEN_WORKSPACE}" = "true" ]
+    then
+      open "${STUDIO}" --args "${@}"
+    else
+      open -na "${STUDIO}" "${WORKSPACE_PATH}" --args "${@}"
+    fi
   else
     echo "command ${STUDIO}"
-    "${STUDIO}" "${WORKSPACE_PATH}" "${@}" &
+    if [ "${ANDROID_STUDIO_DISABLE_OPEN_WORKSPACE}" = "true" ]
+    then
+      "${STUDIO}" "${@}" &
+    else
+      "${STUDIO}" "${WORKSPACE_PATH}" "${@}" &
+    fi
   fi
 }
 
