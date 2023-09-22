@@ -34,6 +34,7 @@ These are explained by the following table:
 |*Variable*|*Meaning*
 |*`ANDROID_STUDIO_VERSION`*|The version of the tool Android Studio to install and use.
 |*`EXTRA_JAVA_VERSION`*|You can set this to a different (newer) version of Java used to launch your IDE (other than `JAVA_VERSION` that is used to build your project)
+|*`ANDROID_STUDIO_DISABLE_OPEN_WORKSPACE`*|`true` will disable that your workspace folder will be opened automatically (legacy behavior), `false` will enable to open your workspace folder. See https://github.com/devonfw/ide/issues/1358[#1358] for details.
 |=======================
 
 == plugins
