@@ -1257,6 +1257,15 @@ function doGitPullOrClone() {
   fi
 }
 
+# checks network connectivity status
+function checkNetworkStatus() {
+  if curl -s --head --fail https://www.google.com > /dev/null; then
+    return 0 # Online
+  else
+    return 1 # Offline
+  fi
+}
+
 #  $1: name of software
 #  $2: version of software
 #  $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
@@ -1279,6 +1288,10 @@ function doInstall() {
   local repository="${8}"
   local url="${9}"
   local target_filename="${10}"
+
+  checkNetworkStatus
+  local isOnline=$?
+
   if [ -z "${target_path}" ]
   then
     target_path="${DEVON_IDE_HOME}/software/${software}"
@@ -1291,12 +1304,15 @@ function doInstall() {
     doFail "Missing software argument for doInstall: ${*}"
   fi
   local result=0
-  if [ "${url/.git/}" != "${url}" ]
+  if [ "${url/.git/}" != "${url}" ] && [ "$isOnline" = 0 ]
   then
     doGitPullOrClone "${target_path}" "${url}"
     return
   fi
-  doUpdateUrls
+  if [ "$isOnline" = 0 ]
+  then
+    doUpdateUrls
+  fi
   if [ -z "${version}" ]
   then
     version=$(doGetLatestSoftwareVersion "${software}")
@@ -1381,7 +1397,7 @@ function doInstall() {
     install_path="${DEVON_SOFTWARE_PATH}/${repo}/${software}/${version}"
     version_file="${install_path}/.devon.software.version"
   fi
-  if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ]
+  if [ ! -d "${install_path}" ] || [ "${install_path}" == "${target_path}" ] && [ "$isOnline" = 0 ]
   then
     doDownload "${url}" "${download_dir}" "${software}" "${version}" "${edition}" "${os}" "${arch}" "${ext}" "${target_filename}"
     doDebug "Received download file ${DOWNLOAD_FILENAME} with file name ${target_filename}"
