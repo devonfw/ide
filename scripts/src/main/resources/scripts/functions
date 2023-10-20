@@ -1289,7 +1289,7 @@ function doInstall() {
   local url="${9}"
   local target_filename="${10}"
 
-  checkNetworkStatus
+  doCheckNetworkStatus
   local isOnline=$?
 
   if [ -z "${target_path}" ]
