@@ -293,6 +293,9 @@ The file specified in the first parameter is then unpacked into the directory sp
 === doUpdateUrls
 Uses xref:doGitPullOrClone[] to clone or pull `urls` ensuring that everything is up-to-date.
 
+=== doCheckNetworkStatus
+Checks if system is connected to the internet, if online, it returns the value 0, and if offline, it returns the value 1.
+
 == Functions on system PATH, files, or folders
 
 === doExtendPath

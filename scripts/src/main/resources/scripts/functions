@@ -1258,7 +1258,7 @@ function doGitPullOrClone() {
 }
 
 # checks network connectivity status
-function checkNetworkStatus() {
+function doCheckNetworkStatus() {
   if curl -s --head --fail https://www.google.com > /dev/null; then
     return 0 # Online
   else
