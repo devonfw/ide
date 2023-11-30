@@ -18,7 +18,7 @@ if not exist "%WORKSPACE_PATH%" (
     echo Creating main workspace directory
     md "%WORKSPACE_PATH%"
   ) else (
-    echo %_fBYellow%WARNING: Worksapce %WORKSPACE% does not exist%_RESET%
+    echo %_fBYellow%WARNING: Workspace %WORKSPACE% does not exist%_RESET%
   )
 )
 call :load_properties "%WORKSPACE_PATH%\devon.properties"
