@@ -66,7 +66,7 @@ function doUpdateScripts() {
 }
 
 function doUpdateSettings() {
-  local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git"
+  local defaultSettingsUrl="https://github.com/devonfw/ide-settings.git#devonfw-ide"
   if [ ! -d "${SETTINGS_PATH}" ]
   then
     if [ -n "${1}" ]
