@@ -342,6 +342,9 @@ Determines whether a version is in a version range.
 === doGetLatestSoftwareVersion
 Determines the latest available version of software and returns it. If a prefix is given, it will be taken into account.
 
+=== doGetLatestStableSoftwareVersion
+Determines the latest stable available version of software and returns it. If a prefix is given, it will be taken into account. 
+
 === doGetNextVersion
 A version number is passed to the function doGetNextVersion as an argument and the next version number is generated from this by incrementing the last digit by one and outputs it.
 
