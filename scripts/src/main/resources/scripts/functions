@@ -1607,6 +1607,20 @@ function doVersionCompare() {
     then
       local p1="${v1/[^0-9]*/}"
       local p2="${v2/[^0-9]*/}"
+
+      # java versions may contain "_" indicating probably a build number
+      # let the major version be x and the build number y then the desired behaviour is x_y < x.0.1
+      if [ "${p1}" = "${p2}" ]
+      then
+        if [[ "${s1}" =~ "_" ]] && ! [[ "${s2}" =~ "_" ]]
+        then
+          return 2
+        fi
+        if [[ "${s2}" =~ "_" ]] && ! [[ "${s1}" =~ "_" ]]
+        then
+          return 1
+        fi
+      fi
       local n1="${p1}"
       local n2="${p2}"
       if [ -z "${n1}" ]
