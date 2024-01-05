@@ -1300,12 +1300,12 @@ function doInstall() {
   if [ -z "${version}" ]
   then
     version=$(doGetLatestSoftwareVersion "${software}")
-    doDebug "Resolved latest version of ${software} to ${version}"
+    doDebug "Resolved latest stable version of ${software} to ${version}"
   elif [ "${version:${#version}-2}" = "*!" ]
   then
     doDebug "Resolving version prefix ${version}"
     edition=$(doGetSoftwareEdition "${software}")
-    resolved_version=$(doGetLatestStableSoftwareVersion "${software}" "${version}")
+    resolved_version=$(doGetAnyLatestSoftwareVersion "${software}" "${version}")
     if [ -n "${resolved_version}" ]
     then
       doDebug "Resolved version prefix ${version} to ${resolved_version}"
@@ -1854,7 +1854,7 @@ function doGetSoftwareEdition() {
 
 # $1: software
 # $2: optional prefix
-function doGetLatestSoftwareVersion() {
+function doGetAnyLatestSoftwareVersion() {
   local software="${1}"
   local prefix="${2}"
   local edition
@@ -1864,7 +1864,7 @@ function doGetLatestSoftwareVersion() {
   then
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV | head -1)"
   else
-    prefix="${prefix:0:${#prefix}-1}"
+    prefix="${prefix:0:${#prefix}-2}" # 2 for "*!"
     prefix="${prefix/./[.]}"
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
   fi
@@ -1873,18 +1873,24 @@ function doGetLatestSoftwareVersion() {
 
 # $1: software
 # $2: optional prefix
-function doGetLatestStableSoftwareVersion() {
+function doGetLatestSoftwareVersion() {
   local software="${1}"
   local prefix="${2}"
   local edition
   local version
   if [ -z "${prefix}" ]
   then
-    mapfile -t versions < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
+    versions=()
+    while IFS= read -r line; do
+      versions+=("$line")
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
   else
-    prefix="${prefix:0:${#prefix}-2}" # 2 for "*!"
+    prefix="${prefix:0:${#prefix}-1}" # 1 for "*"
     prefix="${prefix/./[.]}"
-    mapfile -t versions < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
+    versions=()
+    while IFS= read -r line; do
+      versions+=("$line")
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
   fi
 
   # version is not considered stable (see IDEasy VersionSegment) if:
