@@ -59,5 +59,10 @@ doTestVersionCompare 3.0.0-beta17 '>' 3.0.0-beta11-SNAPSHOT
 doTestVersionCompare 3.0.0.11 '>' 3.0.0-beta11-SNAPSHOT
 doTestVersionCompare 2020.04.001 '>' 3.3.1
 doTestVersionCompare "11*" '>' "11u0"
+doTestVersionCompare 21.0.1_12 '>' 21_35
+doTestVersionCompare 21_35 '<' 21.0.1_12
+doTestVersionCompare 21_35 '<' 21
+doTestVersionCompare 21_35 '<' 21_36
+doTestVersionCompare 21_35 '<' 21_36.2
 
 exit "${exitcode}"
