@@ -1878,18 +1878,19 @@ function doGetLatestSoftwareVersion() {
   local prefix="${2}"
   local edition
   local version
+  edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
     versions=()
     while IFS= read -r line; do
-      versions+=("$line")
+      versions+=("${line}")
     done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
   else
     prefix="${prefix:0:${#prefix}-1}" # 1 for "*"
     prefix="${prefix/./[.]}"
     versions=()
     while IFS= read -r line; do
-      versions+=("$line")
+      versions+=("${line}")
     done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
   fi
 
@@ -1917,23 +1918,23 @@ function doGetLatestSoftwareVersion() {
     # since we later split the version based on ".", "-", or "_", we need to replace "release-candidate" with "releasecandidate"
     version_RC="${version/release-candidate/releasecandidate}"
     version_RC="${version/release_candidate/releasecandidate}"
-    version_RC_lower=$(echo "$version_RC" | tr '[:upper:]' '[:lower:]')
+    version_RC_lower=$(echo "${version_RC}" | tr '[:upper:]' '[:lower:]')
 
     # Split the version based on ".", "-", or "_"
-    IFS='._-' read -ra segments <<< "$version_RC_lower"
+    IFS='._-' read -ra segments <<< "${version_RC_lower}"
 
     # Check if any segment matches unwanted keywords
     unwanted_segment=false
     for segment in "${segments[@]}"; do
-      if echo "$segment" | grep -Eq "$pattern"; then
+      if echo "${segment}" | grep -Eq "${pattern}"; then
         unwanted_segment=true
         break
       fi
     done
 
     # If no unwanted segments were found, then we have the version we want, i.e. the latest stable version
-    if [ "$unwanted_segment" = false ]; then
-      echo "$version"
+    if [ "${unwanted_segment}" = false ]; then
+      echo "${version}"
       break
     fi
   done
