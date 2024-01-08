@@ -522,7 +522,7 @@ function doDownload() {
 
     if [ ! -f "${url_file}" ]
     then
-      if doIsMacOs 
+      if doIsMacOs
       then
         if [ "${arch}" = "arm64" ]
         then
@@ -536,14 +536,14 @@ function doDownload() {
     then
       url_file="${urls_software_dir}/${os}.urls"
       if [ ! -f "${url_file}" ]
-      then 
+      then
         url_file="${urls_software_dir}/urls"
       fi
     fi
     if [ ! -f "${url_file}" ]
     then
       doFail "No url file found at ${urls_software_dir}"
-    fi 
+    fi
 
     local url
     declare -a urls
@@ -553,7 +553,7 @@ function doDownload() {
       ((++i))
     done < "${url_file}"
 
-    # suffle urls to choose urls in random order and distribute load
+    # shuffle urls to choose urls in random order and distribute load
     local size="${#urls[*]}"
     local rand
     local tmp
@@ -612,7 +612,7 @@ function doDownload() {
           local checksum
           checksum="$(cat "${url_file}".sha256)"
           doVerifyChecksums "${target_dir}"/"${filename}" "${checksum}" "${url_file}"
-        else 
+        else
           if [ "${version}" != "latest" ]
           then
             doEcho "No checksum found at ${url_file}.sha256"
@@ -700,7 +700,7 @@ function doDownloadInternal() {
   fi
 }
 
-# $1: filename (potentiall including absolute or relative path)
+# $1: filename (potentially including absolute or relative path)
 # echos the file extension
 function doGetExtension() {
   local filename="${1/*\//}"
@@ -809,7 +809,7 @@ function doExtract() {
   fi
 }
 
-# $n: the executable to run (may be expaneded glob pattern(s))
+# $n: the executable to run (may be expanded glob pattern(s))
 function doRunFirstExecutable() {
   local installer="$1"
   while [ -n "$1" ]
@@ -855,7 +855,7 @@ function doUnzip() {
 }
 
 function doInstallWithPackageManager() {
-  local first  
+  local first
   for installString in "${@}"
   do
     first="${installString/ */}"
@@ -1015,7 +1015,7 @@ function doArrayContainsItemWithPrefix() {
 
 # $1: java package
 # $2: optional groupId
-# $3: optional artifactId 
+# $3: optional artifactId
 function doMavenArchetype() {
   if [ -z "${1}" ]
   then
@@ -1173,7 +1173,7 @@ function doUpgradeMavenArtifact() {
     fi
   fi
   if [[ "${target_version}" =~ alpha|beta|rc|pre|test ]]
-  then 
+  then
     doAskToContinue "Latest version seems unstable: ${target_version}\nAre you sure you want to install this version?"
   fi
   url="${url}/${target_version}/${artifact_id}-${target_version}${suffix}"
@@ -1223,7 +1223,7 @@ function doGitPullOrClone() {
           doFail "${message}See above error for details - check your network connectivity and retry."
         fi
       fi
-      popd > /dev/null || exit 255 
+      popd > /dev/null || exit 255
       if [ "${result}" = 0 ]
       then
         return
@@ -1238,7 +1238,7 @@ function doGitPullOrClone() {
       doFail "Not a git repository: ${dir}"
     else
       mkdir -p "${dir}"
-      pushd "${dir}" > /dev/null || exit 255 
+      pushd "${dir}" > /dev/null || exit 255
       if doIsQuiet
       then
         git_opts="-q"
@@ -1252,7 +1252,7 @@ function doGitPullOrClone() {
       then
         doRunCommand "git checkout ${git_opts} ${branch}"
       fi
-      popd > /dev/null || exit 255 
+      popd > /dev/null || exit 255
     fi
   fi
 }
@@ -1300,7 +1300,19 @@ function doInstall() {
   if [ -z "${version}" ]
   then
     version=$(doGetLatestSoftwareVersion "${software}")
-    doDebug "Resolved latest version of ${software} to ${version}"
+    doDebug "Resolved latest stable version of ${software} to ${version}"
+  elif [ "${version:${#version}-2}" = "*!" ]
+  then
+    doDebug "Resolving version prefix ${version}"
+    edition=$(doGetSoftwareEdition "${software}")
+    resolved_version=$(doGetAnyLatestSoftwareVersion "${software}" "${version}")
+    if [ -n "${resolved_version}" ]
+    then
+      doDebug "Resolved version prefix ${version} to ${resolved_version}"
+      version="${resolved_version}"
+    else
+      doFail "Could not resolve version prefix ${version} : no matching version found in ${DEVON_IDE_HOME}/urls/${software}/${edition}/"
+    fi
   elif [ "${version:${#version}-1}" = "*" ]
   then
     doDebug "Resolving version prefix ${version}"
@@ -1439,7 +1451,7 @@ function doInstall() {
       # doGetFirstExistingPath does not have options
       # shellcheck disable=SC2035
       contents="$(doGetFirstExistingPath *.app/Contents)"
-      popd > /dev/null || exit 255 
+      popd > /dev/null || exit 255
     fi
     if [ -n "${contents}" ] && [ -d "${target_path}/${contents}" ]
     then
@@ -1550,7 +1562,7 @@ function doConfigureWorkspace() {
   fi
   if [ ${result} = 0 ]
   then
-    doSuccess "Your workspace ${WORKSPACE} has been ${action}"  
+    doSuccess "Your workspace ${WORKSPACE} has been ${action}"
   else
     doFail "Your workspace ${WORKSPACE} could not be ${action}"
   fi
@@ -1793,7 +1805,7 @@ function doBrewInstall() {
 function doRequireWsl() {
   local error
   if ! command -v wsl &> /dev/null
-  then 
+  then
     error="WSL 2 is not installed.\nPlease install WSL 2."
   elif wsl -l > /dev/null
   then
@@ -1856,7 +1868,7 @@ function doGetSoftwareEdition() {
 
 # $1: software
 # $2: optional prefix
-function doGetLatestSoftwareVersion() {
+function doGetAnyLatestSoftwareVersion() {
   local software="${1}"
   local prefix="${2}"
   local edition
@@ -1866,12 +1878,81 @@ function doGetLatestSoftwareVersion() {
   then
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV | head -1)"
   else
-    prefix="${prefix:0:${#prefix}-1}"
+    prefix="${prefix:0:${#prefix}-2}" # 2 for "*!"
     prefix="${prefix/./[.]}"
     version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
   fi
   echo "${version}"
-} 
+}
+
+# $1: software
+# $2: optional prefix
+function doGetLatestSoftwareVersion() {
+  local software="${1}"
+  local prefix="${2}"
+  local edition
+  local version
+  edition=$(doGetSoftwareEdition "${software}")
+  if [ -z "${prefix}" ]
+  then
+    versions=()
+    while IFS= read -r line; do
+      versions+=("${line}")
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
+  else
+    prefix="${prefix:0:${#prefix}-1}" # 1 for "*"
+    prefix="${prefix/./[.]}"
+    versions=()
+    while IFS= read -r line; do
+      versions+=("${line}")
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
+  fi
+
+  # version is not considered stable (see IDEasy VersionSegment) if:
+  # VersionSegment.letters starts with "pre"
+
+  # or the letters are a development phase and unstable phase. This is the case if:
+  # 1. development phase:
+  # - not UNDEFINED, not NONE, not REVISION, not BUILD
+  # 2. unstable phase, e.i. small ordinal in enum VersionPhase:
+  # - UNDEFINED, REVISION, SNAPSHOT, NIGHTLY, ALPHA, BETA, BETA_OR_BUILD, BUILD, MILESTONE, RELEASE_CANDIDATE
+  # keywords for every phase:
+  #                        snapshot  nightly  alpha  beta  b              build  milestone  rc
+  #                        dev       nb       alph   bet                         m          release-candidate
+  #                                  ci       alp    test                                   candidate
+  #                                           a
+  #                                           unstable
+
+  words_with_digits=("snapshot" "dev" "nightly" "nb" "ci" "alpha" "alph" "alp" "a" "unstable" "beta" "bet" "test" "b" "milestone" "m" "rc" "releasecandidate" "candidate")
+  pattern="^pre.*$"
+  for word in "${words_with_digits[@]}"; do
+    pattern+="|^${word}[0-9]*$" # this tries to mimic the behavior of VersionSegment
+  done
+  for version in "${versions[@]}"; do
+    # since we later split the version based on ".", "-", or "_", we need to replace "release-candidate" with "releasecandidate"
+    version_RC="${version/release-candidate/releasecandidate}"
+    version_RC="${version/release_candidate/releasecandidate}"
+    version_RC_lower=$(echo "${version_RC}" | tr '[:upper:]' '[:lower:]')
+
+    # Split the version based on ".", "-", or "_"
+    IFS='._-' read -ra segments <<< "${version_RC_lower}"
+
+    # Check if any segment matches unwanted keywords
+    unwanted_segment=false
+    for segment in "${segments[@]}"; do
+      if echo "${segment}" | grep -Eq "${pattern}"; then
+        unwanted_segment=true
+        break
+      fi
+    done
+
+    # If no unwanted segments were found, then we have the version we want, i.e. the latest stable version
+    if [ "${unwanted_segment}" = false ]; then
+      echo "${version}"
+      break
+    fi
+  done
+}
 
 # $1: software
 # $2: selected version
@@ -1926,7 +2007,7 @@ function doListSoftwareVersions() {
 }
 
 # $@: CLI args
-# returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handeled by CLI parser)
+# returns 0 if a standard option was detected and handled, 255 otherwise (regular argument to be handled by CLI parser)
 function doParseOption() {
   if [ "${1}" = "--" ]
   then
