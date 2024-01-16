@@ -1243,7 +1243,7 @@ function doGitPullOrClone() {
       then
         git_opts="-q"
       else
-        doEcho "Cloning git repositroy from ${url}"
+        doEcho "Cloning git repository from ${url}"
       fi
       local branch="${url/*#/}"
       url="${url%#*}"
