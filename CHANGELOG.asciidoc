@@ -2,11 +2,18 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
-== 2023.10.001
+== 2024.01.001
 
 Release with new features and bugfixes:
 
-* TODO
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/50?closed=1[milestone 2024.01.001].
+
+== 2023.12.001
+
+Release with new features and bugfixes:
+
+* https://github.com/devonfw/ide/issues/1370[#1370]: Release broken: system folder empty
+* https://github.com/devonfw/ide/issues/1362[#1362]: use devonfw-ide branch for ide-settings as default
 
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/49?closed=1[milestone 2023.10.001].
 
