@@ -1196,6 +1196,8 @@ function doGitPullOrClone() {
   local dir="${1}"
   local url="${2}"
   local git_opts=""
+
+
   if [ -d "${dir}/.git" ]
   then
     pushd "${dir}" > /dev/null || exit 255
@@ -1220,7 +1222,14 @@ function doGitPullOrClone() {
         then
           message="${message}It seems you are working on a local branch. For testing, you may continue...\n"
         else
-          doFail "${message}See above error for details - check your network connectivity and retry."
+          # Check network connectivity
+          doCheckNetworkStatus
+          local isOnline=$?
+          if [ "$isOnline" = 1 ]
+          then
+            doWarning "You are offline - git repo could not be updated."
+            return
+          fi
         fi
       fi
       popd > /dev/null || exit 255
@@ -1257,6 +1266,15 @@ function doGitPullOrClone() {
   fi
 }
 
+# checks network connectivity status
+function doCheckNetworkStatus() {
+  if curl -s --head --fail https://www.google.com > /dev/null; then
+    return 0 # Online
+  else
+    return 1 # Offline
+  fi
+}
+
 #  $1: name of software
 #  $2: version of software
 #  $3: optional silent flag ('silent' to suppress output if already up-to-date or empty for version output)
@@ -1279,6 +1297,9 @@ function doInstall() {
   local repository="${8}"
   local url="${9}"
   local target_filename="${10}"
+
+  local exitcode_offline=10
+
   if [ -z "${target_path}" ]
   then
     target_path="${DEVON_IDE_HOME}/software/${software}"
@@ -1343,6 +1364,13 @@ function doInstall() {
       fi
       return 1
     else
+      doCheckNetworkStatus
+      local isOnline=$?
+      if [ "$isOnline" = 1 ]
+      then
+        doWarning "You are offline - can not install update."
+        return ${exitcode_offline}
+      fi
       doEcho "Updating ${software} from version ${current_version} to version ${version}..."
     fi
   fi
