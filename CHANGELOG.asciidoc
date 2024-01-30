@@ -6,6 +6,10 @@ This file documents all notable changes to https://github.com/devonfw/ide[devonf
 
 Release with new features and bugfixes:
 
+* https://github.com/devonfw/ide/issues/1153[#1153]: improve offline capability
+* https://github.com/devonfw/ide/issues/1369[#1369]: Ability to select latest stable version via version pattern
+* https://github.com/devonfw/ide/issues/1367[#1367]: Detection of latest Java version is buggy
+
 The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/50?closed=1[milestone 2024.01.001].
 
 == 2023.12.001
