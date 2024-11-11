@@ -1904,11 +1904,11 @@ function doGetAnyLatestSoftwareVersion() {
   edition=$(doGetSoftwareEdition "${software}")
   if [ -z "${prefix}" ]
   then
-    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV | head -1)"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -type d -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV | head -1)"
   else
     prefix="${prefix:0:${#prefix}-2}" # 2 for "*!"
     prefix="${prefix/./[.]}"
-    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
+    version="$(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -type d -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV | head -1)"
   fi
   echo "${version}"
 }
@@ -1926,14 +1926,14 @@ function doGetLatestSoftwareVersion() {
     versions=()
     while IFS= read -r line; do
       versions+=("${line}")
-    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -type d -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | sort -rV)
   else
     prefix="${prefix:0:${#prefix}-1}" # 1 for "*"
     prefix="${prefix/./[.]}"
     versions=()
     while IFS= read -r line; do
       versions+=("${line}")
-    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
+    done < <(find "${DEVON_IDE_HOME}"/urls/"${software}"/"${edition}" -type d -mindepth 1 -maxdepth 1 -print | awk -F'/' '{print $NF}' | grep "^${prefix}" | sort -rV)
   fi
 
   # version is not considered stable (see IDEasy VersionSegment) if:
