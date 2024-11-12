@@ -2,6 +2,14 @@
 
 This file documents all notable changes to https://github.com/devonfw/ide[devonfw-ide].
 
+== 2024.11.001
+
+Release with bugfix:
+
+* https://github.com/devonfw/ide/issues/1391[#1391]: dependencies.json not supported - tomcat not working anymore
+
+The full list of changes for this release can be found in https://github.com/devonfw/ide/milestone/51?closed=1[milestone 2024.11.001].
+
 == 2024.01.001
 
 Release with new features and bugfixes:
