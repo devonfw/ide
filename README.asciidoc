@@ -15,6 +15,19 @@ image:https://github.com/devonfw/ide/actions/workflows/test-macos.yml/badge.svg[
 
 toc::[]
 
+== ATTENTION
+
+=== Sunset of devonfw-ide
+
+With devonfw-ide we have done a great job in automation of IDE installation on your local computer.
+However, we decided to migrate everything from bash scripts to a reasonable programming language and allow professional development and quality assurance.
+As a result we have created a new product https://github.com/devonfw/IDEasy[IDEasy] that is now replacing devonfw-ide.
+Furhter, IDEasy is now a self-contained product totally independent from the rest of devonfw.
+
+If you have been using devonfw-ide and want to migrate to IDEasy please read https://github.com/devonfw/IDEasy/blob/main/documentation/migration-from-devonfw.adoc[this migration guide].
+
+We hope to see you again at IDEasy - the professional IDE automation taking what we started with devonfw-ide to the next level!
+
 == Setup
 
 === Prerequisites
