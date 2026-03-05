@@ -53,7 +53,7 @@ function doSetup() {
           # shellcheck disable=SC2013
           for var in $( grep -o '\$\[.*\]' "${SETTINGS_PATH}/devon/conf/.m2/settings.xml" | sort -u)
           do
-            read -r -p "Please enter secret value for variable ${var}: " secret
+            read -r -s -p "Please enter secret value for variable ${var}: " secret
             crypted=$("${MVN}" --encrypt-password "${secret}")
             echo "Encrypted as ${crypted}"
             echo
